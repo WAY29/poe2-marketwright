@@ -1,0 +1,531 @@
+import json
+import subprocess
+import textwrap
+import unittest
+from pathlib import Path
+
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+
+
+class ExtensionFilterBehaviorTests(unittest.TestCase):
+    def run_node(self, script: str) -> object:
+        result = subprocess.run(
+            ["node", "-e", textwrap.dedent(script)],
+            cwd=REPO_ROOT,
+            capture_output=True,
+            text=True,
+            check=False,
+        )
+        if result.returncode != 0:
+            self.fail(result.stderr or result.stdout)
+        return json.loads(result.stdout)
+
+    def test_page_bridge_keeps_related_pseudo_known_stats(self) -> None:
+        result = self.run_node(
+            r"""
+            const fs = require("fs");
+            const vm = require("vm");
+            const listeners = [];
+            const staticData = {
+              knownStats: [
+                {
+                  id: "pseudo",
+                  entries: [
+                    { id: "pseudo.pseudo_total_strength", text: "# total to Strength" },
+                    { id: "pseudo.pseudo_total_maximum_life", text: "# total maximum Life" },
+                    { id: "pseudo.pseudo_number_of_empty_prefix_mods", text: "# Empty Prefix Modifiers" },
+                    { id: "pseudo.pseudo_number_of_suffix_mods", text: "# Suffix Modifiers" },
+                    { id: "pseudo.pseudo_number_of_uses_remaining", text: "# uses remaining (Tablets)" }
+                  ]
+                },
+                {
+                  id: "explicit",
+                  entries: [
+                    { id: "explicit.stat_strength", text: "# to Strength" },
+                    { id: "explicit.stat_dexterity", text: "# to Dexterity" }
+                  ]
+                }
+              ]
+            };
+            const window = {
+              app: { $data: { static_: staticData } },
+              addEventListener(type, listener) {
+                if (type === "message") {
+                  listeners.push(listener);
+                }
+              },
+              postMessage() {},
+              setTimeout() {
+                throw new Error("trade app should be captured synchronously");
+              }
+            };
+
+            vm.runInNewContext(fs.readFileSync("page-bridge.js", "utf8"), { window, console }, {
+              filename: "page-bridge.js"
+            });
+            listeners[0]({
+              source: window,
+              data: {
+                source: "poe2-marketwright",
+                type: "POE2_MARKETWRIGHT_UPDATE",
+                payload: {
+                  enabled: true,
+                  allowedKeys: [],
+                  allowedStatIds: ["explicit.stat_strength"]
+                }
+              }
+            });
+
+            console.log(JSON.stringify(staticData.knownStats));
+            """
+        )
+
+        groups = {group["id"]: group["entries"] for group in result}
+        self.assertEqual(
+            [entry["id"] for entry in groups["pseudo"]],
+            [
+                "pseudo.pseudo_total_strength",
+                "pseudo.pseudo_number_of_empty_prefix_mods",
+                "pseudo.pseudo_number_of_suffix_mods",
+                "pseudo.pseudo_number_of_uses_remaining",
+            ],
+        )
+        self.assertEqual(
+            [entry["id"] for entry in groups["explicit"]],
+            ["explicit.stat_strength"],
+        )
+
+    def test_content_filter_keeps_related_pseudo_options(self) -> None:
+        result = self.run_node(
+            r"""
+            const fs = require("fs");
+            const vm = require("vm");
+
+            class FakeClassList {
+              constructor() {
+                this.values = new Set();
+              }
+
+              contains(name) {
+                return this.values.has(name);
+              }
+
+              toggle(name, force) {
+                if (force === undefined) {
+                  force = !this.values.has(name);
+                }
+                if (force) {
+                  this.values.add(name);
+                } else {
+                  this.values.delete(name);
+                }
+                return this.values.has(name);
+              }
+            }
+
+            class FakeElement {
+              constructor(text, attributes = {}) {
+                this.innerText = text;
+                this.textContent = text;
+                this.attributes = attributes;
+                this.children = [];
+                this.classList = new FakeClassList();
+                this.id = attributes.id || "";
+              }
+
+              getAttribute(name) {
+                return this.attributes[name] || null;
+              }
+
+              getClientRects() {
+                return [{}];
+              }
+
+              matches() {
+                return false;
+              }
+
+              querySelectorAll() {
+                return this.children;
+              }
+            }
+
+            const bootstrapCall = `  bootstrap().catch((error) => {
+                console.error("[PoE2 Marketwright] bootstrap failed", error);
+              });`;
+            let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { filterOptionGroup, runtime, HIDDEN_CLASS };\n})();"
+            );
+
+            const window = {
+              addEventListener() {},
+              clearTimeout() {},
+              getComputedStyle() {
+                return { display: "block", visibility: "visible", opacity: "1" };
+              },
+              innerHeight: 768,
+              innerWidth: 1024,
+              setTimeout() {
+                return 1;
+              }
+            };
+            const document = {};
+            const location = { pathname: "/trade2" };
+            const sandbox = {
+              window,
+              document,
+              location,
+              console,
+              Element: FakeElement,
+              HTMLInputElement: class extends FakeElement {},
+              HTMLTextAreaElement: class extends FakeElement {},
+              MutationObserver: class {},
+              chrome: {}
+            };
+
+            vm.runInNewContext(source, sandbox, { filename: "content.js" });
+
+            const root = new FakeElement("");
+            const pseudoStrengthById = new FakeElement("# total to Strength", {
+              "data-id": "pseudo.pseudo_total_strength"
+            });
+            const pseudoStrengthByText = new FakeElement("Pseudo: # total to Strength");
+            const pseudoLife = new FakeElement("Pseudo: # total maximum Life", {
+              "data-id": "pseudo.pseudo_total_maximum_life"
+            });
+            const pseudoEmptyPrefix = new FakeElement("# Empty Prefix Modifiers", {
+              "data-id": "pseudo.pseudo_number_of_empty_prefix_mods"
+            });
+            const pseudoSuffixByText = new FakeElement("Pseudo: # Suffix Modifiers");
+            const pseudoEmptyPrefixZh = new FakeElement("Pseudo: 空前缀");
+            const pseudoUsesRemaining = new FakeElement("# uses remaining (Tablets)", {
+              "data-id": "pseudo.pseudo_number_of_uses_remaining"
+            });
+            const explicitKeep = new FakeElement("+# to Strength", {
+              "data-id": "explicit.stat_strength"
+            });
+            const explicitHide = new FakeElement("+# to Dexterity", {
+              "data-id": "explicit.stat_dexterity"
+            });
+            root.children = [
+              pseudoStrengthById,
+              pseudoStrengthByText,
+              pseudoLife,
+              pseudoEmptyPrefix,
+              pseudoSuffixByText,
+              pseudoEmptyPrefixZh,
+              pseudoUsesRemaining,
+              explicitKeep,
+              explicitHide
+            ];
+
+            const hooks = window.__testHooks;
+            hooks.runtime.ui.root = { contains() { return false; } };
+            hooks.runtime.allPatterns = new Set([
+              "# total to strength",
+              "# total maximum life",
+              "# to strength",
+              "# to dexterity"
+            ]);
+
+            const stats = { groups: 0, options: 0, matched: 0, hidden: 0 };
+            hooks.filterOptionGroup(
+              root,
+              new Set(["# to strength"]),
+              new Set(["explicit.stat_strength"]),
+              stats
+            );
+
+            console.log(JSON.stringify({
+              hiddenClass: hooks.HIDDEN_CLASS,
+              pseudoStrengthByIdHidden: pseudoStrengthById.classList.contains(hooks.HIDDEN_CLASS),
+              pseudoStrengthByTextHidden: pseudoStrengthByText.classList.contains(hooks.HIDDEN_CLASS),
+              pseudoLifeHidden: pseudoLife.classList.contains(hooks.HIDDEN_CLASS),
+              pseudoEmptyPrefixHidden: pseudoEmptyPrefix.classList.contains(hooks.HIDDEN_CLASS),
+              pseudoSuffixByTextHidden: pseudoSuffixByText.classList.contains(hooks.HIDDEN_CLASS),
+              pseudoEmptyPrefixZhHidden: pseudoEmptyPrefixZh.classList.contains(hooks.HIDDEN_CLASS),
+              pseudoUsesRemainingHidden: pseudoUsesRemaining.classList.contains(hooks.HIDDEN_CLASS),
+              explicitKeepHidden: explicitKeep.classList.contains(hooks.HIDDEN_CLASS),
+              explicitHideHidden: explicitHide.classList.contains(hooks.HIDDEN_CLASS),
+              stats
+            }));
+            """
+        )
+
+        self.assertFalse(result["pseudoStrengthByIdHidden"])
+        self.assertFalse(result["pseudoStrengthByTextHidden"])
+        self.assertTrue(result["pseudoLifeHidden"])
+        self.assertFalse(result["pseudoEmptyPrefixHidden"])
+        self.assertFalse(result["pseudoSuffixByTextHidden"])
+        self.assertFalse(result["pseudoEmptyPrefixZhHidden"])
+        self.assertFalse(result["pseudoUsesRemainingHidden"])
+        self.assertFalse(result["explicitKeepHidden"])
+        self.assertTrue(result["explicitHideHidden"])
+        self.assertEqual(result["stats"]["hidden"], 2)
+
+    def test_content_filter_keeps_resistance_count_when_resistance_is_allowed(self) -> None:
+        result = self.run_node(
+            r"""
+            const fs = require("fs");
+            const vm = require("vm");
+
+            class FakeClassList {
+              constructor() {
+                this.values = new Set();
+              }
+
+              contains(name) {
+                return this.values.has(name);
+              }
+
+              toggle(name, force) {
+                if (force === undefined) {
+                  force = !this.values.has(name);
+                }
+                if (force) {
+                  this.values.add(name);
+                } else {
+                  this.values.delete(name);
+                }
+                return this.values.has(name);
+              }
+            }
+
+            class FakeElement {
+              constructor(text, attributes = {}) {
+                this.innerText = text;
+                this.textContent = text;
+                this.attributes = attributes;
+                this.children = [];
+                this.classList = new FakeClassList();
+                this.id = attributes.id || "";
+              }
+
+              getAttribute(name) {
+                return this.attributes[name] || null;
+              }
+
+              getClientRects() {
+                return [{}];
+              }
+
+              matches() {
+                return false;
+              }
+
+              querySelectorAll() {
+                return this.children;
+              }
+            }
+
+            const bootstrapCall = `  bootstrap().catch((error) => {
+                console.error("[PoE2 Marketwright] bootstrap failed", error);
+              });`;
+            let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { filterOptionGroup, runtime, HIDDEN_CLASS };\n})();"
+            );
+
+            const window = {
+              addEventListener() {},
+              clearTimeout() {},
+              getComputedStyle() {
+                return { display: "block", visibility: "visible", opacity: "1" };
+              },
+              innerHeight: 768,
+              innerWidth: 1024,
+              setTimeout() {
+                return 1;
+              }
+            };
+            const sandbox = {
+              window,
+              document: {},
+              location: { pathname: "/trade2" },
+              console,
+              Element: FakeElement,
+              HTMLInputElement: class extends FakeElement {},
+              HTMLTextAreaElement: class extends FakeElement {},
+              MutationObserver: class {},
+              chrome: {}
+            };
+
+            vm.runInNewContext(source, sandbox, { filename: "content.js" });
+
+            const root = new FakeElement("");
+            const pseudoCountResistances = new FakeElement("# total Resistances", {
+              "data-id": "pseudo.pseudo_count_resistances"
+            });
+            const pseudoStrength = new FakeElement("# total to Strength", {
+              "data-id": "pseudo.pseudo_total_strength"
+            });
+            const explicitColdResistance = new FakeElement("+#% to Cold Resistance", {
+              "data-id": "explicit.stat_cold_resistance"
+            });
+            root.children = [pseudoCountResistances, pseudoStrength, explicitColdResistance];
+
+            const hooks = window.__testHooks;
+            hooks.runtime.ui.root = { contains() { return false; } };
+            hooks.runtime.allPatterns = new Set([
+              "# total resistances",
+              "# total to strength",
+              "#% to cold resistance"
+            ]);
+
+            const stats = { groups: 0, options: 0, matched: 0, hidden: 0 };
+            hooks.filterOptionGroup(
+              root,
+              new Set(["#% to cold resistance"]),
+              new Set(["explicit.stat_cold_resistance"]),
+              stats
+            );
+
+            console.log(JSON.stringify({
+              pseudoCountResistancesHidden: pseudoCountResistances.classList.contains(hooks.HIDDEN_CLASS),
+              pseudoStrengthHidden: pseudoStrength.classList.contains(hooks.HIDDEN_CLASS),
+              explicitColdResistanceHidden: explicitColdResistance.classList.contains(hooks.HIDDEN_CLASS)
+            }));
+            """
+        )
+
+        self.assertFalse(result["pseudoCountResistancesHidden"])
+        self.assertTrue(result["pseudoStrengthHidden"])
+        self.assertFalse(result["explicitColdResistanceHidden"])
+
+    def test_content_filter_does_not_keep_pseudo_for_incidental_token_overlap(self) -> None:
+        result = self.run_node(
+            r"""
+            const fs = require("fs");
+            const vm = require("vm");
+
+            class FakeClassList {
+              constructor() {
+                this.values = new Set();
+              }
+
+              contains(name) {
+                return this.values.has(name);
+              }
+
+              toggle(name, force) {
+                if (force === undefined) {
+                  force = !this.values.has(name);
+                }
+                if (force) {
+                  this.values.add(name);
+                } else {
+                  this.values.delete(name);
+                }
+                return this.values.has(name);
+              }
+            }
+
+            class FakeElement {
+              constructor(text, attributes = {}) {
+                this.innerText = text;
+                this.textContent = text;
+                this.attributes = attributes;
+                this.children = [];
+                this.classList = new FakeClassList();
+                this.id = attributes.id || "";
+              }
+
+              getAttribute(name) {
+                return this.attributes[name] || null;
+              }
+
+              getClientRects() {
+                return [{}];
+              }
+
+              matches() {
+                return false;
+              }
+
+              querySelectorAll() {
+                return this.children;
+              }
+            }
+
+            const bootstrapCall = `  bootstrap().catch((error) => {
+                console.error("[PoE2 Marketwright] bootstrap failed", error);
+              });`;
+            let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { filterOptionGroup, runtime, HIDDEN_CLASS };\n})();"
+            );
+
+            const window = {
+              addEventListener() {},
+              clearTimeout() {},
+              getComputedStyle() {
+                return { display: "block", visibility: "visible", opacity: "1" };
+              },
+              innerHeight: 768,
+              innerWidth: 1024,
+              setTimeout() {
+                return 1;
+              }
+            };
+            const sandbox = {
+              window,
+              document: {},
+              location: { pathname: "/trade2" },
+              console,
+              Element: FakeElement,
+              HTMLInputElement: class extends FakeElement {},
+              HTMLTextAreaElement: class extends FakeElement {},
+              MutationObserver: class {},
+              chrome: {}
+            };
+
+            vm.runInNewContext(source, sandbox, { filename: "content.js" });
+
+            const root = new FakeElement("");
+            const pseudoStrength = new FakeElement("# total to Strength", {
+              "data-id": "pseudo.pseudo_total_strength"
+            });
+            const explicitDamagePerStrength = new FakeElement("#% increased Damage per # Strength", {
+              "data-id": "explicit.stat_damage_per_strength"
+            });
+            const explicitOther = new FakeElement("+# to Dexterity", {
+              "data-id": "explicit.stat_dexterity"
+            });
+            root.children = [pseudoStrength, explicitDamagePerStrength, explicitOther];
+
+            const hooks = window.__testHooks;
+            hooks.runtime.ui.root = { contains() { return false; } };
+            hooks.runtime.allPatterns = new Set([
+              "# total to strength",
+              "#% increased damage per # strength",
+              "# to dexterity"
+            ]);
+
+            const stats = { groups: 0, options: 0, matched: 0, hidden: 0 };
+            hooks.filterOptionGroup(
+              root,
+              new Set(["#% increased damage per # strength"]),
+              new Set(["explicit.stat_damage_per_strength"]),
+              stats
+            );
+
+            console.log(JSON.stringify({
+              pseudoStrengthHidden: pseudoStrength.classList.contains(hooks.HIDDEN_CLASS),
+              explicitDamagePerStrengthHidden: explicitDamagePerStrength.classList.contains(hooks.HIDDEN_CLASS),
+              explicitOtherHidden: explicitOther.classList.contains(hooks.HIDDEN_CLASS)
+            }));
+            """
+        )
+
+        self.assertTrue(result["pseudoStrengthHidden"])
+        self.assertFalse(result["explicitDamagePerStrengthHidden"])
+        self.assertTrue(result["explicitOtherHidden"])
+
+
+if __name__ == "__main__":
+    unittest.main()
