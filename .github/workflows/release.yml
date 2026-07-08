@@ -1,0 +1,45 @@
+name: Release Chrome Extension
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up release variables
+        run: |
+          echo "TAG_NAME=${GITHUB_REF_NAME}" >> "$GITHUB_ENV"
+          echo "ASSET_NAME=poe2-marketwright-${GITHUB_REF_NAME}-chrome-extension.zip" >> "$GITHUB_ENV"
+
+      - name: Validate manifest JSON
+        run: python -m json.tool manifest.json > /dev/null
+
+      - name: Build extension package
+        run: |
+          mkdir -p dist/poe2-marketwright/data
+          cp manifest.json dist/poe2-marketwright/
+          cp content.js dist/poe2-marketwright/
+          cp content.css dist/poe2-marketwright/
+          cp README.md dist/poe2-marketwright/
+          cp data/affix-filter-data.json dist/poe2-marketwright/data/
+
+      - name: Create zip archive
+        run: |
+          cd dist/poe2-marketwright
+          zip -r "../${ASSET_NAME}" .
+
+      - name: Publish GitHub release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/${{ env.ASSET_NAME }}
+          generate_release_notes: true

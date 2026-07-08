@@ -4,10 +4,12 @@ __pycache__/
 *.py[cod]
 
 build/
+dist/
 
 scripts/.venv/
 scripts/__pycache__/
 scripts/tests/__pycache__/
+tests/__pycache__/
 
 .pytest_cache/
 .mypy_cache/

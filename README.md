@@ -1,5 +1,7 @@
 # PoE2 Marketwright
 
+[中文说明 / Chinese Documentation](./README.zh-CN.md)
+
 PoE2 Marketwright is a broader Path of Exile 2 market extension workspace. The current feature set enhances `https://www.pathofexile.com/trade2` by hiding affix suggestions that do not belong to the currently selected category or item, and the structure is intended to absorb more market-page features later.
 
 ## What it does
@@ -9,7 +11,20 @@ PoE2 Marketwright is a broader Path of Exile 2 market extension workspace. The c
 - Filters visible affix suggestion lists using the scraped PoE2DB data.
 - Allows manual override when auto-detection is not enough.
 
-## Load it in Chrome
+## Install
+
+The recommended way to install the extension is to download the prebuilt package from [GitHub Releases](https://github.com/WAY29/poe2-marketwright/releases).
+
+1. Download the latest release zip from [GitHub Releases](https://github.com/WAY29/poe2-marketwright/releases).
+2. Extract the zip to a local folder.
+3. Open `chrome://extensions`.
+4. Enable `Developer mode`.
+5. Click `Load unpacked`.
+6. Select the extracted folder.
+
+## Load from source
+
+For local development:
 
 1. Open `chrome://extensions`.
 2. Enable `Developer mode`.
