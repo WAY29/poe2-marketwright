@@ -526,6 +526,90 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
         self.assertFalse(result["explicitDamagePerStrengthHidden"])
         self.assertTrue(result["explicitOtherHidden"])
 
+    def test_content_auto_detect_overrides_special_map_items(self) -> None:
+        result = self.run_node(
+            r"""
+            const fs = require("fs");
+            const vm = require("vm");
+
+            const bootstrapCall = `  bootstrap().catch((error) => {
+                console.error("[PoE2 Marketwright] bootstrap failed", error);
+              });`;
+            let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { inferSelectionFromTexts, runtime };\n})();"
+            );
+
+            const window = {
+              addEventListener() {},
+              clearTimeout() {},
+              getComputedStyle() {
+                return { display: "block", visibility: "visible", opacity: "1" };
+              },
+              innerHeight: 768,
+              innerWidth: 1024,
+              setTimeout() {
+                return 1;
+              }
+            };
+            const sandbox = {
+              window,
+              document: {},
+              location: { pathname: "/trade2" },
+              console,
+              Element: class {},
+              HTMLInputElement: class {},
+              HTMLTextAreaElement: class {},
+              MutationObserver: class {},
+              chrome: {}
+            };
+
+            vm.runInNewContext(source, sandbox, { filename: "content.js" });
+
+            const hooks = window.__testHooks;
+            hooks.runtime.data = {
+              itemNameToPage: {
+                "expedition logbook": "Expedition_Tablet"
+              },
+              itemNameToSelection: {
+                "expedition logbook": { kind: "logical", id: "Maps" },
+                "探险日志": { kind: "logical", id: "Maps" },
+                "探險日誌": { kind: "logical", id: "Maps" }
+              },
+              logicalCategories: {
+                Maps: { pageSlugs: ["Expedition_Tablet"] }
+              }
+            };
+            hooks.runtime.itemLookupEntries = [
+              "expedition logbook",
+              "探险日志",
+              "探險日誌"
+            ];
+            hooks.runtime.categoryAliasToSelection = {
+              "探险碑牌": { kind: "page", id: "Expedition_Tablet" }
+            };
+            hooks.runtime.categoryLookupEntries = ["探险碑牌"];
+
+            const detectItem = (text) => hooks.inferSelectionFromTexts(new Set([text]), {
+              allowItems: true,
+              allowCategories: false
+            });
+
+            console.log(JSON.stringify({
+              simplifiedLogbook: detectItem("探险日志"),
+              traditionalLogbook: detectItem("探險日誌"),
+              englishLogbook: detectItem("Expedition Logbook"),
+              expeditionTablet: detectItem("探险碑牌")
+            }));
+            """
+        )
+
+        self.assertEqual(result["simplifiedLogbook"], {"kind": "logical", "id": "Maps", "source": "item", "match": "探险日志"})
+        self.assertEqual(result["traditionalLogbook"], {"kind": "logical", "id": "Maps", "source": "item", "match": "探險日誌"})
+        self.assertEqual(result["englishLogbook"], {"kind": "logical", "id": "Maps", "source": "item", "match": "expedition logbook"})
+        self.assertEqual(result["expeditionTablet"], {"kind": "page", "id": "Expedition_Tablet", "source": "item", "match": "探险碑牌"})
+
 
 if __name__ == "__main__":
     unittest.main()

@@ -130,6 +130,41 @@ EXTRA_PAGE_ITEM_NAMES = {
     "Waystones_mid_tier": [f"Waystone (Tier {tier})" for tier in range(6, 11)],
     "Waystones_top_tier": [f"Waystone (Tier {tier})" for tier in range(11, 17)],
 }
+SPECIAL_MAP_ITEM_NAMES = [
+    "Kulemak's Invitation",
+    "Idol of Estazunti",
+    "Breachlord Sac",
+    "Raven's Reflection",
+    "The Triskelion Reforged",
+    "Head of the King",
+    "Expedition Logbook",
+    "Simulacrum",
+    "Breachstone",
+    "An Audience with the King",
+    "Ancient Crisis Fragment",
+    "Faded Crisis Fragment",
+    "Weathered Crisis Fragment",
+    "Origin Core",
+    "Origin Cradle",
+    "Origin Spark",
+    "Primary Calamity Fragment",
+    "Secondary Calamity Fragment",
+    "Tertiary Calamity Fragment",
+    "Call of the Shadows",
+    "Test of Strength Barya",
+    "Test of Will Barya",
+    "Test of Cunning Barya",
+    "Test of Time Barya",
+    "Djinn Barya",
+    "Cowardly Fate",
+    "Deadly Fate",
+    "Victorious Fate",
+]
+ITEM_NAME_SELECTION_OVERRIDES = {
+    **{item_name: {"kind": "logical", "id": "Maps"} for item_name in SPECIAL_MAP_ITEM_NAMES},
+    "探险日志": {"kind": "logical", "id": "Maps"},
+    "探險日誌": {"kind": "logical", "id": "Maps"},
+}
 TABLET_PAGE_SLUGS = [
     "Breach_Tablet",
     "Expedition_Tablet",
@@ -502,11 +537,24 @@ def build_logical_categories(page_categories: dict[str, Any]) -> dict[str, Any]:
 
 def build_item_name_map(page_categories: dict[str, Any]) -> dict[str, str]:
     item_name_to_page: dict[str, str] = {}
+    overridden_item_names = {
+        normalize_lookup_text(item_name)
+        for item_name in ITEM_NAME_SELECTION_OVERRIDES
+    }
     for page_slug, page in page_categories.items():
         for item_name in page["itemNames"]:
             normalized = normalize_lookup_text(item_name)
+            if normalized in overridden_item_names:
+                continue
             item_name_to_page.setdefault(normalized, page_slug)
     return item_name_to_page
+
+
+def build_item_name_selection_map() -> dict[str, dict[str, str]]:
+    return {
+        normalize_lookup_text(item_name): selection
+        for item_name, selection in ITEM_NAME_SELECTION_OVERRIDES.items()
+    }
 
 
 def build_category_alias_map(
@@ -571,6 +619,7 @@ async def main() -> int:
     page_categories = build_page_categories(artifacts, item_names_by_slug)
     logical_categories = build_logical_categories(page_categories)
     item_name_to_page = build_item_name_map(page_categories)
+    item_name_to_selection = build_item_name_selection_map()
     category_alias_to_selection = build_category_alias_map(page_categories, logical_categories)
     selection_options = build_selection_options(logical_categories, page_categories)
 
@@ -597,6 +646,7 @@ async def main() -> int:
         "pageCategories": page_categories,
         "logicalCategories": logical_categories,
         "itemNameToPage": item_name_to_page,
+        "itemNameToSelection": item_name_to_selection,
         "categoryAliasToSelection": category_alias_to_selection,
         "selectionOptions": selection_options,
         "allPatterns": all_patterns,

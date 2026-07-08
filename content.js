@@ -175,7 +175,12 @@
   async function bootstrap() {
     runtime.data = await loadData();
     runtime.allPatterns = new Set((runtime.data.allPatterns || []).map(normalizeStatKey).filter(Boolean));
-    runtime.itemLookupEntries = Object.keys(runtime.data.itemNameToPage || {}).sort(compareLookupLengthDesc);
+    runtime.itemLookupEntries = Array.from(
+      new Set([
+        ...Object.keys(runtime.data.itemNameToSelection || {}),
+        ...Object.keys(runtime.data.itemNameToPage || {})
+      ])
+    ).sort(compareLookupLengthDesc);
     const localizedAliasMessages = await loadLocalizedAliasMessages();
     runtime.categoryAliasToSelection = buildExpandedCategoryAliasMap(runtime.data.categoryAliasToSelection || {});
     addLocalizedSelectionAliases(localizedAliasMessages);
@@ -992,11 +997,11 @@
       return pageAlias;
     }
 
-    const itemSlug = runtime.data.itemNameToPage[segment];
-    if (itemSlug) {
+    const itemSelection = lookupItemNameSelection(segment);
+    if (itemSelection) {
       return {
-        kind: "page",
-        id: itemSlug,
+        kind: itemSelection.kind,
+        id: itemSelection.id,
         source: "item",
         match: segment
       };
@@ -1054,9 +1059,13 @@
         if (!isContainedLookupMatch(normalized, itemName)) {
           continue;
         }
+        const itemSelection = lookupItemNameSelection(itemName);
+        if (!itemSelection) {
+          continue;
+        }
         return {
-          kind: "page",
-          id: runtime.data.itemNameToPage[itemName],
+          kind: itemSelection.kind,
+          id: itemSelection.id,
           source: "item",
           match: itemName
         };
@@ -1076,6 +1085,23 @@
           match: categoryAlias
         };
       }
+    }
+
+    return null;
+  }
+
+  function lookupItemNameSelection(itemName) {
+    const override = runtime.data.itemNameToSelection?.[itemName];
+    if (override?.kind && override?.id) {
+      return override;
+    }
+
+    const itemSlug = runtime.data.itemNameToPage?.[itemName];
+    if (itemSlug) {
+      return {
+        kind: "page",
+        id: itemSlug
+      };
     }
 
     return null;

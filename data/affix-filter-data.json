@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generatedAt": "2026-07-08T12:21:05.094524+00:00",
+  "generatedAt": "2026-07-08T12:27:52.411260+00:00",
   "source": "https://poe2db.tw/us/Modifiers",
   "tradeStatsSource": "https://www.pathofexile.com/api/trade2/data/stats",
   "pageCategories": {
@@ -56052,8 +56052,6 @@
     "rune of acrobatics": "Charms",
     "legacy of elevore": "Charms",
     "breach tablet": "Breach_Tablet",
-    "breachstone": "Breach_Tablet",
-    "breachlord sac": "Breach_Tablet",
     "serle's triumph": "Expedition_Tablet",
     "cadigan's epiphany": "Expedition_Tablet",
     "astrid's creativity": "Expedition_Tablet",
@@ -56069,14 +56067,8 @@
     "ire of aldur": "Expedition_Tablet",
     "betrayal of aldur": "Expedition_Tablet",
     "expedition tablet": "Expedition_Tablet",
-    "expedition logbook": "Expedition_Tablet",
-    "simulacrum": "Delirium_Tablet",
-    "raven's reflection": "Delirium_Tablet",
     "raven-touched shard": "Delirium_Tablet",
     "delirium tablet": "Delirium_Tablet",
-    "an audience with the king": "Ritual_Tablet",
-    "head of the king": "Ritual_Tablet",
-    "call of the shadows": "Ritual_Tablet",
     "ritual tablet": "Ritual_Tablet",
     "omen of refreshment": "Ritual_Tablet",
     "omen of resurgence": "Ritual_Tablet",
@@ -56094,7 +56086,6 @@
     "omen of greater annulment": "Ritual_Tablet",
     "omen of sinistral annulment": "Ritual_Tablet",
     "omen of dextral annulment": "Ritual_Tablet",
-    "kulemak's invitation": "Abyss_Tablet",
     "abyss tablet": "Abyss_Tablet",
     "omen of abyssal echoes": "Abyss_Tablet",
     "omen of the sovereign": "Abyss_Tablet",
@@ -56124,6 +56115,128 @@
     "waystone (tier 14)": "Waystones_top_tier",
     "waystone (tier 15)": "Waystones_top_tier",
     "waystone (tier 16)": "Waystones_top_tier"
+  },
+  "itemNameToSelection": {
+    "kulemak's invitation": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "idol of estazunti": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "breachlord sac": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "raven's reflection": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "the triskelion reforged": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "head of the king": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "expedition logbook": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "simulacrum": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "breachstone": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "an audience with the king": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "ancient crisis fragment": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "faded crisis fragment": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "weathered crisis fragment": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "origin core": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "origin cradle": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "origin spark": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "primary calamity fragment": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "secondary calamity fragment": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "tertiary calamity fragment": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "call of the shadows": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "test of strength barya": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "test of will barya": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "test of cunning barya": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "test of time barya": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "djinn barya": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "cowardly fate": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "deadly fate": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "victorious fate": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "探险日志": {
+      "kind": "logical",
+      "id": "Maps"
+    },
+    "探險日誌": {
+      "kind": "logical",
+      "id": "Maps"
+    }
   },
   "categoryAliasToSelection": {
     "weapons": {

@@ -9,6 +9,7 @@ if str(SCRIPT_ROOT) not in sys.path:
 from build_extension_data import (
     PageArtifacts,
     build_item_name_map,
+    build_item_name_selection_map,
     build_page_categories,
     build_trade_stat_index,
     canonicalize_stat_text,
@@ -57,6 +58,41 @@ class TradeStatMappingTests(unittest.TestCase):
         self.assertEqual(item_name_to_page["waystone (tier 10)"], "Waystones_mid_tier")
         self.assertEqual(item_name_to_page["waystone (tier 11)"], "Waystones_top_tier")
         self.assertEqual(item_name_to_page["waystone (tier 16)"], "Waystones_top_tier")
+
+    def test_special_map_items_override_page_item_names(self) -> None:
+        artifacts = [
+            PageArtifacts(
+                page_slug="Expedition_Tablet",
+                page_group=None,
+                page_url="https://poe2db.tw/us/Expedition_Tablet#ModifiersCalc",
+                baseitem_name="Expedition Tablet",
+                allowed_patterns=[],
+                allowed_stat_ids=[],
+                item_names=[],
+            ),
+        ]
+
+        page_categories = build_page_categories(
+            artifacts,
+            {"Expedition_Tablet": ["Expedition Tablet", "Expedition Logbook"]},
+        )
+        item_name_to_page = build_item_name_map(page_categories)
+        item_name_to_selection = build_item_name_selection_map()
+
+        self.assertEqual(item_name_to_page["expedition tablet"], "Expedition_Tablet")
+        self.assertNotIn("expedition logbook", item_name_to_page)
+        self.assertEqual(
+            item_name_to_selection["expedition logbook"],
+            {"kind": "logical", "id": "Maps"},
+        )
+        self.assertEqual(
+            item_name_to_selection["探险日志"],
+            {"kind": "logical", "id": "Maps"},
+        )
+        self.assertEqual(
+            item_name_to_selection["探險日誌"],
+            {"kind": "logical", "id": "Maps"},
+        )
 
     def test_splits_poe2db_combined_mods_and_maps_each_trade_stat(self) -> None:
         trade_stat_index = build_trade_stat_index(
