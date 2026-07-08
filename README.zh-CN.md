@@ -36,8 +36,8 @@ PoE2 Marketwright 是一个面向《流放之路 2》官方市集页面的浏览
 在仓库根目录执行：
 
 ```bash
-scripts/.venv/bin/python scripts/poe2_scraper.py scrape --scope all --split-dir build/all-affixes-split --out build/all-affixes-all.json --pretty
-scripts/.venv/bin/python scripts/build_extension_data.py --split-dir build/all-affixes-split --out data/affix-filter-data.json
+uv run --project scripts python scripts/poe2_scraper.py scrape --scope all --split-dir build/all-affixes-split --out build/all-affixes-all.json --pretty
+uv run --project scripts python scripts/build_extension_data.py --split-dir build/all-affixes-split --out data/affix-filter-data.json
 ```
 
 ## 数据来源

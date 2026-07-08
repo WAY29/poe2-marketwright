@@ -36,8 +36,8 @@ For local development:
 From the repository root:
 
 ```bash
-scripts/.venv/bin/python scripts/poe2_scraper.py scrape --scope all --split-dir build/all-affixes-split --out build/all-affixes-all.json --pretty
-scripts/.venv/bin/python scripts/build_extension_data.py --split-dir build/all-affixes-split --out data/affix-filter-data.json
+uv run --project scripts python scripts/poe2_scraper.py scrape --scope all --split-dir build/all-affixes-split --out build/all-affixes-all.json --pretty
+uv run --project scripts python scripts/build_extension_data.py --split-dir build/all-affixes-split --out data/affix-filter-data.json
 ```
 
 ## Data sources
