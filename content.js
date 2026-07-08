@@ -11,7 +11,9 @@
   const STORAGE_KEY = "poe2Trade2AffixFilterState";
   const DEFAULT_STATE = {
     enabled: true,
-    selection: "auto"
+    selection: "auto",
+    collapsed: false,
+    panelPosition: null
   };
   const ROOT_ID = "poe2-trade2-affix-filter-root";
   const HIDDEN_CLASS = "poe2-trade2-affix-filter-hidden";
@@ -21,6 +23,7 @@
   const BRIDGE_READY_TYPE = "POE2_MARKETWRIGHT_READY";
   const BRIDGE_STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
   const TRADE_ROOT_SELECTOR = "#trade";
+  const LOCALIZED_ALIAS_LOCALES = ["zh_CN", "zh_TW"];
   const ITEM_SEARCH_ROOT_SELECTOR =
     "#trade .top .search-panel > .search-bar:not(.search-advanced) .search-left .multiselect.search-select";
   const ITEM_SEARCH_INPUT_SELECTOR = `${ITEM_SEARCH_ROOT_SELECTOR} input.multiselect__input`;
@@ -51,6 +54,24 @@
     ".vs__dropdown-menu",
     ".dropdown-menu"
   ].join(",");
+  const I18N_FALLBACKS = {
+    actionTitle: "PoE2 Marketwright",
+    autoDetect: "Auto detect",
+    selectionGroupTypes: "Types",
+    selectionGroupExactBases: "Exact bases",
+    collapsePanel: "Collapse panel",
+    expandPanel: "Expand panel",
+    statusOff: "Off",
+    statusAutoUnknown: "Auto: Unknown",
+    statusSelection: "$1: $2",
+    selectionSourceAuto: "Auto",
+    selectionSourceManual: "Manual",
+    statsText: "Available $1 / Keep $2 / Ignore $3",
+    toggleOn: "ON",
+    toggleOff: "OFF",
+    enableFiltering: "Enable filtering",
+    disableFiltering: "Disable filtering"
+  };
 
   const runtime = {
     data: null,
@@ -69,6 +90,8 @@
     controlObservers: [],
     controlListenerTimer: null,
     refreshTimer: null,
+    selectionSignature: "",
+    selectionPollTimer: null,
     bridgeStats: null,
     bridgePayloadSignature: "",
     lastFilterStats: null,
@@ -83,7 +106,9 @@
     runtime.data = await loadData();
     runtime.allPatterns = new Set((runtime.data.allPatterns || []).map(normalizeStatKey).filter(Boolean));
     runtime.itemLookupEntries = Object.keys(runtime.data.itemNameToPage || {}).sort(compareLookupLengthDesc);
+    const localizedAliasMessages = await loadLocalizedAliasMessages();
     runtime.categoryAliasToSelection = buildExpandedCategoryAliasMap(runtime.data.categoryAliasToSelection || {});
+    addLocalizedSelectionAliases(localizedAliasMessages);
     runtime.categoryLookupEntries = Object.keys(runtime.categoryAliasToSelection).sort(compareLookupLengthDesc);
     runtime.state = await loadState();
     bindPageBridgeMessages();
@@ -100,6 +125,23 @@
       throw new Error(`Failed to load affix filter data: ${response.status}`);
     }
     return response.json();
+  }
+
+  async function loadLocalizedAliasMessages() {
+    const messagesByLocale = {};
+    await Promise.all(
+      LOCALIZED_ALIAS_LOCALES.map(async (locale) => {
+        try {
+          const response = await fetch(chrome.runtime.getURL(`_locales/${locale}/messages.json`));
+          if (response.ok) {
+            messagesByLocale[locale] = await response.json();
+          }
+        } catch (error) {
+          console.debug(`[PoE2 Marketwright] unable to load ${locale} aliases`, error);
+        }
+      })
+    );
+    return messagesByLocale;
   }
 
   async function loadState() {
@@ -122,36 +164,59 @@
     root.innerHTML = `
       <div class="poe2-trade2-affix-filter-panel">
         <div class="poe2-trade2-affix-filter-header">
-          <div class="poe2-trade2-affix-filter-title">PoE2 Marketwright</div>
-          <label class="poe2-trade2-affix-filter-toggle">
-            <input id="poe2-trade2-affix-filter-enabled" type="checkbox">
-            <span>启用</span>
-          </label>
+          <span class="poe2-trade2-affix-filter-brand" aria-hidden="true">M</span>
+          <div id="poe2-trade2-affix-filter-status" class="poe2-trade2-affix-filter-status"></div>
+          <button id="poe2-trade2-affix-filter-enabled" class="poe2-trade2-affix-filter-toggle" type="button"></button>
+          <button id="poe2-trade2-affix-filter-collapse" class="poe2-trade2-affix-filter-collapse-toggle" type="button" aria-label="" title="">
+            <svg class="poe2-trade2-affix-filter-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+              <path d="M5 3l5 5-5 5V3z"></path>
+            </svg>
+          </button>
         </div>
-        <div id="poe2-trade2-affix-filter-status" class="poe2-trade2-affix-filter-status"></div>
         <label class="poe2-trade2-affix-filter-field">
-          <span class="poe2-trade2-affix-filter-field-label">模式</span>
           <select id="poe2-trade2-affix-filter-selection"></select>
         </label>
         <div id="poe2-trade2-affix-filter-meta" class="poe2-trade2-affix-filter-meta"></div>
       </div>
+      <button id="poe2-trade2-affix-filter-expand" class="poe2-trade2-affix-filter-collapsed-button" type="button" aria-label="" title="">
+        <span class="poe2-trade2-affix-filter-mark" aria-hidden="true">M</span>
+      </button>
     `;
 
     document.documentElement.appendChild(root);
 
     runtime.ui.root = root;
+    runtime.ui.panel = root.querySelector(".poe2-trade2-affix-filter-panel");
+    runtime.ui.collapse = root.querySelector("#poe2-trade2-affix-filter-collapse");
+    runtime.ui.expand = root.querySelector("#poe2-trade2-affix-filter-expand");
     runtime.ui.enabled = root.querySelector("#poe2-trade2-affix-filter-enabled");
     runtime.ui.selection = root.querySelector("#poe2-trade2-affix-filter-selection");
     runtime.ui.status = root.querySelector("#poe2-trade2-affix-filter-status");
     runtime.ui.meta = root.querySelector("#poe2-trade2-affix-filter-meta");
+    runtime.ui.dragHandle = root.querySelector(".poe2-trade2-affix-filter-header");
 
+    updateStaticUiText();
     populateSelectionOptions(runtime.ui.selection);
 
-    runtime.ui.enabled.checked = Boolean(runtime.state.enabled);
     runtime.ui.selection.value = runtime.state.selection;
+    updateToggleButton();
+    applyPanelPosition();
+    applyPanelCollapsed();
+    bindPanelDrag();
 
-    runtime.ui.enabled.addEventListener("change", async () => {
-      runtime.state.enabled = runtime.ui.enabled.checked;
+    runtime.ui.collapse.addEventListener("click", async () => {
+      await setPanelCollapsed(true);
+    });
+
+    runtime.ui.expand.addEventListener("click", async () => {
+      if (runtime.ui.suppressExpandClick) {
+        return;
+      }
+      await setPanelCollapsed(false);
+    });
+
+    runtime.ui.enabled.addEventListener("click", async () => {
+      runtime.state.enabled = !runtime.state.enabled;
       await saveState();
       scheduleRefresh();
     });
@@ -163,23 +228,165 @@
     });
   }
 
+  function updateStaticUiText() {
+    runtime.ui.collapse.setAttribute("aria-label", t("collapsePanel"));
+    runtime.ui.collapse.title = t("collapsePanel");
+    runtime.ui.expand.setAttribute("aria-label", t("expandPanel"));
+    runtime.ui.expand.title = t("expandPanel");
+  }
+
+  function t(key, substitutions = [], fallback = "") {
+    const values = Array.isArray(substitutions) ? substitutions : [substitutions];
+    const message = globalThis.chrome?.i18n?.getMessage?.(
+      key,
+      values.map((value) => String(value))
+    );
+    const template = message || fallback || I18N_FALLBACKS[key] || key;
+    return values.reduce((text, value, index) => text.replaceAll(`$${index + 1}`, String(value)), template);
+  }
+
+  async function setPanelCollapsed(collapsed) {
+    if (runtime.state.collapsed === collapsed) {
+      return;
+    }
+
+    runtime.state.collapsed = collapsed;
+    applyPanelCollapsed();
+    applyPanelPosition();
+    await saveState();
+  }
+
+  function applyPanelCollapsed() {
+    const collapsed = Boolean(runtime.state.collapsed);
+    runtime.ui.root.classList.toggle("poe2-trade2-affix-filter-collapsed", collapsed);
+    runtime.ui.collapse?.setAttribute("aria-expanded", String(!collapsed));
+    runtime.ui.expand?.setAttribute("aria-expanded", String(!collapsed));
+  }
+
+  function applyPanelPosition() {
+    const position = runtime.state.panelPosition;
+    if (!position || !Number.isFinite(position.left) || !Number.isFinite(position.top)) {
+      return;
+    }
+
+    const clamped = clampPanelPosition(position.left, position.top);
+    runtime.ui.root.style.left = `${clamped.left}px`;
+    runtime.ui.root.style.top = `${clamped.top}px`;
+    runtime.ui.root.style.right = "auto";
+  }
+
+  function bindPanelDrag() {
+    const handles = [runtime.ui.dragHandle, runtime.ui.expand].filter(Boolean);
+    if (!handles.length) {
+      return;
+    }
+
+    let dragState = null;
+
+    const startDrag = (event) => {
+      const target = event.target instanceof Element ? event.target : null;
+      const isCollapsedHandle = event.currentTarget === runtime.ui.expand;
+      if (event.button !== 0 || (!isCollapsedHandle && target?.closest("button, select, input, option"))) {
+        return;
+      }
+
+      const rect = runtime.ui.root.getBoundingClientRect();
+      dragState = {
+        pointerId: event.pointerId,
+        offsetX: event.clientX - rect.left,
+        offsetY: event.clientY - rect.top,
+        startX: event.clientX,
+        startY: event.clientY,
+        moved: false,
+        isCollapsedHandle
+      };
+      event.currentTarget.setPointerCapture?.(event.pointerId);
+      runtime.ui.root.classList.add("poe2-trade2-affix-filter-dragging");
+      if (!isCollapsedHandle) {
+        event.preventDefault();
+      }
+    };
+
+    const moveDrag = (event) => {
+      if (!dragState || event.pointerId !== dragState.pointerId) {
+        return;
+      }
+
+      if (Math.hypot(event.clientX - dragState.startX, event.clientY - dragState.startY) > 3) {
+        dragState.moved = true;
+      }
+      const position = clampPanelPosition(event.clientX - dragState.offsetX, event.clientY - dragState.offsetY);
+      runtime.ui.root.style.left = `${position.left}px`;
+      runtime.ui.root.style.top = `${position.top}px`;
+      runtime.ui.root.style.right = "auto";
+      event.preventDefault();
+    };
+
+    const finishDrag = async (event) => {
+      if (!dragState || event.pointerId !== dragState.pointerId) {
+        return;
+      }
+
+      const handle = event.currentTarget;
+      handle.releasePointerCapture?.(event.pointerId);
+      runtime.ui.root.classList.remove("poe2-trade2-affix-filter-dragging");
+      const rect = runtime.ui.root.getBoundingClientRect();
+      runtime.state.panelPosition = clampPanelPosition(rect.left, rect.top);
+      if (dragState.isCollapsedHandle && dragState.moved) {
+        runtime.ui.suppressExpandClick = true;
+        window.setTimeout(() => {
+          runtime.ui.suppressExpandClick = false;
+        }, 0);
+      }
+      dragState = null;
+      await saveState();
+    };
+
+    for (const handle of handles) {
+      handle.addEventListener("pointerdown", startDrag);
+      handle.addEventListener("pointermove", moveDrag);
+      handle.addEventListener("pointerup", finishDrag);
+      handle.addEventListener("pointercancel", finishDrag);
+    }
+
+    window.addEventListener("resize", () => {
+      if (!runtime.state.panelPosition) {
+        return;
+      }
+      const rect = runtime.ui.root.getBoundingClientRect();
+      runtime.state.panelPosition = clampPanelPosition(rect.left, rect.top);
+      applyPanelPosition();
+    });
+  }
+
+  function clampPanelPosition(left, top) {
+    const margin = 8;
+    const rect = runtime.ui.root.getBoundingClientRect();
+    const width = rect.width || (runtime.state.collapsed ? 36 : 220);
+    const height = rect.height || (runtime.state.collapsed ? 36 : 88);
+    return {
+      left: Math.max(margin, Math.min(left, window.innerWidth - width - margin)),
+      top: Math.max(margin, Math.min(top, window.innerHeight - height - margin))
+    };
+  }
+
   function populateSelectionOptions(select) {
     select.innerHTML = "";
 
     const autoOption = document.createElement("option");
     autoOption.value = "auto";
-    autoOption.textContent = "自动识别";
+    autoOption.textContent = t("autoDetect");
     select.appendChild(autoOption);
 
     const logicalGroup = document.createElement("optgroup");
-    logicalGroup.label = "逻辑类别";
+    logicalGroup.label = t("selectionGroupTypes");
     const pageGroup = document.createElement("optgroup");
-    pageGroup.label = "具体类别页";
+    pageGroup.label = t("selectionGroupExactBases");
 
     for (const option of runtime.data.selectionOptions || []) {
       const element = document.createElement("option");
       element.value = encodeSelection(option.kind, option.id);
-      element.textContent = option.label;
+      element.textContent = localizeSelectionLabel(option, option.label);
       if (option.kind === "logical") {
         logicalGroup.appendChild(element);
       } else {
@@ -193,6 +400,47 @@
 
   function encodeSelection(kind, id) {
     return `${kind}:${id}`;
+  }
+
+  function localizeSelectionLabel(selection, fallback) {
+    if (!selection?.kind || !selection?.id) {
+      return fallback || "";
+    }
+    const prefix = selection.kind === "logical" ? "selectionLogical" : "selectionPage";
+    return t(`${prefix}_${toI18nId(selection.id)}`, [], fallback || selection.id);
+  }
+
+  function toI18nId(id) {
+    return String(id).replace(/[^A-Za-z0-9_]/g, "_");
+  }
+
+  function addLocalizedSelectionAliases(messagesByLocale) {
+    const messagesList = Object.values(messagesByLocale || {});
+    if (!messagesList.length) {
+      return;
+    }
+
+    for (const option of runtime.data.selectionOptions || []) {
+      const selection = {
+        kind: option.kind,
+        id: option.id
+      };
+      const prefix = option.kind === "logical" ? "selectionLogical" : "selectionPage";
+      const key = `${prefix}_${toI18nId(option.id)}`;
+      for (const messages of messagesList) {
+        addSelectionAlias(messages[key]?.message, selection);
+      }
+    }
+  }
+
+  function addSelectionAlias(alias, selection) {
+    const normalized = normalizeLookupText(alias || "");
+    if (!normalized || isIgnorableSelectionText(normalized)) {
+      return;
+    }
+    if (!runtime.categoryAliasToSelection[normalized]) {
+      runtime.categoryAliasToSelection[normalized] = selection;
+    }
   }
 
   function decodeSelection(value) {
@@ -212,6 +460,8 @@
 
   function bindGlobalListeners() {
     bindTradeControlListeners();
+    bindTradeInteractionListeners();
+    startSelectionPolling();
 
     const observer = new MutationObserver(() => {
       scheduleControlListenerRefresh();
@@ -224,6 +474,83 @@
 
     window.addEventListener("popstate", scheduleRefreshAfterDomUpdate, true);
     window.addEventListener("hashchange", scheduleRefreshAfterDomUpdate, true);
+  }
+
+  function bindTradeInteractionListeners() {
+    const eventTypes = ["input", "change", "compositionend", "keyup", "paste", "cut", "click", "pointerup", "blur"];
+    for (const type of eventTypes) {
+      document.addEventListener(
+        type,
+        (event) => {
+          if (isTradeSelectionEventTarget(event.target)) {
+            scheduleRefreshAfterDomUpdate();
+            scheduleControlListenerRefresh();
+          }
+        },
+        true
+      );
+    }
+  }
+
+  function isTradeSelectionEventTarget(target) {
+    if (!(target instanceof Element) || runtime.ui.root?.contains(target)) {
+      return false;
+    }
+    if (target.closest(ITEM_SEARCH_ROOT_SELECTOR)) {
+      return true;
+    }
+    const typeFilterGroup = findTypeFilterGroup();
+    if (typeFilterGroup?.contains(target)) {
+      return true;
+    }
+    return Boolean(target.closest(OPTION_SELECTOR) || target.closest(OPTION_ROOT_SELECTOR));
+  }
+
+  function startSelectionPolling() {
+    if (runtime.selectionPollTimer) {
+      return;
+    }
+    runtime.selectionSignature = getSelectionDomSignature();
+    runtime.selectionPollTimer = window.setInterval(() => {
+      const signature = getSelectionDomSignature();
+      if (signature === runtime.selectionSignature) {
+        return;
+      }
+      runtime.selectionSignature = signature;
+      scheduleRefreshAfterDomUpdate();
+      scheduleControlListenerRefresh();
+    }, 250);
+  }
+
+  function getSelectionDomSignature() {
+    const itemRoot = getItemSearchRoot();
+    const itemInput = getItemSearchInput();
+    const categoryRoot = getTypeCategoryMultiselect();
+    const activeElement = document.activeElement;
+    const activeValue =
+      activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement
+        ? activeElement.value
+        : "";
+
+    return [
+      location.href,
+      itemInput?.value || "",
+      collectMultiselectSelectedTexts(itemRoot || itemInput).join("|"),
+      collectMultiselectSelectedTexts(categoryRoot).join("|"),
+      isActiveSelectionElement(activeElement, itemRoot, categoryRoot) ? activeValue : ""
+    ].join("\n");
+  }
+
+  function isActiveSelectionElement(activeElement, itemRoot, categoryRoot) {
+    if (!(activeElement instanceof Element) || runtime.ui.root?.contains(activeElement)) {
+      return false;
+    }
+    return Boolean(
+      activeElement.closest(ITEM_SEARCH_ROOT_SELECTOR) ||
+        itemRoot?.contains(activeElement) ||
+        categoryRoot?.contains(activeElement) ||
+        findTypeFilterGroup()?.contains(activeElement)
+    );
   }
 
   function scheduleControlListenerRefresh() {
@@ -849,38 +1176,47 @@
     }
 
     const record = getSelectionRecord(selection);
-    runtime.ui.enabled.checked = Boolean(runtime.state.enabled);
     runtime.ui.selection.value = runtime.state.selection;
+    updateToggleButton();
 
     if (!runtime.state.enabled) {
-      runtime.ui.status.textContent = "已关闭。当前不会过滤右侧词缀建议。";
-      runtime.ui.meta.textContent = "模式: 关闭";
+      runtime.ui.status.textContent = t("statusOff");
+      runtime.ui.meta.textContent = buildMetaText(0, true);
       return;
     }
 
     if (!selection || !record) {
-      runtime.ui.status.textContent = "未识别到当前类别或物品名，当前不过滤。";
-      runtime.ui.meta.textContent = "模式: 自动识别";
+      runtime.ui.status.textContent = t("statusAutoUnknown");
+      runtime.ui.meta.textContent = buildMetaText(0, true);
       return;
     }
 
-    const label = record.label || selection.id;
-    const selectionSource = selection.source === "manual" ? "手动" : "自动";
+    const label = localizeSelectionLabel(selection, record.label || selection.id);
+    const selectionSource = selection.source === "manual" ? t("selectionSourceManual") : t("selectionSourceAuto");
     const patternCount = allowedPatterns ? allowedPatterns.size : 0;
-    runtime.ui.status.textContent = `${selectionSource}: ${label}`;
+    runtime.ui.status.textContent = t("statusSelection", [selectionSource, label]);
     runtime.ui.meta.textContent = buildMetaText(patternCount);
   }
 
-  function buildMetaText(patternCount) {
-    const parts = [`可用词条模式 ${patternCount} 条`];
-    if (runtime.lastFilterStats?.matched) {
-      parts.push(`页面候选 ${runtime.lastFilterStats.matched} 条，已隐藏 ${runtime.lastFilterStats.hidden} 条`);
+  function buildMetaText(patternCount, forceEmpty = false) {
+    if (forceEmpty) {
+      return t("statsText", [0, 0, 0]);
     }
-    if (runtime.bridgeStats?.total) {
-      const skipped = runtime.bridgeStats.skipped ? "，已跳过严格过滤" : "";
-      parts.push(`源数据保留 ${runtime.bridgeStats.kept || 0} 条，已隐藏 ${runtime.bridgeStats.hidden || 0} 条${skipped}`);
+
+    const fallbackKeep = Math.max(0, (runtime.lastFilterStats?.matched || 0) - (runtime.lastFilterStats?.hidden || 0));
+    const keep = runtime.bridgeStats?.kept ?? fallbackKeep;
+    const ignore = runtime.bridgeStats?.hidden ?? runtime.lastFilterStats?.hidden ?? 0;
+    return t("statsText", [patternCount, keep, ignore]);
+  }
+
+  function updateToggleButton() {
+    if (!runtime.ui.enabled) {
+      return;
     }
-    return parts.join("；");
+    const enabled = Boolean(runtime.state.enabled);
+    runtime.ui.enabled.textContent = enabled ? t("toggleOn") : t("toggleOff");
+    runtime.ui.enabled.setAttribute("aria-pressed", String(enabled));
+    runtime.ui.enabled.title = enabled ? t("disableFiltering") : t("enableFiltering");
   }
 
   function unhideAllFilteredOptions() {

@@ -1,0 +1,363 @@
+{
+  "extName": {
+    "message": "PoE2 Marketwright"
+  },
+  "extDescription": {
+    "message": "Path of Exile 2 交易页增强扩展，用于改进 trade2 使用体验。"
+  },
+  "actionTitle": {
+    "message": "PoE2 Marketwright"
+  },
+  "autoDetect": {
+    "message": "自动检测"
+  },
+  "selectionGroupTypes": {
+    "message": "类型"
+  },
+  "selectionGroupExactBases": {
+    "message": "装备基础类型"
+  },
+  "collapsePanel": {
+    "message": "折叠面板"
+  },
+  "expandPanel": {
+    "message": "展开面板"
+  },
+  "statusOff": {
+    "message": "关闭"
+  },
+  "statusAutoUnknown": {
+    "message": "自动: 未识别"
+  },
+  "selectionSourceAuto": {
+    "message": "自动"
+  },
+  "selectionSourceManual": {
+    "message": "手动"
+  },
+  "statusSelection": {
+    "message": "$SOURCE$: $LABEL$",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      },
+      "label": {
+        "content": "$2"
+      }
+    }
+  },
+  "selectionLogical_Accessories": {
+    "message": "饰品"
+  },
+  "selectionLogical_Armour": {
+    "message": "防具"
+  },
+  "selectionLogical_Body_Armours": {
+    "message": "胸甲"
+  },
+  "selectionLogical_Boots": {
+    "message": "靴子"
+  },
+  "selectionLogical_Flasks": {
+    "message": "药剂"
+  },
+  "selectionLogical_Gloves": {
+    "message": "手套"
+  },
+  "selectionLogical_Helmets": {
+    "message": "头盔"
+  },
+  "selectionLogical_Jewellery": {
+    "message": "首饰"
+  },
+  "selectionLogical_Jewels": {
+    "message": "珠宝"
+  },
+  "selectionLogical_Maps": {
+    "message": "地图"
+  },
+  "selectionLogical_Off_hand": {
+    "message": "副手"
+  },
+  "selectionLogical_One_Handed_Weapons": {
+    "message": "单手武器"
+  },
+  "selectionLogical_Relics": {
+    "message": "圣物"
+  },
+  "selectionLogical_Sanctum": {
+    "message": "圣所"
+  },
+  "selectionLogical_Shields": {
+    "message": "盾牌"
+  },
+  "selectionLogical_Tablets": {
+    "message": "碑牌"
+  },
+  "selectionLogical_Two_Handed_Weapons": {
+    "message": "双手武器"
+  },
+  "selectionLogical_Weapons": {
+    "message": "武器"
+  },
+  "selectionPage_Abyss_Tablet": {
+    "message": "深渊碑牌"
+  },
+  "selectionPage_Amphora_Relic": {
+    "message": "双耳瓶圣物"
+  },
+  "selectionPage_Amulets": {
+    "message": "项链"
+  },
+  "selectionPage_Belts": {
+    "message": "腰带"
+  },
+  "selectionPage_Body_Armours_dex": {
+    "message": "胸甲 (敏捷)"
+  },
+  "selectionPage_Body_Armours_dex_int": {
+    "message": "胸甲 (敏捷/智慧)"
+  },
+  "selectionPage_Body_Armours_int": {
+    "message": "胸甲 (智慧)"
+  },
+  "selectionPage_Body_Armours_str": {
+    "message": "胸甲 (力量)"
+  },
+  "selectionPage_Body_Armours_str_dex": {
+    "message": "胸甲 (力量/敏捷)"
+  },
+  "selectionPage_Body_Armours_str_dex_int": {
+    "message": "胸甲 (力量/敏捷/智慧)"
+  },
+  "selectionPage_Body_Armours_str_int": {
+    "message": "胸甲 (力量/智慧)"
+  },
+  "selectionPage_Boots_dex": {
+    "message": "靴子 (敏捷)"
+  },
+  "selectionPage_Boots_dex_int": {
+    "message": "靴子 (敏捷/智慧)"
+  },
+  "selectionPage_Boots_int": {
+    "message": "靴子 (智慧)"
+  },
+  "selectionPage_Boots_str": {
+    "message": "靴子 (力量)"
+  },
+  "selectionPage_Boots_str_dex": {
+    "message": "靴子 (力量/敏捷)"
+  },
+  "selectionPage_Boots_str_int": {
+    "message": "靴子 (力量/智慧)"
+  },
+  "selectionPage_Bows": {
+    "message": "弓"
+  },
+  "selectionPage_Breach_Tablet": {
+    "message": "裂隙碑牌"
+  },
+  "selectionPage_Bucklers": {
+    "message": "小圆盾"
+  },
+  "selectionPage_Charms": {
+    "message": "护符"
+  },
+  "selectionPage_Claws": {
+    "message": "爪"
+  },
+  "selectionPage_Coffer_Relic": {
+    "message": "宝匣圣物"
+  },
+  "selectionPage_Crossbows": {
+    "message": "弩"
+  },
+  "selectionPage_Daggers": {
+    "message": "匕首"
+  },
+  "selectionPage_Delirium_Tablet": {
+    "message": "谵妄碑牌"
+  },
+  "selectionPage_Diamond": {
+    "message": "钻石"
+  },
+  "selectionPage_Emerald": {
+    "message": "绿宝石"
+  },
+  "selectionPage_Expedition_Tablet": {
+    "message": "探险碑牌"
+  },
+  "selectionPage_Flails": {
+    "message": "连枷"
+  },
+  "selectionPage_Foci": {
+    "message": "法器"
+  },
+  "selectionPage_Gloves_dex": {
+    "message": "手套 (敏捷)"
+  },
+  "selectionPage_Gloves_dex_int": {
+    "message": "手套 (敏捷/智慧)"
+  },
+  "selectionPage_Gloves_int": {
+    "message": "手套 (智慧)"
+  },
+  "selectionPage_Gloves_str": {
+    "message": "手套 (力量)"
+  },
+  "selectionPage_Gloves_str_dex": {
+    "message": "手套 (力量/敏捷)"
+  },
+  "selectionPage_Gloves_str_int": {
+    "message": "手套 (力量/智慧)"
+  },
+  "selectionPage_Helmets_dex": {
+    "message": "头盔 (敏捷)"
+  },
+  "selectionPage_Helmets_dex_int": {
+    "message": "头盔 (敏捷/智慧)"
+  },
+  "selectionPage_Helmets_int": {
+    "message": "头盔 (智慧)"
+  },
+  "selectionPage_Helmets_str": {
+    "message": "头盔 (力量)"
+  },
+  "selectionPage_Helmets_str_dex": {
+    "message": "头盔 (力量/敏捷)"
+  },
+  "selectionPage_Helmets_str_int": {
+    "message": "头盔 (力量/智慧)"
+  },
+  "selectionPage_Incense_Relic": {
+    "message": "香炉圣物"
+  },
+  "selectionPage_Irradiated_Tablet": {
+    "message": "辐照碑牌"
+  },
+  "selectionPage_Life_Flasks": {
+    "message": "生命药剂"
+  },
+  "selectionPage_Mana_Flasks": {
+    "message": "魔力药剂"
+  },
+  "selectionPage_One_Hand_Axes": {
+    "message": "单手斧"
+  },
+  "selectionPage_One_Hand_Maces": {
+    "message": "单手锤"
+  },
+  "selectionPage_One_Hand_Swords": {
+    "message": "单手剑"
+  },
+  "selectionPage_Overseer_Tablet": {
+    "message": "监督者碑牌"
+  },
+  "selectionPage_Quarterstaves": {
+    "message": "武杖"
+  },
+  "selectionPage_Quivers": {
+    "message": "箭袋"
+  },
+  "selectionPage_Rings": {
+    "message": "戒指"
+  },
+  "selectionPage_Ritual_Tablet": {
+    "message": "祭祀碑牌"
+  },
+  "selectionPage_Ruby": {
+    "message": "红宝石"
+  },
+  "selectionPage_Sapphire": {
+    "message": "蓝宝石"
+  },
+  "selectionPage_Sceptres": {
+    "message": "权杖"
+  },
+  "selectionPage_Seal_Relic": {
+    "message": "封印圣物"
+  },
+  "selectionPage_Shields_str": {
+    "message": "盾牌 (力量)"
+  },
+  "selectionPage_Shields_str_dex": {
+    "message": "盾牌 (力量/敏捷)"
+  },
+  "selectionPage_Shields_str_int": {
+    "message": "盾牌 (力量/智慧)"
+  },
+  "selectionPage_Spears": {
+    "message": "长矛"
+  },
+  "selectionPage_Staves": {
+    "message": "长杖"
+  },
+  "selectionPage_Talismans": {
+    "message": "魔符"
+  },
+  "selectionPage_Tapestry_Relic": {
+    "message": "挂毯圣物"
+  },
+  "selectionPage_Temple_Tablet": {
+    "message": "神殿碑牌"
+  },
+  "selectionPage_Time_Lost_Diamond": {
+    "message": "时迭钻石"
+  },
+  "selectionPage_Time_Lost_Emerald": {
+    "message": "时迭绿宝石"
+  },
+  "selectionPage_Time_Lost_Ruby": {
+    "message": "时迭红宝石"
+  },
+  "selectionPage_Time_Lost_Sapphire": {
+    "message": "时迭蓝宝石"
+  },
+  "selectionPage_Traps": {
+    "message": "陷阱"
+  },
+  "selectionPage_Two_Hand_Axes": {
+    "message": "双手斧"
+  },
+  "selectionPage_Two_Hand_Maces": {
+    "message": "双手锤"
+  },
+  "selectionPage_Two_Hand_Swords": {
+    "message": "双手剑"
+  },
+  "selectionPage_Urn_Relic": {
+    "message": "瓮圣物"
+  },
+  "selectionPage_Vase_Relic": {
+    "message": "花瓶圣物"
+  },
+  "selectionPage_Wands": {
+    "message": "魔杖"
+  },
+  "statsText": {
+    "message": "可用词缀 $AVAILABLE$ / 保留 $KEEP$ / 忽略 $IGNORE$",
+    "placeholders": {
+      "available": {
+        "content": "$1"
+      },
+      "keep": {
+        "content": "$2"
+      },
+      "ignore": {
+        "content": "$3"
+      }
+    }
+  },
+  "toggleOn": {
+    "message": "开"
+  },
+  "toggleOff": {
+    "message": "关"
+  },
+  "enableFiltering": {
+    "message": "启用过滤"
+  },
+  "disableFiltering": {
+    "message": "关闭过滤"
+  }
+}

@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" role="img" aria-label="PoE2 Marketwright icon">
+  <defs>
+    <linearGradient id="bg" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#332716"/>
+      <stop offset="1" stop-color="#100c08"/>
+    </linearGradient>
+    <linearGradient id="gold" x1="0" x2="0" y1="0" y2="1">
+      <stop offset="0" stop-color="#ffe7a0"/>
+      <stop offset="0.52" stop-color="#d6a54f"/>
+      <stop offset="1" stop-color="#8f5d22"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="50%" cy="28%" r="58%">
+      <stop offset="0" stop-color="#42d69a" stop-opacity="0.32"/>
+      <stop offset="1" stop-color="#42d69a" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="5" y="5" width="118" height="118" rx="24" fill="url(#bg)"/>
+  <rect x="8.5" y="8.5" width="111" height="111" rx="21" fill="none" stroke="#8a6837" stroke-width="7"/>
+  <rect x="13" y="13" width="102" height="102" rx="17" fill="url(#glow)"/>
+  <path d="M32 91V37h16l16 25 16-25h16v54H79V59L64 82 49 59v32H32Z" fill="#080604" opacity="0.55"/>
+  <path d="M29 88V34h16l19 30 19-30h16v54H82V56L64 84 46 56v32H29Z" fill="url(#gold)"/>
+  <path d="M29 88V34h16l19 30 19-30h16v54H82V56L64 84 46 56v32H29Z" fill="none" stroke="#f8df96" stroke-width="3" stroke-linejoin="round" opacity="0.48"/>
+</svg>

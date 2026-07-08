@@ -1,19 +1,15 @@
 #poe2-trade2-affix-filter-root {
   position: fixed;
-  top: 18px;
-  right: 18px;
+  top: 14px;
+  right: 14px;
   z-index: 2147483647;
-  width: 292px;
-  color: #d6c4a0;
-  background:
-    linear-gradient(180deg, rgba(44, 34, 24, 0.98) 0%, rgba(21, 16, 11, 0.98) 100%);
-  border: 1px solid #5a4329;
-  border-radius: 4px;
-  box-shadow:
-    inset 0 1px 0 rgba(255, 245, 220, 0.06),
-    inset 0 0 0 1px rgba(17, 12, 8, 0.75),
-    0 10px 28px rgba(0, 0, 0, 0.42);
-  font: 12px/1.45 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  width: 220px;
+  font: 11px/1.35 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+#poe2-trade2-affix-filter-root.poe2-trade2-affix-filter-collapsed {
+  width: 36px;
+  height: 36px;
 }
 
 #poe2-trade2-affix-filter-root * {
@@ -21,88 +17,190 @@
 }
 
 .poe2-trade2-affix-filter-panel {
-  padding: 10px 11px 11px;
+  padding: 7px;
+  color: #d9c79e;
   background:
-    linear-gradient(180deg, rgba(87, 63, 37, 0.12) 0%, rgba(0, 0, 0, 0) 18%),
-    linear-gradient(180deg, rgba(0, 0, 0, 0) 72%, rgba(0, 0, 0, 0.18) 100%);
+    linear-gradient(180deg, rgba(39, 30, 21, 0.98) 0%, rgba(17, 13, 9, 0.98) 100%);
+  border: 1px solid rgba(105, 78, 43, 0.92);
+  border-radius: 5px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 220, 0.05),
+    0 8px 22px rgba(0, 0, 0, 0.44);
+  transition:
+    border-color 160ms ease,
+    box-shadow 160ms ease;
+}
+
+.poe2-trade2-affix-filter-collapsed .poe2-trade2-affix-filter-panel {
+  display: none;
 }
 
 .poe2-trade2-affix-filter-header {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding-bottom: 8px;
-  border-bottom: 1px solid rgba(113, 85, 50, 0.52);
+  gap: 7px;
+  cursor: move;
+  user-select: none;
 }
 
-.poe2-trade2-affix-filter-title {
-  color: #e1c98c;
-  font:
-    600 13px/1.2 Georgia,
-    "Times New Roman",
-    serif;
-  letter-spacing: 0.04em;
-  text-transform: uppercase;
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.65);
-}
-
-.poe2-trade2-affix-filter-toggle {
+.poe2-trade2-affix-filter-brand,
+.poe2-trade2-affix-filter-collapse-toggle,
+.poe2-trade2-affix-filter-collapsed-button {
   display: inline-flex;
   align-items: center;
-  gap: 8px;
-  white-space: nowrap;
-  color: #c9b48a;
+  justify-content: center;
+  padding: 0;
+  border: 1px solid rgba(136, 104, 57, 0.96);
+  color: #f3d681;
+  background:
+    radial-gradient(circle at 50% 30%, rgba(66, 214, 154, 0.18) 0%, rgba(66, 214, 154, 0) 44%),
+    linear-gradient(180deg, #332716 0%, #100c08 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 238, 188, 0.16),
+    0 1px 0 rgba(0, 0, 0, 0.5);
+  font:
+    700 12px/1 Georgia,
+    "Times New Roman",
+    serif;
+  text-shadow:
+    0 1px 0 #000,
+    0 0 5px rgba(224, 177, 73, 0.36);
+  transition:
+    border-color 160ms ease,
+    color 160ms ease,
+    filter 160ms ease;
 }
 
-.poe2-trade2-affix-filter-toggle input,
-.poe2-trade2-affix-filter-field select {
+.poe2-trade2-affix-filter-brand {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 22px;
+  border-radius: 4px;
+}
+
+.poe2-trade2-affix-filter-collapse-toggle {
+  flex: 0 0 22px;
+  width: 22px;
+  height: 19px;
+  border-radius: 3px;
   cursor: pointer;
 }
 
-.poe2-trade2-affix-filter-toggle input {
-  accent-color: #b68743;
+.poe2-trade2-affix-filter-arrow {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+  filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.7));
+}
+
+.poe2-trade2-affix-filter-collapsed-button {
+  display: none;
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 238, 188, 0.18),
+    0 5px 15px rgba(0, 0, 0, 0.42);
+  cursor: pointer;
+}
+
+.poe2-trade2-affix-filter-collapsed .poe2-trade2-affix-filter-collapsed-button {
+  display: inline-flex;
+}
+
+.poe2-trade2-affix-filter-collapsed-button .poe2-trade2-affix-filter-mark {
+  font-size: 20px;
+}
+
+.poe2-trade2-affix-filter-collapse-toggle:hover,
+.poe2-trade2-affix-filter-collapsed-button:hover,
+.poe2-trade2-affix-filter-toggle:hover,
+.poe2-trade2-affix-filter-field select:hover {
+  border-color: #d0a45c;
+  filter: brightness(1.08);
+}
+
+.poe2-trade2-affix-filter-collapse-toggle:focus-visible,
+.poe2-trade2-affix-filter-collapsed-button:focus-visible,
+.poe2-trade2-affix-filter-toggle:focus-visible,
+.poe2-trade2-affix-filter-field select:focus-visible {
+  outline: 2px solid rgba(211, 166, 83, 0.86);
+  outline-offset: 2px;
+}
+
+.poe2-trade2-affix-filter-dragging,
+.poe2-trade2-affix-filter-dragging * {
+  cursor: move !important;
+  user-select: none !important;
 }
 
 .poe2-trade2-affix-filter-status {
-  margin-top: 10px;
-  min-height: 44px;
-  padding: 8px 10px;
-  border: 1px solid rgba(94, 68, 40, 0.55);
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: #ead7aa;
+  font:
+    600 11px/1.25 Georgia,
+    "Times New Roman",
+    serif;
+  letter-spacing: 0.02em;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
+}
+
+.poe2-trade2-affix-filter-toggle {
+  flex: 0 0 auto;
+  min-width: 32px;
+  height: 19px;
+  padding: 0 6px;
+  border: 1px solid rgba(135, 100, 52, 0.96);
   border-radius: 3px;
+  color: #1d150c;
   background:
-    linear-gradient(180deg, rgba(33, 25, 17, 0.96) 0%, rgba(18, 14, 10, 0.96) 100%);
-  color: #f1e3bf;
+    linear-gradient(180deg, #d6ae65 0%, #9a6830 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 240, 214, 0.04),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+    inset 0 1px 0 rgba(255, 244, 210, 0.28),
+    0 1px 0 rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 17px;
+  transition:
+    border-color 160ms ease,
+    filter 160ms ease;
+}
+
+.poe2-trade2-affix-filter-toggle[aria-pressed="false"] {
+  color: #baa276;
+  background:
+    linear-gradient(180deg, rgba(49, 39, 28, 0.98) 0%, rgba(23, 18, 13, 0.98) 100%);
 }
 
 .poe2-trade2-affix-filter-field {
   display: block;
-  margin-top: 10px;
-}
-
-.poe2-trade2-affix-filter-field-label {
-  display: block;
-  margin-bottom: 6px;
-  color: #a8936d;
-  font-size: 11px;
-  letter-spacing: 0.03em;
-  text-transform: uppercase;
+  margin-top: 6px;
 }
 
 .poe2-trade2-affix-filter-field select {
   width: 100%;
-  padding: 8px 10px;
+  height: 26px;
+  padding: 3px 7px;
   border: 1px solid #5c4529;
   border-radius: 3px;
-  color: #e8d3a6;
+  color: #ead7aa;
+  background-color: #20150d;
   background:
-    linear-gradient(180deg, rgba(46, 34, 24, 0.98) 0%, rgba(22, 17, 12, 0.98) 100%);
+    linear-gradient(180deg, rgba(45, 34, 24, 0.98) 0%, rgba(20, 15, 10, 0.98) 100%);
   box-shadow:
-    inset 0 1px 0 rgba(255, 242, 214, 0.04),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.22);
+    inset 0 1px 0 rgba(255, 242, 214, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+  color-scheme: dark;
+  cursor: pointer;
+  font-size: 11px;
+  transition:
+    border-color 160ms ease,
+    filter 160ms ease;
 }
 
 .poe2-trade2-affix-filter-field select:focus {
@@ -110,12 +208,37 @@
   border-color: #b27f38;
 }
 
+.poe2-trade2-affix-filter-field select option,
+.poe2-trade2-affix-filter-field select optgroup {
+  color: #ead7aa;
+  background-color: #20150d;
+}
+
+.poe2-trade2-affix-filter-field select option:checked {
+  color: #1d150c;
+  background-color: #d6ae65;
+}
+
 .poe2-trade2-affix-filter-meta {
-  margin-top: 8px;
+  margin-top: 5px;
+  overflow: hidden;
   color: #8f7b58;
-  font-size: 12px;
+  font-size: 10px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .poe2-trade2-affix-filter-hidden {
   display: none !important;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .poe2-trade2-affix-filter-panel,
+  .poe2-trade2-affix-filter-brand,
+  .poe2-trade2-affix-filter-collapse-toggle,
+  .poe2-trade2-affix-filter-collapsed-button,
+  .poe2-trade2-affix-filter-toggle,
+  .poe2-trade2-affix-filter-field select {
+    transition: none;
+  }
 }

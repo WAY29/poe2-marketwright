@@ -1,0 +1,75 @@
+{
+  "extName": {
+    "message": "PoE2 Marketwright"
+  },
+  "extDescription": {
+    "message": "A Path of Exile 2 market extension for trade2 quality-of-life enhancements."
+  },
+  "actionTitle": {
+    "message": "PoE2 Marketwright"
+  },
+  "autoDetect": {
+    "message": "Auto detect"
+  },
+  "selectionGroupTypes": {
+    "message": "Types"
+  },
+  "selectionGroupExactBases": {
+    "message": "Exact bases"
+  },
+  "collapsePanel": {
+    "message": "Collapse panel"
+  },
+  "expandPanel": {
+    "message": "Expand panel"
+  },
+  "statusOff": {
+    "message": "Off"
+  },
+  "statusAutoUnknown": {
+    "message": "Auto: Unknown"
+  },
+  "selectionSourceAuto": {
+    "message": "Auto"
+  },
+  "selectionSourceManual": {
+    "message": "Manual"
+  },
+  "statusSelection": {
+    "message": "$SOURCE$: $LABEL$",
+    "placeholders": {
+      "source": {
+        "content": "$1"
+      },
+      "label": {
+        "content": "$2"
+      }
+    }
+  },
+  "statsText": {
+    "message": "Available $AVAILABLE$ / Keep $KEEP$ / Ignore $IGNORE$",
+    "placeholders": {
+      "available": {
+        "content": "$1"
+      },
+      "keep": {
+        "content": "$2"
+      },
+      "ignore": {
+        "content": "$3"
+      }
+    }
+  },
+  "toggleOn": {
+    "message": "ON"
+  },
+  "toggleOff": {
+    "message": "OFF"
+  },
+  "enableFiltering": {
+    "message": "Enable filtering"
+  },
+  "disableFiltering": {
+    "message": "Disable filtering"
+  }
+}
