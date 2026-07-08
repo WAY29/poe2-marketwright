@@ -26,6 +26,7 @@ WHITESPACE_RE = re.compile(r"\s+")
 HTML_BREAK_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
 HTML_TAG_RE = re.compile(r"<[^>]+>")
 TRADE_STATS_URL = "https://www.pathofexile.com/api/trade2/data/stats"
+TRADE_ITEMS_URL = "https://www.pathofexile.com/api/trade2/data/items"
 PLURAL_NORMALIZATION_STOP_WORDS = {
     "as",
     "chaos",
@@ -130,38 +131,7 @@ EXTRA_PAGE_ITEM_NAMES = {
     "Waystones_mid_tier": [f"Waystone (Tier {tier})" for tier in range(6, 11)],
     "Waystones_top_tier": [f"Waystone (Tier {tier})" for tier in range(11, 17)],
 }
-SPECIAL_MAP_ITEM_NAMES = [
-    "Kulemak's Invitation",
-    "Idol of Estazunti",
-    "Breachlord Sac",
-    "Raven's Reflection",
-    "The Triskelion Reforged",
-    "Head of the King",
-    "Expedition Logbook",
-    "Simulacrum",
-    "Breachstone",
-    "An Audience with the King",
-    "Ancient Crisis Fragment",
-    "Faded Crisis Fragment",
-    "Weathered Crisis Fragment",
-    "Origin Core",
-    "Origin Cradle",
-    "Origin Spark",
-    "Primary Calamity Fragment",
-    "Secondary Calamity Fragment",
-    "Tertiary Calamity Fragment",
-    "Call of the Shadows",
-    "Test of Strength Barya",
-    "Test of Will Barya",
-    "Test of Cunning Barya",
-    "Test of Time Barya",
-    "Djinn Barya",
-    "Cowardly Fate",
-    "Deadly Fate",
-    "Victorious Fate",
-]
-ITEM_NAME_SELECTION_OVERRIDES = {
-    **{item_name: {"kind": "logical", "id": "Maps"} for item_name in SPECIAL_MAP_ITEM_NAMES},
+LOCALIZED_ITEM_NAME_SELECTION_OVERRIDES = {
     "探险日志": {"kind": "logical", "id": "Maps"},
     "探險日誌": {"kind": "logical", "id": "Maps"},
 }
@@ -175,6 +145,11 @@ TABLET_PAGE_SLUGS = [
     "Abyss_Tablet",
     "Temple_Tablet",
 ]
+POE2DB_ITEM_NAME_FALLBACK_EXCLUDED_PAGE_SLUGS = {
+    *WAYSTONE_PAGE_SLUGS,
+    *TABLET_PAGE_SLUGS,
+    "Inscribed_Ultimatum",
+}
 
 LOGICAL_CATEGORY_SPECS = {
     "Weapons": {
@@ -282,6 +257,23 @@ LOGICAL_CATEGORY_SPECS = {
         "aliases": ["Maps", "Map"],
         "page_slugs": [*WAYSTONE_PAGE_SLUGS, *TABLET_PAGE_SLUGS],
     },
+}
+TRADE_ITEM_GROUP_TO_LOGICAL_CATEGORY = {
+    "accessory": "Accessories",
+    "armour": "Armour",
+    "flask": "Flasks",
+    "jewel": "Jewels",
+    "map": "Maps",
+    "sanctum": "Sanctum",
+    "weapon": "Weapons",
+}
+TRADE_ITEM_GROUPS_WITH_TRUSTED_PAGE_ITEM_NAMES = {
+    "accessory",
+    "armour",
+    "flask",
+    "jewel",
+    "sanctum",
+    "weapon",
 }
 
 
@@ -454,6 +446,11 @@ async def fetch_trade_stats(url: str) -> dict[str, Any]:
         return json.loads(await fetch_text(client, url))
 
 
+async def fetch_trade_items(url: str) -> dict[str, Any]:
+    async with build_async_client(max_connections=1) as client:
+        return json.loads(await fetch_text(client, url))
+
+
 def load_page_artifacts(split_dir: Path, trade_stat_index: dict[str, set[str]]) -> list[PageArtifacts]:
     index_payload = json.loads((split_dir / "index.json").read_text(encoding="utf-8"))
     artifacts: list[PageArtifacts] = []
@@ -535,26 +532,106 @@ def build_logical_categories(page_categories: dict[str, Any]) -> dict[str, Any]:
     return logical_categories
 
 
-def build_item_name_map(page_categories: dict[str, Any]) -> dict[str, str]:
+def build_item_name_map(
+    page_categories: dict[str, Any],
+    item_name_to_selection: dict[str, dict[str, str]] | None = None,
+) -> dict[str, str]:
     item_name_to_page: dict[str, str] = {}
-    overridden_item_names = {
-        normalize_lookup_text(item_name)
-        for item_name in ITEM_NAME_SELECTION_OVERRIDES
-    }
+    authoritative_item_names = set(item_name_to_selection or {})
     for page_slug, page in page_categories.items():
+        if page_slug in POE2DB_ITEM_NAME_FALLBACK_EXCLUDED_PAGE_SLUGS:
+            continue
         for item_name in page["itemNames"]:
             normalized = normalize_lookup_text(item_name)
-            if normalized in overridden_item_names:
+            if normalized in authoritative_item_names:
                 continue
             item_name_to_page.setdefault(normalized, page_slug)
     return item_name_to_page
 
 
-def build_item_name_selection_map() -> dict[str, dict[str, str]]:
-    return {
-        normalize_lookup_text(item_name): selection
-        for item_name, selection in ITEM_NAME_SELECTION_OVERRIDES.items()
-    }
+def build_item_name_selection_map(
+    trade_items_payload: dict[str, Any],
+    page_categories: dict[str, Any],
+) -> dict[str, dict[str, str]]:
+    item_name_to_selection: dict[str, dict[str, str]] = {}
+    default_page_lookup = build_page_item_name_lookup(page_categories, include_item_names=True)
+    map_page_lookup = build_map_page_item_name_lookup(page_categories)
+
+    for group in trade_items_payload.get("result", []):
+        group_id = group.get("id")
+        logical_id = TRADE_ITEM_GROUP_TO_LOGICAL_CATEGORY.get(group_id)
+        if not logical_id:
+            continue
+
+        page_lookup = (
+            default_page_lookup
+            if group_id in TRADE_ITEM_GROUPS_WITH_TRUSTED_PAGE_ITEM_NAMES
+            else map_page_lookup
+        )
+        for entry in group.get("entries", []):
+            if not isinstance(entry, dict):
+                continue
+
+            selection = select_trade_item_entry(entry, logical_id, page_lookup)
+            if not selection:
+                continue
+            for item_name in trade_item_lookup_names(entry):
+                item_name_to_selection.setdefault(normalize_lookup_text(item_name), selection)
+
+    for item_name, selection in LOCALIZED_ITEM_NAME_SELECTION_OVERRIDES.items():
+        item_name_to_selection[normalize_lookup_text(item_name)] = selection
+
+    return item_name_to_selection
+
+
+def build_page_item_name_lookup(
+    page_categories: dict[str, Any],
+    include_item_names: bool,
+) -> dict[str, str]:
+    lookup: dict[str, str] = {}
+    for page_slug, page in page_categories.items():
+        names = [
+            page["label"],
+            *page.get("aliases", []),
+        ]
+        if include_item_names:
+            names.extend(page.get("itemNames", []))
+        for name in names:
+            normalized = normalize_lookup_text(name)
+            if normalized:
+                lookup.setdefault(normalized, page_slug)
+    return lookup
+
+
+def build_map_page_item_name_lookup(page_categories: dict[str, Any]) -> dict[str, str]:
+    lookup = build_page_item_name_lookup(page_categories, include_item_names=False)
+    for page_slug, item_names in EXTRA_PAGE_ITEM_NAMES.items():
+        if page_slug not in page_categories:
+            continue
+        for item_name in item_names:
+            lookup[normalize_lookup_text(item_name)] = page_slug
+    return lookup
+
+
+def select_trade_item_entry(
+    entry: dict[str, Any],
+    logical_id: str,
+    page_lookup: dict[str, str],
+) -> dict[str, str] | None:
+    item_type = normalize_lookup_text(entry.get("type") or "")
+    page_slug = page_lookup.get(item_type)
+    if page_slug:
+        return {"kind": "page", "id": page_slug}
+    return {"kind": "logical", "id": logical_id}
+
+
+def trade_item_lookup_names(entry: dict[str, Any]) -> list[str]:
+    return dedupe_preserve_order(
+        [
+            entry.get("type") or "",
+            entry.get("text") or "",
+        ]
+    )
 
 
 def build_category_alias_map(
@@ -608,18 +685,24 @@ async def main() -> int:
         default=TRADE_STATS_URL,
         help="Official trade2 stats API URL used to map PoE2DB stat text to trade stat ids.",
     )
+    parser.add_argument(
+        "--trade-items-url",
+        default=TRADE_ITEMS_URL,
+        help="Official trade2 items API URL used to map selected item names to filter categories.",
+    )
     args = parser.parse_args()
 
     split_dir = Path(args.split_dir)
     trade_stats_payload = await fetch_trade_stats(args.trade_stats_url)
+    trade_items_payload = await fetch_trade_items(args.trade_items_url)
     trade_stat_index = build_trade_stat_index(trade_stats_payload)
     artifacts = load_page_artifacts(split_dir, trade_stat_index)
     item_names_by_slug = await collect_item_names([artifact.page_url for artifact in artifacts], args.workers)
 
     page_categories = build_page_categories(artifacts, item_names_by_slug)
     logical_categories = build_logical_categories(page_categories)
-    item_name_to_page = build_item_name_map(page_categories)
-    item_name_to_selection = build_item_name_selection_map()
+    item_name_to_selection = build_item_name_selection_map(trade_items_payload, page_categories)
+    item_name_to_page = build_item_name_map(page_categories, item_name_to_selection)
     category_alias_to_selection = build_category_alias_map(page_categories, logical_categories)
     selection_options = build_selection_options(logical_categories, page_categories)
 
@@ -643,6 +726,7 @@ async def main() -> int:
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "source": "https://poe2db.tw/us/Modifiers",
         "tradeStatsSource": args.trade_stats_url,
+        "tradeItemsSource": args.trade_items_url,
         "pageCategories": page_categories,
         "logicalCategories": logical_categories,
         "itemNameToPage": item_name_to_page,

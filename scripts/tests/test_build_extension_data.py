@@ -50,16 +50,35 @@ class TradeStatMappingTests(unittest.TestCase):
             ),
         ]
 
-        item_name_to_page = build_item_name_map(build_page_categories(artifacts, {}))
+        page_categories = build_page_categories(artifacts, {})
+        item_name_to_selection = build_item_name_selection_map(
+            {
+                "result": [
+                    {
+                        "id": "map",
+                        "entries": [
+                            {"type": "Waystone (Tier 1)"},
+                            {"type": "Waystone (Tier 5)"},
+                            {"type": "Waystone (Tier 6)"},
+                            {"type": "Waystone (Tier 10)"},
+                            {"type": "Waystone (Tier 11)"},
+                            {"type": "Waystone (Tier 16)"},
+                        ],
+                    },
+                ],
+            },
+            page_categories,
+        )
 
-        self.assertEqual(item_name_to_page["waystone (tier 1)"], "Waystones_low_tier")
-        self.assertEqual(item_name_to_page["waystone (tier 5)"], "Waystones_low_tier")
-        self.assertEqual(item_name_to_page["waystone (tier 6)"], "Waystones_mid_tier")
-        self.assertEqual(item_name_to_page["waystone (tier 10)"], "Waystones_mid_tier")
-        self.assertEqual(item_name_to_page["waystone (tier 11)"], "Waystones_top_tier")
-        self.assertEqual(item_name_to_page["waystone (tier 16)"], "Waystones_top_tier")
+        self.assertIn("Waystone (Tier 1)", page_categories["Waystones_low_tier"]["itemNames"])
+        self.assertEqual(item_name_to_selection["waystone (tier 1)"], {"kind": "page", "id": "Waystones_low_tier"})
+        self.assertEqual(item_name_to_selection["waystone (tier 5)"], {"kind": "page", "id": "Waystones_low_tier"})
+        self.assertEqual(item_name_to_selection["waystone (tier 6)"], {"kind": "page", "id": "Waystones_mid_tier"})
+        self.assertEqual(item_name_to_selection["waystone (tier 10)"], {"kind": "page", "id": "Waystones_mid_tier"})
+        self.assertEqual(item_name_to_selection["waystone (tier 11)"], {"kind": "page", "id": "Waystones_top_tier"})
+        self.assertEqual(item_name_to_selection["waystone (tier 16)"], {"kind": "page", "id": "Waystones_top_tier"})
 
-    def test_special_map_items_override_page_item_names(self) -> None:
+    def test_official_trade_items_drive_item_name_selections(self) -> None:
         artifacts = [
             PageArtifacts(
                 page_slug="Expedition_Tablet",
@@ -70,21 +89,74 @@ class TradeStatMappingTests(unittest.TestCase):
                 allowed_stat_ids=[],
                 item_names=[],
             ),
+            PageArtifacts(
+                page_slug="Delirium_Tablet",
+                page_group=None,
+                page_url="https://poe2db.tw/us/Delirium_Tablet#ModifiersCalc",
+                baseitem_name="Delirium Tablet",
+                allowed_patterns=[],
+                allowed_stat_ids=[],
+                item_names=[],
+            ),
+            PageArtifacts(
+                page_slug="Waystones_low_tier",
+                page_group=None,
+                page_url="https://poe2db.tw/us/Waystones_low_tier",
+                baseitem_name="Waystones low tier",
+                allowed_patterns=[],
+                allowed_stat_ids=[],
+                item_names=[],
+            ),
         ]
-
         page_categories = build_page_categories(
             artifacts,
-            {"Expedition_Tablet": ["Expedition Tablet", "Expedition Logbook"]},
+            {"Expedition_Tablet": ["Serle's Triumph", "Expedition Tablet", "Expedition Logbook"]},
         )
-        item_name_to_page = build_item_name_map(page_categories)
-        item_name_to_selection = build_item_name_selection_map()
+        trade_items_payload = {
+            "result": [
+                {
+                    "id": "map",
+                    "entries": [
+                        {"type": "Expedition Logbook"},
+                        {"type": "Expedition Tablet"},
+                        {"type": "Waystone (Tier 1)"},
+                        {"type": "Simulacrum"},
+                        {
+                            "type": "Delirium Tablet",
+                            "text": "Clear Skies Delirium Tablet",
+                            "name": "Clear Skies",
+                        },
+                    ],
+                },
+            ],
+        }
+        item_name_to_selection = build_item_name_selection_map(trade_items_payload, page_categories)
+        item_name_to_page = build_item_name_map(page_categories, item_name_to_selection)
 
-        self.assertEqual(item_name_to_page["expedition tablet"], "Expedition_Tablet")
+        self.assertNotIn("expedition tablet", item_name_to_page)
         self.assertNotIn("expedition logbook", item_name_to_page)
+        self.assertNotIn("serle's triumph", item_name_to_page)
+        self.assertEqual(
+            item_name_to_selection["expedition tablet"],
+            {"kind": "page", "id": "Expedition_Tablet"},
+        )
         self.assertEqual(
             item_name_to_selection["expedition logbook"],
             {"kind": "logical", "id": "Maps"},
         )
+        self.assertEqual(
+            item_name_to_selection["waystone (tier 1)"],
+            {"kind": "page", "id": "Waystones_low_tier"},
+        )
+        self.assertEqual(
+            item_name_to_selection["simulacrum"],
+            {"kind": "logical", "id": "Maps"},
+        )
+        self.assertEqual(
+            item_name_to_selection["clear skies delirium tablet"],
+            {"kind": "page", "id": "Delirium_Tablet"},
+        )
+        self.assertNotIn("clear skies", item_name_to_selection)
         self.assertEqual(
             item_name_to_selection["探险日志"],
             {"kind": "logical", "id": "Maps"},
