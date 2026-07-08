@@ -24,11 +24,11 @@
   "web_accessible_resources": [
     {
       "resources": [
-        "data/affix-filter-data.json"
+        "data/affix-filter-data.json",
+        "page-bridge.js"
       ],
       "matches": [
-        "https://www.pathofexile.com/trade2",
-        "https://www.pathofexile.com/trade2/*"
+        "https://www.pathofexile.com/*"
       ]
     }
   ],

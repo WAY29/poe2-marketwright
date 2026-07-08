@@ -9,6 +9,7 @@ import re
 import sys
 from dataclasses import dataclass
 from datetime import datetime, timezone
+from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
@@ -22,6 +23,18 @@ from poe2_scraper import build_async_client, fetch_text, page_slug_from_url, str
 
 NUMBER_RE = re.compile(r"([-+]?\d+(?:\.\d+)?)")
 WHITESPACE_RE = re.compile(r"\s+")
+HTML_BREAK_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
+HTML_TAG_RE = re.compile(r"<[^>]+>")
+TRADE_STATS_URL = "https://www.pathofexile.com/api/trade2/data/stats"
+PLURAL_NORMALIZATION_STOP_WORDS = {
+    "as",
+    "chaos",
+    "has",
+    "is",
+    "less",
+    "loss",
+    "this",
+}
 
 WEAPON_PAGE_SLUGS = [
     "Claws",
@@ -218,6 +231,7 @@ class PageArtifacts:
     page_url: str
     baseitem_name: str
     allowed_patterns: list[str]
+    allowed_stat_ids: list[str]
     item_names: list[str]
 
 
@@ -267,8 +281,77 @@ def canonicalize_stat_text(text: str) -> str:
     text = re.sub(r"#\s*-\s*#", "#", text)
     text = text.replace("+#", "#")
     text = text.replace("(#)", "#")
+    text = text.replace("(##)", "#")
+    text = text.replace("##", "#")
+    text = re.sub(r"(^|[\s(])%", r"\1#%", text)
     text = WHITESPACE_RE.sub(" ", text).strip()
     return text
+
+
+def canonicalize_match_key(text: str) -> str:
+    return canonicalize_stat_text(text).lower()
+
+
+def plural_normalized_match_key(text: str) -> str:
+    key = canonicalize_match_key(text)
+    return re.sub(r"[a-z]+", lambda match: singularize_token(match.group(0)), key)
+
+
+def singularize_token(token: str) -> str:
+    if token in PLURAL_NORMALIZATION_STOP_WORDS or len(token) <= 3:
+        return token
+    if token.endswith("ies") and len(token) > 4:
+        return f"{token[:-3]}y"
+    if token.endswith(("ses", "xes", "zes", "ches", "shes")):
+        return token[:-2]
+    if token.endswith("s") and not token.endswith(("ss", "us", "ous", "is")):
+        return token[:-1]
+    return token
+
+
+def trade_stat_lookup_keys(text: str) -> set[str]:
+    exact = canonicalize_match_key(text)
+    if not exact:
+        return set()
+    return {exact, plural_normalized_match_key(exact)}
+
+
+def split_affix_stat_lines(text_html: str) -> list[str]:
+    text = HTML_BREAK_RE.sub("\n", str(text_html or ""))
+    lines: list[str] = []
+    for raw_line in text.splitlines():
+        line = HTML_TAG_RE.sub("", raw_line)
+        line = unescape(line).replace("\xa0", " ")
+        line = WHITESPACE_RE.sub(" ", line).strip()
+        if line:
+            lines.append(line)
+    return lines
+
+
+def build_trade_stat_index(trade_stats_payload: dict[str, Any]) -> dict[str, set[str]]:
+    index: dict[str, set[str]] = {}
+    for group in trade_stats_payload.get("result", []):
+        for entry in group.get("entries", []):
+            stat_id = entry.get("id")
+            text = entry.get("text")
+            if not stat_id or not text:
+                continue
+            for key in trade_stat_lookup_keys(text):
+                index.setdefault(key, set()).add(stat_id)
+    return index
+
+
+def map_affix_text_to_trade_stat_ids(text_html: str, trade_stat_index: dict[str, set[str]]) -> tuple[list[str], list[str]]:
+    patterns: list[str] = []
+    stat_ids: set[str] = set()
+    for line in split_affix_stat_lines(text_html):
+        pattern = canonicalize_stat_text(line)
+        if not pattern:
+            continue
+        patterns.append(pattern)
+        for key in trade_stat_lookup_keys(pattern):
+            stat_ids.update(trade_stat_index.get(key, set()))
+    return patterns, sorted(stat_ids)
 
 
 def dedupe_preserve_order(values: list[str]) -> list[str]:
@@ -305,25 +388,33 @@ async def collect_item_names(page_urls: list[str], workers: int) -> dict[str, li
     return dict(results)
 
 
-def load_page_artifacts(split_dir: Path) -> list[PageArtifacts]:
+async def fetch_trade_stats(url: str) -> dict[str, Any]:
+    async with build_async_client(max_connections=1) as client:
+        return json.loads(await fetch_text(client, url))
+
+
+def load_page_artifacts(split_dir: Path, trade_stat_index: dict[str, set[str]]) -> list[PageArtifacts]:
     index_payload = json.loads((split_dir / "index.json").read_text(encoding="utf-8"))
     artifacts: list[PageArtifacts] = []
     for page in index_payload["pages"]:
         page_payload = json.loads((split_dir / page["file"]).read_text(encoding="utf-8"))
-        patterns = sorted(
-            {
-                canonicalize_stat_text(affix["text"])
-                for affix in page_payload["affixes"]
-                if canonicalize_stat_text(affix["text"])
-            }
-        )
+        patterns: set[str] = set()
+        stat_ids: set[str] = set()
+        for affix in page_payload["affixes"]:
+            affix_patterns, affix_stat_ids = map_affix_text_to_trade_stat_ids(
+                affix.get("text_html") or affix.get("text", ""),
+                trade_stat_index,
+            )
+            patterns.update(affix_patterns)
+            stat_ids.update(affix_stat_ids)
         artifacts.append(
             PageArtifacts(
                 page_slug=page["page_slug"],
                 page_group=page.get("page_group"),
                 page_url=page["page_url"],
                 baseitem_name=page["baseitem_name"],
-                allowed_patterns=patterns,
+                allowed_patterns=sorted(patterns),
+                allowed_stat_ids=sorted(stat_ids),
                 item_names=[],
             )
         )
@@ -338,6 +429,7 @@ def build_page_categories(artifacts: list[PageArtifacts], item_names_by_slug: di
             "pageGroup": artifact.page_group,
             "pageUrl": artifact.page_url,
             "allowedPatterns": artifact.allowed_patterns,
+            "allowedStatIds": artifact.allowed_stat_ids,
             "itemNames": item_names_by_slug.get(artifact.page_slug, []),
             "aliases": dedupe_preserve_order(
                 [
@@ -354,6 +446,7 @@ def build_logical_categories(page_categories: dict[str, Any]) -> dict[str, Any]:
     logical_categories: dict[str, Any] = {}
     for logical_id, spec in LOGICAL_CATEGORY_SPECS.items():
         patterns: set[str] = set()
+        stat_ids: set[str] = set()
         item_names: list[str] = []
         page_slugs: list[str] = []
         for page_slug in spec["page_slugs"]:
@@ -362,12 +455,14 @@ def build_logical_categories(page_categories: dict[str, Any]) -> dict[str, Any]:
                 continue
             page_slugs.append(page_slug)
             patterns.update(page["allowedPatterns"])
+            stat_ids.update(page["allowedStatIds"])
             item_names.extend(page["itemNames"])
         logical_categories[logical_id] = {
             "label": spec["label"],
             "aliases": dedupe_preserve_order(spec["aliases"]),
             "pageSlugs": page_slugs,
             "allowedPatterns": sorted(patterns),
+            "allowedStatIds": sorted(stat_ids),
             "itemNames": dedupe_preserve_order(item_names),
         }
     return logical_categories
@@ -428,10 +523,17 @@ async def main() -> int:
         help="Output file for the extension data bundle.",
     )
     parser.add_argument("--workers", type=int, default=8, help="Concurrent page fetches.")
+    parser.add_argument(
+        "--trade-stats-url",
+        default=TRADE_STATS_URL,
+        help="Official trade2 stats API URL used to map PoE2DB stat text to trade stat ids.",
+    )
     args = parser.parse_args()
 
     split_dir = Path(args.split_dir)
-    artifacts = load_page_artifacts(split_dir)
+    trade_stats_payload = await fetch_trade_stats(args.trade_stats_url)
+    trade_stat_index = build_trade_stat_index(trade_stats_payload)
+    artifacts = load_page_artifacts(split_dir, trade_stat_index)
     item_names_by_slug = await collect_item_names([artifact.page_url for artifact in artifacts], args.workers)
 
     page_categories = build_page_categories(artifacts, item_names_by_slug)
@@ -447,17 +549,26 @@ async def main() -> int:
             for pattern in page["allowedPatterns"]
         }
     )
+    all_stat_ids = sorted(
+        {
+            stat_id
+            for page in page_categories.values()
+            for stat_id in page["allowedStatIds"]
+        }
+    )
 
     output = {
         "version": 1,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "source": "https://poe2db.tw/us/Modifiers",
+        "tradeStatsSource": args.trade_stats_url,
         "pageCategories": page_categories,
         "logicalCategories": logical_categories,
         "itemNameToPage": item_name_to_page,
         "categoryAliasToSelection": category_alias_to_selection,
         "selectionOptions": selection_options,
         "allPatterns": all_patterns,
+        "allStatIds": all_stat_ids,
     }
 
     out_path = Path(args.out)
