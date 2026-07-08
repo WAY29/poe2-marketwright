@@ -7,6 +7,9 @@ if str(SCRIPT_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_ROOT))
 
 from build_extension_data import (
+    PageArtifacts,
+    build_item_name_map,
+    build_page_categories,
     build_trade_stat_index,
     canonicalize_stat_text,
     map_affix_text_to_trade_stat_ids,
@@ -15,6 +18,46 @@ from build_extension_data import (
 
 
 class TradeStatMappingTests(unittest.TestCase):
+    def test_adds_synthetic_waystone_tier_item_names(self) -> None:
+        artifacts = [
+            PageArtifacts(
+                page_slug="Waystones_low_tier",
+                page_group=None,
+                page_url="https://poe2db.tw/us/Waystones_low_tier",
+                baseitem_name="Waystones low tier",
+                allowed_patterns=[],
+                allowed_stat_ids=[],
+                item_names=[],
+            ),
+            PageArtifacts(
+                page_slug="Waystones_mid_tier",
+                page_group=None,
+                page_url="https://poe2db.tw/us/Waystones_mid_tier",
+                baseitem_name="Waystones mid tier",
+                allowed_patterns=[],
+                allowed_stat_ids=[],
+                item_names=[],
+            ),
+            PageArtifacts(
+                page_slug="Waystones_top_tier",
+                page_group=None,
+                page_url="https://poe2db.tw/us/Waystones_top_tier",
+                baseitem_name="Waystones top tier",
+                allowed_patterns=[],
+                allowed_stat_ids=[],
+                item_names=[],
+            ),
+        ]
+
+        item_name_to_page = build_item_name_map(build_page_categories(artifacts, {}))
+
+        self.assertEqual(item_name_to_page["waystone (tier 1)"], "Waystones_low_tier")
+        self.assertEqual(item_name_to_page["waystone (tier 5)"], "Waystones_low_tier")
+        self.assertEqual(item_name_to_page["waystone (tier 6)"], "Waystones_mid_tier")
+        self.assertEqual(item_name_to_page["waystone (tier 10)"], "Waystones_mid_tier")
+        self.assertEqual(item_name_to_page["waystone (tier 11)"], "Waystones_top_tier")
+        self.assertEqual(item_name_to_page["waystone (tier 16)"], "Waystones_top_tier")
+
     def test_splits_poe2db_combined_mods_and_maps_each_trade_stat(self) -> None:
         trade_stat_index = build_trade_stat_index(
             {

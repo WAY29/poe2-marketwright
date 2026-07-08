@@ -76,6 +76,33 @@ class DiscoverModifierLinksTests(unittest.TestCase):
             ],
         )
 
+    def test_discovers_extra_modsview_pages_without_modifierscalc_anchor(self) -> None:
+        html = """
+        <div class="itemList">
+          <a href="/us/Waystones_low_tier">Waystones(Low)</a>
+          <a href="/us/Waystones_mid_tier">Waystones(Mid)</a>
+          <a href="/us/Waystones_top_tier">Waystones(Top)</a>
+          <a href="/us/Strongbox">Strongbox</a>
+          <a href="/us/Relics">Relics</a>
+          <a href="/us/Inscribed_Ultimatum">Inscribed Ultimatum</a>
+          <a href="/us/Quality">Quality</a>
+        </div>
+        """
+
+        links = discover_modifier_links(html, "https://poe2db.tw/us/Modifiers")
+
+        self.assertEqual(
+            links,
+            [
+                "https://poe2db.tw/us/Waystones_low_tier",
+                "https://poe2db.tw/us/Waystones_mid_tier",
+                "https://poe2db.tw/us/Waystones_top_tier",
+                "https://poe2db.tw/us/Strongbox",
+                "https://poe2db.tw/us/Relics",
+                "https://poe2db.tw/us/Inscribed_Ultimatum",
+            ],
+        )
+
 
 class FlattenAffixesTests(unittest.TestCase):
     def test_flattens_page_affixes_with_plain_text(self) -> None:

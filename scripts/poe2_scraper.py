@@ -30,6 +30,14 @@ HTML_TAG_RE = re.compile(r"<[^>]+>")
 WHITESPACE_RE = re.compile(r"\s+")
 MODSVIEW_MARKER = "new ModsView("
 PAGE_META_KEYS = {"baseitem", "config", "gen", "opt"}
+EXTRA_MODSVIEW_PAGE_SLUGS = {
+    "Inscribed_Ultimatum",
+    "Relics",
+    "Strongbox",
+    "Waystones_low_tier",
+    "Waystones_mid_tier",
+    "Waystones_top_tier",
+}
 EQUIPMENT_PAGE_SLUGS = {
     "Claws",
     "Daggers",
@@ -95,7 +103,7 @@ class ModifierLinksParser(HTMLParser):
         if tag != "a":
             return
         href = dict(attrs).get("href")
-        if href and "#ModifiersCalc" in href:
+        if href and ("#ModifiersCalc" in href or page_slug_from_url(href) in EXTRA_MODSVIEW_PAGE_SLUGS):
             self.links.append(href)
 
 

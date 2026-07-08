@@ -111,6 +111,7 @@ JEWEL_PAGE_SLUGS = [
 ]
 FLASK_PAGE_SLUGS = ["Life_Flasks", "Mana_Flasks", "Charms"]
 RELIC_PAGE_SLUGS = [
+    "Relics",
     "Urn_Relic",
     "Amphora_Relic",
     "Vase_Relic",
@@ -119,6 +120,16 @@ RELIC_PAGE_SLUGS = [
     "Tapestry_Relic",
     "Incense_Relic",
 ]
+WAYSTONE_PAGE_SLUGS = [
+    "Waystones_low_tier",
+    "Waystones_mid_tier",
+    "Waystones_top_tier",
+]
+EXTRA_PAGE_ITEM_NAMES = {
+    "Waystones_low_tier": [f"Waystone (Tier {tier})" for tier in range(1, 6)],
+    "Waystones_mid_tier": [f"Waystone (Tier {tier})" for tier in range(6, 11)],
+    "Waystones_top_tier": [f"Waystone (Tier {tier})" for tier in range(11, 17)],
+}
 TABLET_PAGE_SLUGS = [
     "Breach_Tablet",
     "Expedition_Tablet",
@@ -211,6 +222,21 @@ LOGICAL_CATEGORY_SPECS = {
         "aliases": ["Tablets", "Tablet"],
         "page_slugs": TABLET_PAGE_SLUGS,
     },
+    "Waystones": {
+        "label": "Waystones",
+        "aliases": ["Waystones", "Waystone", "Maps", "Map"],
+        "page_slugs": WAYSTONE_PAGE_SLUGS,
+    },
+    "Strongboxes": {
+        "label": "Strongboxes",
+        "aliases": ["Strongboxes", "Strongbox"],
+        "page_slugs": ["Strongbox"],
+    },
+    "Ultimatums": {
+        "label": "Ultimatums",
+        "aliases": ["Ultimatums", "Ultimatum", "Inscribed Ultimatum"],
+        "page_slugs": ["Inscribed_Ultimatum"],
+    },
     "Sanctum": {
         "label": "Sanctum",
         "aliases": ["Sanctum"],
@@ -219,7 +245,7 @@ LOGICAL_CATEGORY_SPECS = {
     "Maps": {
         "label": "Maps",
         "aliases": ["Maps", "Map"],
-        "page_slugs": TABLET_PAGE_SLUGS,
+        "page_slugs": [*WAYSTONE_PAGE_SLUGS, *TABLET_PAGE_SLUGS],
     },
 }
 
@@ -424,13 +450,19 @@ def load_page_artifacts(split_dir: Path, trade_stat_index: dict[str, set[str]]) 
 def build_page_categories(artifacts: list[PageArtifacts], item_names_by_slug: dict[str, list[str]]) -> dict[str, Any]:
     page_categories: dict[str, Any] = {}
     for artifact in artifacts:
+        item_names = dedupe_preserve_order(
+            [
+                *item_names_by_slug.get(artifact.page_slug, []),
+                *EXTRA_PAGE_ITEM_NAMES.get(artifact.page_slug, []),
+            ]
+        )
         page_categories[artifact.page_slug] = {
             "label": artifact.baseitem_name,
             "pageGroup": artifact.page_group,
             "pageUrl": artifact.page_url,
             "allowedPatterns": artifact.allowed_patterns,
             "allowedStatIds": artifact.allowed_stat_ids,
-            "itemNames": item_names_by_slug.get(artifact.page_slug, []),
+            "itemNames": item_names,
             "aliases": dedupe_preserve_order(
                 [
                     artifact.baseitem_name,
