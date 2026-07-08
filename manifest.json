@@ -1,0 +1,38 @@
+{
+  "manifest_version": 3,
+  "name": "PoE2 Marketwright",
+  "version": "0.1.0",
+  "description": "A Path of Exile 2 market extension for trade2 quality-of-life enhancements.",
+  "permissions": [
+    "storage"
+  ],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://www.pathofexile.com/trade2",
+        "https://www.pathofexile.com/trade2/*"
+      ],
+      "js": [
+        "content.js"
+      ],
+      "css": [
+        "content.css"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": [
+        "data/affix-filter-data.json"
+      ],
+      "matches": [
+        "https://www.pathofexile.com/trade2",
+        "https://www.pathofexile.com/trade2/*"
+      ]
+    }
+  ],
+  "action": {
+    "default_title": "PoE2 Marketwright"
+  }
+}

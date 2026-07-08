@@ -1,0 +1,11 @@
+[project]
+name = "poe2-marketwright-scripts"
+version = "0.1.0"
+description = "Scripts and data tooling for PoE2 Marketwright"
+requires-python = ">=3.10"
+dependencies = [
+  "aiohttp>=3.12,<4",
+]
+
+[tool.uv]
+package = false
