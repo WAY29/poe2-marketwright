@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "PoE2 Marketwright",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "description": "A Path of Exile 2 market extension for trade2 quality-of-life enhancements.",
   "permissions": [
     "storage"
