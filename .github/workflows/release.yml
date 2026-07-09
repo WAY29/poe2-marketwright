@@ -26,12 +26,47 @@ jobs:
 
       - name: Build extension package
         run: |
-          mkdir -p dist/poe2-marketwright/data
+          mkdir -p dist/poe2-marketwright
           cp manifest.json dist/poe2-marketwright/
           cp content.js dist/poe2-marketwright/
           cp content.css dist/poe2-marketwright/
+          cp page-bridge.js dist/poe2-marketwright/
           cp README.md dist/poe2-marketwright/
-          cp data/affix-filter-data.json dist/poe2-marketwright/data/
+          cp -R data dist/poe2-marketwright/
+          cp -R images dist/poe2-marketwright/
+          cp -R _locales dist/poe2-marketwright/
+
+      - name: Validate packaged extension files
+        run: |
+          python <<'PY'
+          import json
+          import pathlib
+          import sys
+
+          root = pathlib.Path("dist/poe2-marketwright")
+          manifest = json.loads((root / "manifest.json").read_text())
+
+          required = set(manifest.get("icons", {}).values())
+          required.update(manifest.get("action", {}).get("default_icon", {}).values())
+
+          for content_script in manifest.get("content_scripts", []):
+              required.update(content_script.get("js", []))
+              required.update(content_script.get("css", []))
+
+          for resource_group in manifest.get("web_accessible_resources", []):
+              required.update(resource_group.get("resources", []))
+
+          default_locale = manifest.get("default_locale")
+          if default_locale:
+              required.add(f"_locales/{default_locale}/messages.json")
+
+          missing = sorted(path for path in required if not (root / path).exists())
+          if missing:
+              print("Missing packaged files:")
+              for path in missing:
+                  print(f"- {path}")
+              sys.exit(1)
+          PY
 
       - name: Create zip archive
         run: |
