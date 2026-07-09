@@ -43,7 +43,8 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
                   id: "explicit",
                   entries: [
                     { id: "explicit.stat_strength", text: "# to Strength" },
-                    { id: "explicit.stat_dexterity", text: "# to Dexterity" }
+                    { id: "explicit.stat_dexterity", text: "# to Dexterity" },
+                    { id: "explicit.stat_unclassified", text: "# unclassified future stat" }
                   ]
                 }
               ]
@@ -72,7 +73,9 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
                 payload: {
                   enabled: true,
                   allowedKeys: [],
-                  allowedStatIds: ["explicit.stat_strength"]
+                  allowedStatIds: ["explicit.stat_strength"],
+                  allStatIds: ["explicit.stat_strength", "explicit.stat_dexterity"],
+                  allKeys: ["# to strength", "# to dexterity"]
                 }
               }
             });
@@ -93,7 +96,7 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
         )
         self.assertEqual(
             [entry["id"] for entry in groups["explicit"]],
-            ["explicit.stat_strength"],
+            ["explicit.stat_strength", "explicit.stat_unclassified"],
         )
 
     def test_content_filter_keeps_related_pseudo_options(self) -> None:
@@ -210,6 +213,9 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
             const explicitHide = new FakeElement("+# to Dexterity", {
               "data-id": "explicit.stat_dexterity"
             });
+            const explicitUnclassified = new FakeElement("# new future stat", {
+              "data-id": "explicit.stat_unclassified"
+            });
             root.children = [
               pseudoStrengthById,
               pseudoStrengthByText,
@@ -219,7 +225,8 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               pseudoEmptyPrefixZh,
               pseudoUsesRemaining,
               explicitKeep,
-              explicitHide
+              explicitHide,
+              explicitUnclassified
             ];
 
             const hooks = window.__testHooks;
@@ -229,6 +236,10 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               "# total maximum life",
               "# to strength",
               "# to dexterity"
+            ]);
+            hooks.runtime.allStatIds = new Set([
+              "explicit.stat_strength",
+              "explicit.stat_dexterity"
             ]);
 
             const stats = { groups: 0, options: 0, matched: 0, hidden: 0 };
@@ -250,6 +261,7 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               pseudoUsesRemainingHidden: pseudoUsesRemaining.classList.contains(hooks.HIDDEN_CLASS),
               explicitKeepHidden: explicitKeep.classList.contains(hooks.HIDDEN_CLASS),
               explicitHideHidden: explicitHide.classList.contains(hooks.HIDDEN_CLASS),
+              explicitUnclassifiedHidden: explicitUnclassified.classList.contains(hooks.HIDDEN_CLASS),
               stats
             }));
             """
@@ -264,6 +276,7 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
         self.assertFalse(result["pseudoUsesRemainingHidden"])
         self.assertFalse(result["explicitKeepHidden"])
         self.assertTrue(result["explicitHideHidden"])
+        self.assertFalse(result["explicitUnclassifiedHidden"])
         self.assertEqual(result["stats"]["hidden"], 2)
 
     def test_content_filter_keeps_resistance_count_when_resistance_is_allowed(self) -> None:
@@ -374,6 +387,9 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               "# total resistances",
               "# total to strength",
               "#% to cold resistance"
+            ]);
+            hooks.runtime.allStatIds = new Set([
+              "explicit.stat_cold_resistance"
             ]);
 
             const stats = { groups: 0, options: 0, matched: 0, hidden: 0 };
@@ -504,6 +520,10 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               "# total to strength",
               "#% increased damage per # strength",
               "# to dexterity"
+            ]);
+            hooks.runtime.allStatIds = new Set([
+              "explicit.stat_damage_per_strength",
+              "explicit.stat_dexterity"
             ]);
 
             const stats = { groups: 0, options: 0, matched: 0, hidden: 0 };

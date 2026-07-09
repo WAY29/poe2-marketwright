@@ -13,6 +13,7 @@ from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
+from urllib.parse import urljoin
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
@@ -28,6 +29,10 @@ HTML_TAG_RE = re.compile(r"<[^>]+>")
 GRANTED_SKILL_RE = re.compile(r"\bGrants\s+Skill:\s*(?:Level\s+(?:#|\d+)\s*)?(.+?)\s*$", re.IGNORECASE)
 TRADE_STATS_URL = "https://www.pathofexile.com/api/trade2/data/stats"
 TRADE_ITEMS_URL = "https://www.pathofexile.com/api/trade2/data/items"
+POE2DB_ITEM_ROOT_URL = "https://poe2db.tw/us/"
+TRADE_STAT_WILDCARD_PLACEHOLDERS = {
+    "azmeri spirit",
+}
 HTML_VOID_TAGS = {
     "area",
     "base",
@@ -147,6 +152,18 @@ EXTRA_PAGE_ITEM_NAMES = {
     "Waystones_low_tier": [f"Waystone (Tier {tier})" for tier in range(1, 6)],
     "Waystones_mid_tier": [f"Waystone (Tier {tier})" for tier in range(6, 11)],
     "Waystones_top_tier": [f"Waystone (Tier {tier})" for tier in range(11, 17)],
+}
+PAGE_ITEM_NAME_CLASS_FILTERS = {
+    "Charms": "UtilityFlask",
+}
+EXTRA_PAGE_ALLOWED_TRADE_STAT_TEXTS = {
+    "Charms": [
+        "#% increased Duration (Charm)",
+        "#% increased Charm Effect Duration",
+        "#% increased Charm Charges gained",
+        "#% reduced Charm Charges used",
+        "Charms gain # charge per Second",
+    ],
 }
 LOCALIZED_ITEM_NAME_SELECTION_OVERRIDES = {
     "探险日志": {"kind": "logical", "id": "Maps"},
@@ -309,11 +326,20 @@ class PageArtifacts:
 class PageHtmlArtifacts:
     item_names: list[str]
     granted_skill_names: list[str]
+    item_mod_texts: list[str]
+
+
+@dataclass(frozen=True)
+class TradeStatRecord:
+    key: str
+    pattern: str
+    stat_id: str
 
 
 class Poe2dbPageArtifactsParser(HTMLParser):
-    def __init__(self) -> None:
+    def __init__(self, item_class_code: str | None = None) -> None:
         super().__init__()
+        self.item_class_code = item_class_code
         self.capture_anchor = False
         self.current_text: list[str] = []
         self.item_names: list[str] = []
@@ -321,15 +347,25 @@ class Poe2dbPageArtifactsParser(HTMLParser):
         self.current_implicit_text: list[str] = []
         self.current_implicit_has_granted_skill_icon = False
         self.granted_skill_names: list[str] = []
+        self.capture_item_mod_depth = 0
+        self.current_item_mod_text: list[str] = []
+        self.item_mod_texts: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attrs_dict = dict(attrs)
+        class_tokens = (attrs_dict.get("class", "") or "").split()
+        if self.capture_item_mod_depth > 0 and tag not in HTML_VOID_TAGS:
+            self.capture_item_mod_depth += 1
+        if tag == "div" and {"implicitMod", "explicitMod"}.intersection(class_tokens):
+            self.capture_item_mod_depth = 1
+            self.current_item_mod_text = []
+
         if self.capture_implicit_depth > 0:
             self.record_granted_skill_icon(tag, attrs_dict)
             if tag not in HTML_VOID_TAGS:
                 self.capture_implicit_depth += 1
 
-        if tag == "div" and "implicitMod" in (attrs_dict.get("class", "") or "").split():
+        if tag == "div" and "implicitMod" in class_tokens:
             self.capture_implicit_depth = 1
             self.current_implicit_text = []
             self.current_implicit_has_granted_skill_icon = False
@@ -337,7 +373,10 @@ class Poe2dbPageArtifactsParser(HTMLParser):
         if tag != "a":
             return
         class_name = attrs_dict.get("class", "") or ""
-        if "whiteitem" in class_name:
+        class_tokens = class_name.split()
+        if "whiteitem" in class_tokens and (
+            not self.item_class_code or self.item_class_code in class_tokens
+        ):
             self.capture_anchor = True
             self.current_text = []
 
@@ -346,6 +385,11 @@ class Poe2dbPageArtifactsParser(HTMLParser):
             self.record_granted_skill_icon(tag, dict(attrs))
 
     def handle_endtag(self, tag: str) -> None:
+        if self.capture_item_mod_depth > 0:
+            self.capture_item_mod_depth -= 1
+            if self.capture_item_mod_depth == 0:
+                self.finish_item_mod()
+
         if self.capture_implicit_depth > 0:
             self.capture_implicit_depth -= 1
             if self.capture_implicit_depth == 0:
@@ -362,6 +406,8 @@ class Poe2dbPageArtifactsParser(HTMLParser):
     def handle_data(self, data: str) -> None:
         if self.capture_anchor:
             self.current_text.append(data)
+        if self.capture_item_mod_depth > 0:
+            self.current_item_mod_text.append(data)
         if self.capture_implicit_depth > 0:
             self.current_implicit_text.append(data)
 
@@ -383,9 +429,20 @@ class Poe2dbPageArtifactsParser(HTMLParser):
             self.granted_skill_names.append(skill_name)
         self.current_implicit_text = []
 
+    def finish_item_mod(self) -> None:
+        text = WHITESPACE_RE.sub(" ", "".join(self.current_item_mod_text)).strip()
+        if text:
+            self.item_mod_texts.append(text)
+        self.current_item_mod_text = []
+
 
 def humanize_slug(slug: str) -> str:
     return slug.replace("_", " ")
+
+
+def poe2db_item_slug(item_name: str) -> str:
+    without_apostrophes = re.sub(r"['’]", "", item_name)
+    return re.sub(r"[^\w-]+", "_", without_apostrophes).strip("_")
 
 
 def normalize_lookup_text(text: str) -> str:
@@ -447,12 +504,13 @@ def split_affix_stat_lines(text_html: str) -> list[str]:
     return lines
 
 
-def parse_page_html_artifacts(html: str) -> PageHtmlArtifacts:
-    parser = Poe2dbPageArtifactsParser()
+def parse_page_html_artifacts(html: str, item_class_code: str | None = None) -> PageHtmlArtifacts:
+    parser = Poe2dbPageArtifactsParser(item_class_code)
     parser.feed(html)
     return PageHtmlArtifacts(
         item_names=dedupe_preserve_order(parser.item_names),
         granted_skill_names=dedupe_preserve_order(parser.granted_skill_names),
+        item_mod_texts=dedupe_preserve_order(parser.item_mod_texts),
     )
 
 
@@ -489,6 +547,20 @@ def build_trade_stat_index(trade_stats_payload: dict[str, Any]) -> dict[str, set
             for key in trade_stat_lookup_keys(text):
                 index.setdefault(key, set()).add(stat_id)
     return index
+
+
+def build_trade_stat_records(trade_stats_payload: dict[str, Any]) -> list[TradeStatRecord]:
+    records: list[TradeStatRecord] = []
+    for group in trade_stats_payload.get("result", []):
+        for entry in group.get("entries", []):
+            stat_id = entry.get("id")
+            text = entry.get("text")
+            if not stat_id or not text:
+                continue
+            pattern = canonicalize_stat_text(text)
+            for key in trade_stat_lookup_keys(text):
+                records.append(TradeStatRecord(key=key, pattern=pattern, stat_id=stat_id))
+    return records
 
 
 def build_trade_skill_stat_index(trade_stats_payload: dict[str, Any]) -> dict[str, set[tuple[str, str]]]:
@@ -537,6 +609,46 @@ def map_affix_text_to_trade_stat_ids(text_html: str, trade_stat_index: dict[str,
     return patterns, sorted(stat_ids)
 
 
+def map_trade_stat_texts_to_trade_stat_ids(
+    trade_stat_texts: list[str],
+    trade_stat_index: dict[str, set[str]],
+    trade_stat_records: list[TradeStatRecord] | None = None,
+    include_unmatched_patterns: bool = True,
+) -> tuple[list[str], list[str]]:
+    patterns: set[str] = set()
+    stat_ids: set[str] = set()
+    for trade_stat_text in trade_stat_texts:
+        pattern = canonicalize_stat_text(trade_stat_text)
+        if not pattern:
+            continue
+        matched_stat_ids: set[str] = set()
+        for key in trade_stat_lookup_keys(pattern):
+            matched_stat_ids.update(trade_stat_index.get(key, set()))
+        wildcard_match_re = build_trade_stat_wildcard_match_re(pattern)
+        if wildcard_match_re:
+            for record in trade_stat_records or []:
+                if wildcard_match_re.match(record.key):
+                    patterns.add(record.pattern)
+                    matched_stat_ids.add(record.stat_id)
+        if include_unmatched_patterns or matched_stat_ids:
+            patterns.add(pattern)
+        stat_ids.update(matched_stat_ids)
+    return sorted(patterns), sorted(stat_ids)
+
+
+def build_trade_stat_wildcard_match_re(pattern: str) -> re.Pattern[str] | None:
+    key = canonicalize_match_key(pattern)
+    if "[" not in key or "]" not in key:
+        return None
+    placeholders = [placeholder.strip().lower() for placeholder in re.findall(r"\[([^\]]+)\]", key)]
+    if not placeholders or any(placeholder not in TRADE_STAT_WILDCARD_PLACEHOLDERS for placeholder in placeholders):
+        return None
+    parts = re.split(r"\[[^\]]+\]", key)
+    if any(not part for part in parts):
+        return None
+    return re.compile(r"^" + r".+".join(re.escape(part) for part in parts) + r"$")
+
+
 def dedupe_preserve_order(values: list[str]) -> list[str]:
     seen: set[str] = set()
     output: list[str] = []
@@ -547,29 +659,98 @@ def dedupe_preserve_order(values: list[str]) -> list[str]:
     return output
 
 
-async def fetch_page_item_names(page_url: str) -> list[str]:
+def merge_extra_artifacts(*artifacts_by_slug: dict[str, list[str]]) -> dict[str, list[str]]:
+    merged: dict[str, set[str]] = {}
+    for artifacts in artifacts_by_slug:
+        for page_slug, values in artifacts.items():
+            merged.setdefault(page_slug, set()).update(values)
+    return {page_slug: sorted(values) for page_slug, values in merged.items()}
+
+
+async def fetch_page_item_names(page_url: str, item_class_code: str | None = None) -> list[str]:
     async with build_async_client(max_connections=1) as client:
         html = await fetch_text(client, page_url)
-    return parse_page_html_artifacts(html).item_names
+    return parse_page_html_artifacts(html, item_class_code).item_names
 
 
 async def collect_item_names(page_urls: list[str], workers: int) -> dict[str, list[str]]:
-    page_artifacts_by_slug = await collect_page_html_artifacts(page_urls, workers)
+    page_artifacts_by_slug = await collect_page_html_artifacts(
+        page_urls,
+        workers,
+        PAGE_ITEM_NAME_CLASS_FILTERS,
+    )
     return {slug: page_artifacts.item_names for slug, page_artifacts in page_artifacts_by_slug.items()}
 
 
-async def collect_page_html_artifacts(page_urls: list[str], workers: int) -> dict[str, PageHtmlArtifacts]:
+async def collect_page_html_artifacts(
+    page_urls: list[str],
+    workers: int,
+    item_class_codes_by_slug: dict[str, str | None] | None = None,
+) -> dict[str, PageHtmlArtifacts]:
     semaphore = asyncio.Semaphore(max(1, workers))
+    item_class_codes_by_slug = item_class_codes_by_slug or {}
 
     async def task(page_url: str, client: Any) -> tuple[str, PageHtmlArtifacts]:
         async with semaphore:
             html = await fetch_text(client, page_url)
-        return page_slug_from_url(page_url), parse_page_html_artifacts(html)
+        page_slug = page_slug_from_url(page_url)
+        return page_slug, parse_page_html_artifacts(
+            html,
+            item_class_codes_by_slug.get(page_slug),
+        )
 
     async with build_async_client(max_connections=max(1, workers)) as client:
         tasks = [task(page_url, client) for page_url in page_urls]
         results = await asyncio.gather(*tasks)
     return dict(results)
+
+
+async def collect_unique_item_stat_artifacts(
+    unique_item_names_by_page: dict[str, list[str]],
+    trade_stat_index: dict[str, set[str]],
+    trade_stat_records: list[TradeStatRecord],
+    workers: int,
+) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    semaphore = asyncio.Semaphore(max(1, workers))
+    patterns_by_page: dict[str, set[str]] = {}
+    stat_ids_by_page: dict[str, set[str]] = {}
+    tasks_input = [
+        (page_slug, item_name)
+        for page_slug, item_names in unique_item_names_by_page.items()
+        for item_name in item_names
+    ]
+
+    async def task(page_slug: str, item_name: str, client: Any) -> tuple[str, list[str], list[str]]:
+        item_url = urljoin(POE2DB_ITEM_ROOT_URL, poe2db_item_slug(item_name))
+        try:
+            async with semaphore:
+                html = await fetch_text(client, item_url)
+        except Exception as error:
+            print(f"[build_extension_data] failed to fetch unique item page {item_url}: {error}", file=sys.stderr)
+            return page_slug, [], []
+
+        item_mod_texts = parse_page_html_artifacts(html).item_mod_texts
+        patterns, stat_ids = map_trade_stat_texts_to_trade_stat_ids(
+            item_mod_texts,
+            trade_stat_index,
+            trade_stat_records,
+            include_unmatched_patterns=False,
+        )
+        return page_slug, patterns, stat_ids
+
+    async with build_async_client(max_connections=max(1, workers)) as client:
+        results = await asyncio.gather(
+            *[task(page_slug, item_name, client) for page_slug, item_name in tasks_input]
+        )
+
+    for page_slug, patterns, stat_ids in results:
+        patterns_by_page.setdefault(page_slug, set()).update(patterns)
+        stat_ids_by_page.setdefault(page_slug, set()).update(stat_ids)
+
+    return (
+        {page_slug: sorted(patterns) for page_slug, patterns in patterns_by_page.items()},
+        {page_slug: sorted(stat_ids) for page_slug, stat_ids in stat_ids_by_page.items()},
+    )
 
 
 async def fetch_trade_stats(url: str) -> dict[str, Any]:
@@ -596,6 +777,12 @@ def load_page_artifacts(split_dir: Path, trade_stat_index: dict[str, set[str]]) 
             )
             patterns.update(affix_patterns)
             stat_ids.update(affix_stat_ids)
+        extra_patterns, extra_stat_ids = map_trade_stat_texts_to_trade_stat_ids(
+            EXTRA_PAGE_ALLOWED_TRADE_STAT_TEXTS.get(page["page_slug"], []),
+            trade_stat_index,
+        )
+        patterns.update(extra_patterns)
+        stat_ids.update(extra_stat_ids)
         artifacts.append(
             PageArtifacts(
                 page_slug=page["page_slug"],
@@ -608,6 +795,45 @@ def load_page_artifacts(split_dir: Path, trade_stat_index: dict[str, set[str]]) 
             )
         )
     return artifacts
+
+
+def build_unique_item_names_by_page(
+    trade_items_payload: dict[str, Any],
+    page_categories: dict[str, Any],
+) -> dict[str, list[str]]:
+    unique_item_names_by_page: dict[str, list[str]] = {}
+    default_page_lookup = build_page_item_name_lookup(page_categories, include_item_names=True)
+    map_page_lookup = build_map_page_item_name_lookup(page_categories)
+
+    for group in trade_items_payload.get("result", []):
+        group_id = group.get("id")
+        logical_id = TRADE_ITEM_GROUP_TO_LOGICAL_CATEGORY.get(group_id)
+        if not logical_id:
+            continue
+
+        page_lookup = (
+            default_page_lookup
+            if group_id in TRADE_ITEM_GROUPS_WITH_TRUSTED_PAGE_ITEM_NAMES
+            else map_page_lookup
+        )
+        for entry in group.get("entries", []):
+            if not isinstance(entry, dict) or not entry.get("flags", {}).get("unique"):
+                continue
+            if entry.get("disc") == "legacy":
+                continue
+            item_name = entry.get("name")
+            if not item_name:
+                continue
+
+            selection = select_trade_item_entry(entry, logical_id, page_lookup)
+            if not selection or selection.get("kind") != "page":
+                continue
+            unique_item_names_by_page.setdefault(selection["id"], []).append(item_name)
+
+    return {
+        page_slug: dedupe_preserve_order(item_names)
+        for page_slug, item_names in sorted(unique_item_names_by_page.items())
+    }
 
 
 def build_page_categories(
@@ -844,11 +1070,13 @@ async def main() -> int:
     trade_stats_payload = await fetch_trade_stats(args.trade_stats_url)
     trade_items_payload = await fetch_trade_items(args.trade_items_url)
     trade_stat_index = build_trade_stat_index(trade_stats_payload)
+    trade_stat_records = build_trade_stat_records(trade_stats_payload)
     trade_skill_stat_index = build_trade_skill_stat_index(trade_stats_payload)
     artifacts = load_page_artifacts(split_dir, trade_stat_index)
     page_html_artifacts_by_slug = await collect_page_html_artifacts(
         [artifact.page_url for artifact in artifacts],
         args.workers,
+        PAGE_ITEM_NAME_CLASS_FILTERS,
     )
     item_names_by_slug = {
         page_slug: page_html_artifacts.item_names
@@ -866,11 +1094,32 @@ async def main() -> int:
         if granted_stat_ids:
             granted_skill_stat_ids_by_slug[page_slug] = granted_stat_ids
 
-    page_categories = build_page_categories(
+    base_page_categories = build_page_categories(
         artifacts,
         item_names_by_slug,
         granted_skill_patterns_by_slug,
         granted_skill_stat_ids_by_slug,
+    )
+    unique_item_patterns_by_slug, unique_item_stat_ids_by_slug = await collect_unique_item_stat_artifacts(
+        build_unique_item_names_by_page(trade_items_payload, base_page_categories),
+        trade_stat_index,
+        trade_stat_records,
+        args.workers,
+    )
+    extra_allowed_patterns_by_slug = merge_extra_artifacts(
+        granted_skill_patterns_by_slug,
+        unique_item_patterns_by_slug,
+    )
+    extra_allowed_stat_ids_by_slug = merge_extra_artifacts(
+        granted_skill_stat_ids_by_slug,
+        unique_item_stat_ids_by_slug,
+    )
+
+    page_categories = build_page_categories(
+        artifacts,
+        item_names_by_slug,
+        extra_allowed_patterns_by_slug,
+        extra_allowed_stat_ids_by_slug,
     )
     logical_categories = build_logical_categories(page_categories)
     item_name_to_selection = build_item_name_selection_map(trade_items_payload, page_categories)

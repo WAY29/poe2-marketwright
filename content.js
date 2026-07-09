@@ -147,6 +147,7 @@
     data: null,
     state: { ...DEFAULT_STATE },
     allPatterns: new Set(),
+    allStatIds: new Set(),
     itemLookupEntries: [],
     categoryLookupEntries: [],
     categoryAliasToSelection: {},
@@ -175,6 +176,7 @@
   async function bootstrap() {
     runtime.data = await loadData();
     runtime.allPatterns = new Set((runtime.data.allPatterns || []).map(normalizeStatKey).filter(Boolean));
+    runtime.allStatIds = new Set((runtime.data.allStatIds || []).map(String).filter(Boolean));
     runtime.itemLookupEntries = Array.from(
       new Set([
         ...Object.keys(runtime.data.itemNameToSelection || {}),
@@ -755,7 +757,10 @@
       hidden: 0
     };
 
-    if (!runtime.state.enabled || !allowedPatterns || allowedPatterns.size === 0) {
+    if (
+      !runtime.state.enabled ||
+      !((allowedPatterns && allowedPatterns.size > 0) || (allowedStatIds && allowedStatIds.size > 0))
+    ) {
       runtime.lastFilterStats = filterStats;
       updatePanel(activeSelection, allowedPatterns);
       return;
@@ -1329,8 +1334,9 @@
       if (!isVisible(option) || runtime.ui.root.contains(option)) {
         continue;
       }
+      const statId = getOptionStatId(option);
       const pattern = getOptionPatternKey(option);
-      if (!runtime.allPatterns.has(pattern)) {
+      if (!isClassifiedStatOption(statId, pattern)) {
         continue;
       }
       const root = findOptionRoot(option);
@@ -1401,14 +1407,17 @@
       const statId = getOptionStatId(option);
       const pattern = getOptionPatternKey(option);
       if (isPseudoStatOption(option, statId)) {
-        if (isPseudoStatAllowed(option, statId, pattern, allowedPatterns, allowedStatIds)) {
+        if (
+          isPseudoStatAllowed(option, statId, pattern, allowedPatterns, allowedStatIds) ||
+          isClassifiedStatOption(statId, pattern)
+        ) {
           affixOptionCount += 1;
         }
         continue;
       }
       if (
-        (statId && allowedStatIds?.has(statId)) ||
-        (pattern && (runtime.allPatterns.has(pattern) || allowedPatterns.has(pattern)))
+        isAllowedStatOption(statId, pattern, allowedPatterns, allowedStatIds) ||
+        isClassifiedStatOption(statId, pattern)
       ) {
         affixOptionCount += 1;
       }
@@ -1424,7 +1433,7 @@
       const statId = getOptionStatId(option);
       const pattern = getOptionPatternKey(option);
       if (isPseudoStatOption(option, statId)) {
-        const shouldHide = !isPseudoStatAllowed(option, statId, pattern, allowedPatterns, allowedStatIds);
+        const shouldHide = shouldHidePseudoStatOption(option, statId, pattern, allowedPatterns, allowedStatIds);
         stats.matched += 1;
         if (shouldHide) {
           stats.hidden += 1;
@@ -1432,10 +1441,10 @@
         option.classList.toggle(HIDDEN_CLASS, shouldHide);
         continue;
       }
-      if (!statId && (!pattern || !isFilterableStatOption(option, pattern, allowedPatterns))) {
+      if (!isAllowedStatOption(statId, pattern, allowedPatterns, allowedStatIds) && !isClassifiedStatOption(statId, pattern)) {
         continue;
       }
-      const shouldHide = statId ? !allowedStatIds?.has(statId) : !allowedPatterns.has(pattern);
+      const shouldHide = shouldHideStatOption(statId, pattern, allowedPatterns, allowedStatIds);
       stats.matched += 1;
       if (shouldHide) {
         stats.hidden += 1;
@@ -1497,13 +1506,29 @@
     if (isAlwaysVisiblePseudoStat(statId, [pattern, ...optionTexts])) {
       return true;
     }
-    if (statId && allowedStatIds?.has(statId)) {
-      return true;
-    }
-    if (pattern && allowedPatterns.has(pattern)) {
+    if (isAllowedStatOption(statId, pattern, allowedPatterns, allowedStatIds)) {
       return true;
     }
     return isPseudoStatRelatedToAllowed([statId, pattern, ...optionTexts], allowedPatterns);
+  }
+
+  function shouldHidePseudoStatOption(element, statId, pattern, allowedPatterns, allowedStatIds) {
+    if (isPseudoStatAllowed(element, statId, pattern, allowedPatterns, allowedStatIds)) {
+      return false;
+    }
+    return true;
+  }
+
+  function shouldHideStatOption(statId, pattern, allowedPatterns, allowedStatIds) {
+    return isClassifiedStatOption(statId, pattern) && !isAllowedStatOption(statId, pattern, allowedPatterns, allowedStatIds);
+  }
+
+  function isAllowedStatOption(statId, pattern, allowedPatterns, allowedStatIds) {
+    return Boolean((statId && allowedStatIds?.has(statId)) || (pattern && allowedPatterns?.has(pattern)));
+  }
+
+  function isClassifiedStatOption(statId, pattern) {
+    return Boolean((statId && runtime.allStatIds.has(statId)) || (pattern && runtime.allPatterns.has(pattern)));
   }
 
   function isPseudoStatId(statId) {
@@ -1682,15 +1707,6 @@
     return false;
   }
 
-  function isFilterableStatOption(element, pattern, allowedPatterns) {
-    if (allowedPatterns.has(pattern) || runtime.allPatterns.has(pattern)) {
-      return true;
-    }
-
-    const text = getOptionText(element);
-    return /#|%|\bmap\b|\bmodifier\b|\bmonsters?\b|\bitems?\b/i.test(text);
-  }
-
   function collectOptionTexts(element) {
     return [
       element.innerText,
@@ -1763,9 +1779,16 @@
       enabled,
       allowedKeys: enabled ? Array.from(allowedPatterns || []) : [],
       allowedStatIds: enabled ? Array.from(allowedStatIds || []) : [],
-      allKeys: Array.from(runtime.allPatterns)
+      allKeys: Array.from(runtime.allPatterns),
+      allStatIds: Array.from(runtime.allStatIds)
     };
-    const signature = `${payload.enabled}:${payload.allowedKeys.join("|")}:${payload.allowedStatIds.join("|")}`;
+    const signature = [
+      payload.enabled,
+      payload.allowedKeys.join("|"),
+      payload.allowedStatIds.join("|"),
+      payload.allKeys.join("|"),
+      payload.allStatIds.join("|")
+    ].join(":");
     if (signature === runtime.bridgePayloadSignature) {
       return;
     }

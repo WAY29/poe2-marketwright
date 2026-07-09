@@ -95,7 +95,9 @@
     lastPayload: {
       enabled: false,
       allowedKeys: [],
-      allowedStatIds: []
+      allowedStatIds: [],
+      allKeys: [],
+      allStatIds: []
     },
     lastFilterStats: null
   };
@@ -153,6 +155,8 @@
     const payload = runtime.lastPayload || {};
     const allowedIds = new Set(payload.allowedStatIds || []);
     const allowedKeys = buildAllowedKeys(payload.allowedKeys || [], allowedIds);
+    const classifiedIds = new Set((payload.allStatIds || []).map(String).filter(Boolean));
+    const classifiedKeys = new Set((payload.allKeys || []).map(normalizeStatKey).filter(Boolean));
     const shouldFilter = Boolean(payload.enabled && (allowedKeys.size > 0 || allowedIds.size > 0));
     const stats = {
       total: 0,
@@ -174,12 +178,14 @@
         stats.total += 1;
         const id = String(entry?.id || "");
         const key = normalizeStatKey(entry?.text || entry?.type || "");
+        const pseudo = isPseudoStatGroup(group.id) || isPseudoStatId(id);
         const keep =
           (id && allowedIds.has(id)) ||
           (key && allowedKeys.has(key)) ||
-          ((isPseudoStatGroup(group.id) || isPseudoStatId(id)) &&
+          (pseudo &&
             (isAlwaysVisiblePseudoStat(id, [entry?.text, entry?.type, key]) ||
-              isPseudoStatRelatedToAllowed([id, key], allowedKeys)));
+              isPseudoStatRelatedToAllowed([id, key], allowedKeys))) ||
+          (!pseudo && !isClassifiedKnownStat(id, key, classifiedIds, classifiedKeys));
         if (keep) {
           stats.kept += 1;
           return true;
@@ -236,6 +242,10 @@
     }
 
     return allowedKeys;
+  }
+
+  function isClassifiedKnownStat(id, key, classifiedIds, classifiedKeys) {
+    return Boolean((id && classifiedIds.has(id)) || (key && classifiedKeys.has(key)));
   }
 
   function isFilterableStatGroup(groupId) {
