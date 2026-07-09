@@ -1,0 +1,4 @@
+interface:
+  display_name: "Bump Version Release"
+  short_description: "Bump project version, commit, tag, and push releases."
+  default_prompt: "Bump this project to the requested version, commit the version changes, create the matching git tag, and push both branch and tag."
