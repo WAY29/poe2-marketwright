@@ -2,13 +2,6 @@ version = 1
 revision = 3
 requires-python = ">=3.10"
 
-[options]
-exclude-newer = "2026-07-01T03:40:44.27132Z"
-exclude-newer-span = "P1W"
-
-[options.exclude-newer-package]
-semble = { timestamp = "2026-07-08T03:40:44.271508Z", span = "PT0S" }
-
 [[package]]
 name = "aiohappyeyeballs"
 version = "2.6.2"
@@ -456,7 +449,7 @@ wheels = [
 
 [[package]]
 name = "poe2-marketwright-scripts"
-version = "0.1.0"
+version = "0.2.0"
 source = { virtual = "." }
 dependencies = [
     { name = "aiohttp" },

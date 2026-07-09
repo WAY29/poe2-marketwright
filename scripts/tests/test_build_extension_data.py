@@ -8,12 +8,15 @@ if str(SCRIPT_ROOT) not in sys.path:
 
 from build_extension_data import (
     PageArtifacts,
+    build_trade_skill_stat_index,
     build_item_name_map,
     build_item_name_selection_map,
     build_page_categories,
     build_trade_stat_index,
     canonicalize_stat_text,
+    map_granted_skill_names_to_trade_stats,
     map_affix_text_to_trade_stat_ids,
+    parse_page_html_artifacts,
     split_affix_stat_lines,
 )
 
@@ -264,6 +267,80 @@ class TradeStatMappingTests(unittest.TestCase):
         self.assertEqual(
             split_affix_stat_lines("First<br/>Second<br />Third"),
             ["First", "Second", "Third"],
+        )
+
+    def test_extracts_granted_skill_names_from_poe2db_item_page(self) -> None:
+        artifacts = parse_page_html_artifacts(
+            """
+            <a class="whiteitem Sceptre" href="Rattling_Sceptre">Rattling Sceptre</a>
+            <div class="implicitMod">
+              <img class="grantsSkill"/>
+              Grants Skill: <a class="gem_blue" href="/us/Skeletal_Warrior">Skeletal Warrior</a>
+            </div>
+            <div class="implicitMod">
+              <img class="grantsSkill">
+              Grants Skill: Level 13 <a class="gem_blue" href="/us/Lightning_Bolt">Lightning Bolt</a>
+            </div>
+            """
+        )
+
+        self.assertEqual(artifacts.item_names, ["Rattling Sceptre"])
+        self.assertEqual(artifacts.granted_skill_names, ["Skeletal Warrior", "Lightning Bolt"])
+
+    def test_adds_poe2db_granted_skills_to_page_categories(self) -> None:
+        trade_skill_stat_index = build_trade_skill_stat_index(
+            {
+                "result": [
+                    {
+                        "id": "skill",
+                        "entries": [
+                            {
+                                "id": "skill.summon_skeleton_warrior",
+                                "text": "Grants Skill: Level # Skeletal Warrior Minion",
+                            },
+                            {
+                                "id": "skill.discipline",
+                                "text": "Grants Skill: Level # Discipline",
+                            },
+                        ],
+                    }
+                ]
+            }
+        )
+        granted_patterns, granted_stat_ids = map_granted_skill_names_to_trade_stats(
+            ["Skeletal Warrior", "Discipline"],
+            trade_skill_stat_index,
+        )
+        page_categories = build_page_categories(
+            [
+                PageArtifacts(
+                    page_slug="Sceptres",
+                    page_group="Sceptres",
+                    page_url="https://poe2db.tw/us/Sceptres#ModifiersCalc",
+                    baseitem_name="Sceptres",
+                    allowed_patterns=[],
+                    allowed_stat_ids=[],
+                    item_names=[],
+                )
+            ],
+            {},
+            {"Sceptres": granted_patterns},
+            {"Sceptres": granted_stat_ids},
+        )
+
+        self.assertEqual(
+            page_categories["Sceptres"]["allowedPatterns"],
+            [
+                "Grants Skill: Level # Discipline",
+                "Grants Skill: Level # Skeletal Warrior Minion",
+            ],
+        )
+        self.assertEqual(
+            page_categories["Sceptres"]["allowedStatIds"],
+            [
+                "skill.discipline",
+                "skill.summon_skeleton_warrior",
+            ],
         )
 
 

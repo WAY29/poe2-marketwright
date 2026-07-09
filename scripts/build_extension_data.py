@@ -25,8 +25,25 @@ NUMBER_RE = re.compile(r"([-+]?\d+(?:\.\d+)?)")
 WHITESPACE_RE = re.compile(r"\s+")
 HTML_BREAK_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
 HTML_TAG_RE = re.compile(r"<[^>]+>")
+GRANTED_SKILL_RE = re.compile(r"\bGrants\s+Skill:\s*(?:Level\s+(?:#|\d+)\s*)?(.+?)\s*$", re.IGNORECASE)
 TRADE_STATS_URL = "https://www.pathofexile.com/api/trade2/data/stats"
 TRADE_ITEMS_URL = "https://www.pathofexile.com/api/trade2/data/items"
+HTML_VOID_TAGS = {
+    "area",
+    "base",
+    "br",
+    "col",
+    "embed",
+    "hr",
+    "img",
+    "input",
+    "link",
+    "meta",
+    "param",
+    "source",
+    "track",
+    "wbr",
+}
 PLURAL_NORMALIZATION_STOP_WORDS = {
     "as",
     "chaos",
@@ -288,15 +305,35 @@ class PageArtifacts:
     item_names: list[str]
 
 
-class WhiteItemAnchorParser(HTMLParser):
+@dataclass
+class PageHtmlArtifacts:
+    item_names: list[str]
+    granted_skill_names: list[str]
+
+
+class Poe2dbPageArtifactsParser(HTMLParser):
     def __init__(self) -> None:
         super().__init__()
         self.capture_anchor = False
         self.current_text: list[str] = []
         self.item_names: list[str] = []
+        self.capture_implicit_depth = 0
+        self.current_implicit_text: list[str] = []
+        self.current_implicit_has_granted_skill_icon = False
+        self.granted_skill_names: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attrs_dict = dict(attrs)
+        if self.capture_implicit_depth > 0:
+            self.record_granted_skill_icon(tag, attrs_dict)
+            if tag not in HTML_VOID_TAGS:
+                self.capture_implicit_depth += 1
+
+        if tag == "div" and "implicitMod" in (attrs_dict.get("class", "") or "").split():
+            self.capture_implicit_depth = 1
+            self.current_implicit_text = []
+            self.current_implicit_has_granted_skill_icon = False
+
         if tag != "a":
             return
         class_name = attrs_dict.get("class", "") or ""
@@ -304,7 +341,16 @@ class WhiteItemAnchorParser(HTMLParser):
             self.capture_anchor = True
             self.current_text = []
 
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if self.capture_implicit_depth > 0:
+            self.record_granted_skill_icon(tag, dict(attrs))
+
     def handle_endtag(self, tag: str) -> None:
+        if self.capture_implicit_depth > 0:
+            self.capture_implicit_depth -= 1
+            if self.capture_implicit_depth == 0:
+                self.finish_implicit_mod()
+
         if tag != "a" or not self.capture_anchor:
             return
         text = strip_html("".join(self.current_text))
@@ -316,6 +362,26 @@ class WhiteItemAnchorParser(HTMLParser):
     def handle_data(self, data: str) -> None:
         if self.capture_anchor:
             self.current_text.append(data)
+        if self.capture_implicit_depth > 0:
+            self.current_implicit_text.append(data)
+
+    def record_granted_skill_icon(self, tag: str, attrs_dict: dict[str, str | None]) -> None:
+        if tag != "img":
+            return
+        class_name = attrs_dict.get("class", "") or ""
+        if "grantsSkill" in class_name.split():
+            self.current_implicit_has_granted_skill_icon = True
+
+    def finish_implicit_mod(self) -> None:
+        if not self.current_implicit_has_granted_skill_icon:
+            self.current_implicit_text = []
+            return
+
+        text = WHITESPACE_RE.sub(" ", "".join(self.current_implicit_text)).strip()
+        skill_name = extract_granted_skill_name(text)
+        if skill_name:
+            self.granted_skill_names.append(skill_name)
+        self.current_implicit_text = []
 
 
 def humanize_slug(slug: str) -> str:
@@ -381,6 +447,37 @@ def split_affix_stat_lines(text_html: str) -> list[str]:
     return lines
 
 
+def parse_page_html_artifacts(html: str) -> PageHtmlArtifacts:
+    parser = Poe2dbPageArtifactsParser()
+    parser.feed(html)
+    return PageHtmlArtifacts(
+        item_names=dedupe_preserve_order(parser.item_names),
+        granted_skill_names=dedupe_preserve_order(parser.granted_skill_names),
+    )
+
+
+def extract_granted_skill_name(text: str) -> str:
+    match = GRANTED_SKILL_RE.search(strip_html(text))
+    if not match:
+        return ""
+    return WHITESPACE_RE.sub(" ", match.group(1)).strip()
+
+
+def granted_skill_lookup_keys(skill_name: str) -> set[str]:
+    normalized = normalize_lookup_text(skill_name)
+    if not normalized:
+        return set()
+
+    keys = {normalized}
+    keys.add(re.sub(r"[a-z]+", lambda match: singularize_token(match.group(0)), normalized))
+    if normalized.endswith(" minion"):
+        without_minion = normalized[: -len(" minion")].strip()
+        keys.add(without_minion)
+        keys.add(re.sub(r"[a-z]+", lambda match: singularize_token(match.group(0)), without_minion))
+    keys.discard("")
+    return keys
+
+
 def build_trade_stat_index(trade_stats_payload: dict[str, Any]) -> dict[str, set[str]]:
     index: dict[str, set[str]] = {}
     for group in trade_stats_payload.get("result", []):
@@ -392,6 +489,39 @@ def build_trade_stat_index(trade_stats_payload: dict[str, Any]) -> dict[str, set
             for key in trade_stat_lookup_keys(text):
                 index.setdefault(key, set()).add(stat_id)
     return index
+
+
+def build_trade_skill_stat_index(trade_stats_payload: dict[str, Any]) -> dict[str, set[tuple[str, str]]]:
+    index: dict[str, set[tuple[str, str]]] = {}
+    for group in trade_stats_payload.get("result", []):
+        if group.get("id") != "skill":
+            continue
+        for entry in group.get("entries", []):
+            stat_id = entry.get("id")
+            text = entry.get("text")
+            if not stat_id or not text:
+                continue
+            skill_name = extract_granted_skill_name(text)
+            if not skill_name:
+                continue
+            pattern = canonicalize_stat_text(text)
+            for key in granted_skill_lookup_keys(skill_name):
+                index.setdefault(key, set()).add((pattern, stat_id))
+    return index
+
+
+def map_granted_skill_names_to_trade_stats(
+    skill_names: list[str],
+    trade_skill_stat_index: dict[str, set[tuple[str, str]]],
+) -> tuple[list[str], list[str]]:
+    patterns: set[str] = set()
+    stat_ids: set[str] = set()
+    for skill_name in skill_names:
+        for key in granted_skill_lookup_keys(skill_name):
+            for pattern, stat_id in trade_skill_stat_index.get(key, set()):
+                patterns.add(pattern)
+                stat_ids.add(stat_id)
+    return sorted(patterns), sorted(stat_ids)
 
 
 def map_affix_text_to_trade_stat_ids(text_html: str, trade_stat_index: dict[str, set[str]]) -> tuple[list[str], list[str]]:
@@ -420,20 +550,21 @@ def dedupe_preserve_order(values: list[str]) -> list[str]:
 async def fetch_page_item_names(page_url: str) -> list[str]:
     async with build_async_client(max_connections=1) as client:
         html = await fetch_text(client, page_url)
-    parser = WhiteItemAnchorParser()
-    parser.feed(html)
-    return dedupe_preserve_order(parser.item_names)
+    return parse_page_html_artifacts(html).item_names
 
 
 async def collect_item_names(page_urls: list[str], workers: int) -> dict[str, list[str]]:
+    page_artifacts_by_slug = await collect_page_html_artifacts(page_urls, workers)
+    return {slug: page_artifacts.item_names for slug, page_artifacts in page_artifacts_by_slug.items()}
+
+
+async def collect_page_html_artifacts(page_urls: list[str], workers: int) -> dict[str, PageHtmlArtifacts]:
     semaphore = asyncio.Semaphore(max(1, workers))
 
-    async def task(page_url: str, client: Any) -> tuple[str, list[str]]:
+    async def task(page_url: str, client: Any) -> tuple[str, PageHtmlArtifacts]:
         async with semaphore:
             html = await fetch_text(client, page_url)
-        parser = WhiteItemAnchorParser()
-        parser.feed(html)
-        return page_slug_from_url(page_url), dedupe_preserve_order(parser.item_names)
+        return page_slug_from_url(page_url), parse_page_html_artifacts(html)
 
     async with build_async_client(max_connections=max(1, workers)) as client:
         tasks = [task(page_url, client) for page_url in page_urls]
@@ -479,8 +610,15 @@ def load_page_artifacts(split_dir: Path, trade_stat_index: dict[str, set[str]]) 
     return artifacts
 
 
-def build_page_categories(artifacts: list[PageArtifacts], item_names_by_slug: dict[str, list[str]]) -> dict[str, Any]:
+def build_page_categories(
+    artifacts: list[PageArtifacts],
+    item_names_by_slug: dict[str, list[str]],
+    extra_allowed_patterns_by_slug: dict[str, list[str]] | None = None,
+    extra_allowed_stat_ids_by_slug: dict[str, list[str]] | None = None,
+) -> dict[str, Any]:
     page_categories: dict[str, Any] = {}
+    extra_allowed_patterns_by_slug = extra_allowed_patterns_by_slug or {}
+    extra_allowed_stat_ids_by_slug = extra_allowed_stat_ids_by_slug or {}
     for artifact in artifacts:
         item_names = dedupe_preserve_order(
             [
@@ -492,8 +630,18 @@ def build_page_categories(artifacts: list[PageArtifacts], item_names_by_slug: di
             "label": artifact.baseitem_name,
             "pageGroup": artifact.page_group,
             "pageUrl": artifact.page_url,
-            "allowedPatterns": artifact.allowed_patterns,
-            "allowedStatIds": artifact.allowed_stat_ids,
+            "allowedPatterns": sorted(
+                {
+                    *artifact.allowed_patterns,
+                    *extra_allowed_patterns_by_slug.get(artifact.page_slug, []),
+                }
+            ),
+            "allowedStatIds": sorted(
+                {
+                    *artifact.allowed_stat_ids,
+                    *extra_allowed_stat_ids_by_slug.get(artifact.page_slug, []),
+                }
+            ),
             "itemNames": item_names,
             "aliases": dedupe_preserve_order(
                 [
@@ -696,10 +844,34 @@ async def main() -> int:
     trade_stats_payload = await fetch_trade_stats(args.trade_stats_url)
     trade_items_payload = await fetch_trade_items(args.trade_items_url)
     trade_stat_index = build_trade_stat_index(trade_stats_payload)
+    trade_skill_stat_index = build_trade_skill_stat_index(trade_stats_payload)
     artifacts = load_page_artifacts(split_dir, trade_stat_index)
-    item_names_by_slug = await collect_item_names([artifact.page_url for artifact in artifacts], args.workers)
+    page_html_artifacts_by_slug = await collect_page_html_artifacts(
+        [artifact.page_url for artifact in artifacts],
+        args.workers,
+    )
+    item_names_by_slug = {
+        page_slug: page_html_artifacts.item_names
+        for page_slug, page_html_artifacts in page_html_artifacts_by_slug.items()
+    }
+    granted_skill_patterns_by_slug: dict[str, list[str]] = {}
+    granted_skill_stat_ids_by_slug: dict[str, list[str]] = {}
+    for page_slug, page_html_artifacts in page_html_artifacts_by_slug.items():
+        granted_patterns, granted_stat_ids = map_granted_skill_names_to_trade_stats(
+            page_html_artifacts.granted_skill_names,
+            trade_skill_stat_index,
+        )
+        if granted_patterns:
+            granted_skill_patterns_by_slug[page_slug] = granted_patterns
+        if granted_stat_ids:
+            granted_skill_stat_ids_by_slug[page_slug] = granted_stat_ids
 
-    page_categories = build_page_categories(artifacts, item_names_by_slug)
+    page_categories = build_page_categories(
+        artifacts,
+        item_names_by_slug,
+        granted_skill_patterns_by_slug,
+        granted_skill_stat_ids_by_slug,
+    )
     logical_categories = build_logical_categories(page_categories)
     item_name_to_selection = build_item_name_selection_map(trade_items_payload, page_categories)
     item_name_to_page = build_item_name_map(page_categories, item_name_to_selection)
