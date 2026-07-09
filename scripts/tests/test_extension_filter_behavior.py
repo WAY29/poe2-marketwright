@@ -21,7 +21,7 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
             self.fail(result.stderr or result.stdout)
         return json.loads(result.stdout)
 
-    def test_page_bridge_keeps_related_pseudo_known_stats(self) -> None:
+    def test_page_bridge_hides_unmatched_known_stats_but_keeps_related_pseudo(self) -> None:
         result = self.run_node(
             r"""
             const fs = require("fs");
@@ -96,7 +96,7 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
         )
         self.assertEqual(
             [entry["id"] for entry in groups["explicit"]],
-            ["explicit.stat_strength", "explicit.stat_unclassified"],
+            ["explicit.stat_strength"],
         )
 
     def test_content_filter_keeps_related_pseudo_options(self) -> None:
@@ -216,6 +216,9 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
             const explicitUnclassified = new FakeElement("# new future stat", {
               "data-id": "explicit.stat_unclassified"
             });
+            const explicitPipeKeep = new FakeElement("# timeless stat", {
+              "data-id": "explicit.stat_timeless|1"
+            });
             root.children = [
               pseudoStrengthById,
               pseudoStrengthByText,
@@ -226,7 +229,8 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               pseudoUsesRemaining,
               explicitKeep,
               explicitHide,
-              explicitUnclassified
+              explicitUnclassified,
+              explicitPipeKeep
             ];
 
             const hooks = window.__testHooks;
@@ -239,14 +243,15 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
             ]);
             hooks.runtime.allStatIds = new Set([
               "explicit.stat_strength",
-              "explicit.stat_dexterity"
+              "explicit.stat_dexterity",
+              "explicit.stat_timeless|1"
             ]);
 
             const stats = { groups: 0, options: 0, matched: 0, hidden: 0 };
             hooks.filterOptionGroup(
               root,
               new Set(["# to strength"]),
-              new Set(["explicit.stat_strength"]),
+              new Set(["explicit.stat_strength", "explicit.stat_timeless|1"]),
               stats
             );
 
@@ -262,6 +267,7 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               explicitKeepHidden: explicitKeep.classList.contains(hooks.HIDDEN_CLASS),
               explicitHideHidden: explicitHide.classList.contains(hooks.HIDDEN_CLASS),
               explicitUnclassifiedHidden: explicitUnclassified.classList.contains(hooks.HIDDEN_CLASS),
+              explicitPipeKeepHidden: explicitPipeKeep.classList.contains(hooks.HIDDEN_CLASS),
               stats
             }));
             """
@@ -276,8 +282,9 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
         self.assertFalse(result["pseudoUsesRemainingHidden"])
         self.assertFalse(result["explicitKeepHidden"])
         self.assertTrue(result["explicitHideHidden"])
-        self.assertFalse(result["explicitUnclassifiedHidden"])
-        self.assertEqual(result["stats"]["hidden"], 2)
+        self.assertTrue(result["explicitUnclassifiedHidden"])
+        self.assertFalse(result["explicitPipeKeepHidden"])
+        self.assertEqual(result["stats"]["hidden"], 3)
 
     def test_content_filter_keeps_resistance_count_when_resistance_is_allowed(self) -> None:
         result = self.run_node(

@@ -563,6 +563,22 @@ def build_trade_stat_records(trade_stats_payload: dict[str, Any]) -> list[TradeS
     return records
 
 
+def build_trade_stat_universe(trade_stats_payload: dict[str, Any]) -> tuple[list[str], list[str]]:
+    patterns: set[str] = set()
+    stat_ids: set[str] = set()
+    for group in trade_stats_payload.get("result", []):
+        for entry in group.get("entries", []):
+            stat_id = entry.get("id")
+            text = entry.get("text")
+            if not stat_id or not text:
+                continue
+            pattern = canonicalize_stat_text(text)
+            if pattern:
+                patterns.add(pattern)
+            stat_ids.add(stat_id)
+    return sorted(patterns), sorted(stat_ids)
+
+
 def build_trade_skill_stat_index(trade_stats_payload: dict[str, Any]) -> dict[str, set[tuple[str, str]]]:
     index: dict[str, set[tuple[str, str]]] = {}
     for group in trade_stats_payload.get("result", []):
@@ -1127,15 +1143,18 @@ async def main() -> int:
     category_alias_to_selection = build_category_alias_map(page_categories, logical_categories)
     selection_options = build_selection_options(logical_categories, page_categories)
 
+    trade_stat_patterns, trade_stat_ids = build_trade_stat_universe(trade_stats_payload)
     all_patterns = sorted(
-        {
+        set(trade_stat_patterns)
+        | {
             pattern
             for page in page_categories.values()
             for pattern in page["allowedPatterns"]
         }
     )
     all_stat_ids = sorted(
-        {
+        set(trade_stat_ids)
+        | {
             stat_id
             for page in page_categories.values()
             for stat_id in page["allowedStatIds"]

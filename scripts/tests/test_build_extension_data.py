@@ -10,6 +10,7 @@ if str(SCRIPT_ROOT) not in sys.path:
 from build_extension_data import (
     PageArtifacts,
     build_trade_stat_records,
+    build_trade_stat_universe,
     build_unique_item_names_by_page,
     build_trade_skill_stat_index,
     build_item_name_map,
@@ -28,6 +29,49 @@ from build_extension_data import (
 
 
 class TradeStatMappingTests(unittest.TestCase):
+    def test_builds_trade_stat_universe_from_official_stats(self) -> None:
+        patterns, stat_ids = build_trade_stat_universe(
+            {
+                "result": [
+                    {
+                        "id": "explicit",
+                        "entries": [
+                            {"id": "explicit.stat_allowed", "text": "# to Strength"},
+                            {"id": "explicit.stat_not_in_category", "text": "# to Dexterity"},
+                            {"id": "explicit.stat_timeless|1", "text": "Only affects Passives in Very Small Ring"},
+                            {"id": "", "text": "# ignored"},
+                            {"id": "explicit.stat_no_text"},
+                        ],
+                    },
+                    {
+                        "id": "pseudo",
+                        "entries": [
+                            {"id": "pseudo.pseudo_total_strength", "text": "+# total to Strength"},
+                        ],
+                    },
+                ]
+            }
+        )
+
+        self.assertEqual(
+            patterns,
+            [
+                "# to Dexterity",
+                "# to Strength",
+                "# total to Strength",
+                "Only affects Passives in Very Small Ring",
+            ],
+        )
+        self.assertEqual(
+            stat_ids,
+            [
+                "explicit.stat_allowed",
+                "explicit.stat_not_in_category",
+                "explicit.stat_timeless|1",
+                "pseudo.pseudo_total_strength",
+            ],
+        )
+
     def test_adds_synthetic_waystone_tier_item_names(self) -> None:
         artifacts = [
             PageArtifacts(

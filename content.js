@@ -35,7 +35,7 @@
   const PSEUDO_STAT_GROUP_PREFIX_RE = /^pseudo\s*[:：-]?\s*/i;
   const PSEUDO_STAT_ID_RE = /\bpseudo\.[\w.-]+\b/i;
   const TRADE_STAT_ID_RE =
-    /\b(?:pseudo|explicit|implicit|fractured|crafted|enchant|rune|desecrated|sanctum|skill)\.[\w.-]+\b/i;
+    /\b(?:pseudo|explicit|implicit|fractured|crafted|enchant|rune|desecrated|sanctum|skill)\.[\w.|-]+\b/i;
   const ALWAYS_VISIBLE_PSEUDO_STAT_ID_RE = /^pseudo\.pseudo_number_of_(?:[\w]+_mods|uses_remaining)$/i;
   const ALWAYS_VISIBLE_PSEUDO_STAT_TEXT_RE =
     /^#?\s*(?:(?:(?:crafted|desecrated|empty|enchant|fractured|implicit|prefix|suffix|unrevealed)\s+)*modifiers?|uses remaining(?:\s*\([^)]*\))?)\s*$/i;
@@ -1336,7 +1336,7 @@
       }
       const statId = getOptionStatId(option);
       const pattern = getOptionPatternKey(option);
-      if (!isClassifiedStatOption(statId, pattern)) {
+      if (!isFilterableStatOption(statId, pattern)) {
         continue;
       }
       const root = findOptionRoot(option);
@@ -1417,7 +1417,7 @@
       }
       if (
         isAllowedStatOption(statId, pattern, allowedPatterns, allowedStatIds) ||
-        isClassifiedStatOption(statId, pattern)
+        isFilterableStatOption(statId, pattern)
       ) {
         affixOptionCount += 1;
       }
@@ -1441,7 +1441,7 @@
         option.classList.toggle(HIDDEN_CLASS, shouldHide);
         continue;
       }
-      if (!isAllowedStatOption(statId, pattern, allowedPatterns, allowedStatIds) && !isClassifiedStatOption(statId, pattern)) {
+      if (!isAllowedStatOption(statId, pattern, allowedPatterns, allowedStatIds) && !isFilterableStatOption(statId, pattern)) {
         continue;
       }
       const shouldHide = shouldHideStatOption(statId, pattern, allowedPatterns, allowedStatIds);
@@ -1520,7 +1520,7 @@
   }
 
   function shouldHideStatOption(statId, pattern, allowedPatterns, allowedStatIds) {
-    return isClassifiedStatOption(statId, pattern) && !isAllowedStatOption(statId, pattern, allowedPatterns, allowedStatIds);
+    return isFilterableStatOption(statId, pattern) && !isAllowedStatOption(statId, pattern, allowedPatterns, allowedStatIds);
   }
 
   function isAllowedStatOption(statId, pattern, allowedPatterns, allowedStatIds) {
@@ -1529,6 +1529,10 @@
 
   function isClassifiedStatOption(statId, pattern) {
     return Boolean((statId && runtime.allStatIds.has(statId)) || (pattern && runtime.allPatterns.has(pattern)));
+  }
+
+  function isFilterableStatOption(statId, pattern) {
+    return Boolean(statId || isClassifiedStatOption(statId, pattern));
   }
 
   function isPseudoStatId(statId) {
