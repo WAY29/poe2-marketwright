@@ -11,6 +11,7 @@ from build_extension_data import (
     PageArtifacts,
     build_trade_stat_records,
     build_trade_stat_universe,
+    collect_base_item_mod_stat_artifacts,
     build_unique_item_names_by_page,
     build_trade_skill_stat_index,
     build_item_name_map,
@@ -294,6 +295,51 @@ class TradeStatMappingTests(unittest.TestCase):
         self.assertIn("explicit.stat_reduced_charm_charges_used", charms.allowed_stat_ids)
         self.assertIn("implicit.stat_reduced_charm_charges_used", charms.allowed_stat_ids)
         self.assertIn("explicit.stat_charm_charges_gained", charms.allowed_stat_ids)
+
+    def test_maps_base_item_mods_to_official_trade_stats(self) -> None:
+        trade_stats_payload = {
+            "result": [
+                {
+                    "id": "implicit",
+                    "entries": [
+                        {
+                            "id": "implicit.stat_adds_irradiated",
+                            "text": "Adds Irradiated to a Map # use remaining",
+                        }
+                    ],
+                },
+                {
+                    "id": "explicit",
+                    "entries": [
+                        {"id": "explicit.stat_unique_only", "text": "Only on a unique item"}
+                    ],
+                },
+            ]
+        }
+        page_artifacts = {
+            "Any_Base_Item": parse_page_html_artifacts(
+                """
+                <div class="Stats">
+                  <div class="implicitMod">Adds Irradiated to a Map <br/><span>10</span> uses remaining</div>
+                </div>
+                <div id="Unique">
+                  <div class="explicitMod">Only on a unique item</div>
+                </div>
+                """
+            )
+        }
+
+        patterns_by_slug, stat_ids_by_slug = collect_base_item_mod_stat_artifacts(
+            page_artifacts,
+            build_trade_stat_index(trade_stats_payload),
+            build_trade_stat_records(trade_stats_payload),
+        )
+
+        self.assertEqual(
+            patterns_by_slug,
+            {"Any_Base_Item": ["Adds Irradiated to a Map # use remaining"]},
+        )
+        self.assertEqual(stat_ids_by_slug, {"Any_Base_Item": ["implicit.stat_adds_irradiated"]})
 
     def test_discovers_unique_item_names_by_page_from_trade_items(self) -> None:
         self.assertEqual(poe2db_item_slug("Ngamahu's Chosen"), "Ngamahus_Chosen")

@@ -326,6 +326,7 @@ class PageArtifacts:
 class PageHtmlArtifacts:
     item_names: list[str]
     granted_skill_names: list[str]
+    base_item_mod_texts: list[str]
     item_mod_texts: list[str]
 
 
@@ -350,6 +351,10 @@ class Poe2dbPageArtifactsParser(HTMLParser):
         self.capture_item_mod_depth = 0
         self.current_item_mod_text: list[str] = []
         self.item_mod_texts: list[str] = []
+        self.capture_base_stats_depth = 0
+        self.capture_base_item_mod_depth = 0
+        self.current_base_item_mod_text: list[str] = []
+        self.base_item_mod_texts: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
         attrs_dict = dict(attrs)
@@ -359,6 +364,21 @@ class Poe2dbPageArtifactsParser(HTMLParser):
         if tag == "div" and {"implicitMod", "explicitMod"}.intersection(class_tokens):
             self.capture_item_mod_depth = 1
             self.current_item_mod_text = []
+
+        if self.capture_base_stats_depth > 0 and tag not in HTML_VOID_TAGS:
+            self.capture_base_stats_depth += 1
+        elif tag == "div" and "Stats" in class_tokens:
+            self.capture_base_stats_depth = 1
+
+        if self.capture_base_item_mod_depth > 0 and tag not in HTML_VOID_TAGS:
+            self.capture_base_item_mod_depth += 1
+        elif (
+            self.capture_base_stats_depth > 0
+            and tag == "div"
+            and {"implicitMod", "explicitMod"}.intersection(class_tokens)
+        ):
+            self.capture_base_item_mod_depth = 1
+            self.current_base_item_mod_text = []
 
         if self.capture_implicit_depth > 0:
             self.record_granted_skill_icon(tag, attrs_dict)
@@ -390,6 +410,14 @@ class Poe2dbPageArtifactsParser(HTMLParser):
             if self.capture_item_mod_depth == 0:
                 self.finish_item_mod()
 
+        if self.capture_base_item_mod_depth > 0:
+            self.capture_base_item_mod_depth -= 1
+            if self.capture_base_item_mod_depth == 0:
+                self.finish_base_item_mod()
+
+        if self.capture_base_stats_depth > 0:
+            self.capture_base_stats_depth -= 1
+
         if self.capture_implicit_depth > 0:
             self.capture_implicit_depth -= 1
             if self.capture_implicit_depth == 0:
@@ -408,6 +436,8 @@ class Poe2dbPageArtifactsParser(HTMLParser):
             self.current_text.append(data)
         if self.capture_item_mod_depth > 0:
             self.current_item_mod_text.append(data)
+        if self.capture_base_item_mod_depth > 0:
+            self.current_base_item_mod_text.append(data)
         if self.capture_implicit_depth > 0:
             self.current_implicit_text.append(data)
 
@@ -434,6 +464,12 @@ class Poe2dbPageArtifactsParser(HTMLParser):
         if text:
             self.item_mod_texts.append(text)
         self.current_item_mod_text = []
+
+    def finish_base_item_mod(self) -> None:
+        text = WHITESPACE_RE.sub(" ", "".join(self.current_base_item_mod_text)).strip()
+        if text:
+            self.base_item_mod_texts.append(text)
+        self.current_base_item_mod_text = []
 
 
 def humanize_slug(slug: str) -> str:
@@ -476,6 +512,8 @@ def plural_normalized_match_key(text: str) -> str:
 def singularize_token(token: str) -> str:
     if token in PLURAL_NORMALIZATION_STOP_WORDS or len(token) <= 3:
         return token
+    if token.endswith("uses"):
+        return token[:-1]
     if token.endswith("ies") and len(token) > 4:
         return f"{token[:-3]}y"
     if token.endswith(("ses", "xes", "zes", "ches", "shes")):
@@ -510,6 +548,7 @@ def parse_page_html_artifacts(html: str, item_class_code: str | None = None) -> 
     return PageHtmlArtifacts(
         item_names=dedupe_preserve_order(parser.item_names),
         granted_skill_names=dedupe_preserve_order(parser.granted_skill_names),
+        base_item_mod_texts=dedupe_preserve_order(parser.base_item_mod_texts),
         item_mod_texts=dedupe_preserve_order(parser.item_mod_texts),
     )
 
@@ -719,6 +758,41 @@ async def collect_page_html_artifacts(
         tasks = [task(page_url, client) for page_url in page_urls]
         results = await asyncio.gather(*tasks)
     return dict(results)
+
+
+def map_item_mod_texts_to_trade_stats(
+    item_mod_texts: list[str],
+    trade_stat_index: dict[str, set[str]],
+    trade_stat_records: list[TradeStatRecord],
+) -> tuple[list[str], list[str]]:
+    _, stat_ids = map_trade_stat_texts_to_trade_stat_ids(
+        item_mod_texts,
+        trade_stat_index,
+        trade_stat_records,
+        include_unmatched_patterns=False,
+    )
+    patterns = sorted({record.pattern for record in trade_stat_records if record.stat_id in stat_ids})
+    return patterns, stat_ids
+
+
+def collect_base_item_mod_stat_artifacts(
+    page_html_artifacts_by_slug: dict[str, PageHtmlArtifacts],
+    trade_stat_index: dict[str, set[str]],
+    trade_stat_records: list[TradeStatRecord],
+) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
+    patterns_by_slug: dict[str, list[str]] = {}
+    stat_ids_by_slug: dict[str, list[str]] = {}
+    for page_slug, page_html_artifacts in page_html_artifacts_by_slug.items():
+        patterns, stat_ids = map_item_mod_texts_to_trade_stats(
+            page_html_artifacts.base_item_mod_texts,
+            trade_stat_index,
+            trade_stat_records,
+        )
+        if patterns:
+            patterns_by_slug[page_slug] = patterns
+        if stat_ids:
+            stat_ids_by_slug[page_slug] = stat_ids
+    return patterns_by_slug, stat_ids_by_slug
 
 
 async def collect_unique_item_stat_artifacts(
@@ -1098,6 +1172,11 @@ async def main() -> int:
         page_slug: page_html_artifacts.item_names
         for page_slug, page_html_artifacts in page_html_artifacts_by_slug.items()
     }
+    base_item_mod_patterns_by_slug, base_item_mod_stat_ids_by_slug = collect_base_item_mod_stat_artifacts(
+        page_html_artifacts_by_slug,
+        trade_stat_index,
+        trade_stat_records,
+    )
     granted_skill_patterns_by_slug: dict[str, list[str]] = {}
     granted_skill_stat_ids_by_slug: dict[str, list[str]] = {}
     for page_slug, page_html_artifacts in page_html_artifacts_by_slug.items():
@@ -1113,8 +1192,8 @@ async def main() -> int:
     base_page_categories = build_page_categories(
         artifacts,
         item_names_by_slug,
-        granted_skill_patterns_by_slug,
-        granted_skill_stat_ids_by_slug,
+        merge_extra_artifacts(granted_skill_patterns_by_slug, base_item_mod_patterns_by_slug),
+        merge_extra_artifacts(granted_skill_stat_ids_by_slug, base_item_mod_stat_ids_by_slug),
     )
     unique_item_patterns_by_slug, unique_item_stat_ids_by_slug = await collect_unique_item_stat_artifacts(
         build_unique_item_names_by_page(trade_items_payload, base_page_categories),
@@ -1124,10 +1203,12 @@ async def main() -> int:
     )
     extra_allowed_patterns_by_slug = merge_extra_artifacts(
         granted_skill_patterns_by_slug,
+        base_item_mod_patterns_by_slug,
         unique_item_patterns_by_slug,
     )
     extra_allowed_stat_ids_by_slug = merge_extra_artifacts(
         granted_skill_stat_ids_by_slug,
+        base_item_mod_stat_ids_by_slug,
         unique_item_stat_ids_by_slug,
     )
 
