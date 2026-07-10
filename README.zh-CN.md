@@ -49,4 +49,8 @@ uv run --project scripts python scripts/build_extension_data.py --split-dir buil
 - 官方 `trade2` 相关命名与词条兼容性来自：
   - `https://www.pathofexile.com/api/trade2/data/items`
   - `https://www.pathofexile.com/api/trade2/data/stats`
-- C/D 报价换算：`https://api.poe2scout.com/poe2/Leagues/{赛季}/ReferenceCurrencies`
+- E/C/D 报价换算：`https://api.poe2scout.com/poe2/Leagues/{赛季}/ReferenceCurrencies`
+
+## 致谢
+
+感谢 [PoE2DB](https://poe2db.tw/us/) 提供词缀过滤所需的词缀与物品类别数据，感谢 [Poe2Scout](https://poe2scout.com/) 提供报价换算所需的参考通货汇率。

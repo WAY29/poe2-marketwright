@@ -48,4 +48,8 @@ uv run --project scripts python scripts/build_extension_data.py --split-dir buil
 - `https://poe2db.tw/us/Modifiers`
 - category pages such as `https://poe2db.tw/us/Amulets#ModifiersCalc`
 - official item/stat naming from `https://www.pathofexile.com/api/trade2/data/items` and `https://www.pathofexile.com/api/trade2/data/stats` is compatible with the generated canonical patterns
-- C/D conversion rates come from `https://api.poe2scout.com/poe2/Leagues/{league}/ReferenceCurrencies`
+- E/C/D conversion rates come from `https://api.poe2scout.com/poe2/Leagues/{league}/ReferenceCurrencies`
+
+## Acknowledgements
+
+Thanks to [PoE2DB](https://poe2db.tw/us/) for the modifier and item-category data used by the affix filter, and to [Poe2Scout](https://poe2scout.com/) for the reference currency rates used by price conversion.
