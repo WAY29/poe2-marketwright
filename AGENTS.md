@@ -76,3 +76,10 @@ git diff --check
 ```
 
 Use the smallest relevant test while iterating, then run the full suite before delivery. Reload the unpacked extension and refresh the trade page to manually verify UI and page-context changes.
+
+## Release Packaging
+
+- Before creating a release tag, build the extension into a temporary directory and validate the packaged `manifest.json`, not only the source tree.
+- The release package must include every manifest icon, action icon, background service worker, content-script JavaScript and CSS file, default-locale message file, and every web-accessible resource.
+- Expand and validate globbed web-accessible resources such as `images/currency/*.png`; do not treat a glob pattern as a literal file path.
+- When a new content script or local asset is added, update `.github/workflows/release.yml` packaging commands in the same change and run the equivalent local package validation before release.

@@ -30,6 +30,7 @@ jobs:
           cp manifest.json dist/poe2-marketwright/
           cp background.js dist/poe2-marketwright/
           cp pob-copy.js dist/poe2-marketwright/
+          cp currency-conversion.js dist/poe2-marketwright/
           cp content.js dist/poe2-marketwright/
           cp content.css dist/poe2-marketwright/
           cp page-bridge.js dist/poe2-marketwright/
@@ -42,6 +43,7 @@ jobs:
         run: |
           python <<'PY'
           import json
+          import glob
           import pathlib
           import sys
 
@@ -58,14 +60,20 @@ jobs:
               required.update(content_script.get("js", []))
               required.update(content_script.get("css", []))
 
+          wildcard_resources = set()
           for resource_group in manifest.get("web_accessible_resources", []):
-              required.update(resource_group.get("resources", []))
+              for resource in resource_group.get("resources", []):
+                  if glob.has_magic(resource):
+                      wildcard_resources.add(resource)
+                  else:
+                      required.add(resource)
 
           default_locale = manifest.get("default_locale")
           if default_locale:
               required.add(f"_locales/{default_locale}/messages.json")
 
           missing = sorted(path for path in required if not (root / path).exists())
+          missing.extend(sorted(path for path in wildcard_resources if not list(root.glob(path))))
           if missing:
               print("Missing packaged files:")
               for path in missing:
