@@ -9,6 +9,7 @@
   const READY_TYPE = "POE2_MARKETWRIGHT_READY";
   const STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
   const POB_MESSAGE_SOURCE = "poe2-marketwright-pob-copy";
+  const FAVORITES_MESSAGE_SOURCE = "poe2-marketwright-favorites";
   const CURRENCY_MESSAGE_SOURCE = "poe2-marketwright-currency-conversion";
   const NUMBER_RE = /([-+]?\d+(?:\.\d+)?)/g;
   const PSEUDO_STAT_GROUP_ID = "pseudo";
@@ -97,6 +98,8 @@
     lastPayload: {
       enabled: false,
       pobCopyEnabled: false,
+      // Capture result details during initial content-script startup. Content state can disable this afterward.
+      favoritesEnabled: true,
       currencyConversionEnabled: false,
       allowedKeys: [],
       allowedStatIds: [],
@@ -111,7 +114,7 @@
       return;
     }
 
-    runtime.lastPayload = event.data.payload || runtime.lastPayload;
+    runtime.lastPayload = { ...runtime.lastPayload, ...(event.data.payload || {}) };
     applyKnownStatsFilter();
     notifyState();
   });
@@ -217,9 +220,24 @@
       );
     };
 
+    const emitFavorites = (url, body) => {
+      if (!runtime.lastPayload.favoritesEnabled || !url || !String(url).includes("/api/trade2/fetch/")) {
+        return;
+      }
+      window.postMessage(
+        {
+          source: FAVORITES_MESSAGE_SOURCE,
+          url: String(url),
+          body: typeof body === "string" ? body : null
+        },
+        "*"
+      );
+    };
+
     const emit = (url, body, searchUrl) => {
       emitCurrencyUpdate(url, body, searchUrl);
       emitPobCopy(url, body);
+      emitFavorites(url, body);
     };
 
     const originalFetch = window.fetch;
@@ -238,7 +256,11 @@
         const responsePromise = originalFetch.apply(this, args);
         if (
           targetUrl?.includes("/api/trade2/fetch/") &&
-          (runtime.lastPayload.pobCopyEnabled || runtime.lastPayload.currencyConversionEnabled)
+          (
+            runtime.lastPayload.pobCopyEnabled ||
+            runtime.lastPayload.favoritesEnabled ||
+            runtime.lastPayload.currencyConversionEnabled
+          )
         ) {
           responsePromise
             .then((response) => response.clone().text())
@@ -264,7 +286,11 @@
             "load",
             () => {
               let body = null;
-              if (runtime.lastPayload.pobCopyEnabled || runtime.lastPayload.currencyConversionEnabled) {
+              if (
+                runtime.lastPayload.pobCopyEnabled ||
+                runtime.lastPayload.favoritesEnabled ||
+                runtime.lastPayload.currencyConversionEnabled
+              ) {
                 try {
                   if (this.responseType === "" || this.responseType === "text") {
                     body = this.responseText;

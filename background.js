@@ -109,7 +109,13 @@
           return response.text();
         })
         .then((body) => sendResponse({ ok: true, body }))
-        .catch((error) => sendResponse({ ok: false, error: String(error) }));
+        .catch((error) => {
+          console.error("[PoE2 Marketwright] English item fetch failed", {
+            url: englishUrl,
+            error: error?.message || String(error)
+          });
+          sendResponse({ ok: false, error: String(error) });
+        });
       return true;
     }
 

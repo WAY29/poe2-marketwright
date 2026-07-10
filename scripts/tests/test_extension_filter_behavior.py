@@ -629,6 +629,144 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
         self.assertEqual(result["englishLogbook"], {"kind": "logical", "id": "Maps", "source": "item", "match": "expedition logbook"})
         self.assertEqual(result["expeditionTablet"], {"kind": "page", "id": "Expedition_Tablet", "source": "item", "match": "探险碑牌"})
 
+    def test_content_classifies_favorite_by_base_name_and_trade_category(self) -> None:
+        result = self.run_node(
+            r"""
+            const fs = require("fs");
+            const vm = require("vm");
+
+            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { getFavoriteItemClassification, runtime };\n})();"
+            );
+
+            const window = {
+              addEventListener() {},
+              clearTimeout() {},
+              setTimeout() { return 1; }
+            };
+            const sandbox = {
+              window,
+              document: {},
+              location: { pathname: "/trade2" },
+              console,
+              Element: class {},
+              HTMLInputElement: class {},
+              HTMLTextAreaElement: class {},
+              MutationObserver: class {},
+              chrome: {}
+            };
+
+            vm.runInNewContext(source, sandbox, { filename: "content.js" });
+            const hooks = window.__testHooks;
+            hooks.runtime.data = {
+              itemNameToSelection: {
+                "warmonger bow": { kind: "page", id: "Bows" }
+              },
+              itemNameToPage: {}
+            };
+
+            console.log(JSON.stringify(hooks.getFavoriteItemClassification({
+              name: "Spirit Fletch",
+              typeLine: "Warmonger Bow"
+            })));
+            """
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "baseName": "Warmonger Bow",
+                "category": "weapon.bow",
+                "itemType": "Bow",
+            },
+        )
+
+    def test_favorites_disclosure_uses_the_full_feature_row_and_keeps_its_switch_independent(self) -> None:
+        result = self.run_node(
+            r"""
+            const fs = require("fs");
+            const vm = require("vm");
+
+            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const originalSource = fs.readFileSync("content.js", "utf8");
+            let source = originalSource.replace(bootstrapCall, "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { applyFavoritesDrawerState, runtime };\n})();"
+            );
+
+            const classes = new Set();
+            const disclosure = {
+              attributes: {},
+              disabled: null,
+              setAttribute(name, value) { this.attributes[name] = value; }
+            };
+            const window = {
+              addEventListener() {},
+              clearTimeout() {},
+              setTimeout() { return 1; }
+            };
+            const sandbox = {
+              window,
+              document: {},
+              location: { pathname: "/trade2" },
+              console,
+              Element: class {},
+              HTMLInputElement: class {},
+              HTMLTextAreaElement: class {},
+              MutationObserver: class {},
+              chrome: {}
+            };
+
+            vm.runInNewContext(source, sandbox, { filename: "content.js" });
+            const hooks = window.__testHooks;
+            hooks.runtime.state = {
+              favoritesEnabled: true,
+              favoritesDrawerOpen: true,
+              collapsed: false
+            };
+            hooks.runtime.ui = {
+              root: {
+                classList: {
+                  toggle(name, value) {
+                    if (value) classes.add(name);
+                    else classes.delete(name);
+                  }
+                }
+              },
+              favoritesDisclosure: disclosure
+            };
+            hooks.applyFavoritesDrawerState();
+            const enabled = {
+              expanded: disclosure.attributes["aria-expanded"],
+              disabled: disclosure.disabled,
+              openClass: classes.has("poe2-marketwright-favorites-open")
+            };
+
+            hooks.runtime.state.favoritesEnabled = false;
+            hooks.applyFavoritesDrawerState();
+            console.log(JSON.stringify({
+              hasDisclosure: originalSource.includes("poe2-marketwright-favorites-disclosure"),
+              hasLegacyArrow: originalSource.includes("poe2-marketwright-favorites-toggle"),
+              enabled,
+              disabled: disclosure.disabled
+            }));
+            """
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "hasDisclosure": True,
+                "hasLegacyArrow": False,
+                "enabled": {"expanded": "true", "disabled": False, "openClass": True},
+                "disabled": True,
+            },
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

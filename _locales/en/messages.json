@@ -137,5 +137,83 @@
   },
   "currencyLeagueUnavailable": {
     "message": "League: unavailable"
+  },
+  "toggleFavoritesDrawer": {
+    "message": "Toggle favorites"
+  },
+  "expandFavoritesDrawer": {
+    "message": "Expand favorites"
+  },
+  "collapseFavoritesDrawer": {
+    "message": "Collapse favorites"
+  },
+  "favoritesSearch": {
+    "message": "Search favorites"
+  },
+  "favoritesLeague": {
+    "message": "Favorites: $1"
+  },
+  "favoritesLeagueUnavailable": {
+    "message": "Favorites: league unavailable"
+  },
+  "favoritesEmpty": {
+    "message": "No favorites in this league"
+  },
+  "favoritesNoMatches": {
+    "message": "No matching favorites"
+  },
+  "favoriteMoreMods": {
+    "message": "+$1 more"
+  },
+  "renameFavorite": {
+    "message": "Rename favorite"
+  },
+  "deleteFavorite": {
+    "message": "Delete favorite"
+  },
+  "undoFavoriteDelete": {
+    "message": "Undo"
+  },
+  "favoriteDeleted": {
+    "message": "Favorite deleted"
+  },
+  "favoriteSearchLoading": {
+    "message": "Creating search..."
+  },
+  "favoriteSearchError": {
+    "message": "Search failed. Retry."
+  },
+  "favoriteSave": {
+    "message": "Save favorite"
+  },
+  "favoriteRemove": {
+    "message": "Remove favorite"
+  },
+  "favoriteLoading": {
+    "message": "Loading item..."
+  },
+  "favoriteSaved": {
+    "message": "Saved"
+  },
+  "favoriteRemoved": {
+    "message": "Removed"
+  },
+  "favoriteError": {
+    "message": "Unable to save favorite"
+  },
+  "favoritesTitle": {
+    "message": "Favorites"
+  },
+  "enableFavorites": {
+    "message": "Enable favorites"
+  },
+  "disableFavorites": {
+    "message": "Disable favorites"
+  },
+  "closeFavoritesDrawer": {
+    "message": "Close favorites"
+  },
+  "favoriteTooltipRarity": {
+    "message": "Rarity: $1"
   }
 }

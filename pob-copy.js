@@ -152,7 +152,10 @@
 
     const setButtonStatus = (button, status) => {
       button.dataset.status = status;
-      button.textContent = labels[status] || labels.ready;
+      button.title = labels[status] || labels.ready;
+      button.setAttribute("aria-label", button.title);
+      button.innerHTML =
+        '<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M5 1.75h7.25c.69 0 1.25.56 1.25 1.25v8.25c0 .69-.56 1.25-1.25 1.25H8.5V11h3.5V3.25H5V1.75zm-2.25 3h6.5c.69 0 1.25.56 1.25 1.25v7c0 .69-.56 1.25-1.25 1.25h-6.5c-.69 0-1.25-.56-1.25-1.25V6c0-.69.56-1.25 1.25-1.25zM3.75 6.25v6.5h5.5v-6.5h-5.5z"></path></svg>';
     };
 
     const copyToClipboard = async (text) => {

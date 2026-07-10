@@ -40,6 +40,274 @@
   display: none;
 }
 
+.poe2-marketwright-favorites-drawer {
+  display: none;
+  position: absolute;
+  top: 0;
+  right: calc(100% + 6px);
+  width: min(340px, calc(100vw - 52px));
+  max-height: min(70vh, 540px);
+  overflow: hidden;
+  color: #d9c79e;
+  background:
+    linear-gradient(180deg, rgba(39, 30, 21, 0.98) 0%, rgba(17, 13, 9, 0.98) 100%);
+  border: 1px solid rgba(105, 78, 43, 0.92);
+  border-radius: 5px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 220, 0.05),
+    0 8px 22px rgba(0, 0, 0, 0.44);
+}
+
+#poe2-trade2-affix-filter-root.poe2-marketwright-favorites-open .poe2-marketwright-favorites-drawer {
+  display: flex;
+  flex-direction: column;
+}
+
+#poe2-trade2-affix-filter-root.poe2-trade2-affix-filter-collapsed .poe2-marketwright-favorites-drawer {
+  display: none;
+}
+
+.poe2-marketwright-favorites-header {
+  display: grid;
+  gap: 6px;
+  padding: 8px;
+  border-bottom: 1px solid rgba(105, 78, 43, 0.72);
+  background: rgba(12, 10, 8, 0.5);
+}
+
+.poe2-marketwright-favorites-header-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.poe2-marketwright-favorites-league {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: #ead7aa;
+  font: 700 11px/1.2 Georgia, "Times New Roman", serif;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.poe2-marketwright-favorites-close {
+  display: inline-flex;
+  flex: 0 0 20px;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid rgba(136, 104, 57, 0.96);
+  border-radius: 3px;
+  color: #ead7aa;
+  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 238, 188, 0.16),
+    0 1px 0 rgba(0, 0, 0, 0.45);
+  cursor: pointer;
+}
+
+.poe2-marketwright-favorites-close svg {
+  width: 12px;
+  height: 12px;
+}
+
+.poe2-marketwright-favorites-close:hover,
+.poe2-marketwright-favorites-close:focus-visible {
+  border-color: #d0a45c;
+  filter: brightness(1.08);
+  outline: none;
+}
+
+.poe2-marketwright-favorites-search-field {
+  display: block;
+}
+
+.poe2-marketwright-favorites-search-field input,
+.poe2-marketwright-favorite-rename-input {
+  width: 100%;
+  height: 25px;
+  padding: 3px 7px;
+  border: 1px solid #5c4529;
+  border-radius: 3px;
+  color: #ead7aa;
+  background: linear-gradient(180deg, rgba(45, 34, 24, 0.98) 0%, rgba(20, 15, 10, 0.98) 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 242, 214, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+  font: 11px/1.2 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.poe2-marketwright-favorites-search-field input:focus,
+.poe2-marketwright-favorite-rename-input:focus {
+  outline: 1px solid rgba(198, 147, 72, 0.88);
+  border-color: #b27f38;
+}
+
+.poe2-marketwright-favorites-list {
+  min-height: 72px;
+  overflow-y: auto;
+}
+
+.poe2-marketwright-favorite-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  border-bottom: 1px solid rgba(105, 78, 43, 0.5);
+}
+
+.poe2-marketwright-favorite-launch {
+  display: grid;
+  min-width: 0;
+  gap: 3px;
+  padding: 8px;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  font: inherit;
+  text-align: left;
+}
+
+.poe2-marketwright-favorite-row:hover,
+.poe2-marketwright-favorite-row:focus-within {
+  background: rgba(153, 108, 50, 0.13);
+}
+
+.poe2-marketwright-favorite-launch:focus-visible {
+  outline: none;
+}
+
+.poe2-marketwright-favorite-launch:focus-visible {
+  box-shadow: inset 2px 0 0 #d0a45c;
+}
+
+.poe2-marketwright-favorite-name {
+  overflow: hidden;
+  color: #ead7aa;
+  font: 700 11px/1.2 Georgia, "Times New Roman", serif;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.poe2-marketwright-favorite-meta,
+.poe2-marketwright-favorite-mods,
+.poe2-marketwright-favorite-more {
+  overflow: hidden;
+  color: #a99064;
+  font-size: 10px;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.poe2-marketwright-favorite-mods {
+  display: grid;
+  overflow: visible;
+  color: #d0bd91;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+.poe2-marketwright-favorite-mods span {
+  overflow-wrap: anywhere;
+  white-space: normal;
+}
+
+.poe2-marketwright-favorite-more {
+  color: #8f7b58;
+}
+
+.poe2-marketwright-favorite-actions {
+  display: flex;
+  align-items: flex-start;
+  gap: 3px;
+  padding: 7px 7px 0 0;
+}
+
+.poe2-marketwright-favorite-action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: 1px solid rgba(122, 88, 47, 0.92);
+  border-radius: 3px;
+  color: #d9c79e;
+  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  cursor: pointer;
+}
+
+.poe2-marketwright-favorite-action svg {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+}
+
+.poe2-marketwright-favorite-action:hover,
+.poe2-marketwright-favorite-action:focus-visible {
+  border-color: #d0a45c;
+  filter: brightness(1.08);
+  outline: none;
+}
+
+.poe2-marketwright-favorite-delete:hover,
+.poe2-marketwright-favorite-delete:focus-visible {
+  border-color: #b76a6a;
+  color: #f2c0c0;
+}
+
+.poe2-marketwright-favorites-empty {
+  padding: 12px 8px;
+  color: #8f7b58;
+  font-size: 10px;
+  text-align: center;
+}
+
+.poe2-marketwright-favorites-undo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 7px 8px;
+  border-top: 1px solid rgba(105, 78, 43, 0.72);
+  color: #d0bd91;
+  background: rgba(12, 10, 8, 0.72);
+  font-size: 10px;
+}
+
+.poe2-marketwright-favorites-undo[hidden] {
+  display: none;
+}
+
+.poe2-marketwright-favorites-undo button {
+  padding: 2px 6px;
+  border: 1px solid rgba(136, 104, 57, 0.96);
+  border-radius: 3px;
+  color: #ead7aa;
+  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  cursor: pointer;
+  font: 700 10px/1.2 Georgia, "Times New Roman", serif;
+}
+
+.poe2-marketwright-favorite-row[data-status="loading"] .poe2-marketwright-favorite-launch {
+  cursor: progress;
+  opacity: 0.68;
+}
+
+.poe2-marketwright-favorite-search-status {
+  grid-column: 1 / -1;
+  padding: 0 8px 7px;
+  color: #a99064;
+  font-size: 10px;
+}
+
+.poe2-marketwright-favorite-row[data-status="error"] .poe2-marketwright-favorite-search-status {
+  color: #f2c0c0;
+}
+
 .poe2-trade2-affix-filter-header {
   display: flex;
   align-items: center;
@@ -89,6 +357,9 @@
   height: 19px;
   border-radius: 3px;
   cursor: pointer;
+}
+
+.poe2-trade2-affix-filter-header .poe2-trade2-affix-filter-collapse-toggle {
   margin-left: auto;
 }
 
@@ -174,6 +445,48 @@
 
 .poe2-trade2-affix-filter-currency-feature {
   border-color: rgba(118, 82, 42, 0.86);
+}
+
+.poe2-marketwright-favorites-feature {
+  position: relative;
+  display: flex;
+  align-items: center;
+  min-height: 35px;
+  padding: 0;
+  border-color: rgba(144, 101, 48, 0.86);
+}
+
+.poe2-marketwright-favorites-disclosure {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  width: 100%;
+  padding: 7px 48px 7px 7px;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.poe2-marketwright-favorites-disclosure:hover:not(:disabled) {
+  background: rgba(141, 98, 42, 0.16);
+}
+
+.poe2-marketwright-favorites-disclosure:focus-visible {
+  outline: 2px solid rgba(211, 166, 83, 0.86);
+  outline-offset: -3px;
+}
+
+.poe2-marketwright-favorites-disclosure:disabled {
+  cursor: default;
+}
+
+.poe2-marketwright-favorites-feature .poe2-trade2-affix-filter-feature-toggle {
+  position: relative;
+  z-index: 1;
+  margin: 7px 7px 7px auto;
 }
 
 .poe2-trade2-affix-filter-currency-league {
@@ -344,40 +657,70 @@
   display: none !important;
 }
 
-.poe2-marketwright-pob-copy-button {
+.poe2-marketwright-pob-copy-button,
+.poe2-marketwright-favorite-button {
   appearance: none;
-  min-width: 64px;
-  padding: 4px 7px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
   border: 1px solid rgba(122, 88, 47, 0.92);
-  border-radius: 3px;
+  border-radius: 2px;
   color: #ead7aa;
   background: linear-gradient(180deg, #332716 0%, #100c08 100%);
   box-shadow:
     inset 0 1px 0 rgba(255, 238, 188, 0.16),
     0 1px 0 rgba(0, 0, 0, 0.42);
   cursor: pointer;
-  font: 600 11px/1.1 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
-  white-space: nowrap;
 }
 
-.poe2-marketwright-pob-copy-button:hover {
+.poe2-marketwright-pob-copy-button svg,
+.poe2-marketwright-favorite-button svg {
+  width: 14px;
+  height: 14px;
+  fill: currentColor;
+}
+
+.poe2-marketwright-pob-copy-button:hover,
+.poe2-marketwright-favorite-button:hover {
   border-color: #d0a45c;
   filter: brightness(1.08);
 }
 
-.poe2-marketwright-pob-copy-button:focus-visible {
+.poe2-marketwright-pob-copy-button:focus-visible,
+.poe2-marketwright-favorite-button:focus-visible {
   outline: 2px solid rgba(211, 166, 83, 0.86);
   outline-offset: 2px;
 }
 
-.poe2-marketwright-pob-copy-button:disabled {
+.poe2-marketwright-pob-copy-button:disabled,
+.poe2-marketwright-favorite-button:disabled {
   cursor: default;
   opacity: 0.72;
 }
 
 .poe2-marketwright-pob-copy-button--below-verified {
-  display: inline-block;
+  display: inline-flex;
   margin-top: 4px;
+}
+
+.poe2-marketwright-pob-copy-button[data-status="loading"] svg {
+  animation: poe2-marketwright-currency-spin 750ms linear infinite;
+}
+
+.poe2-marketwright-favorite-button[data-favorite="true"] {
+  color: #f3d681;
+}
+
+.poe2-marketwright-favorite-button[data-status="loading"] svg {
+  animation: poe2-marketwright-currency-spin 750ms linear infinite;
+}
+
+.poe2-marketwright-favorite-button[data-status="error"] {
+  border-color: #b76a6a;
+  color: #f2c0c0;
 }
 
 .poe2-marketwright-pob-copy-button[data-status="ok"] {

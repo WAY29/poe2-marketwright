@@ -425,5 +425,83 @@
   },
   "currencyLeagueUnavailable": {
     "message": "当前赛季：未检测到"
+  },
+  "toggleFavoritesDrawer": {
+    "message": "切换收藏"
+  },
+  "expandFavoritesDrawer": {
+    "message": "展开收藏"
+  },
+  "collapseFavoritesDrawer": {
+    "message": "折叠收藏"
+  },
+  "favoritesSearch": {
+    "message": "搜索收藏"
+  },
+  "favoritesLeague": {
+    "message": "收藏：$1"
+  },
+  "favoritesLeagueUnavailable": {
+    "message": "收藏：未检测到赛季"
+  },
+  "favoritesEmpty": {
+    "message": "当前赛季没有收藏"
+  },
+  "favoritesNoMatches": {
+    "message": "没有匹配的收藏"
+  },
+  "favoriteMoreMods": {
+    "message": "另有 $1 条"
+  },
+  "renameFavorite": {
+    "message": "重命名收藏"
+  },
+  "deleteFavorite": {
+    "message": "删除收藏"
+  },
+  "undoFavoriteDelete": {
+    "message": "撤销"
+  },
+  "favoriteDeleted": {
+    "message": "已删除收藏"
+  },
+  "favoriteSearchLoading": {
+    "message": "正在创建搜索..."
+  },
+  "favoriteSearchError": {
+    "message": "搜索失败，请重试"
+  },
+  "favoriteSave": {
+    "message": "收藏物品"
+  },
+  "favoriteRemove": {
+    "message": "取消收藏"
+  },
+  "favoriteLoading": {
+    "message": "正在加载物品..."
+  },
+  "favoriteSaved": {
+    "message": "已收藏"
+  },
+  "favoriteRemoved": {
+    "message": "已取消收藏"
+  },
+  "favoriteError": {
+    "message": "无法收藏物品"
+  },
+  "favoritesTitle": {
+    "message": "物品收藏"
+  },
+  "enableFavorites": {
+    "message": "启用物品收藏"
+  },
+  "disableFavorites": {
+    "message": "关闭物品收藏"
+  },
+  "closeFavoritesDrawer": {
+    "message": "关闭收藏"
+  },
+  "favoriteTooltipRarity": {
+    "message": "稀有度：$1"
   }
 }

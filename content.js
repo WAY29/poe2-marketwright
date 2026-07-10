@@ -13,6 +13,9 @@
     filteringEnabled: true,
     pobCopyEnabled: true,
     currencyConversionEnabled: true,
+    favoritesEnabled: true,
+    favorites: [],
+    favoritesDrawerOpen: false,
     selection: "auto",
     collapsed: false,
     panelPosition: null,
@@ -32,6 +35,132 @@
     "#trade .top .search-panel > .search-bar:not(.search-advanced) .search-left .multiselect.search-select";
   const ITEM_SEARCH_INPUT_SELECTOR = `${ITEM_SEARCH_ROOT_SELECTOR} input.multiselect__input`;
   const TYPE_FILTER_GROUP_SELECTOR = "#trade .search-advanced-pane.blue > .filter-group";
+  const FAVORITE_TRADE_CATEGORY_BY_PAGE = Object.freeze({
+    Strongbox: "map",
+    Relics: "sanctum.relic",
+    Inscribed_Ultimatum: "map.ultimatum",
+    Claws: "weapon.claw",
+    Daggers: "weapon.dagger",
+    Wands: "weapon.wand",
+    One_Hand_Swords: "weapon.onesword",
+    One_Hand_Axes: "weapon.oneaxe",
+    One_Hand_Maces: "weapon.onemace",
+    Sceptres: "weapon.sceptre",
+    Spears: "weapon.spear",
+    Flails: "weapon.flail",
+    Bows: "weapon.bow",
+    Staves: "weapon.staff",
+    Two_Hand_Swords: "weapon.twosword",
+    Two_Hand_Axes: "weapon.twoaxe",
+    Two_Hand_Maces: "weapon.twomace",
+    Quarterstaves: "weapon.warstaff",
+    Crossbows: "weapon.crossbow",
+    Traps: "weapon",
+    Talismans: "weapon.talisman",
+    Amulets: "accessory.amulet",
+    Rings: "accessory.ring",
+    Belts: "accessory.belt",
+    Gloves_str: "armour.gloves",
+    Gloves_dex: "armour.gloves",
+    Gloves_int: "armour.gloves",
+    Gloves_str_dex: "armour.gloves",
+    Gloves_str_int: "armour.gloves",
+    Gloves_dex_int: "armour.gloves",
+    Boots_str: "armour.boots",
+    Boots_dex: "armour.boots",
+    Boots_int: "armour.boots",
+    Boots_str_dex: "armour.boots",
+    Boots_str_int: "armour.boots",
+    Boots_dex_int: "armour.boots",
+    Body_Armours_str: "armour.chest",
+    Body_Armours_dex: "armour.chest",
+    Body_Armours_int: "armour.chest",
+    Body_Armours_str_dex: "armour.chest",
+    Body_Armours_str_int: "armour.chest",
+    Body_Armours_dex_int: "armour.chest",
+    Body_Armours_str_dex_int: "armour.chest",
+    Helmets_str: "armour.helmet",
+    Helmets_dex: "armour.helmet",
+    Helmets_int: "armour.helmet",
+    Helmets_str_dex: "armour.helmet",
+    Helmets_str_int: "armour.helmet",
+    Helmets_dex_int: "armour.helmet",
+    Quivers: "armour.quiver",
+    Shields_str: "armour.shield",
+    Shields_str_dex: "armour.shield",
+    Shields_str_int: "armour.shield",
+    Bucklers: "armour.buckler",
+    Foci: "armour.focus",
+    Ruby: "jewel",
+    Emerald: "jewel",
+    Sapphire: "jewel",
+    Diamond: "jewel",
+    "Time-Lost_Ruby": "jewel",
+    "Time-Lost_Emerald": "jewel",
+    "Time-Lost_Sapphire": "jewel",
+    "Time-Lost_Diamond": "jewel",
+    Life_Flasks: "flask.life",
+    Mana_Flasks: "flask.mana",
+    Charms: "flask.charm",
+    Urn_Relic: "sanctum.relic",
+    Amphora_Relic: "sanctum.relic",
+    Vase_Relic: "sanctum.relic",
+    Seal_Relic: "sanctum.relic",
+    Coffer_Relic: "sanctum.relic",
+    Tapestry_Relic: "sanctum.relic",
+    Incense_Relic: "sanctum.relic",
+    Breach_Tablet: "map.tablet",
+    Expedition_Tablet: "map.tablet",
+    Delirium_Tablet: "map.tablet",
+    Ritual_Tablet: "map.tablet",
+    Irradiated_Tablet: "map.tablet",
+    Overseer_Tablet: "map.tablet",
+    Abyss_Tablet: "map.tablet",
+    Temple_Tablet: "map.tablet",
+    Waystones_low_tier: "map.waystone",
+    Waystones_mid_tier: "map.waystone",
+    Waystones_top_tier: "map.waystone"
+  });
+  const FAVORITE_TRADE_CATEGORY_LABELS = Object.freeze({
+    map: "Any Endgame Item",
+    "map.ultimatum": "Ultimatum Key",
+    "sanctum.relic": "Relic",
+    "weapon.claw": "Claw",
+    "weapon.dagger": "Dagger",
+    "weapon.wand": "Wand",
+    "weapon.onesword": "One-Handed Sword",
+    "weapon.oneaxe": "One-Handed Axe",
+    "weapon.onemace": "One-Handed Mace",
+    "weapon.sceptre": "Sceptre",
+    "weapon.spear": "Spear",
+    "weapon.flail": "Flail",
+    "weapon.bow": "Bow",
+    "weapon.staff": "Staff",
+    "weapon.twosword": "Two-Handed Sword",
+    "weapon.twoaxe": "Two-Handed Axe",
+    "weapon.twomace": "Two-Handed Mace",
+    "weapon.warstaff": "Quarterstaff",
+    "weapon.crossbow": "Crossbow",
+    weapon: "Any Weapon",
+    "weapon.talisman": "Talisman",
+    "accessory.amulet": "Amulet",
+    "accessory.ring": "Ring",
+    "accessory.belt": "Belt",
+    "armour.gloves": "Gloves",
+    "armour.boots": "Boots",
+    "armour.chest": "Body Armour",
+    "armour.helmet": "Helmet",
+    "armour.quiver": "Quiver",
+    "armour.shield": "Shield",
+    "armour.buckler": "Buckler",
+    "armour.focus": "Focus",
+    jewel: "Jewel",
+    "flask.life": "Life Flask",
+    "flask.mana": "Mana Flask",
+    "flask.charm": "Charm",
+    "map.tablet": "Tablet",
+    "map.waystone": "Waystone"
+  });
   const LOOKUP_SPLIT_RE = /[\n\r|]+/;
   const NUMBER_RE = /([-+]?\d+(?:\.\d+)?)/g;
   const STAT_GROUP_PREFIX_RE =
@@ -150,6 +279,9 @@
     disableFiltering: "Disable filtering",
     enablePobCopy: "Enable PoB copy button",
     disablePobCopy: "Disable PoB copy button",
+    favoritesTitle: "Favorites",
+    enableFavorites: "Enable favorites",
+    disableFavorites: "Disable favorites",
     enableCurrencyConversion: "Enable price conversion",
     disableCurrencyConversion: "Disable price conversion",
     refreshCurrencyConversion: "Refresh Poe2Scout prices",
@@ -166,7 +298,30 @@
     pobCopyReady: "PoB Copy",
     pobCopyLoading: "Loading...",
     pobCopyOk: "Copied!",
-    pobCopyError: "Failed"
+    pobCopyError: "Failed",
+    toggleFavoritesDrawer: "Toggle favorites",
+    expandFavoritesDrawer: "Expand favorites",
+    collapseFavoritesDrawer: "Collapse favorites",
+    favoritesSearch: "Search favorites",
+    favoritesLeague: "Favorites: $1",
+    favoritesLeagueUnavailable: "Favorites: league unavailable",
+    favoritesEmpty: "No favorites in this league",
+    favoritesNoMatches: "No matching favorites",
+    favoriteMoreMods: "+$1 more",
+    renameFavorite: "Rename favorite",
+    deleteFavorite: "Delete favorite",
+    undoFavoriteDelete: "Undo",
+    favoriteDeleted: "Favorite deleted",
+    favoriteSearchLoading: "Creating search...",
+    favoriteSearchError: "Search failed. Retry.",
+    favoriteSave: "Save favorite",
+    favoriteRemove: "Remove favorite",
+    favoriteLoading: "Loading item...",
+    favoriteSaved: "Saved",
+    favoriteRemoved: "Removed",
+    favoriteError: "Unable to save favorite",
+    closeFavoritesDrawer: "Close favorites",
+    favoriteTooltipRarity: "Rarity: $1"
   };
   const EXTENSION_CONTEXT_INVALIDATED_RE = /extension context invalidated|context invalidated|message port closed/i;
 
@@ -193,8 +348,12 @@
     bridgeStats: null,
     bridgePayloadSignature: "",
     lastFilterStats: null,
+    favoriteLeague: null,
     pobCopy: null,
+    favorites: null,
     currencyConversion: null,
+    deletedFavorite: null,
+    deletedFavoriteTimer: null,
     ui: {}
   };
 
@@ -203,6 +362,7 @@
   async function bootstrap() {
     runtime.state = await loadState();
     initializePobCopy();
+    initializeFavorites();
     initializeCurrencyConversion();
     bindPageBridgeMessages();
     injectPageBridge();
@@ -257,6 +417,15 @@
     return {
       ...DEFAULT_STATE,
       ...savedState,
+      favoritesEnabled:
+        typeof savedState.favoritesEnabled === "boolean"
+          ? savedState.favoritesEnabled
+          : DEFAULT_STATE.favoritesEnabled,
+      favorites: Array.isArray(savedState.favorites) ? savedState.favorites : [],
+      favoritesDrawerOpen:
+        typeof savedState.favoritesDrawerOpen === "boolean"
+          ? savedState.favoritesDrawerOpen
+          : DEFAULT_STATE.favoritesDrawerOpen,
       filteringEnabled:
         typeof savedState.filteringEnabled === "boolean"
           ? savedState.filteringEnabled
@@ -305,6 +474,26 @@
     const root = document.createElement("div");
     root.id = ROOT_ID;
     root.innerHTML = `
+      <aside class="poe2-marketwright-favorites-drawer" aria-live="polite">
+        <div class="poe2-marketwright-favorites-header">
+          <div class="poe2-marketwright-favorites-header-row">
+            <span id="poe2-marketwright-favorites-league" class="poe2-marketwright-favorites-league"></span>
+            <button id="poe2-marketwright-favorites-close" class="poe2-marketwright-favorites-close" type="button" aria-label="" title="">
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <path d="M4 4l8 8m0-8l-8 8" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"></path>
+              </svg>
+            </button>
+          </div>
+          <label class="poe2-marketwright-favorites-search-field">
+            <input id="poe2-marketwright-favorites-search" type="search" autocomplete="off" spellcheck="false">
+          </label>
+        </div>
+        <div id="poe2-marketwright-favorites-list" class="poe2-marketwright-favorites-list"></div>
+        <div id="poe2-marketwright-favorites-undo" class="poe2-marketwright-favorites-undo" hidden>
+          <span id="poe2-marketwright-favorites-undo-text"></span>
+          <button id="poe2-marketwright-favorites-undo-button" type="button"></button>
+        </div>
+      </aside>
       <div class="poe2-trade2-affix-filter-panel">
         <div class="poe2-trade2-affix-filter-header">
           <span class="poe2-trade2-affix-filter-brand" aria-hidden="true">M</span>
@@ -331,6 +520,12 @@
             <button id="poe2-trade2-affix-filter-pob-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
           </div>
         </section>
+        <section class="poe2-trade2-affix-filter-feature poe2-marketwright-favorites-feature">
+          <button id="poe2-marketwright-favorites-disclosure" class="poe2-marketwright-favorites-disclosure" type="button" aria-label="" title="">
+            <span id="poe2-marketwright-favorites-title" class="poe2-trade2-affix-filter-feature-title"></span>
+          </button>
+          <button id="poe2-marketwright-favorites-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
+        </section>
         <section class="poe2-trade2-affix-filter-feature poe2-trade2-affix-filter-currency-feature">
           <div class="poe2-trade2-affix-filter-feature-header">
             <span id="poe2-trade2-affix-filter-currency-title" class="poe2-trade2-affix-filter-feature-title"></span>
@@ -353,6 +548,16 @@
 
     runtime.ui.root = root;
     runtime.ui.panel = root.querySelector(".poe2-trade2-affix-filter-panel");
+    runtime.ui.favoritesDrawer = root.querySelector(".poe2-marketwright-favorites-drawer");
+    runtime.ui.favoritesClose = root.querySelector("#poe2-marketwright-favorites-close");
+    runtime.ui.favoritesDisclosure = root.querySelector("#poe2-marketwright-favorites-disclosure");
+    runtime.ui.favoritesEnabled = root.querySelector("#poe2-marketwright-favorites-enabled");
+    runtime.ui.favoritesLeague = root.querySelector("#poe2-marketwright-favorites-league");
+    runtime.ui.favoritesSearch = root.querySelector("#poe2-marketwright-favorites-search");
+    runtime.ui.favoritesList = root.querySelector("#poe2-marketwright-favorites-list");
+    runtime.ui.favoritesUndo = root.querySelector("#poe2-marketwright-favorites-undo");
+    runtime.ui.favoritesUndoText = root.querySelector("#poe2-marketwright-favorites-undo-text");
+    runtime.ui.favoritesUndoButton = root.querySelector("#poe2-marketwright-favorites-undo-button");
     runtime.ui.collapse = root.querySelector("#poe2-trade2-affix-filter-collapse");
     runtime.ui.expand = root.querySelector("#poe2-trade2-affix-filter-expand");
     runtime.ui.enabled = root.querySelector("#poe2-trade2-affix-filter-enabled");
@@ -362,6 +567,7 @@
     runtime.ui.currencyLeague = root.querySelector("#poe2-trade2-affix-filter-currency-league");
     runtime.ui.statTitle = root.querySelector("#poe2-trade2-affix-filter-stat-title");
     runtime.ui.pobTitle = root.querySelector("#poe2-trade2-affix-filter-pob-title");
+    runtime.ui.favoritesTitle = root.querySelector("#poe2-marketwright-favorites-title");
     runtime.ui.currencyTitle = root.querySelector("#poe2-trade2-affix-filter-currency-title");
     runtime.ui.selection = root.querySelector("#poe2-trade2-affix-filter-selection");
     runtime.ui.status = root.querySelector("#poe2-trade2-affix-filter-status");
@@ -375,6 +581,8 @@
 
     runtime.ui.selection.value = runtime.state.selection;
     updateToggleButton();
+    renderFavoriteDrawer();
+    applyFavoritesDrawerState();
     applyPanelCollapsed();
     applyPanelPosition();
     bindPanelDrag();
@@ -388,6 +596,22 @@
         return;
       }
       runAsync(() => setPanelCollapsed(false), "expand panel");
+    });
+
+    runtime.ui.favoritesDisclosure.addEventListener("click", () => {
+      runAsync(
+        () => setFavoritesDrawerOpen(!runtime.state.favoritesDrawerOpen),
+        "toggle favorites drawer"
+      );
+    });
+
+    runtime.ui.favoritesClose.addEventListener("click", () => {
+      runAsync(() => setFavoritesDrawerOpen(false), "close favorites drawer");
+    });
+
+    runtime.ui.favoritesSearch.addEventListener("input", renderFavoriteDrawer);
+    runtime.ui.favoritesUndoButton.addEventListener("click", () => {
+      runAsync(undoDeletedFavorite, "undo favorite deletion");
     });
 
     runtime.ui.enabled.addEventListener("click", () => {
@@ -406,6 +630,20 @@
         await saveState();
         scheduleRefresh();
       }, "toggle PoB copy");
+    });
+
+    runtime.ui.favoritesEnabled.addEventListener("click", () => {
+      runtime.state.favoritesEnabled = !runtime.state.favoritesEnabled;
+      runtime.favorites?.setEnabled(runtime.state.favoritesEnabled);
+      if (!runtime.state.favoritesEnabled) {
+        runtime.state.favoritesDrawerOpen = false;
+      }
+      updateFavoritesToggleButton();
+      applyFavoritesDrawerState();
+      runAsync(async () => {
+        await saveState();
+        scheduleRefresh();
+      }, "toggle favorites");
     });
 
     runtime.ui.currencyEnabled.addEventListener("click", () => {
@@ -450,9 +688,18 @@
     runtime.ui.expand.title = t("expandPanel");
     runtime.ui.statTitle.textContent = t("statFilterTitle");
     runtime.ui.pobTitle.textContent = t("pobCopyTitle");
+    runtime.ui.favoritesTitle.textContent = t("favoritesTitle");
     runtime.ui.currencyTitle.textContent = t("currencyConversionTitle");
     runtime.ui.currencyRefresh.setAttribute("aria-label", t("refreshCurrencyConversion"));
     runtime.ui.currencyRefresh.title = t("refreshCurrencyConversion");
+    runtime.ui.favoritesSearch.placeholder = t("favoritesSearch");
+    runtime.ui.favoritesSearch.setAttribute("aria-label", t("favoritesSearch"));
+    runtime.ui.favoritesUndoText.textContent = t("favoriteDeleted");
+    runtime.ui.favoritesUndoButton.textContent = t("undoFavoriteDelete");
+    runtime.ui.favoritesUndoButton.title = t("undoFavoriteDelete");
+    runtime.ui.favoritesClose.setAttribute("aria-label", t("closeFavoritesDrawer"));
+    runtime.ui.favoritesClose.title = t("closeFavoritesDrawer");
+    applyFavoritesDrawerState();
   }
 
   function updateCurrencyLeague(league, searchUrl = null) {
@@ -481,6 +728,31 @@
       }
     });
     runtime.pobCopy.start();
+  }
+
+  function initializeFavorites() {
+    const factory = globalThis.Poe2MarketwrightFavorites?.createFavoriteFeature;
+    if (!factory) {
+      return;
+    }
+
+    runtime.favorites = factory({
+      enabled: runtime.state.favoritesEnabled,
+      favorites: runtime.state.favorites,
+      getFavorites: () => runtime.state.favorites,
+      getLeague: getCurrentFavoriteLeague,
+      getItemClassification: getFavoriteItemClassification,
+      onToggleFavorite: toggleFavorite,
+      labels: {
+        add: t("favoriteSave"),
+        remove: t("favoriteRemove"),
+        loading: t("favoriteLoading"),
+        saved: t("favoriteSaved"),
+        removed: t("favoriteRemoved"),
+        error: t("favoriteError")
+      }
+    });
+    runtime.favorites.start();
   }
 
   function initializeCurrencyConversion() {
@@ -516,6 +788,337 @@
     return values.reduce((text, value, index) => text.replaceAll(`$${index + 1}`, String(value)), template);
   }
 
+  function getFavoriteTools() {
+    const factory = globalThis.Poe2MarketwrightFavorites?.createFavoriteTools;
+    return factory ? factory() : null;
+  }
+
+  function getCurrentFavoriteLeague() {
+    return getFavoriteTools()?.getLeagueFromTradeUrl(window.location.href) || null;
+  }
+
+  function getFavoriteItemClassification(item) {
+    if (!runtime.data) {
+      return null;
+    }
+    const baseName = String(item?.typeLine || item?.baseType || "").trim();
+    const selection = lookupItemNameSelection(normalizeLookupText(baseName));
+    const category = selection?.kind === "page" ? FAVORITE_TRADE_CATEGORY_BY_PAGE[selection.id] : null;
+    if (!baseName || !category) {
+      console.warn("[PoE2 Marketwright] unable to classify favorite item", {
+        baseName: baseName || null,
+        selection: selection || null
+      });
+      return null;
+    }
+    return {
+      baseName,
+      category,
+      itemType: FAVORITE_TRADE_CATEGORY_LABELS[category] || category
+    };
+  }
+
+  function getVisibleFavorites() {
+    const league = getCurrentFavoriteLeague();
+    runtime.favoriteLeague = league;
+    const search = String(runtime.ui.favoritesSearch?.value || "").trim().toLowerCase();
+    const favorites = (runtime.state.favorites || [])
+      .filter((favorite) => favorite?.league === league)
+      .sort((left, right) => Number(right.createdAt || 0) - Number(left.createdAt || 0));
+    if (!search) {
+      return favorites;
+    }
+    return favorites.filter((favorite) => String(favorite.displayName || "").toLowerCase().includes(search));
+  }
+
+  function createFavoriteIconButton(className, title, path) {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = className;
+    button.title = title;
+    button.setAttribute("aria-label", title);
+    button.innerHTML = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="${path}"></path></svg>`;
+    return button;
+  }
+
+  function buildFavoriteTooltip(favorite) {
+    const lines = [
+      t("favoriteTooltipRarity", String(favorite.rarity || "").toUpperCase()),
+      favorite.originalName || favorite.displayName || "",
+      favorite.baseName || "",
+      favorite.itemType || "",
+      ...(Array.isArray(favorite.mods) ? favorite.mods.map((mod) => mod?.text || "") : [])
+    ];
+    return lines.filter(Boolean).join("\n");
+  }
+
+  function renderFavoriteDrawer() {
+    if (!runtime.ui.favoritesList) {
+      return;
+    }
+    const league = getCurrentFavoriteLeague();
+    runtime.favoriteLeague = league;
+    runtime.ui.favoritesLeague.textContent = league ? t("favoritesLeague", league) : t("favoritesLeagueUnavailable");
+    runtime.ui.favoritesLeague.title = league || "";
+    runtime.ui.favoritesList.replaceChildren();
+
+    if (!league) {
+      const status = document.createElement("div");
+      status.className = "poe2-marketwright-favorites-empty";
+      status.textContent = t("favoritesLeagueUnavailable");
+      runtime.ui.favoritesList.appendChild(status);
+      renderFavoriteUndo();
+      return;
+    }
+
+    const favorites = getVisibleFavorites();
+    if (!favorites.length) {
+      const status = document.createElement("div");
+      status.className = "poe2-marketwright-favorites-empty";
+      status.textContent = runtime.ui.favoritesSearch.value.trim() ? t("favoritesNoMatches") : t("favoritesEmpty");
+      runtime.ui.favoritesList.appendChild(status);
+      renderFavoriteUndo();
+      return;
+    }
+
+    for (const favorite of favorites) {
+      const row = document.createElement("article");
+      row.className = "poe2-marketwright-favorite-row";
+
+      const launch = document.createElement("button");
+      launch.type = "button";
+      launch.className = "poe2-marketwright-favorite-launch";
+      launch.setAttribute("aria-label", favorite.displayName || favorite.baseName || "");
+      launch.title = buildFavoriteTooltip(favorite);
+      launch.addEventListener("click", () => {
+        void launchFavoriteSearch(favorite, launch, row);
+      });
+
+      const name = document.createElement("span");
+      name.className = "poe2-marketwright-favorite-name";
+      name.textContent = favorite.displayName || favorite.baseName;
+      const meta = document.createElement("span");
+      meta.className = "poe2-marketwright-favorite-meta";
+      meta.textContent = [favorite.baseName, favorite.itemType, favorite.rarity].filter(Boolean).join(" / ");
+      const mods = document.createElement("span");
+      mods.className = "poe2-marketwright-favorite-mods";
+      const visibleMods = Array.isArray(favorite.mods) ? favorite.mods.slice(0, 3) : [];
+      for (const mod of visibleMods) {
+        const line = document.createElement("span");
+        const text = mod?.text || "";
+        line.textContent = text;
+        mods.appendChild(line);
+      }
+      const extraModCount = Math.max(0, (favorite.mods?.length || 0) - visibleMods.length);
+      if (extraModCount) {
+        const more = document.createElement("span");
+        more.className = "poe2-marketwright-favorite-more";
+        more.textContent = t("favoriteMoreMods", extraModCount);
+        mods.appendChild(more);
+      }
+      launch.append(name, meta, mods);
+
+      const actions = document.createElement("div");
+      actions.className = "poe2-marketwright-favorite-actions";
+      const renameButton = createFavoriteIconButton(
+        "poe2-marketwright-favorite-action",
+        t("renameFavorite"),
+        "M2.5 11.8V14h2.2l6.5-6.5-2.2-2.2-6.5 6.5zm10.2-6.2a.9.9 0 0 0 0-1.3L11.3 2.9a.9.9 0 0 0-1.3 0L9 4l2.2 2.2 1.5-1.5z"
+      );
+      renameButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        startFavoriteRename(favorite, name);
+      });
+      const deleteButton = createFavoriteIconButton(
+        "poe2-marketwright-favorite-action poe2-marketwright-favorite-delete",
+        t("deleteFavorite"),
+        "M4 4.5h8l-.6 9H4.6l-.6-9zm2-2h4l.6 1H13v1.5H3V3.5h2.4L6 2.5zm1 4v5h1.5v-5H7zm2.5 0v5H11v-5H9.5z"
+      );
+      deleteButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        runAsync(() => deleteFavorite(favorite), "delete favorite");
+      });
+      actions.append(renameButton, deleteButton);
+      row.append(launch, actions);
+      runtime.ui.favoritesList.appendChild(row);
+    }
+    renderFavoriteUndo();
+  }
+
+  function renderFavoriteUndo() {
+    if (!runtime.ui.favoritesUndo) {
+      return;
+    }
+    runtime.ui.favoritesUndo.hidden = !runtime.deletedFavorite;
+  }
+
+  async function replaceFavorites(nextFavorites) {
+    const previousFavorites = runtime.state.favorites;
+    runtime.state.favorites = nextFavorites;
+    runtime.favorites?.setFavorites(nextFavorites);
+    renderFavoriteDrawer();
+    try {
+      await saveState();
+    } catch (error) {
+      runtime.state.favorites = previousFavorites;
+      runtime.favorites?.setFavorites(previousFavorites);
+      renderFavoriteDrawer();
+      throw error;
+    }
+  }
+
+  async function toggleFavorite(favorite) {
+    const existingIndex = runtime.state.favorites.findIndex(
+      (entry) => entry?.signature === favorite.signature
+    );
+    if (existingIndex >= 0) {
+      await replaceFavorites(runtime.state.favorites.filter((_, index) => index !== existingIndex));
+      return;
+    }
+    await replaceFavorites([favorite, ...runtime.state.favorites]);
+  }
+
+  async function renameFavorite(favorite, displayName) {
+    const name = String(displayName || "").trim();
+    if (!name || name === favorite.displayName) {
+      renderFavoriteDrawer();
+      return;
+    }
+    await replaceFavorites(
+      runtime.state.favorites.map((entry) =>
+        entry?.signature === favorite.signature ? { ...entry, displayName: name } : entry
+      )
+    );
+  }
+
+  function startFavoriteRename(favorite, nameNode) {
+    const input = document.createElement("input");
+    input.type = "text";
+    input.className = "poe2-marketwright-favorite-rename-input";
+    input.value = favorite.displayName || "";
+    input.setAttribute("aria-label", t("renameFavorite"));
+    let cancelled = false;
+    const commit = () => {
+      if (!cancelled) {
+        runAsync(() => renameFavorite(favorite, input.value), "rename favorite");
+      }
+    };
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        input.blur();
+      } else if (event.key === "Escape") {
+        cancelled = true;
+        renderFavoriteDrawer();
+      }
+    });
+    input.addEventListener("blur", commit, { once: true });
+    nameNode.replaceWith(input);
+    input.focus();
+    input.select();
+  }
+
+  async function deleteFavorite(favorite) {
+    const existing = runtime.state.favorites.find((entry) => entry?.signature === favorite.signature);
+    if (!existing) {
+      return;
+    }
+    await replaceFavorites(runtime.state.favorites.filter((entry) => entry?.signature !== favorite.signature));
+    if (runtime.deletedFavoriteTimer) {
+      window.clearTimeout(runtime.deletedFavoriteTimer);
+    }
+    runtime.deletedFavorite = existing;
+    runtime.deletedFavoriteTimer = window.setTimeout(() => {
+      runtime.deletedFavorite = null;
+      runtime.deletedFavoriteTimer = null;
+      renderFavoriteUndo();
+    }, 5000);
+    renderFavoriteUndo();
+  }
+
+  async function undoDeletedFavorite() {
+    const favorite = runtime.deletedFavorite;
+    if (!favorite) {
+      return;
+    }
+    runtime.deletedFavorite = null;
+    if (runtime.deletedFavoriteTimer) {
+      window.clearTimeout(runtime.deletedFavoriteTimer);
+      runtime.deletedFavoriteTimer = null;
+    }
+    await replaceFavorites([favorite, ...runtime.state.favorites]);
+  }
+
+  async function launchFavoriteSearch(favorite, launchButton, row) {
+    const tools = getFavoriteTools();
+    if (!tools) {
+      throw new Error("Favorite tools are unavailable");
+    }
+    launchButton.disabled = true;
+    row.dataset.status = "loading";
+    const status = document.createElement("span");
+    status.className = "poe2-marketwright-favorite-search-status";
+    status.textContent = t("favoriteSearchLoading");
+    row.appendChild(status);
+    try {
+      const response = await fetch(
+        new URL(`/api/trade2/search/${encodeURIComponent(favorite.league)}`, window.location.origin),
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          credentials: "include",
+          body: JSON.stringify(tools.createTradeSearchPayload(favorite))
+        }
+      );
+      if (!response.ok) {
+        throw new Error(`Trade search failed: ${response.status}`);
+      }
+      const result = await response.json();
+      if (!result?.id || typeof result.id !== "string") {
+        throw new Error("Trade search returned no query id");
+      }
+      window.location.assign(
+        new URL(
+          `/trade2/search/poe2/${encodeURIComponent(favorite.league)}/${encodeURIComponent(result.id)}`,
+          window.location.origin
+        ).toString()
+      );
+    } catch (error) {
+      console.debug("[PoE2 Marketwright] favorite search failed", error);
+      row.dataset.status = "error";
+      status.textContent = t("favoriteSearchError");
+      launchButton.disabled = false;
+    }
+  }
+
+  async function setFavoritesDrawerOpen(open) {
+    if (!runtime.state.favoritesEnabled) {
+      return;
+    }
+    const nextOpen = Boolean(open);
+    if (runtime.state.favoritesDrawerOpen === nextOpen) {
+      return;
+    }
+    runtime.state.favoritesDrawerOpen = nextOpen;
+    applyFavoritesDrawerState();
+    applyPanelPosition();
+    await saveState();
+  }
+
+  function applyFavoritesDrawerState() {
+    if (!runtime.ui.root || !runtime.ui.favoritesDisclosure) {
+      return;
+    }
+    const open = Boolean(
+      runtime.state.favoritesEnabled && runtime.state.favoritesDrawerOpen && !runtime.state.collapsed
+    );
+    runtime.ui.root.classList.toggle("poe2-marketwright-favorites-open", open);
+    runtime.ui.favoritesDisclosure.disabled = !runtime.state.favoritesEnabled;
+    runtime.ui.favoritesDisclosure.setAttribute("aria-expanded", String(open));
+    runtime.ui.favoritesDisclosure.setAttribute("aria-label", t(open ? "collapseFavoritesDrawer" : "expandFavoritesDrawer"));
+    runtime.ui.favoritesDisclosure.title = t(open ? "collapseFavoritesDrawer" : "expandFavoritesDrawer");
+  }
+
   async function setPanelCollapsed(collapsed) {
     if (runtime.state.collapsed === collapsed) {
       return;
@@ -544,6 +1147,7 @@
     runtime.ui.root.classList.toggle("poe2-trade2-affix-filter-collapsed", collapsed);
     runtime.ui.collapse?.setAttribute("aria-expanded", String(!collapsed));
     runtime.ui.expand?.setAttribute("aria-expanded", String(!collapsed));
+    applyFavoritesDrawerState();
   }
 
   function applyPanelPosition() {
@@ -676,8 +1280,14 @@
     const rect = runtime.ui.root.getBoundingClientRect();
     const width = rect.width || (runtime.state.collapsed ? COLLAPSED_PANEL_SIZE : 238);
     const height = rect.height || (runtime.state.collapsed ? COLLAPSED_PANEL_SIZE : 188);
+    const drawerWidth =
+      runtime.state.favoritesDrawerOpen && !runtime.state.collapsed
+        ? (runtime.ui.favoritesDrawer?.getBoundingClientRect().width || 340) + 6
+        : 0;
+    const maxLeft = Math.max(margin, window.innerWidth - width - margin);
+    const minLeft = Math.min(margin + drawerWidth, maxLeft);
     return {
-      left: Math.max(margin, Math.min(left, window.innerWidth - width - margin)),
+      left: Math.max(minLeft, Math.min(left, maxLeft)),
       top: Math.max(margin, Math.min(top, window.innerHeight - height - margin))
     };
   }
@@ -824,6 +1434,10 @@
     }
     runtime.selectionSignature = getSelectionDomSignature();
     runtime.selectionPollTimer = window.setInterval(() => {
+      const favoriteLeague = getCurrentFavoriteLeague();
+      if (favoriteLeague !== runtime.favoriteLeague) {
+        renderFavoriteDrawer();
+      }
       const signature = getSelectionDomSignature();
       if (signature === runtime.selectionSignature) {
         return;
@@ -1560,6 +2174,7 @@
     runtime.ui.enabled.setAttribute("aria-pressed", String(enabled));
     runtime.ui.enabled.title = enabled ? t("disableFiltering") : t("enableFiltering");
     updatePobCopyToggleButton();
+    updateFavoritesToggleButton();
     updateCurrencyConversionToggleButton();
   }
 
@@ -1571,6 +2186,16 @@
     runtime.ui.pobEnabled.textContent = enabled ? t("toggleOn") : t("toggleOff");
     runtime.ui.pobEnabled.setAttribute("aria-pressed", String(enabled));
     runtime.ui.pobEnabled.title = enabled ? t("disablePobCopy") : t("enablePobCopy");
+  }
+
+  function updateFavoritesToggleButton() {
+    if (!runtime.ui.favoritesEnabled) {
+      return;
+    }
+    const enabled = Boolean(runtime.state.favoritesEnabled);
+    runtime.ui.favoritesEnabled.textContent = enabled ? t("toggleOn") : t("toggleOff");
+    runtime.ui.favoritesEnabled.setAttribute("aria-pressed", String(enabled));
+    runtime.ui.favoritesEnabled.title = enabled ? t("disableFavorites") : t("enableFavorites");
   }
 
   function updateCurrencyConversionToggleButton() {
@@ -2046,6 +2671,7 @@
     const payload = {
       enabled,
       pobCopyEnabled: Boolean(runtime.state.pobCopyEnabled),
+      favoritesEnabled: Boolean(runtime.state.favoritesEnabled),
       currencyConversionEnabled: Boolean(runtime.state.currencyConversionEnabled),
       allowedKeys: enabled ? Array.from(allowedPatterns || []) : [],
       allowedStatIds: enabled ? Array.from(allowedStatIds || []) : [],
@@ -2055,6 +2681,7 @@
     const signature = [
       payload.enabled,
       payload.pobCopyEnabled,
+      payload.favoritesEnabled,
       payload.currencyConversionEnabled,
       payload.allowedKeys.join("|"),
       payload.allowedStatIds.join("|"),
