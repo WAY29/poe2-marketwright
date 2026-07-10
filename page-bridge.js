@@ -9,6 +9,7 @@
   const READY_TYPE = "POE2_MARKETWRIGHT_READY";
   const STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
   const POB_MESSAGE_SOURCE = "poe2-marketwright-pob-copy";
+  const CURRENCY_MESSAGE_SOURCE = "poe2-marketwright-currency-conversion";
   const NUMBER_RE = /([-+]?\d+(?:\.\d+)?)/g;
   const PSEUDO_STAT_GROUP_ID = "pseudo";
   const ALWAYS_VISIBLE_PSEUDO_STAT_ID_RE = /^pseudo\.pseudo_number_of_(?:[\w]+_mods|uses_remaining)$/i;
@@ -96,6 +97,7 @@
     lastPayload: {
       enabled: false,
       pobCopyEnabled: false,
+      currencyConversionEnabled: false,
       allowedKeys: [],
       allowedStatIds: [],
       allKeys: [],
@@ -115,7 +117,7 @@
   });
 
   waitForTradeApp();
-  installPobApiHook();
+  installTradeApiHook();
   notifyReady();
 
   function waitForTradeApp() {
@@ -142,13 +144,66 @@
     return true;
   }
 
-  function installPobApiHook() {
+  function installTradeApiHook() {
     if (window.__poe2MarketwrightPobApiHookLoaded) {
       return;
     }
     window.__poe2MarketwrightPobApiHookLoaded = true;
 
-    const emit = (url, body) => {
+    const getLeagueFromTradeSearchUrl = (url) => {
+      const match = String(url || "").match(/\/trade2\/search\/(?:poe2\/)?([^/?#]+)/i);
+      if (!match) {
+        return null;
+      }
+      try {
+        const league = decodeURIComponent(match[1]).trim();
+        return league || null;
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const getQueryIdFromFetchUrl = (url) => {
+      const match = String(url || "").match(/[?&]query=([^&#]+)/i);
+      if (!match) {
+        return null;
+      }
+      try {
+        const queryId = decodeURIComponent(match[1]).trim();
+        return queryId || null;
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const emitCurrencyUpdate = (url, body, searchUrl) => {
+      if (!runtime.lastPayload.currencyConversionEnabled || !url) {
+        return;
+      }
+      const tradeUrl = String(url);
+      if (!tradeUrl.includes("/api/trade2/fetch/")) {
+        return;
+      }
+      const league = getLeagueFromTradeSearchUrl(searchUrl);
+      if (!league) {
+        return;
+      }
+      const queryId = getQueryIdFromFetchUrl(tradeUrl);
+      window.postMessage(
+        {
+          source: CURRENCY_MESSAGE_SOURCE,
+          type: "fetch",
+          league,
+          queryId,
+          searchUrl,
+          tradeUrl,
+          body: typeof body === "string" ? body : null
+        },
+        "*"
+      );
+    };
+
+    const emitPobCopy = (url, body) => {
       if (!runtime.lastPayload.pobCopyEnabled || !url || !String(url).includes("/api/trade2/fetch/")) {
         return;
       }
@@ -160,6 +215,11 @@
         },
         "*"
       );
+    };
+
+    const emit = (url, body, searchUrl) => {
+      emitCurrencyUpdate(url, body, searchUrl);
+      emitPobCopy(url, body);
     };
 
     const originalFetch = window.fetch;
@@ -174,11 +234,15 @@
           targetUrl = null;
         }
 
+        const searchUrl = window.location?.href || null;
         const responsePromise = originalFetch.apply(this, args);
-        if (targetUrl?.includes("/api/trade2/fetch/")) {
+        if (
+          targetUrl?.includes("/api/trade2/fetch/") &&
+          (runtime.lastPayload.pobCopyEnabled || runtime.lastPayload.currencyConversionEnabled)
+        ) {
           responsePromise
             .then((response) => response.clone().text())
-            .then((body) => emit(targetUrl, body))
+            .then((body) => emit(targetUrl, body, searchUrl))
             .catch(() => {});
         }
         return responsePromise;
@@ -191,6 +255,7 @@
       XMLHttpRequest.prototype.open = function (method, url, ...rest) {
         this.__poe2MarketwrightPobUrl =
           typeof url === "string" && url.includes("/api/trade2/fetch/") ? url : null;
+        this.__poe2MarketwrightTradeSearchUrl = this.__poe2MarketwrightPobUrl ? window.location?.href || null : null;
         return originalOpen.call(this, method, url, ...rest);
       };
       XMLHttpRequest.prototype.send = function (...args) {
@@ -199,16 +264,18 @@
             "load",
             () => {
               let body = null;
-              try {
-                if (this.responseType === "" || this.responseType === "text") {
-                  body = this.responseText;
-                } else if (this.responseType === "json") {
-                  body = JSON.stringify(this.response);
+              if (runtime.lastPayload.pobCopyEnabled || runtime.lastPayload.currencyConversionEnabled) {
+                try {
+                  if (this.responseType === "" || this.responseType === "text") {
+                    body = this.responseText;
+                  } else if (this.responseType === "json") {
+                    body = JSON.stringify(this.response);
+                  }
+                } catch (error) {
+                  body = null;
                 }
-              } catch (error) {
-                body = null;
               }
-              emit(this.__poe2MarketwrightPobUrl, body);
+              emit(this.__poe2MarketwrightPobUrl, body, this.__poe2MarketwrightTradeSearchUrl);
             },
             { once: true }
           );

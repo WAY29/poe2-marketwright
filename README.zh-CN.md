@@ -6,11 +6,12 @@ PoE2 Marketwright 是一个面向《流放之路 2》官方市集页面的浏览
 
 ## 当前功能
 
-- 在页面内注入一个增强面板，并分别控制词缀过滤和 PoB 复制按钮。
+- 在页面内注入一个增强面板，并分别控制词缀过滤、PoB 复制按钮和 C/D 报价换算。
 - 自动识别当前类别或物品名称。
 - 按爬取到的 PoE2DB 数据过滤不属于当前类别的词缀建议。
 - 支持识别失败时手动指定类别。
 - 在市集结果行中增加用于 PoB Create Custom 的复制按钮。
+- 为固定价的崇高石、混沌石、神圣石报价增加 `E`、`C`、`D` 换算按钮；汇率按当前市集赛季从 Poe2Scout 实时获取，面板中的刷新按钮可强制更新报价。
 
 ## 安装方式
 
@@ -48,3 +49,4 @@ uv run --project scripts python scripts/build_extension_data.py --split-dir buil
 - 官方 `trade2` 相关命名与词条兼容性来自：
   - `https://www.pathofexile.com/api/trade2/data/items`
   - `https://www.pathofexile.com/api/trade2/data/stats`
+- C/D 报价换算：`https://api.poe2scout.com/poe2/Leagues/{赛季}/ReferenceCurrencies`

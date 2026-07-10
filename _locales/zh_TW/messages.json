@@ -383,5 +383,47 @@
   },
   "pobCopyError": {
     "message": "失敗"
+  },
+  "currencyConversionTitle": {
+    "message": "報價換算"
+  },
+  "enableCurrencyConversion": {
+    "message": "啟用報價換算"
+  },
+  "disableCurrencyConversion": {
+    "message": "關閉報價換算"
+  },
+  "refreshCurrencyConversion": {
+    "message": "重新整理 Poe2Scout 報價"
+  },
+  "showExalted": {
+    "message": "換算為崇高石"
+  },
+  "showChaos": {
+    "message": "換算為混沌石"
+  },
+  "showDivine": {
+    "message": "換算為神聖石"
+  },
+  "currencyExalted": {
+    "message": "崇高石"
+  },
+  "currencyChaos": {
+    "message": "混沌石"
+  },
+  "currencyDivine": {
+    "message": "神聖石"
+  },
+  "currencyLoading": {
+    "message": "取得中..."
+  },
+  "currencyUnavailable": {
+    "message": "匯率不可用"
+  },
+  "currencyLeague": {
+    "message": "目前賽季：$1"
+  },
+  "currencyLeagueUnavailable": {
+    "message": "目前賽季：未偵測到"
   }
 }

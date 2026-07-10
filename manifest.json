@@ -26,6 +26,7 @@
       ],
       "js": [
         "pob-copy.js",
+        "currency-conversion.js",
         "content.js"
       ],
       "css": [
@@ -40,7 +41,8 @@
         "_locales/zh_CN/messages.json",
         "_locales/zh_TW/messages.json",
         "data/affix-filter-data.json",
-        "page-bridge.js"
+        "page-bridge.js",
+        "images/currency/*.png"
       ],
       "matches": [
         "https://pathofexile.com/*",
@@ -53,7 +55,8 @@
   },
   "host_permissions": [
     "https://pathofexile.com/*",
-    "https://*.pathofexile.com/*"
+    "https://*.pathofexile.com/*",
+    "https://api.poe2scout.com/*"
   ],
   "action": {
     "default_icon": {

@@ -6,12 +6,13 @@ PoE2 Marketwright is a broader Path of Exile 2 market extension workspace. The c
 
 ## What it does
 
-- Adds an on-page toggle panel.
+- Adds an on-page toggle panel for stat filtering, PoB copy, and C/D price conversion.
 - Separates stat filtering and PoB Copy Button controls with independent toggles.
 - Auto-detects the current category or item name from the trade2 filters.
 - Filters visible affix suggestion lists using the scraped PoE2DB data.
 - Allows manual override when auto-detection is not enough.
 - Adds a PoB Create Custom copy button to trade result rows.
+- Adds `E`, `C`, and `D` conversion controls for fixed Exalted, Chaos, and Divine Orb prices. Rates are fetched from Poe2Scout for the active trade league; the panel refresh button forces a live update.
 
 ## Install
 
@@ -47,3 +48,4 @@ uv run --project scripts python scripts/build_extension_data.py --split-dir buil
 - `https://poe2db.tw/us/Modifiers`
 - category pages such as `https://poe2db.tw/us/Amulets#ModifiersCalc`
 - official item/stat naming from `https://www.pathofexile.com/api/trade2/data/items` and `https://www.pathofexile.com/api/trade2/data/stats` is compatible with the generated canonical patterns
+- C/D conversion rates come from `https://api.poe2scout.com/poe2/Leagues/{league}/ReferenceCurrencies`

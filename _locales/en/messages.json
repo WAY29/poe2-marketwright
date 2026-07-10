@@ -95,5 +95,47 @@
   },
   "pobCopyError": {
     "message": "Failed"
+  },
+  "currencyConversionTitle": {
+    "message": "Price Conversion"
+  },
+  "enableCurrencyConversion": {
+    "message": "Enable price conversion"
+  },
+  "disableCurrencyConversion": {
+    "message": "Disable price conversion"
+  },
+  "refreshCurrencyConversion": {
+    "message": "Refresh Poe2Scout prices"
+  },
+  "showExalted": {
+    "message": "Show in Exalted Orbs"
+  },
+  "showChaos": {
+    "message": "Show in Chaos Orbs"
+  },
+  "showDivine": {
+    "message": "Show in Divine Orbs"
+  },
+  "currencyExalted": {
+    "message": "Exalted Orb"
+  },
+  "currencyChaos": {
+    "message": "Chaos Orb"
+  },
+  "currencyDivine": {
+    "message": "Divine Orb"
+  },
+  "currencyLoading": {
+    "message": "Loading..."
+  },
+  "currencyUnavailable": {
+    "message": "Rate unavailable"
+  },
+  "currencyLeague": {
+    "message": "League: $1"
+  },
+  "currencyLeagueUnavailable": {
+    "message": "League: unavailable"
   }
 }

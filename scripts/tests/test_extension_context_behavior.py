@@ -59,6 +59,47 @@ class ExtensionContextBehaviorTests(unittest.TestCase):
 
         self.assertEqual(result, {"resolved": True})
 
+    def test_currency_panel_displays_the_detected_league(self) -> None:
+        result = self.run_node(
+            r'''
+            const fs = require("fs");
+            const vm = require("vm");
+            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { updateCurrencyLeague, runtime };\n})();"
+            );
+
+            const sandbox = {
+              window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+              document: {},
+              location: { pathname: "/trade2" },
+              console,
+              chrome: {}
+            };
+            vm.runInNewContext(source, sandbox, { filename: "content.js" });
+
+            const leagueNode = { textContent: "", title: "", dataset: {} };
+            const hooks = sandbox.window.__testHooks;
+            hooks.runtime.ui.currencyLeague = leagueNode;
+            hooks.updateCurrencyLeague(
+              "HC Runes of Aldur",
+              "https://www.pathofexile.com/trade2/search/HC%20Runes%20of%20Aldur/query-1"
+            );
+            console.log(JSON.stringify(leagueNode));
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "textContent": "League: HC Runes of Aldur",
+                "title": "https://www.pathofexile.com/trade2/search/HC%20Runes%20of%20Aldur/query-1",
+                "dataset": {"state": "ready"},
+            },
+        )
+
     def test_collapsed_panel_keeps_toggle_anchor_and_restores_saved_position(self) -> None:
         result = self.run_node(
             r'''

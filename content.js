@@ -12,6 +12,7 @@
   const DEFAULT_STATE = {
     filteringEnabled: true,
     pobCopyEnabled: true,
+    currencyConversionEnabled: true,
     selection: "auto",
     collapsed: false,
     panelPosition: null,
@@ -142,12 +143,26 @@
     statsText: "Available $1 / Keep $2 / Ignore $3",
     statFilterTitle: "Stat filter",
     pobCopyTitle: "PoB Copy Button",
+    currencyConversionTitle: "Price Conversion",
     toggleOn: "ON",
     toggleOff: "OFF",
     enableFiltering: "Enable filtering",
     disableFiltering: "Disable filtering",
     enablePobCopy: "Enable PoB copy button",
     disablePobCopy: "Disable PoB copy button",
+    enableCurrencyConversion: "Enable price conversion",
+    disableCurrencyConversion: "Disable price conversion",
+    refreshCurrencyConversion: "Refresh Poe2Scout prices",
+    showExalted: "Show in Exalted Orbs",
+    showChaos: "Show in Chaos Orbs",
+    showDivine: "Show in Divine Orbs",
+    currencyExalted: "Exalted Orb",
+    currencyChaos: "Chaos Orb",
+    currencyDivine: "Divine Orb",
+    currencyLoading: "Loading...",
+    currencyUnavailable: "Rate unavailable",
+    currencyLeague: "League: $1",
+    currencyLeagueUnavailable: "League: unavailable",
     pobCopyReady: "PoB Copy",
     pobCopyLoading: "Loading...",
     pobCopyOk: "Copied!",
@@ -179,6 +194,7 @@
     bridgePayloadSignature: "",
     lastFilterStats: null,
     pobCopy: null,
+    currencyConversion: null,
     ui: {}
   };
 
@@ -187,6 +203,7 @@
   async function bootstrap() {
     runtime.state = await loadState();
     initializePobCopy();
+    initializeCurrencyConversion();
     bindPageBridgeMessages();
     injectPageBridge();
 
@@ -271,7 +288,13 @@
     if (isExtensionContextInvalidated(error)) {
       return;
     }
-    console.error(`[PoE2 Marketwright] ${operation} failed`, error);
+    console.error(`[PoE2 Marketwright] ${operation} failed`, {
+      error,
+      message: error?.message || String(error),
+      requestedLeague: error?.requestedLeague || error?.details?.requestedLeague || null,
+      searchUrl: error?.searchUrl || error?.details?.searchUrl || null,
+      details: error?.details || null
+    });
   }
 
   function runAsync(task, operation) {
@@ -308,6 +331,18 @@
             <button id="poe2-trade2-affix-filter-pob-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
           </div>
         </section>
+        <section class="poe2-trade2-affix-filter-feature poe2-trade2-affix-filter-currency-feature">
+          <div class="poe2-trade2-affix-filter-feature-header">
+            <span id="poe2-trade2-affix-filter-currency-title" class="poe2-trade2-affix-filter-feature-title"></span>
+            <button id="poe2-trade2-affix-filter-currency-refresh" class="poe2-trade2-affix-filter-currency-refresh" type="button" aria-label="" title="">
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                <path d="M13.5 4.5V1.75l-1.2 1.2A5.5 5.5 0 1 0 13.2 9h-1.6a4 4 0 1 1-.5-4.9L9.7 5.5h3.8z"></path>
+              </svg>
+            </button>
+            <button id="poe2-trade2-affix-filter-currency-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
+          </div>
+          <div id="poe2-trade2-affix-filter-currency-league" class="poe2-trade2-affix-filter-currency-league" aria-live="polite"></div>
+        </section>
       </div>
       <button id="poe2-trade2-affix-filter-expand" class="poe2-trade2-affix-filter-collapsed-button" type="button" aria-label="" title="">
         <span class="poe2-trade2-affix-filter-mark" aria-hidden="true">M</span>
@@ -322,14 +357,20 @@
     runtime.ui.expand = root.querySelector("#poe2-trade2-affix-filter-expand");
     runtime.ui.enabled = root.querySelector("#poe2-trade2-affix-filter-enabled");
     runtime.ui.pobEnabled = root.querySelector("#poe2-trade2-affix-filter-pob-enabled");
+    runtime.ui.currencyEnabled = root.querySelector("#poe2-trade2-affix-filter-currency-enabled");
+    runtime.ui.currencyRefresh = root.querySelector("#poe2-trade2-affix-filter-currency-refresh");
+    runtime.ui.currencyLeague = root.querySelector("#poe2-trade2-affix-filter-currency-league");
     runtime.ui.statTitle = root.querySelector("#poe2-trade2-affix-filter-stat-title");
     runtime.ui.pobTitle = root.querySelector("#poe2-trade2-affix-filter-pob-title");
+    runtime.ui.currencyTitle = root.querySelector("#poe2-trade2-affix-filter-currency-title");
     runtime.ui.selection = root.querySelector("#poe2-trade2-affix-filter-selection");
     runtime.ui.status = root.querySelector("#poe2-trade2-affix-filter-status");
     runtime.ui.meta = root.querySelector("#poe2-trade2-affix-filter-meta");
     runtime.ui.dragHandle = root.querySelector(".poe2-trade2-affix-filter-header");
 
     updateStaticUiText();
+    const leagueContext = runtime.currencyConversion?.getActiveLeagueContext?.();
+    updateCurrencyLeague(leagueContext?.league, leagueContext?.searchUrl);
     populateSelectionOptions(runtime.ui.selection);
 
     runtime.ui.selection.value = runtime.state.selection;
@@ -367,6 +408,32 @@
       }, "toggle PoB copy");
     });
 
+    runtime.ui.currencyEnabled.addEventListener("click", () => {
+      runtime.state.currencyConversionEnabled = !runtime.state.currencyConversionEnabled;
+      runtime.currencyConversion?.setEnabled(runtime.state.currencyConversionEnabled);
+      updateCurrencyConversionToggleButton();
+      runAsync(async () => {
+        await saveState();
+        scheduleRefresh();
+      }, "toggle currency conversion");
+    });
+
+    runtime.ui.currencyRefresh.addEventListener("click", () => {
+      if (runtime.ui.currencyRefresh.disabled) {
+        return;
+      }
+      runtime.ui.currencyRefresh.disabled = true;
+      runtime.ui.currencyRefresh.dataset.loading = "true";
+      runAsync(async () => {
+        try {
+          await runtime.currencyConversion?.refresh();
+        } finally {
+          runtime.ui.currencyRefresh.disabled = false;
+          delete runtime.ui.currencyRefresh.dataset.loading;
+        }
+      }, "refresh currency conversion");
+    });
+
     runtime.ui.selection.addEventListener("change", () => {
       runtime.state.selection = runtime.ui.selection.value;
       runAsync(async () => {
@@ -383,6 +450,19 @@
     runtime.ui.expand.title = t("expandPanel");
     runtime.ui.statTitle.textContent = t("statFilterTitle");
     runtime.ui.pobTitle.textContent = t("pobCopyTitle");
+    runtime.ui.currencyTitle.textContent = t("currencyConversionTitle");
+    runtime.ui.currencyRefresh.setAttribute("aria-label", t("refreshCurrencyConversion"));
+    runtime.ui.currencyRefresh.title = t("refreshCurrencyConversion");
+  }
+
+  function updateCurrencyLeague(league, searchUrl = null) {
+    if (!runtime.ui.currencyLeague) {
+      return;
+    }
+    const detected = typeof league === "string" && league.trim() ? league.trim() : null;
+    runtime.ui.currencyLeague.textContent = detected ? t("currencyLeague", detected) : t("currencyLeagueUnavailable");
+    runtime.ui.currencyLeague.title = searchUrl || "";
+    runtime.ui.currencyLeague.dataset.state = detected ? "ready" : "unavailable";
   }
 
   function initializePobCopy() {
@@ -401,6 +481,29 @@
       }
     });
     runtime.pobCopy.start();
+  }
+
+  function initializeCurrencyConversion() {
+    const factory = globalThis.Poe2MarketwrightCurrencyConversion?.createCurrencyConversionFeature;
+    if (!factory) {
+      return;
+    }
+
+    runtime.currencyConversion = factory({
+      enabled: runtime.state.currencyConversionEnabled,
+      labels: {
+        showExalted: t("showExalted"),
+        showChaos: t("showChaos"),
+        showDivine: t("showDivine"),
+        currencyExalted: t("currencyExalted"),
+        currencyChaos: t("currencyChaos"),
+        currencyDivine: t("currencyDivine"),
+        loading: t("currencyLoading"),
+        unavailable: t("currencyUnavailable")
+      },
+      onLeagueChange: updateCurrencyLeague
+    });
+    runtime.currencyConversion.start();
   }
 
   function t(key, substitutions = [], fallback = "") {
@@ -1457,6 +1560,7 @@
     runtime.ui.enabled.setAttribute("aria-pressed", String(enabled));
     runtime.ui.enabled.title = enabled ? t("disableFiltering") : t("enableFiltering");
     updatePobCopyToggleButton();
+    updateCurrencyConversionToggleButton();
   }
 
   function updatePobCopyToggleButton() {
@@ -1467,6 +1571,17 @@
     runtime.ui.pobEnabled.textContent = enabled ? t("toggleOn") : t("toggleOff");
     runtime.ui.pobEnabled.setAttribute("aria-pressed", String(enabled));
     runtime.ui.pobEnabled.title = enabled ? t("disablePobCopy") : t("enablePobCopy");
+  }
+
+  function updateCurrencyConversionToggleButton() {
+    if (!runtime.ui.currencyEnabled) {
+      return;
+    }
+    const enabled = Boolean(runtime.state.currencyConversionEnabled);
+    runtime.ui.currencyEnabled.textContent = enabled ? t("toggleOn") : t("toggleOff");
+    runtime.ui.currencyEnabled.setAttribute("aria-pressed", String(enabled));
+    runtime.ui.currencyEnabled.title = enabled ? t("disableCurrencyConversion") : t("enableCurrencyConversion");
+    runtime.ui.currencyRefresh.disabled = !enabled;
   }
 
   function unhideAllFilteredOptions() {
@@ -1931,6 +2046,7 @@
     const payload = {
       enabled,
       pobCopyEnabled: Boolean(runtime.state.pobCopyEnabled),
+      currencyConversionEnabled: Boolean(runtime.state.currencyConversionEnabled),
       allowedKeys: enabled ? Array.from(allowedPatterns || []) : [],
       allowedStatIds: enabled ? Array.from(allowedStatIds || []) : [],
       allKeys: Array.from(runtime.allPatterns),
@@ -1939,6 +2055,7 @@
     const signature = [
       payload.enabled,
       payload.pobCopyEnabled,
+      payload.currencyConversionEnabled,
       payload.allowedKeys.join("|"),
       payload.allowedStatIds.join("|"),
       payload.allKeys.join("|"),
