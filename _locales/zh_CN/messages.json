@@ -359,5 +359,29 @@
   },
   "disableFiltering": {
     "message": "关闭过滤"
+  },
+  "statFilterTitle": {
+    "message": "词缀过滤"
+  },
+  "pobCopyTitle": {
+    "message": "PoB 复制按钮"
+  },
+  "enablePobCopy": {
+    "message": "启用 PoB 复制按钮"
+  },
+  "disablePobCopy": {
+    "message": "关闭 PoB 复制按钮"
+  },
+  "pobCopyReady": {
+    "message": "复制到 PoB"
+  },
+  "pobCopyLoading": {
+    "message": "处理中..."
+  },
+  "pobCopyOk": {
+    "message": "已复制"
+  },
+  "pobCopyError": {
+    "message": "失败"
   }
 }

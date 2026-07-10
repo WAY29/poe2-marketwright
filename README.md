@@ -7,9 +7,11 @@ PoE2 Marketwright is a broader Path of Exile 2 market extension workspace. The c
 ## What it does
 
 - Adds an on-page toggle panel.
+- Separates stat filtering and PoB Copy Button controls with independent toggles.
 - Auto-detects the current category or item name from the trade2 filters.
 - Filters visible affix suggestion lists using the scraped PoE2DB data.
 - Allows manual override when auto-detection is not enough.
+- Adds a PoB Create Custom copy button to trade result rows.
 
 ## Install
 

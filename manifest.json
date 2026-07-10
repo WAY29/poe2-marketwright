@@ -11,15 +11,21 @@
     "128": "images/icon-128.png"
   },
   "permissions": [
-    "storage"
+    "storage",
+    "clipboardWrite"
   ],
   "content_scripts": [
     {
       "matches": [
+        "https://pathofexile.com/trade2",
+        "https://pathofexile.com/trade2/*",
         "https://www.pathofexile.com/trade2",
-        "https://www.pathofexile.com/trade2/*"
+        "https://www.pathofexile.com/trade2/*",
+        "https://*.pathofexile.com/trade2",
+        "https://*.pathofexile.com/trade2/*"
       ],
       "js": [
+        "pob-copy.js",
         "content.js"
       ],
       "css": [
@@ -37,9 +43,17 @@
         "page-bridge.js"
       ],
       "matches": [
-        "https://www.pathofexile.com/*"
+        "https://pathofexile.com/*",
+        "https://*.pathofexile.com/*"
       ]
     }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "host_permissions": [
+    "https://pathofexile.com/*",
+    "https://*.pathofexile.com/*"
   ],
   "action": {
     "default_icon": {

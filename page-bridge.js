@@ -8,6 +8,7 @@
   const UPDATE_TYPE = "POE2_MARKETWRIGHT_UPDATE";
   const READY_TYPE = "POE2_MARKETWRIGHT_READY";
   const STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
+  const POB_MESSAGE_SOURCE = "poe2-marketwright-pob-copy";
   const NUMBER_RE = /([-+]?\d+(?:\.\d+)?)/g;
   const PSEUDO_STAT_GROUP_ID = "pseudo";
   const ALWAYS_VISIBLE_PSEUDO_STAT_ID_RE = /^pseudo\.pseudo_number_of_(?:[\w]+_mods|uses_remaining)$/i;
@@ -94,6 +95,7 @@
     originalKnownStats: null,
     lastPayload: {
       enabled: false,
+      pobCopyEnabled: false,
       allowedKeys: [],
       allowedStatIds: [],
       allKeys: [],
@@ -113,6 +115,7 @@
   });
 
   waitForTradeApp();
+  installPobApiHook();
   notifyReady();
 
   function waitForTradeApp() {
@@ -137,6 +140,82 @@
       runtime.originalKnownStats = cloneKnownStats(staticData.knownStats);
     }
     return true;
+  }
+
+  function installPobApiHook() {
+    if (window.__poe2MarketwrightPobApiHookLoaded) {
+      return;
+    }
+    window.__poe2MarketwrightPobApiHookLoaded = true;
+
+    const emit = (url, body) => {
+      if (!runtime.lastPayload.pobCopyEnabled || !url || !String(url).includes("/api/trade2/fetch/")) {
+        return;
+      }
+      window.postMessage(
+        {
+          source: POB_MESSAGE_SOURCE,
+          url: String(url),
+          body: typeof body === "string" ? body : null
+        },
+        "*"
+      );
+    };
+
+    const originalFetch = window.fetch;
+    if (typeof originalFetch === "function") {
+      window.fetch = function (...args) {
+        let targetUrl = null;
+        try {
+          const target =
+            typeof Request !== "undefined" && args[0] instanceof Request ? args[0].url : args[0];
+          targetUrl = String(target);
+        } catch (error) {
+          targetUrl = null;
+        }
+
+        const responsePromise = originalFetch.apply(this, args);
+        if (targetUrl?.includes("/api/trade2/fetch/")) {
+          responsePromise
+            .then((response) => response.clone().text())
+            .then((body) => emit(targetUrl, body))
+            .catch(() => {});
+        }
+        return responsePromise;
+      };
+    }
+
+    if (typeof XMLHttpRequest !== "undefined") {
+      const originalOpen = XMLHttpRequest.prototype.open;
+      const originalSend = XMLHttpRequest.prototype.send;
+      XMLHttpRequest.prototype.open = function (method, url, ...rest) {
+        this.__poe2MarketwrightPobUrl =
+          typeof url === "string" && url.includes("/api/trade2/fetch/") ? url : null;
+        return originalOpen.call(this, method, url, ...rest);
+      };
+      XMLHttpRequest.prototype.send = function (...args) {
+        if (this.__poe2MarketwrightPobUrl) {
+          this.addEventListener(
+            "load",
+            () => {
+              let body = null;
+              try {
+                if (this.responseType === "" || this.responseType === "text") {
+                  body = this.responseText;
+                } else if (this.responseType === "json") {
+                  body = JSON.stringify(this.response);
+                }
+              } catch (error) {
+                body = null;
+              }
+              emit(this.__poe2MarketwrightPobUrl, body);
+            },
+            { once: true }
+          );
+        }
+        return originalSend.apply(this, args);
+      };
+    }
   }
 
   function cloneKnownStats(knownStats) {

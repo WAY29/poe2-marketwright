@@ -359,5 +359,29 @@
   },
   "disableFiltering": {
     "message": "關閉過濾"
+  },
+  "statFilterTitle": {
+    "message": "詞綴過濾"
+  },
+  "pobCopyTitle": {
+    "message": "PoB 複製按鈕"
+  },
+  "enablePobCopy": {
+    "message": "啟用 PoB 複製按鈕"
+  },
+  "disablePobCopy": {
+    "message": "關閉 PoB 複製按鈕"
+  },
+  "pobCopyReady": {
+    "message": "複製到 PoB"
+  },
+  "pobCopyLoading": {
+    "message": "處理中..."
+  },
+  "pobCopyOk": {
+    "message": "已複製"
+  },
+  "pobCopyError": {
+    "message": "失敗"
   }
 }

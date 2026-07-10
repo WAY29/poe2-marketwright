@@ -154,9 +154,7 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               }
             }
 
-            const bootstrapCall = `  bootstrap().catch((error) => {
-                console.error("[PoE2 Marketwright] bootstrap failed", error);
-              });`;
+            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
               /\n\}\)\(\);\s*$/,
@@ -341,9 +339,7 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               }
             }
 
-            const bootstrapCall = `  bootstrap().catch((error) => {
-                console.error("[PoE2 Marketwright] bootstrap failed", error);
-              });`;
+            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
               /\n\}\)\(\);\s*$/,
@@ -474,9 +470,7 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               }
             }
 
-            const bootstrapCall = `  bootstrap().catch((error) => {
-                console.error("[PoE2 Marketwright] bootstrap failed", error);
-              });`;
+            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
               /\n\}\)\(\);\s*$/,
@@ -559,9 +553,7 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
             const fs = require("fs");
             const vm = require("vm");
 
-            const bootstrapCall = `  bootstrap().catch((error) => {
-                console.error("[PoE2 Marketwright] bootstrap failed", error);
-              });`;
+            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
               /\n\}\)\(\);\s*$/,

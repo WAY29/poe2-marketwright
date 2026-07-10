@@ -3,11 +3,14 @@
   top: 14px;
   right: 14px;
   z-index: 2147483647;
-  width: 220px;
+  width: 238px;
   font: 11px/1.35 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
 #poe2-trade2-affix-filter-root.poe2-trade2-affix-filter-collapsed {
+  left: auto;
+  top: 14px;
+  right: 14px;
   width: 36px;
   height: 36px;
 }
@@ -17,6 +20,8 @@
 }
 
 .poe2-trade2-affix-filter-panel {
+  display: grid;
+  gap: 6px;
   padding: 7px;
   color: #d9c79e;
   background:
@@ -84,6 +89,7 @@
   height: 19px;
   border-radius: 3px;
   cursor: pointer;
+  margin-left: auto;
 }
 
 .poe2-trade2-affix-filter-arrow {
@@ -135,7 +141,6 @@
 }
 
 .poe2-trade2-affix-filter-status {
-  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   color: #ead7aa;
@@ -147,6 +152,53 @@
   text-overflow: ellipsis;
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7);
   white-space: nowrap;
+}
+
+.poe2-trade2-affix-filter-feature {
+  padding: 7px;
+  border: 1px solid rgba(105, 78, 43, 0.92);
+  border-radius: 3px;
+  background: rgba(12, 10, 8, 0.62);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 220, 0.04),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.24);
+}
+
+.poe2-trade2-affix-filter-stat-feature {
+  border-color: rgba(145, 104, 52, 0.86);
+}
+
+.poe2-trade2-affix-filter-pob-feature {
+  border-color: rgba(59, 119, 91, 0.86);
+}
+
+.poe2-trade2-affix-filter-feature-header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.poe2-trade2-affix-filter-feature-title {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  color: #ead7aa;
+  font:
+    700 11px/1.25 Georgia,
+    "Times New Roman",
+    serif;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7);
+  white-space: nowrap;
+}
+
+.poe2-trade2-affix-filter-feature-toggle {
+  flex: 0 0 auto;
+  margin-left: auto;
+}
+
+.poe2-trade2-affix-filter-feature .poe2-trade2-affix-filter-status {
+  margin-top: 6px;
 }
 
 .poe2-trade2-affix-filter-toggle {
@@ -232,13 +284,60 @@
   display: none !important;
 }
 
+.poe2-marketwright-pob-copy-button {
+  appearance: none;
+  min-width: 64px;
+  padding: 4px 7px;
+  border: 1px solid rgba(65, 124, 94, 0.92);
+  border-radius: 3px;
+  color: #c9f1d8;
+  background: linear-gradient(180deg, #203f30 0%, #11251b 100%);
+  box-shadow:
+    inset 0 1px 0 rgba(222, 255, 231, 0.1),
+    0 1px 0 rgba(0, 0, 0, 0.42);
+  cursor: pointer;
+  font: 600 11px/1.1 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  white-space: nowrap;
+}
+
+.poe2-marketwright-pob-copy-button:hover {
+  border-color: #7dc39a;
+  filter: brightness(1.08);
+}
+
+.poe2-marketwright-pob-copy-button:focus-visible {
+  outline: 2px solid rgba(125, 195, 154, 0.86);
+  outline-offset: 2px;
+}
+
+.poe2-marketwright-pob-copy-button:disabled {
+  cursor: default;
+  opacity: 0.72;
+}
+
+.poe2-marketwright-pob-copy-button--below-verified {
+  display: inline-block;
+  margin-top: 4px;
+}
+
+.poe2-marketwright-pob-copy-button[data-status="ok"] {
+  border-color: #75b58b;
+  color: #d4f4de;
+}
+
+.poe2-marketwright-pob-copy-button[data-status="error"] {
+  border-color: #b76a6a;
+  color: #f2c0c0;
+}
+
 @media (prefers-reduced-motion: reduce) {
   .poe2-trade2-affix-filter-panel,
   .poe2-trade2-affix-filter-brand,
   .poe2-trade2-affix-filter-collapse-toggle,
   .poe2-trade2-affix-filter-collapsed-button,
   .poe2-trade2-affix-filter-toggle,
-  .poe2-trade2-affix-filter-field select {
+  .poe2-trade2-affix-filter-field select,
+  .poe2-marketwright-pob-copy-button {
     transition: none;
   }
 }

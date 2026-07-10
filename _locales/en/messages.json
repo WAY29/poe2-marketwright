@@ -71,5 +71,29 @@
   },
   "disableFiltering": {
     "message": "Disable filtering"
+  },
+  "statFilterTitle": {
+    "message": "Stat filter"
+  },
+  "pobCopyTitle": {
+    "message": "PoB Copy Button"
+  },
+  "enablePobCopy": {
+    "message": "Enable PoB copy button"
+  },
+  "disablePobCopy": {
+    "message": "Disable PoB copy button"
+  },
+  "pobCopyReady": {
+    "message": "PoB Copy"
+  },
+  "pobCopyLoading": {
+    "message": "Loading..."
+  },
+  "pobCopyOk": {
+    "message": "Copied!"
+  },
+  "pobCopyError": {
+    "message": "Failed"
   }
 }

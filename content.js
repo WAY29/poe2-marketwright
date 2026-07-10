@@ -10,12 +10,15 @@
 
   const STORAGE_KEY = "poe2Trade2AffixFilterState";
   const DEFAULT_STATE = {
-    enabled: true,
+    filteringEnabled: true,
+    pobCopyEnabled: true,
     selection: "auto",
     collapsed: false,
-    panelPosition: null
+    panelPosition: null,
+    collapsedPosition: null
   };
   const ROOT_ID = "poe2-trade2-affix-filter-root";
+  const COLLAPSED_PANEL_SIZE = 36;
   const HIDDEN_CLASS = "poe2-trade2-affix-filter-hidden";
   const BRIDGE_SCRIPT_ID = "poe2-marketwright-page-bridge";
   const BRIDGE_SOURCE = "poe2-marketwright";
@@ -137,11 +140,20 @@
     selectionSourceAuto: "Auto",
     selectionSourceManual: "Manual",
     statsText: "Available $1 / Keep $2 / Ignore $3",
+    statFilterTitle: "Stat filter",
+    pobCopyTitle: "PoB Copy Button",
     toggleOn: "ON",
     toggleOff: "OFF",
     enableFiltering: "Enable filtering",
-    disableFiltering: "Disable filtering"
+    disableFiltering: "Disable filtering",
+    enablePobCopy: "Enable PoB copy button",
+    disablePobCopy: "Disable PoB copy button",
+    pobCopyReady: "PoB Copy",
+    pobCopyLoading: "Loading...",
+    pobCopyOk: "Copied!",
+    pobCopyError: "Failed"
   };
+  const EXTENSION_CONTEXT_INVALIDATED_RE = /extension context invalidated|context invalidated|message port closed/i;
 
   const runtime = {
     data: null,
@@ -166,14 +178,18 @@
     bridgeStats: null,
     bridgePayloadSignature: "",
     lastFilterStats: null,
+    pobCopy: null,
     ui: {}
   };
 
-  bootstrap().catch((error) => {
-    console.error("[PoE2 Marketwright] bootstrap failed", error);
-  });
+  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));
 
   async function bootstrap() {
+    runtime.state = await loadState();
+    initializePobCopy();
+    bindPageBridgeMessages();
+    injectPageBridge();
+
     runtime.data = await loadData();
     runtime.allPatterns = new Set((runtime.data.allPatterns || []).map(normalizeStatKey).filter(Boolean));
     runtime.allStatIds = new Set((runtime.data.allStatIds || []).map(String).filter(Boolean));
@@ -187,9 +203,6 @@
     runtime.categoryAliasToSelection = buildExpandedCategoryAliasMap(runtime.data.categoryAliasToSelection || {});
     addLocalizedSelectionAliases(localizedAliasMessages);
     runtime.categoryLookupEntries = Object.keys(runtime.categoryAliasToSelection).sort(compareLookupLengthDesc);
-    runtime.state = await loadState();
-    bindPageBridgeMessages();
-    injectPageBridge();
     mountPanel();
     bindGlobalListeners();
     scheduleRefresh();
@@ -223,16 +236,46 @@
 
   async function loadState() {
     const stored = await chrome.storage.local.get(STORAGE_KEY);
+    const savedState = stored[STORAGE_KEY] || {};
     return {
       ...DEFAULT_STATE,
-      ...(stored[STORAGE_KEY] || {})
+      ...savedState,
+      filteringEnabled:
+        typeof savedState.filteringEnabled === "boolean"
+          ? savedState.filteringEnabled
+          : typeof savedState.enabled === "boolean"
+            ? savedState.enabled
+            : DEFAULT_STATE.filteringEnabled
     };
   }
 
   async function saveState() {
-    await chrome.storage.local.set({
-      [STORAGE_KEY]: runtime.state
-    });
+    try {
+      await chrome.storage.local.set({
+        [STORAGE_KEY]: runtime.state
+      });
+      return true;
+    } catch (error) {
+      if (isExtensionContextInvalidated(error)) {
+        return false;
+      }
+      throw error;
+    }
+  }
+
+  function isExtensionContextInvalidated(error) {
+    return EXTENSION_CONTEXT_INVALIDATED_RE.test(String(error?.message || error || ""));
+  }
+
+  function handleAsyncError(error, operation) {
+    if (isExtensionContextInvalidated(error)) {
+      return;
+    }
+    console.error(`[PoE2 Marketwright] ${operation} failed`, error);
+  }
+
+  function runAsync(task, operation) {
+    Promise.resolve().then(task).catch((error) => handleAsyncError(error, operation));
   }
 
   function mountPanel() {
@@ -242,18 +285,29 @@
       <div class="poe2-trade2-affix-filter-panel">
         <div class="poe2-trade2-affix-filter-header">
           <span class="poe2-trade2-affix-filter-brand" aria-hidden="true">M</span>
-          <div id="poe2-trade2-affix-filter-status" class="poe2-trade2-affix-filter-status"></div>
-          <button id="poe2-trade2-affix-filter-enabled" class="poe2-trade2-affix-filter-toggle" type="button"></button>
           <button id="poe2-trade2-affix-filter-collapse" class="poe2-trade2-affix-filter-collapse-toggle" type="button" aria-label="" title="">
             <svg class="poe2-trade2-affix-filter-arrow" viewBox="0 0 16 16" aria-hidden="true" focusable="false">
               <path d="M5 3l5 5-5 5V3z"></path>
             </svg>
           </button>
         </div>
-        <label class="poe2-trade2-affix-filter-field">
-          <select id="poe2-trade2-affix-filter-selection"></select>
-        </label>
-        <div id="poe2-trade2-affix-filter-meta" class="poe2-trade2-affix-filter-meta"></div>
+        <section class="poe2-trade2-affix-filter-feature poe2-trade2-affix-filter-stat-feature">
+          <div class="poe2-trade2-affix-filter-feature-header">
+            <span id="poe2-trade2-affix-filter-stat-title" class="poe2-trade2-affix-filter-feature-title"></span>
+            <button id="poe2-trade2-affix-filter-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
+          </div>
+          <div id="poe2-trade2-affix-filter-status" class="poe2-trade2-affix-filter-status"></div>
+          <label class="poe2-trade2-affix-filter-field">
+            <select id="poe2-trade2-affix-filter-selection"></select>
+          </label>
+          <div id="poe2-trade2-affix-filter-meta" class="poe2-trade2-affix-filter-meta"></div>
+        </section>
+        <section class="poe2-trade2-affix-filter-feature poe2-trade2-affix-filter-pob-feature">
+          <div class="poe2-trade2-affix-filter-feature-header">
+            <span id="poe2-trade2-affix-filter-pob-title" class="poe2-trade2-affix-filter-feature-title"></span>
+            <button id="poe2-trade2-affix-filter-pob-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
+          </div>
+        </section>
       </div>
       <button id="poe2-trade2-affix-filter-expand" class="poe2-trade2-affix-filter-collapsed-button" type="button" aria-label="" title="">
         <span class="poe2-trade2-affix-filter-mark" aria-hidden="true">M</span>
@@ -267,6 +321,9 @@
     runtime.ui.collapse = root.querySelector("#poe2-trade2-affix-filter-collapse");
     runtime.ui.expand = root.querySelector("#poe2-trade2-affix-filter-expand");
     runtime.ui.enabled = root.querySelector("#poe2-trade2-affix-filter-enabled");
+    runtime.ui.pobEnabled = root.querySelector("#poe2-trade2-affix-filter-pob-enabled");
+    runtime.ui.statTitle = root.querySelector("#poe2-trade2-affix-filter-stat-title");
+    runtime.ui.pobTitle = root.querySelector("#poe2-trade2-affix-filter-pob-title");
     runtime.ui.selection = root.querySelector("#poe2-trade2-affix-filter-selection");
     runtime.ui.status = root.querySelector("#poe2-trade2-affix-filter-status");
     runtime.ui.meta = root.querySelector("#poe2-trade2-affix-filter-meta");
@@ -277,31 +334,45 @@
 
     runtime.ui.selection.value = runtime.state.selection;
     updateToggleButton();
-    applyPanelPosition();
     applyPanelCollapsed();
+    applyPanelPosition();
     bindPanelDrag();
 
-    runtime.ui.collapse.addEventListener("click", async () => {
-      await setPanelCollapsed(true);
+    runtime.ui.collapse.addEventListener("click", () => {
+      runAsync(() => setPanelCollapsed(true), "collapse panel");
     });
 
-    runtime.ui.expand.addEventListener("click", async () => {
+    runtime.ui.expand.addEventListener("click", () => {
       if (runtime.ui.suppressExpandClick) {
         return;
       }
-      await setPanelCollapsed(false);
+      runAsync(() => setPanelCollapsed(false), "expand panel");
     });
 
-    runtime.ui.enabled.addEventListener("click", async () => {
-      runtime.state.enabled = !runtime.state.enabled;
-      await saveState();
-      scheduleRefresh();
+    runtime.ui.enabled.addEventListener("click", () => {
+      runtime.state.filteringEnabled = !runtime.state.filteringEnabled;
+      runAsync(async () => {
+        await saveState();
+        scheduleRefresh();
+      }, "toggle stat filtering");
     });
 
-    runtime.ui.selection.addEventListener("change", async () => {
+    runtime.ui.pobEnabled.addEventListener("click", () => {
+      runtime.state.pobCopyEnabled = !runtime.state.pobCopyEnabled;
+      runtime.pobCopy?.setEnabled(runtime.state.pobCopyEnabled);
+      updatePobCopyToggleButton();
+      runAsync(async () => {
+        await saveState();
+        scheduleRefresh();
+      }, "toggle PoB copy");
+    });
+
+    runtime.ui.selection.addEventListener("change", () => {
       runtime.state.selection = runtime.ui.selection.value;
-      await saveState();
-      scheduleRefreshAfterDomUpdate();
+      runAsync(async () => {
+        await saveState();
+        scheduleRefreshAfterDomUpdate();
+      }, "change stat selection");
     });
   }
 
@@ -310,6 +381,26 @@
     runtime.ui.collapse.title = t("collapsePanel");
     runtime.ui.expand.setAttribute("aria-label", t("expandPanel"));
     runtime.ui.expand.title = t("expandPanel");
+    runtime.ui.statTitle.textContent = t("statFilterTitle");
+    runtime.ui.pobTitle.textContent = t("pobCopyTitle");
+  }
+
+  function initializePobCopy() {
+    const factory = globalThis.Poe2MarketwrightPobCopy?.createPobCopyFeature;
+    if (!factory) {
+      return;
+    }
+
+    runtime.pobCopy = factory({
+      enabled: runtime.state.pobCopyEnabled,
+      labels: {
+        ready: t("pobCopyReady"),
+        loading: t("pobCopyLoading"),
+        ok: t("pobCopyOk"),
+        error: t("pobCopyError")
+      }
+    });
+    runtime.pobCopy.start();
   }
 
   function t(key, substitutions = [], fallback = "") {
@@ -327,6 +418,18 @@
       return;
     }
 
+    if (collapsed) {
+      const rect = runtime.ui.collapse?.getBoundingClientRect();
+      if (rect && rect.width > 0 && rect.height > 0) {
+        runtime.state.collapsedPosition = {
+          left: rect.left + (rect.width - COLLAPSED_PANEL_SIZE) / 2,
+          top: rect.top + (rect.height - COLLAPSED_PANEL_SIZE) / 2
+        };
+      }
+    } else {
+      runtime.state.collapsedPosition = null;
+    }
+
     runtime.state.collapsed = collapsed;
     applyPanelCollapsed();
     applyPanelPosition();
@@ -341,8 +444,31 @@
   }
 
   function applyPanelPosition() {
+    if (runtime.state.collapsed) {
+      const position = runtime.state.collapsedPosition;
+      if (
+        position &&
+        Number.isFinite(position.left) &&
+        Number.isFinite(position.top)
+      ) {
+        const clamped = clampPanelPosition(position.left, position.top);
+        runtime.ui.root.style.left = `${clamped.left}px`;
+        runtime.ui.root.style.top = `${clamped.top}px`;
+        runtime.ui.root.style.right = "auto";
+        return;
+      }
+
+      runtime.ui.root.style.left = "";
+      runtime.ui.root.style.top = "";
+      runtime.ui.root.style.right = "";
+      return;
+    }
+
     const position = runtime.state.panelPosition;
     if (!position || !Number.isFinite(position.left) || !Number.isFinite(position.top)) {
+      runtime.ui.root.style.left = "";
+      runtime.ui.root.style.top = "";
+      runtime.ui.root.style.right = "";
       return;
     }
 
@@ -399,7 +525,7 @@
       event.preventDefault();
     };
 
-    const finishDrag = async (event) => {
+    const finishDrag = (event) => {
       if (!dragState || event.pointerId !== dragState.pointerId) {
         return;
       }
@@ -407,16 +533,22 @@
       const handle = event.currentTarget;
       handle.releasePointerCapture?.(event.pointerId);
       runtime.ui.root.classList.remove("poe2-trade2-affix-filter-dragging");
+      const wasCollapsedHandle = dragState.isCollapsedHandle;
+      const wasMoved = dragState.moved;
       const rect = runtime.ui.root.getBoundingClientRect();
-      runtime.state.panelPosition = clampPanelPosition(rect.left, rect.top);
-      if (dragState.isCollapsedHandle && dragState.moved) {
+      if (!wasCollapsedHandle || wasMoved) {
+        runtime.state.panelPosition = clampPanelPosition(rect.left, rect.top);
+      }
+      if (wasCollapsedHandle && wasMoved) {
         runtime.ui.suppressExpandClick = true;
         window.setTimeout(() => {
           runtime.ui.suppressExpandClick = false;
         }, 0);
       }
       dragState = null;
-      await saveState();
+      if (!wasCollapsedHandle || wasMoved) {
+        runAsync(() => saveState(), "save panel position");
+      }
     };
 
     for (const handle of handles) {
@@ -439,8 +571,8 @@
   function clampPanelPosition(left, top) {
     const margin = 8;
     const rect = runtime.ui.root.getBoundingClientRect();
-    const width = rect.width || (runtime.state.collapsed ? 36 : 220);
-    const height = rect.height || (runtime.state.collapsed ? 36 : 88);
+    const width = rect.width || (runtime.state.collapsed ? COLLAPSED_PANEL_SIZE : 238);
+    const height = rect.height || (runtime.state.collapsed ? COLLAPSED_PANEL_SIZE : 188);
     return {
       left: Math.max(margin, Math.min(left, window.innerWidth - width - margin)),
       top: Math.max(margin, Math.min(top, window.innerHeight - height - margin))
@@ -698,6 +830,10 @@
       }
 
       if (event.data.type === BRIDGE_READY_TYPE) {
+        if (!runtime.data || !runtime.ui.root) {
+          syncPageBridge(null, null);
+          return;
+        }
         scheduleRefresh();
         return;
       }
@@ -708,7 +844,9 @@
 
       const payload = event.data.payload || {};
       runtime.bridgeStats = payload.filterStats || null;
-      scheduleRefresh();
+      if (runtime.data && runtime.ui.root) {
+        scheduleRefresh();
+      }
     });
   }
 
@@ -758,7 +896,7 @@
     };
 
     if (
-      !runtime.state.enabled ||
+      !runtime.state.filteringEnabled ||
       !((allowedPatterns && allowedPatterns.size > 0) || (allowedStatIds && allowedStatIds.size > 0))
     ) {
       runtime.lastFilterStats = filterStats;
@@ -776,7 +914,7 @@
   }
 
   function resolveActiveSelection() {
-    if (!runtime.state.enabled) {
+    if (!runtime.state.filteringEnabled) {
       return null;
     }
 
@@ -1218,7 +1356,7 @@
   }
 
   function getAllowedPatterns(selection) {
-    if (!selection || !runtime.state.enabled) {
+    if (!selection || !runtime.state.filteringEnabled) {
       return null;
     }
 
@@ -1248,7 +1386,7 @@
   }
 
   function getAllowedStatIds(selection) {
-    if (!selection || !runtime.state.enabled) {
+    if (!selection || !runtime.state.filteringEnabled) {
       return null;
     }
 
@@ -1280,7 +1418,7 @@
     runtime.ui.selection.value = runtime.state.selection;
     updateToggleButton();
 
-    if (!runtime.state.enabled) {
+    if (!runtime.state.filteringEnabled) {
       runtime.ui.status.textContent = t("statusOff");
       runtime.ui.meta.textContent = buildMetaText(0, true);
       return;
@@ -1314,10 +1452,21 @@
     if (!runtime.ui.enabled) {
       return;
     }
-    const enabled = Boolean(runtime.state.enabled);
+    const enabled = Boolean(runtime.state.filteringEnabled);
     runtime.ui.enabled.textContent = enabled ? t("toggleOn") : t("toggleOff");
     runtime.ui.enabled.setAttribute("aria-pressed", String(enabled));
     runtime.ui.enabled.title = enabled ? t("disableFiltering") : t("enableFiltering");
+    updatePobCopyToggleButton();
+  }
+
+  function updatePobCopyToggleButton() {
+    if (!runtime.ui.pobEnabled) {
+      return;
+    }
+    const enabled = Boolean(runtime.state.pobCopyEnabled);
+    runtime.ui.pobEnabled.textContent = enabled ? t("toggleOn") : t("toggleOff");
+    runtime.ui.pobEnabled.setAttribute("aria-pressed", String(enabled));
+    runtime.ui.pobEnabled.title = enabled ? t("disablePobCopy") : t("enablePobCopy");
   }
 
   function unhideAllFilteredOptions() {
@@ -1776,11 +1925,12 @@
 
   function syncPageBridge(allowedPatterns, allowedStatIds) {
     const enabled = Boolean(
-      runtime.state.enabled &&
+      runtime.state.filteringEnabled &&
         ((allowedPatterns && allowedPatterns.size > 0) || (allowedStatIds && allowedStatIds.size > 0))
     );
     const payload = {
       enabled,
+      pobCopyEnabled: Boolean(runtime.state.pobCopyEnabled),
       allowedKeys: enabled ? Array.from(allowedPatterns || []) : [],
       allowedStatIds: enabled ? Array.from(allowedStatIds || []) : [],
       allKeys: Array.from(runtime.allPatterns),
@@ -1788,6 +1938,7 @@
     };
     const signature = [
       payload.enabled,
+      payload.pobCopyEnabled,
       payload.allowedKeys.join("|"),
       payload.allowedStatIds.join("|"),
       payload.allKeys.join("|"),
