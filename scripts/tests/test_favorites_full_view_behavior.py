@@ -626,6 +626,42 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
             },
         )
 
+    def test_full_item_delete_feedback_precedes_the_favorite_list(self) -> None:
+        result = self.run_node(
+            r'''
+            const fs = require("fs");
+            const vm = require("vm");
+            let source = fs.readFileSync("favorites-panel.js", "utf8");
+            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { renderItems };\n})();"
+            );
+            class Node {
+              constructor() { this.children = []; this.className = ""; this.dataset = {}; }
+              appendChild(child) { this.children.push(child); return child; }
+              append(...children) { children.forEach((child) => this.appendChild(child)); }
+              addEventListener() {}
+              setAttribute() {}
+            }
+            const sandbox = {
+              window: {},
+              document: { createElement() { return new Node(); }, querySelector() { return null; } },
+              location: { search: "" },
+              URLSearchParams,
+              console
+            };
+            vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
+            const root = sandbox.window.__testHooks.renderItems({ favorites: [], deletedFavorite: true });
+            console.log(JSON.stringify(root.children.map((child) => child.className)));
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            ["favorites-panel-toolbar", "favorites-panel-feedback", "favorites-panel-empty"],
+        )
+
     def test_compact_item_tooltip_omits_a_base_type_that_is_already_the_title(self) -> None:
         result = self.run_node(
             r'''

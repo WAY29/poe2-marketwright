@@ -1326,6 +1326,8 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
 
         self.assertIn('id="poe2-marketwright-link-favorites-feedback-undo"', source)
         self.assertNotIn('id="poe2-marketwright-link-favorites-undo"', source)
+        self.assertIn('id="poe2-marketwright-favorites-feedback-undo"', source)
+        self.assertNotIn('id="poe2-marketwright-favorites-undo"', source)
 
     def test_favorites_disclosure_uses_the_full_feature_row_and_keeps_its_switch_independent(self) -> None:
         result = self.run_node(

@@ -634,21 +634,23 @@
         <div class="poe2-marketwright-favorites-header">
           <div class="poe2-marketwright-favorites-header-row">
             <span id="poe2-marketwright-favorites-league" class="poe2-marketwright-favorites-league"></span>
-            <button id="poe2-marketwright-favorites-close" class="poe2-marketwright-favorites-close" type="button" aria-label="" title="">
-              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
-                <path d="M4 4l8 8m0-8l-8 8" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"></path>
-              </svg>
-            </button>
+            <div class="poe2-marketwright-favorites-header-actions">
+              <div id="poe2-marketwright-favorites-feedback" class="poe2-marketwright-favorite-feedback" aria-live="polite" hidden>
+                <span id="poe2-marketwright-favorites-feedback-text" class="poe2-marketwright-favorites-feedback-text"></span>
+                <button id="poe2-marketwright-favorites-feedback-undo" class="poe2-marketwright-favorites-feedback-undo" type="button"></button>
+              </div>
+              <button id="poe2-marketwright-favorites-close" class="poe2-marketwright-favorites-close" type="button" aria-label="" title="">
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false">
+                  <path d="M4 4l8 8m0-8l-8 8" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"></path>
+                </svg>
+              </button>
+            </div>
           </div>
           <label class="poe2-marketwright-favorites-search-field">
             <input id="poe2-marketwright-favorites-search" type="search" autocomplete="off" spellcheck="false">
           </label>
         </div>
         <div id="poe2-marketwright-favorites-list" class="poe2-marketwright-favorites-list"></div>
-        <div id="poe2-marketwright-favorites-undo" class="poe2-marketwright-favorites-undo" hidden>
-          <span id="poe2-marketwright-favorites-undo-text"></span>
-          <button id="poe2-marketwright-favorites-undo-button" type="button"></button>
-        </div>
       </aside>
       <div class="poe2-trade2-affix-filter-panel">
         <div class="poe2-trade2-affix-filter-header">
@@ -763,9 +765,9 @@
     runtime.ui.favoritesLeague = root.querySelector("#poe2-marketwright-favorites-league");
     runtime.ui.favoritesSearch = root.querySelector("#poe2-marketwright-favorites-search");
     runtime.ui.favoritesList = root.querySelector("#poe2-marketwright-favorites-list");
-    runtime.ui.favoritesUndo = root.querySelector("#poe2-marketwright-favorites-undo");
-    runtime.ui.favoritesUndoText = root.querySelector("#poe2-marketwright-favorites-undo-text");
-    runtime.ui.favoritesUndoButton = root.querySelector("#poe2-marketwright-favorites-undo-button");
+    runtime.ui.favoritesFeedback = root.querySelector("#poe2-marketwright-favorites-feedback");
+    runtime.ui.favoritesFeedbackText = root.querySelector("#poe2-marketwright-favorites-feedback-text");
+    runtime.ui.favoritesFeedbackUndo = root.querySelector("#poe2-marketwright-favorites-feedback-undo");
     runtime.ui.collapse = root.querySelector("#poe2-trade2-affix-filter-collapse");
     runtime.ui.expand = root.querySelector("#poe2-trade2-affix-filter-expand");
     runtime.ui.enabled = root.querySelector("#poe2-trade2-affix-filter-enabled");
@@ -887,7 +889,7 @@
     });
 
     runtime.ui.favoritesSearch.addEventListener("input", renderFavoriteDrawer);
-    runtime.ui.favoritesUndoButton.addEventListener("click", () => {
+    runtime.ui.favoritesFeedbackUndo.addEventListener("click", () => {
       runAsync(undoDeletedFavorite, "undo favorite deletion");
     });
 
@@ -994,9 +996,9 @@
     updateFavoritesViewModeButton();
     runtime.ui.favoritesSearch.placeholder = t("favoritesSearch");
     runtime.ui.favoritesSearch.setAttribute("aria-label", t("favoritesSearch"));
-    runtime.ui.favoritesUndoText.textContent = t("favoriteDeleted");
-    runtime.ui.favoritesUndoButton.textContent = t("undoFavoriteDelete");
-    runtime.ui.favoritesUndoButton.title = t("undoFavoriteDelete");
+    runtime.ui.favoritesFeedbackText.textContent = t("favoriteDeleted");
+    runtime.ui.favoritesFeedbackUndo.textContent = t("undoFavoriteDelete");
+    runtime.ui.favoritesFeedbackUndo.title = t("undoFavoriteDelete");
     runtime.ui.favoritesClose.setAttribute("aria-label", t("closeFavoritesDrawer"));
     runtime.ui.favoritesClose.title = t("closeFavoritesDrawer");
     runtime.ui.linkFavoritesImport.setAttribute("aria-label", t("importLinkFavorites"));
@@ -1888,7 +1890,7 @@
       status.className = "poe2-marketwright-favorites-empty";
       status.textContent = t("favoritesLeagueUnavailable");
       runtime.ui.favoritesList.appendChild(status);
-      renderFavoriteUndo();
+      renderFavoriteFeedback();
       return;
     }
 
@@ -1898,7 +1900,7 @@
       status.className = "poe2-marketwright-favorites-empty";
       status.textContent = runtime.ui.favoritesSearch.value.trim() ? t("favoritesNoMatches") : t("favoritesEmpty");
       runtime.ui.favoritesList.appendChild(status);
-      renderFavoriteUndo();
+      renderFavoriteFeedback();
       return;
     }
 
@@ -1957,14 +1959,14 @@
       row.append(launch, actions);
       runtime.ui.favoritesList.appendChild(row);
     }
-    renderFavoriteUndo();
+    renderFavoriteFeedback();
   }
 
-  function renderFavoriteUndo() {
-    if (!runtime.ui.favoritesUndo) {
+  function renderFavoriteFeedback() {
+    if (!runtime.ui.favoritesFeedback) {
       return;
     }
-    runtime.ui.favoritesUndo.hidden = !runtime.deletedFavorite;
+    runtime.ui.favoritesFeedback.hidden = !runtime.deletedFavorite;
   }
 
   async function replaceFavorites(nextFavorites) {
@@ -2047,9 +2049,9 @@
     runtime.deletedFavoriteTimer = window.setTimeout(() => {
       runtime.deletedFavorite = null;
       runtime.deletedFavoriteTimer = null;
-      renderFavoriteUndo();
+      renderFavoriteFeedback();
     }, 5000);
-    renderFavoriteUndo();
+    renderFavoriteFeedback();
     publishFavoritesPanelState();
   }
 

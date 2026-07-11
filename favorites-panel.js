@@ -283,6 +283,15 @@
       })
     );
     root.appendChild(toolbar);
+
+    if (state.deletedFavorite) {
+      const feedback = createElement("div", "favorites-panel-feedback");
+      feedback.appendChild(createElement("span", "", t("favoriteDeleted")));
+      const undo = makeTextButton(t("undoFavoriteDelete"));
+      undo.addEventListener("click", () => run("undo-favorite"));
+      feedback.appendChild(undo);
+      root.appendChild(feedback);
+    }
     const query = local.itemSearch.trim().toLocaleLowerCase();
     const favorites = (state.favorites || []).filter((favorite) => {
       if (!query) {
@@ -309,14 +318,6 @@
         list.appendChild(renderFavoriteRow(favorite));
       }
       root.appendChild(list);
-    }
-    if (state.deletedFavorite) {
-      const feedback = createElement("div", "favorites-panel-feedback");
-      feedback.appendChild(createElement("span", "", t("favoriteDeleted")));
-      const undo = makeTextButton(t("undoFavoriteDelete"));
-      undo.addEventListener("click", () => run("undo-favorite"));
-      feedback.appendChild(undo);
-      root.appendChild(feedback);
     }
     return root;
   }
