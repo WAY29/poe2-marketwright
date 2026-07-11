@@ -65,10 +65,10 @@ uv run --project scripts python scripts/build_extension_data.py --split-dir buil
 
 ## Verification
 
-Run the full test suite after behavior changes:
+Run the native Node extension tests and the direct Python data-tooling tests after behavior changes:
 
 ```bash
-uv run --project scripts python -m unittest discover -s scripts/tests -p 'test_*.py'
+npm test
 ```
 
 For JavaScript or manifest changes, also run:

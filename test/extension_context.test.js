@@ -1,36 +1,19 @@
-import json
-import subprocess
-import textwrap
-import unittest
-from pathlib import Path
+"use strict";
 
+const assert = require("node:assert/strict");
+const { readFileSync } = require("node:fs");
+const { test } = require("node:test");
+const { runScript } = require("./helpers/run-script");
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-
-
-class ExtensionContextBehaviorTests(unittest.TestCase):
-    def run_node(self, script: str) -> object:
-        result = subprocess.run(
-            ["node", "-e", textwrap.dedent(script)],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if result.returncode != 0:
-            self.fail(result.stderr or result.stdout)
-        return json.loads(result.stdout)
-
-    def test_save_state_ignores_invalidated_extension_context(self) -> None:
-        result = self.run_node(
-            r'''
+test("save state ignores invalidated extension context", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { saveState, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { saveState, runtime };\\n})();"
             );
 
             const sandbox = {
@@ -54,22 +37,20 @@ class ExtensionContextBehaviorTests(unittest.TestCase):
               .then(() => ({ resolved: true }))
               .catch((error) => ({ resolved: false, message: error.message }));
             sandbox.PROMISE_RESULT.then((result) => console.log(JSON.stringify(result)));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"resolved": true});
+});
 
-        self.assertEqual(result, {"resolved": True})
-
-    def test_global_language_prefers_the_saved_choice_and_migrates_browser_language(self) -> None:
-        result = self.run_node(
-            r'''
+test("global language prefers the saved choice and migrates browser language", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { loadState, resolveUiLanguage };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { loadState, resolveUiLanguage };\\n})();"
             );
             const sandbox = {
               window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
@@ -98,24 +79,19 @@ class ExtensionContextBehaviorTests(unittest.TestCase):
               normalized: hooks.resolveUiLanguage("unsupported")
             }));
             })();
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"migrated": "zh_TW", "saved": "zh_CN", "normalized": "zh_TW"});
+});
 
-        self.assertEqual(
-            result,
-            {"migrated": "zh_TW", "saved": "zh_CN", "normalized": "zh_TW"},
-        )
-
-    def test_favorite_presentation_uses_the_global_language_without_overwriting_custom_names(self) -> None:
-        result = self.run_node(
-            r'''
+test("favorite presentation uses the global language without overwriting custom names", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { getFavoritePresentation, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { getFavoritePresentation, runtime };\\n})();"
             );
             const sandbox = {
               window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
@@ -155,27 +131,25 @@ class ExtensionContextBehaviorTests(unittest.TestCase):
               mods: []
             });
             console.log(JSON.stringify({ automatic, custom }));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result["automatic"]["displayName"], "Storm Ward");
+  assert.deepStrictEqual(result["automatic"]["baseName"], "骑射之弓");
+  assert.deepStrictEqual(result["automatic"]["itemType"], "弓");
+  assert.deepStrictEqual(result["automatic"]["rarity"], "稀有");
+  assert.deepStrictEqual(result["automatic"]["mods"][0]["text"], "+60 生命上限");
+  assert.ok((result["automatic"]["searchTerms"]).includes("+60 to maximum Life"));
+  assert.deepStrictEqual(result["custom"]["displayName"], "My saved bow");
+});
 
-        self.assertEqual(result["automatic"]["displayName"], "Storm Ward")
-        self.assertEqual(result["automatic"]["baseName"], "骑射之弓")
-        self.assertEqual(result["automatic"]["itemType"], "弓")
-        self.assertEqual(result["automatic"]["rarity"], "稀有")
-        self.assertEqual(result["automatic"]["mods"][0]["text"], "+60 生命上限")
-        self.assertIn("+60 to maximum Life", result["automatic"]["searchTerms"])
-        self.assertEqual(result["custom"]["displayName"], "My saved bow")
-
-    def test_currency_panel_displays_the_detected_league(self) -> None:
-        result = self.run_node(
-            r'''
+test("currency panel displays the detected league", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { updateCurrencyLeague, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { updateCurrencyLeague, runtime };\\n})();"
             );
 
             const sandbox = {
@@ -195,28 +169,19 @@ class ExtensionContextBehaviorTests(unittest.TestCase):
               "https://www.pathofexile.com/trade2/search/HC%20Runes%20of%20Aldur/query-1"
             );
             console.log(JSON.stringify(leagueNode));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"textContent": "League: HC Runes of Aldur", "title": "https://www.pathofexile.com/trade2/search/HC%20Runes%20of%20Aldur/query-1", "dataset": {"state": "ready"}});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "textContent": "League: HC Runes of Aldur",
-                "title": "https://www.pathofexile.com/trade2/search/HC%20Runes%20of%20Aldur/query-1",
-                "dataset": {"state": "ready"},
-            },
-        )
-
-    def test_collapsed_panel_keeps_toggle_anchor_and_restores_saved_position(self) -> None:
-        result = self.run_node(
-            r'''
+test("collapsed panel keeps toggle anchor and restores saved position", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { applyPanelPosition, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { applyPanelPosition, runtime };\\n})();"
             );
 
             const sandbox = {
@@ -248,28 +213,20 @@ class ExtensionContextBehaviorTests(unittest.TestCase):
             hooks.applyPanelPosition();
 
             console.log(JSON.stringify({ collapsedStyle, expandedStyle: root.style }));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"collapsedStyle": {"left": "500px", "top": "300px", "right": "auto"}, "expandedStyle": {"left": "240px", "top": "180px", "right": "auto"}});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "collapsedStyle": {"left": "500px", "top": "300px", "right": "auto"},
-                "expandedStyle": {"left": "240px", "top": "180px", "right": "auto"},
-            },
-        )
-
-    def test_expanding_from_the_collapsed_mark_keeps_the_toggle_at_the_mark_position(self) -> None:
-        result = self.run_node(
-            r'''
+test("expanding from the collapsed mark keeps the toggle at the mark position", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { setPanelCollapsed, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { setPanelCollapsed, runtime };\\n})();"
             );
 
             const sandbox = {
@@ -327,28 +284,20 @@ class ExtensionContextBehaviorTests(unittest.TestCase):
             await hooks.setPanelCollapsed(false);
             console.log(JSON.stringify({ panelPosition: hooks.runtime.state.panelPosition, style: root.style }));
             })();
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"panelPosition": {"left": 407, "top": 200}, "style": {"left": "407px", "top": "200px", "right": "auto"}});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "panelPosition": {"left": 407, "top": 200},
-                "style": {"left": "407px", "top": "200px", "right": "auto"},
-            },
-        )
-
-    def test_export_link_favorites_copies_compatible_json_to_the_clipboard(self) -> None:
-        result = self.run_node(
-            r'''
+test("export link favorites copies compatible json to the clipboard", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { exportLinkFavorites, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { exportLinkFavorites, runtime };\\n})();"
             );
             const writes = [];
             const sandbox = {
@@ -408,48 +357,6 @@ class ExtensionContextBehaviorTests(unittest.TestCase):
             await hooks.exportLinkFavorites();
             console.log(JSON.stringify({ writes, feedback: hooks.runtime.linkFavoriteFeedback }));
             })();
-            ''',
-        )
-
-        self.assertEqual(
-            result,
-            {
-                "writes": [
-                    {
-                        "folders": [
-                            {
-                                "id": "folder-1",
-                                "childIds": [],
-                                "parentId": None,
-                                "depth": 0,
-                                "index": 0,
-                                "name": "Bows",
-                                "bookmarks": [
-                                    {
-                                        "id": "link-1",
-                                        "name": "Bow",
-                                        "league": "Auto",
-                                        "poeVersion": "Poe2",
-                                        "endpoint": "query-1",
-                                        "type": "search",
-                                        "idx": 0,
-                                        "isDone": True,
-                                    }
-                                ],
-                                "isOpen": True,
-                            }
-                        ],
-                        "rootBookmarks": [],
-                    }
-                ],
-                "feedback": {
-                    "key": "linkFavoriteExported",
-                    "text": "Bookmarks copied to clipboard",
-                    "state": "ready",
-                },
-            },
-        )
-
-
-if __name__ == "__main__":
-    unittest.main()
+            `);
+  assert.deepStrictEqual(result, {"writes": [{"folders": [{"id": "folder-1", "childIds": [], "parentId": null, "depth": 0, "index": 0, "name": "Bows", "bookmarks": [{"id": "link-1", "name": "Bow", "league": "Auto", "poeVersion": "Poe2", "endpoint": "query-1", "type": "search", "idx": 0, "isDone": true}], "isOpen": true}], "rootBookmarks": []}], "feedback": {"key": "linkFavoriteExported", "text": "Bookmarks copied to clipboard", "state": "ready"}});
+});

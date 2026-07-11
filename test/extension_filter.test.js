@@ -1,29 +1,12 @@
-import json
-import subprocess
-import textwrap
-import unittest
-from pathlib import Path
+"use strict";
 
+const assert = require("node:assert/strict");
+const { readFileSync } = require("node:fs");
+const { test } = require("node:test");
+const { runScript } = require("./helpers/run-script");
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-
-
-class ExtensionFilterBehaviorTests(unittest.TestCase):
-    def run_node(self, script: str) -> object:
-        result = subprocess.run(
-            ["node", "-e", textwrap.dedent(script)],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if result.returncode != 0:
-            self.fail(result.stderr or result.stdout)
-        return json.loads(result.stdout)
-
-    def test_page_bridge_hides_unmatched_known_stats_but_keeps_related_pseudo(self) -> None:
-        result = self.run_node(
-            r"""
+test("page bridge hides unmatched known stats but keeps related pseudo", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
             const listeners = [];
@@ -81,27 +64,14 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
             });
 
             console.log(JSON.stringify(staticData.knownStats));
-            """
-        )
+            `);
+  const groups = Object.fromEntries((result).map((group) => [group["id"], group["entries"]]));
+  assert.deepStrictEqual((groups["pseudo"]).map((entry) => entry["id"]), ["pseudo.pseudo_total_strength", "pseudo.pseudo_number_of_empty_prefix_mods", "pseudo.pseudo_number_of_suffix_mods", "pseudo.pseudo_number_of_uses_remaining"]);
+  assert.deepStrictEqual((groups["explicit"]).map((entry) => entry["id"]), ["explicit.stat_strength"]);
+});
 
-        groups = {group["id"]: group["entries"] for group in result}
-        self.assertEqual(
-            [entry["id"] for entry in groups["pseudo"]],
-            [
-                "pseudo.pseudo_total_strength",
-                "pseudo.pseudo_number_of_empty_prefix_mods",
-                "pseudo.pseudo_number_of_suffix_mods",
-                "pseudo.pseudo_number_of_uses_remaining",
-            ],
-        )
-        self.assertEqual(
-            [entry["id"] for entry in groups["explicit"]],
-            ["explicit.stat_strength"],
-        )
-
-    def test_content_filter_keeps_related_pseudo_options(self) -> None:
-        result = self.run_node(
-            r"""
+test("content filter keeps related pseudo options", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
 
@@ -154,11 +124,11 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               }
             }
 
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { filterOptionGroup, runtime, HIDDEN_CLASS };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { filterOptionGroup, runtime, HIDDEN_CLASS };\\n})();"
             );
 
             const window = {
@@ -268,25 +238,23 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               explicitPipeKeepHidden: explicitPipeKeep.classList.contains(hooks.HIDDEN_CLASS),
               stats
             }));
-            """
-        )
+            `);
+  assert.equal(result["pseudoStrengthByIdHidden"], false);
+  assert.equal(result["pseudoStrengthByTextHidden"], false);
+  assert.equal(result["pseudoLifeHidden"], true);
+  assert.equal(result["pseudoEmptyPrefixHidden"], false);
+  assert.equal(result["pseudoSuffixByTextHidden"], false);
+  assert.equal(result["pseudoEmptyPrefixZhHidden"], false);
+  assert.equal(result["pseudoUsesRemainingHidden"], false);
+  assert.equal(result["explicitKeepHidden"], false);
+  assert.equal(result["explicitHideHidden"], true);
+  assert.equal(result["explicitUnclassifiedHidden"], true);
+  assert.equal(result["explicitPipeKeepHidden"], false);
+  assert.deepStrictEqual(result["stats"]["hidden"], 3);
+});
 
-        self.assertFalse(result["pseudoStrengthByIdHidden"])
-        self.assertFalse(result["pseudoStrengthByTextHidden"])
-        self.assertTrue(result["pseudoLifeHidden"])
-        self.assertFalse(result["pseudoEmptyPrefixHidden"])
-        self.assertFalse(result["pseudoSuffixByTextHidden"])
-        self.assertFalse(result["pseudoEmptyPrefixZhHidden"])
-        self.assertFalse(result["pseudoUsesRemainingHidden"])
-        self.assertFalse(result["explicitKeepHidden"])
-        self.assertTrue(result["explicitHideHidden"])
-        self.assertTrue(result["explicitUnclassifiedHidden"])
-        self.assertFalse(result["explicitPipeKeepHidden"])
-        self.assertEqual(result["stats"]["hidden"], 3)
-
-    def test_content_filter_keeps_resistance_count_when_resistance_is_allowed(self) -> None:
-        result = self.run_node(
-            r"""
+test("content filter keeps resistance count when resistance is allowed", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
 
@@ -339,11 +307,11 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               }
             }
 
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { filterOptionGroup, runtime, HIDDEN_CLASS };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { filterOptionGroup, runtime, HIDDEN_CLASS };\\n})();"
             );
 
             const window = {
@@ -408,16 +376,14 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               pseudoStrengthHidden: pseudoStrength.classList.contains(hooks.HIDDEN_CLASS),
               explicitColdResistanceHidden: explicitColdResistance.classList.contains(hooks.HIDDEN_CLASS)
             }));
-            """
-        )
+            `);
+  assert.equal(result["pseudoCountResistancesHidden"], false);
+  assert.equal(result["pseudoStrengthHidden"], true);
+  assert.equal(result["explicitColdResistanceHidden"], false);
+});
 
-        self.assertFalse(result["pseudoCountResistancesHidden"])
-        self.assertTrue(result["pseudoStrengthHidden"])
-        self.assertFalse(result["explicitColdResistanceHidden"])
-
-    def test_content_filter_does_not_keep_pseudo_for_incidental_token_overlap(self) -> None:
-        result = self.run_node(
-            r"""
+test("content filter does not keep pseudo for incidental token overlap", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
 
@@ -470,11 +436,11 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               }
             }
 
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { filterOptionGroup, runtime, HIDDEN_CLASS };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { filterOptionGroup, runtime, HIDDEN_CLASS };\\n})();"
             );
 
             const window = {
@@ -540,24 +506,22 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               explicitDamagePerStrengthHidden: explicitDamagePerStrength.classList.contains(hooks.HIDDEN_CLASS),
               explicitOtherHidden: explicitOther.classList.contains(hooks.HIDDEN_CLASS)
             }));
-            """
-        )
+            `);
+  assert.equal(result["pseudoStrengthHidden"], true);
+  assert.equal(result["explicitDamagePerStrengthHidden"], false);
+  assert.equal(result["explicitOtherHidden"], true);
+});
 
-        self.assertTrue(result["pseudoStrengthHidden"])
-        self.assertFalse(result["explicitDamagePerStrengthHidden"])
-        self.assertTrue(result["explicitOtherHidden"])
-
-    def test_content_auto_detect_overrides_special_map_items(self) -> None:
-        result = self.run_node(
-            r"""
+test("content auto detect overrides special map items", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
 
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { inferSelectionFromTexts, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { inferSelectionFromTexts, runtime };\\n})();"
             );
 
             const window = {
@@ -621,25 +585,23 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               englishLogbook: detectItem("Expedition Logbook"),
               expeditionTablet: detectItem("探险碑牌")
             }));
-            """
-        )
+            `);
+  assert.deepStrictEqual(result["simplifiedLogbook"], {"kind": "logical", "id": "Maps", "source": "item", "match": "探险日志"});
+  assert.deepStrictEqual(result["traditionalLogbook"], {"kind": "logical", "id": "Maps", "source": "item", "match": "探險日誌"});
+  assert.deepStrictEqual(result["englishLogbook"], {"kind": "logical", "id": "Maps", "source": "item", "match": "expedition logbook"});
+  assert.deepStrictEqual(result["expeditionTablet"], {"kind": "page", "id": "Expedition_Tablet", "source": "item", "match": "探险碑牌"});
+});
 
-        self.assertEqual(result["simplifiedLogbook"], {"kind": "logical", "id": "Maps", "source": "item", "match": "探险日志"})
-        self.assertEqual(result["traditionalLogbook"], {"kind": "logical", "id": "Maps", "source": "item", "match": "探險日誌"})
-        self.assertEqual(result["englishLogbook"], {"kind": "logical", "id": "Maps", "source": "item", "match": "expedition logbook"})
-        self.assertEqual(result["expeditionTablet"], {"kind": "page", "id": "Expedition_Tablet", "source": "item", "match": "探险碑牌"})
-
-    def test_content_classifies_favorite_by_base_name_and_trade_category(self) -> None:
-        result = self.run_node(
-            r"""
+test("content classifies favorite by base name and trade category", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
 
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { getFavoriteItemClassification, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { getFavoriteItemClassification, runtime };\\n})();"
             );
 
             const window = {
@@ -672,30 +634,20 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               name: "Spirit Fletch",
               typeLine: "Warmonger Bow"
             })));
-            """
-        )
+            `);
+  assert.deepStrictEqual(result, {"baseName": "Warmonger Bow", "category": "weapon.bow", "itemType": "Bow", "selection": {"kind": "page", "id": "Bows"}});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "baseName": "Warmonger Bow",
-                "category": "weapon.bow",
-                "itemType": "Bow",
-                "selection": {"kind": "page", "id": "Bows"},
-            },
-        )
-
-    def test_current_link_favorite_uses_selected_base_name_for_its_default_name(self) -> None:
-        result = self.run_node(
-            r"""
+test("current link favorite uses selected base name for its default name", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
 
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { getCurrentLinkFavoriteContext, getLinkFavoriteDisplayNameFromSelections, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { getCurrentLinkFavoriteContext, getLinkFavoriteDisplayNameFromSelections, runtime };\\n})();"
             );
 
             const selected = {
@@ -765,35 +717,21 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               categoryName: hooks.getLinkFavoriteDisplayNameFromSelections([], ["Bows"]),
               unnamed: hooks.getLinkFavoriteDisplayNameFromSelections([], [])
             }));
-            """
-        )
+            `);
+  assert.deepStrictEqual(result, {"context": {"url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1", "league": "Dawn", "queryId": "query-1", "displayName": "Warmonger Bow"}, "categoryName": "Bows", "unnamed": "Unnamed search"});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "context": {
-                    "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
-                    "league": "Dawn",
-                    "queryId": "query-1",
-                    "displayName": "Warmonger Bow",
-                },
-                "categoryName": "Bows",
-                "unnamed": "Unnamed search",
-            },
-        )
-
-    def test_dragging_a_link_to_another_folder_moves_it_into_that_folder(self) -> None:
-        result = self.run_node(
-            r"""
+test("dragging a link to another folder moves it into that folder", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
 
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { setLinkFavoriteDropTarget, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { setLinkFavoriteDropTarget, runtime };\\n})();"
             );
 
             const handlers = {};
@@ -864,28 +802,23 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
             await new Promise((resolve) => setTimeout(resolve, 0));
             console.log(JSON.stringify(hooks.runtime.state.linkFavorites.leagues.Dawn));
             })();
-            """
-        )
+            `);
+  assert.deepStrictEqual(result["rootLinkIds"], []);
+  assert.deepStrictEqual(result["folderLinkIds"], {"folder-b": ["root-link"]});
+  assert.deepStrictEqual(result["links"][0]["folderId"], "folder-b");
+});
 
-        self.assertEqual(
-            result["rootLinkIds"],
-            [],
-        )
-        self.assertEqual(result["folderLinkIds"], {"folder-b": ["root-link"]})
-        self.assertEqual(result["links"][0]["folderId"], "folder-b")
-
-    def test_dragging_a_link_to_another_folder_uses_the_previewed_insert_position(self) -> None:
-        result = self.run_node(
-            r"""
+test("dragging a link to another folder uses the previewed insert position", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
 
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { setLinkFavoriteDropTarget, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { setLinkFavoriteDropTarget, runtime };\\n})();"
             );
 
             const handlers = {};
@@ -973,29 +906,21 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               collapsed: league.folders[0].collapsed
             }));
             })();
-            """
-        )
+            `);
+  assert.deepStrictEqual(result, {"folderLinkIds": {"folder-b": ["root-link", "target-link"]}, "collapsed": false});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "folderLinkIds": {"folder-b": ["root-link", "target-link"]},
-                "collapsed": False,
-            },
-        )
-
-    def test_dragging_a_folder_to_the_top_drop_area_moves_it_to_the_top(self) -> None:
-        result = self.run_node(
-            r"""
+test("dragging a folder to the top drop area moves it to the top", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
 
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { setLinkFavoriteFolderTopDropTarget, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { setLinkFavoriteFolderTopDropTarget, runtime };\\n})();"
             );
 
             const handlers = {};
@@ -1055,23 +980,21 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
             await new Promise((resolve) => setTimeout(resolve, 0));
             console.log(JSON.stringify(hooks.runtime.state.linkFavorites.leagues.Dawn.folderOrder));
             })();
-            """
-        )
+            `);
+  assert.deepStrictEqual(result, ["folder-b", "folder-a"]);
+});
 
-        self.assertEqual(result, ["folder-b", "folder-a"])
-
-    def test_dragging_a_folder_link_to_the_root_drop_area_moves_it_to_the_top_level(self) -> None:
-        result = self.run_node(
-            r"""
+test("dragging a folder link to the root drop area moves it to the top level", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
 
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { setLinkFavoriteGroupDropTarget, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { setLinkFavoriteGroupDropTarget, runtime };\\n})();"
             );
 
             const handlers = {};
@@ -1140,24 +1063,22 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
             await new Promise((resolve) => setTimeout(resolve, 0));
             console.log(JSON.stringify(hooks.runtime.state.linkFavorites.leagues.Dawn));
             })();
-            """
-        )
+            `);
+  assert.deepStrictEqual(result["rootLinkIds"], ["folder-link"]);
+  assert.deepStrictEqual(result["folderLinkIds"], {"folder-b": []});
+  assert.equal(result["links"][0]["folderId"], null);
+});
 
-        self.assertEqual(result["rootLinkIds"], ["folder-link"])
-        self.assertEqual(result["folderLinkIds"], {"folder-b": []})
-        self.assertIsNone(result["links"][0]["folderId"])
-
-    def test_link_favorites_render_on_a_league_search_root_without_a_query_id(self) -> None:
-        result = self.run_node(
-            r"""
+test("link favorites render on a league search root without a query id", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
 
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { renderLinkFavoritesDrawer, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { renderLinkFavoritesDrawer, runtime };\\n})();"
             );
 
             class Node {
@@ -1241,30 +1162,21 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
             };
             hooks.renderLinkFavoritesDrawer();
             console.log(JSON.stringify(hooks.runtime.ui.linkFavoritesList.children.map((child) => child.className)));
-            """
-        )
+            `);
+  assert.deepStrictEqual(result, ["poe2-marketwright-link-favorite-folder-top-drop-area", "poe2-marketwright-link-favorite-group", "poe2-marketwright-link-favorite-root"]);
+});
 
-        self.assertEqual(
-            result,
-            [
-                "poe2-marketwright-link-favorite-folder-top-drop-area",
-                "poe2-marketwright-link-favorite-group",
-                "poe2-marketwright-link-favorite-root",
-            ],
-        )
-
-    def test_collapsing_all_link_favorite_folders_updates_every_folder(self) -> None:
-        result = self.run_node(
-            r"""
+test("collapsing all link favorite folders updates every folder", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
 
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { setAllLinkFavoriteFoldersCollapsed, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { setAllLinkFavoriteFoldersCollapsed, runtime };\\n})();"
             );
 
             const window = {
@@ -1316,31 +1228,29 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
             await hooks.setAllLinkFavoriteFoldersCollapsed(true);
             console.log(JSON.stringify(hooks.runtime.state.linkFavorites.leagues.Dawn.folders.map((folder) => folder.collapsed)));
             })();
-            """
-        )
+            `);
+  assert.deepStrictEqual(result, [true, true]);
+});
 
-        self.assertEqual(result, [True, True])
+test("link favorite undo control resides in header feedback", async () => {
+  const source = readFileSync("content.js", "utf8");
+  assert.ok((source).includes("id=\"poe2-marketwright-link-favorites-feedback-undo\""));
+  assert.ok(!(source).includes("id=\"poe2-marketwright-link-favorites-undo\""));
+  assert.ok((source).includes("id=\"poe2-marketwright-favorites-feedback-undo\""));
+  assert.ok(!(source).includes("id=\"poe2-marketwright-favorites-undo\""));
+});
 
-    def test_link_favorite_undo_control_resides_in_header_feedback(self) -> None:
-        source = (REPO_ROOT / "content.js").read_text(encoding="utf-8")
-
-        self.assertIn('id="poe2-marketwright-link-favorites-feedback-undo"', source)
-        self.assertNotIn('id="poe2-marketwright-link-favorites-undo"', source)
-        self.assertIn('id="poe2-marketwright-favorites-feedback-undo"', source)
-        self.assertNotIn('id="poe2-marketwright-favorites-undo"', source)
-
-    def test_favorites_disclosure_uses_the_full_feature_row_and_keeps_its_switch_independent(self) -> None:
-        result = self.run_node(
-            r"""
+test("favorites disclosure uses the full feature row and keeps its switch independent", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
 
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             const originalSource = fs.readFileSync("content.js", "utf8");
             let source = originalSource.replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { applyFavoritesDrawerState, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { applyFavoritesDrawerState, runtime };\\n})();"
             );
 
             const classes = new Set();
@@ -1399,19 +1309,6 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               enabled,
               disabled: disclosure.disabled
             }));
-            """
-        )
-
-        self.assertEqual(
-            result,
-            {
-                "hasDisclosure": True,
-                "hasLegacyArrow": False,
-                "enabled": {"expanded": "true", "disabled": False, "openClass": True},
-                "disabled": True,
-            },
-        )
-
-
-if __name__ == "__main__":
-    unittest.main()
+            `);
+  assert.deepStrictEqual(result, {"hasDisclosure": true, "hasLegacyArrow": false, "enabled": {"expanded": "true", "disabled": false, "openClass": true}, "disabled": true});
+});

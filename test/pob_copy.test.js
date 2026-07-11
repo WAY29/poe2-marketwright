@@ -1,29 +1,12 @@
-import json
-import subprocess
-import textwrap
-import unittest
-from pathlib import Path
+"use strict";
 
+const assert = require("node:assert/strict");
+const { readFileSync } = require("node:fs");
+const { test } = require("node:test");
+const { runScript } = require("./helpers/run-script");
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-
-
-class PobCopyBehaviorTests(unittest.TestCase):
-    def run_node(self, script: str) -> object:
-        result = subprocess.run(
-            ["node", "-e", textwrap.dedent(script)],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if result.returncode != 0:
-            self.fail(result.stderr or result.stdout)
-        return json.loads(result.stdout)
-
-    def test_pob_builder_outputs_create_custom_item_text(self) -> None:
-        result = self.run_node(
-            r'''
+test("pob builder outputs create custom item text", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
             const sandbox = { console };
@@ -48,27 +31,13 @@ class PobCopyBehaviorTests(unittest.TestCase):
               ]
             });
 
-            console.log(JSON.stringify(text.split("\n")));
-            ''',
-        )
+            console.log(JSON.stringify(text.split("\\n")));
+            `);
+  assert.deepStrictEqual(result, ["Rarity: RARE", "Dawn Veil", "Expert Omen Wand", "Quality: 20", "Implicits: 1", "{implicit}+20% to Fire Resistance", "+30 to Spirit", "+12% increased Attack Speed"]);
+});
 
-        self.assertEqual(
-            result,
-            [
-                "Rarity: RARE",
-                "Dawn Veil",
-                "Expert Omen Wand",
-                "Quality: 20",
-                "Implicits: 1",
-                "{implicit}+20% to Fire Resistance",
-                "+30 to Spirit",
-                "+12% increased Attack Speed",
-            ],
-        )
-
-    def test_page_bridge_forwards_trade_fetch_when_pob_copy_is_enabled(self) -> None:
-        result = self.run_node(
-            r'''
+test("page bridge forwards trade fetch when pob copy is enabled", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
@@ -110,23 +79,12 @@ class PobCopyBehaviorTests(unittest.TestCase):
 
             console.log(JSON.stringify(messages.filter((message) => message.source === "poe2-marketwright-pob-copy")));
             })();
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, [{"source": "poe2-marketwright-pob-copy", "url": "/api/trade2/fetch/query-1", "body": "{\"result\":[{\"id\":\"item-1\",\"item\":{\"name\":\"Dawn Veil\"}}]}"}]);
+});
 
-        self.assertEqual(
-            result,
-            [
-                {
-                    "source": "poe2-marketwright-pob-copy",
-                    "url": "/api/trade2/fetch/query-1",
-                    "body": '{"result":[{"id":"item-1","item":{"name":"Dawn Veil"}}]}',
-                }
-            ],
-        )
-
-    def test_page_bridge_reads_the_league_from_the_trade_page_search_url(self) -> None:
-        result = self.run_node(
-            r'''
+test("page bridge reads the league from the trade page search url", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
@@ -173,27 +131,12 @@ class PobCopyBehaviorTests(unittest.TestCase):
 
             console.log(JSON.stringify(messages.filter((message) => message.source === "poe2-marketwright-currency-conversion")));
             })();
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, [{"source": "poe2-marketwright-currency-conversion", "type": "fetch", "league": "HC Runes of Aldur", "queryId": "query-hc", "searchUrl": "https://www.pathofexile.com/trade2/search/poe2/HC%20Runes%20of%20Aldur/query-1", "tradeUrl": "/api/trade2/fetch/query-1?query=query-hc", "body": "{\"result\":[{\"id\":\"item-1\",\"listing\":{\"price\":{\"type\":\"~price\",\"amount\":2,\"currency\":\"exalted\"}}}]}"}]);
+});
 
-        self.assertEqual(
-            result,
-            [
-                {
-                    "source": "poe2-marketwright-currency-conversion",
-                    "type": "fetch",
-                    "league": "HC Runes of Aldur",
-                    "queryId": "query-hc",
-                    "searchUrl": "https://www.pathofexile.com/trade2/search/poe2/HC%20Runes%20of%20Aldur/query-1",
-                    "tradeUrl": "/api/trade2/fetch/query-1?query=query-hc",
-                    "body": '{"result":[{"id":"item-1","listing":{"price":{"type":"~price","amount":2,"currency":"exalted"}}}]}',
-                },
-            ],
-        )
-
-    def test_page_bridge_uses_the_page_search_url_instead_of_api_search_requests(self) -> None:
-        result = self.run_node(
-            r'''
+test("page bridge uses the page search url instead of api search requests", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
@@ -244,22 +187,6 @@ class PobCopyBehaviorTests(unittest.TestCase):
 
             console.log(JSON.stringify(messages.filter((message) => message.source === "poe2-marketwright-currency-conversion")));
             })();
-            ''',
-        )
-
-        self.assertEqual(
-            result[-1],
-            {
-                "source": "poe2-marketwright-currency-conversion",
-                "type": "fetch",
-                "league": "Dawn of the Hunt",
-                "queryId": "query-hunt",
-                "searchUrl": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-hunt",
-                "tradeUrl": "/api/trade2/fetch/item-1?query=query-hunt",
-                "body": '{"result":[{"id":"item-1"}]}',
-            },
-        )
-
-
-if __name__ == "__main__":
-    unittest.main()
+            `);
+  assert.deepStrictEqual(result.at(-1), {"source": "poe2-marketwright-currency-conversion", "type": "fetch", "league": "Dawn of the Hunt", "queryId": "query-hunt", "searchUrl": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-hunt", "tradeUrl": "/api/trade2/fetch/item-1?query=query-hunt", "body": "{\"result\":[{\"id\":\"item-1\"}]}"});
+});

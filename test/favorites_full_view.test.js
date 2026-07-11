@@ -1,37 +1,20 @@
-import json
-import subprocess
-import textwrap
-import unittest
-from pathlib import Path
+"use strict";
 
+const assert = require("node:assert/strict");
+const { readFileSync } = require("node:fs");
+const { test } = require("node:test");
+const { runScript } = require("./helpers/run-script");
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-
-
-class FavoritesFullViewBehaviorTests(unittest.TestCase):
-    def run_node(self, script: str) -> object:
-        result = subprocess.run(
-            ["node", "-e", textwrap.dedent(script)],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if result.returncode != 0:
-            self.fail(result.stderr or result.stdout)
-        return json.loads(result.stdout)
-
-    def test_full_view_defaults_to_compact_and_migrates_the_open_item_drawer(self) -> None:
-        result = self.run_node(
-            r'''
+test("full view defaults to compact and migrates the open item drawer", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { loadState, setFavoritesViewMode, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { loadState, setFavoritesViewMode, runtime };\\n})();"
             );
             const classList = { toggle() {} };
             const createViewModeButton = () => ({
@@ -83,25 +66,12 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
                 itemViewMode.innerHTML !== fullModeIcon
             }));
             })();
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"defaultsToCompact": true, "fullPanelOpen": true, "fullPanelTab": "items", "drawersClosed": true, "compactDrawerRestored": true, "compactPanelClosed": true, "fullModeButtonsSynced": true});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "defaultsToCompact": True,
-                "fullPanelOpen": True,
-                "fullPanelTab": "items",
-                "drawersClosed": True,
-                "compactDrawerRestored": True,
-                "compactPanelClosed": True,
-                "fullModeButtonsSynced": True,
-            },
-        )
-
-    def test_background_relays_panel_requests_only_to_the_registered_trade_tab(self) -> None:
-        result = self.run_node(
-            r'''
+test("background relays panel requests only to the registered trade tab", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
@@ -146,37 +116,23 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
             );
             console.log(JSON.stringify({ registration, relayed, rejected, tabMessages }));
             })();
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result["registration"], {"ok": true});
+  assert.deepStrictEqual(result["relayed"], {"ok": true, "state": {"favoritesViewMode": "full"}});
+  assert.deepStrictEqual(result["rejected"], {"ok": false, "error": "unknown_panel_session"});
+  assert.deepStrictEqual(result["tabMessages"], [{"tabId": 37, "message": {"type": "favorites-panel-command", "sessionId": "panel-session-1", "command": "get-state"}}]);
+});
 
-        self.assertEqual(result["registration"], {"ok": True})
-        self.assertEqual(result["relayed"], {"ok": True, "state": {"favoritesViewMode": "full"}})
-        self.assertEqual(result["rejected"], {"ok": False, "error": "unknown_panel_session"})
-        self.assertEqual(
-            result["tabMessages"],
-            [
-                {
-                    "tabId": 37,
-                    "message": {
-                        "type": "favorites-panel-command",
-                        "sessionId": "panel-session-1",
-                        "command": "get-state",
-                    },
-                }
-            ],
-        )
-
-    def test_full_view_toggles_only_the_current_document_panel(self) -> None:
-        result = self.run_node(
-            r'''
+test("full view toggles only the current document panel", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { setFavoritesViewMode, setFavoritesPanelOpen, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { setFavoritesViewMode, setFavoritesPanelOpen, runtime };\\n})();"
             );
             const panelFrame = {
               hidden: true,
@@ -225,30 +181,20 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
             await hooks.setFavoritesPanelOpen(false, "items");
             console.log(JSON.stringify({ hiddenAfterModeChange, visibleAfterOpen, documentLayoutUnchanged, hiddenAfterClose: panelFrame.hidden }));
             })();
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"hiddenAfterModeChange": true, "visibleAfterOpen": true, "documentLayoutUnchanged": true, "hiddenAfterClose": true});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "hiddenAfterModeChange": True,
-                "visibleAfterOpen": True,
-                "documentLayoutUnchanged": True,
-                "hiddenAfterClose": True,
-            },
-        )
-
-    def test_clicking_the_open_full_view_section_closes_the_side_panel(self) -> None:
-        result = self.run_node(
-            r'''
+test("clicking the open full view section closes the side panel", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { toggleFavoritesView, runtime };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { toggleFavoritesView, runtime };\\n})();"
             );
             const sandbox = {
               window: { addEventListener() {}, innerWidth: 1440, innerHeight: 900 },
@@ -273,21 +219,19 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
             await hooks.toggleFavoritesView("items");
             console.log(JSON.stringify({ state: hooks.runtime.state }));
             })();
-            ''',
-        )
+            `);
+  assert.equal(result["state"]["favoritesPanelOpen"], false);
+});
 
-        self.assertFalse(result["state"]["favoritesPanelOpen"])
-
-    def test_saving_a_link_captures_active_advanced_filter_groups(self) -> None:
-        result = self.run_node(
-            r'''
+test("saving a link captures active advanced filter groups", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { getCurrentLinkFavoriteFilterGroups };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { getCurrentLinkFavoriteFilterGroups };\\n})();"
             );
             const label = (textContent) => ({ textContent });
             const select = (textContent) => ({ selectedOptions: [{ textContent }], value: textContent });
@@ -347,29 +291,19 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
             };
             vm.runInNewContext(source, sandbox, { filename: "content.js" });
             console.log(JSON.stringify(sandbox.window.__testHooks.getCurrentLinkFavoriteFilterGroups()));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, [{"label": "Type Filters", "values": ["Item Category: Bow"]}, {"label": "Item Requirements", "values": ["Item Level: Min 80"]}, {"label": "Equipment Filters", "values": ["Corrupted"]}, {"label": "Stat Filters", "values": ["+# to maximum Life: Min 50"]}]);
+});
 
-        self.assertEqual(
-            result,
-            [
-                {"label": "Type Filters", "values": ["Item Category: Bow"]},
-                {"label": "Item Requirements", "values": ["Item Level: Min 80"]},
-                {"label": "Equipment Filters", "values": ["Corrupted"]},
-                {"label": "Stat Filters", "values": ["+# to maximum Life: Min 50"]},
-            ],
-        )
-
-    def test_link_tooltip_groups_include_every_saved_filter(self) -> None:
-        result = self.run_node(
-            r'''
+test("link tooltip groups include every saved filter", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
             let source = fs.readFileSync("favorites-panel.js", "utf8");
-            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace("  bindUi();\\n  bootstrap();", "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { getLinkFavoriteTooltipGroups };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { getLinkFavoriteTooltipGroups };\\n})();"
             );
             const sandbox = {
               window: {},
@@ -378,7 +312,7 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
               URLSearchParams,
               Poe2MarketwrightFavorites: {
                 createLinkFavoriteTools() {
-                  return { formatLinkFavoriteStatFilter(value) { return { text: `formatted ${value}`, source: null }; } };
+                  return { formatLinkFavoriteStatFilter(value) { return { text: \`formatted \${value}\`, source: null }; } };
                 }
               },
               console
@@ -392,35 +326,20 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
                 { label: "Stat Filters", values: ["+# to maximum Life", "+#% Fire Resistance"] }
               ]
             })));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, [{"label": "Type Filters", "values": [{"text": "Item Category: Ring", "source": null}]}, {"label": "Other", "values": [{"text": "Fractured: Yes", "source": null}]}, {"label": "Stat Filters", "values": [{"text": "formatted +# to maximum Life", "source": null}, {"text": "formatted +#% Fire Resistance", "source": null}]}]);
+  assert.ok((readFileSync("favorites-panel.html", "utf8")).includes("id=\"favorites-panel-tooltip\""));
+});
 
-        self.assertEqual(
-            result,
-            [
-                {"label": "Type Filters", "values": [{"text": "Item Category: Ring", "source": None}]},
-                {"label": "Other", "values": [{"text": "Fractured: Yes", "source": None}]},
-                {
-                    "label": "Stat Filters",
-                    "values": [
-                        {"text": "formatted +# to maximum Life", "source": None},
-                        {"text": "formatted +#% Fire Resistance", "source": None},
-                    ],
-                },
-            ],
-        )
-        self.assertIn('id="favorites-panel-tooltip"', (REPO_ROOT / "favorites-panel.html").read_text())
-
-    def test_link_tooltip_prefers_above_the_pointer_and_flips_below_at_the_top_edge(self) -> None:
-        result = self.run_node(
-            r'''
+test("link tooltip prefers above the pointer and flips below at the top edge", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
             let source = fs.readFileSync("favorites-panel.js", "utf8");
-            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace("  bindUi();\\n  bootstrap();", "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { getLinkFavoriteTooltipPosition };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { getLinkFavoriteTooltipPosition };\\n})();"
             );
             const sandbox = {
               window: {},
@@ -435,27 +354,19 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
               above: position({ x: 160, y: 500 }, { width: 300, height: 180 }, { width: 360, height: 800 }),
               below: position({ x: 160, y: 50 }, { width: 300, height: 180 }, { width: 360, height: 800 })
             }));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"above": {"left": 10, "top": 308, "placement": "above", "arrowX": 150}, "below": {"left": 10, "top": 62, "placement": "below", "arrowX": 150}});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "above": {"left": 10, "top": 308, "placement": "above", "arrowX": 150},
-                "below": {"left": 10, "top": 62, "placement": "below", "arrowX": 150},
-            },
-        )
-
-    def test_compact_link_favorite_uses_the_same_stat_summary_and_tooltip_groups(self) -> None:
-        result = self.run_node(
-            r'''
+test("compact link favorite uses the same stat summary and tooltip groups", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { getCompactLinkFavoritePresentation };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { getCompactLinkFavoritePresentation };\\n})();"
             );
             const sandbox = {
               window: { addEventListener() {} },
@@ -467,7 +378,7 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
                     formatLinkFavoriteStatFilter(value) {
                       return value.startsWith("FRACTURED")
                         ? { text: "+18% to Item Rarity", source: { key: "fractured", label: "FRACTURED" } }
-                        : { text: `formatted ${value}`, source: null };
+                        : { text: \`formatted \${value}\`, source: null };
                     }
                   };
                 }
@@ -481,39 +392,19 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
                 { label: "Stat Filters", values: ["FRACTURED +#% to Item Rarity", "+# to maximum Life"] }
               ]
             })));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"stats": [{"text": "+18% to Item Rarity", "source": {"key": "fractured", "label": "FRACTURED"}}, {"text": "formatted +# to maximum Life", "source": null}], "tooltipGroups": [{"label": "Type Filters", "values": [{"text": "Item Category: Ring", "source": null}]}, {"label": "Stat Filters", "values": [{"text": "+18% to Item Rarity", "source": {"key": "fractured", "label": "FRACTURED"}}, {"text": "formatted +# to maximum Life", "source": null}]}]});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "stats": [
-                    {"text": "+18% to Item Rarity", "source": {"key": "fractured", "label": "FRACTURED"}},
-                    {"text": "formatted +# to maximum Life", "source": None},
-                ],
-                "tooltipGroups": [
-                    {"label": "Type Filters", "values": [{"text": "Item Category: Ring", "source": None}]},
-                    {
-                        "label": "Stat Filters",
-                        "values": [
-                            {"text": "+18% to Item Rarity", "source": {"key": "fractured", "label": "FRACTURED"}},
-                            {"text": "formatted +# to maximum Life", "source": None},
-                        ],
-                    },
-                ],
-            },
-        )
-
-    def test_compact_item_favorite_tooltip_includes_context_and_every_modifier(self) -> None:
-        result = self.run_node(
-            r'''
+test("compact item favorite tooltip includes context and every modifier", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { getCompactFavoritePresentation };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { getCompactFavoritePresentation };\\n})();"
             );
             const sandbox = {
               window: { addEventListener() {} },
@@ -533,54 +424,19 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
                 { text: "40% increased Physical Damage", source: "desecrated" }
               ]
             })));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"stats": [{"text": "+60 to maximum Life", "source": null}, {"text": "40% increased Physical Damage", "source": {"key": "desecrated", "label": "DESECRATED"}}], "tooltipGroups": [{"label": "Item", "hideLabel": true, "values": [{"text": "Storm Ward", "source": null, "heading": true}, {"text": "Base type: Rider Bow", "source": null}, {"text": "Category: Bow", "source": null}, {"text": "Rarity: RARE", "source": null}]}, {"label": "Modifiers", "values": [{"text": "+60 to maximum Life", "source": null}, {"text": "40% increased Physical Damage", "source": {"key": "desecrated", "label": "DESECRATED"}}]}]});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "stats": [
-                    {"text": "+60 to maximum Life", "source": None},
-                    {
-                        "text": "40% increased Physical Damage",
-                        "source": {"key": "desecrated", "label": "DESECRATED"},
-                    },
-                ],
-                "tooltipGroups": [
-                    {
-                        "label": "Item",
-                        "hideLabel": True,
-                        "values": [
-                            {"text": "Storm Ward", "source": None, "heading": True},
-                            {"text": "Base type: Rider Bow", "source": None},
-                            {"text": "Category: Bow", "source": None},
-                            {"text": "Rarity: RARE", "source": None},
-                        ],
-                    },
-                    {
-                        "label": "Modifiers",
-                        "values": [
-                            {"text": "+60 to maximum Life", "source": None},
-                            {
-                                "text": "40% increased Physical Damage",
-                                "source": {"key": "desecrated", "label": "DESECRATED"},
-                            },
-                        ],
-                    },
-                ],
-            },
-        )
-
-    def test_full_view_restores_search_focus_and_selection_after_filter_render(self) -> None:
-        result = self.run_node(
-            r'''
+test("full view restores search focus and selection after filter render", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
             let source = fs.readFileSync("favorites-panel.js", "utf8");
-            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace("  bindUi();\\n  bootstrap();", "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { captureSearchFocus, restoreSearchFocus, local };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { captureSearchFocus, restoreSearchFocus, local };\\n})();"
             );
             const nextSearch = {
               focusOptions: null,
@@ -614,28 +470,19 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
             const focus = hooks.captureSearchFocus();
             hooks.restoreSearchFocus(focus);
             console.log(JSON.stringify({ focus, focusOptions: nextSearch.focusOptions, selection: nextSearch.selection }));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"focus": {"tab": "items", "selectionStart": 1, "selectionEnd": 3}, "focusOptions": {"preventScroll": true}, "selection": [1, 3]});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "focus": {"tab": "items", "selectionStart": 1, "selectionEnd": 3},
-                "focusOptions": {"preventScroll": True},
-                "selection": [1, 3],
-            },
-        )
-
-    def test_full_item_delete_feedback_precedes_the_favorite_list(self) -> None:
-        result = self.run_node(
-            r'''
+test("full item delete feedback precedes the favorite list", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
             let source = fs.readFileSync("favorites-panel.js", "utf8");
-            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace("  bindUi();\\n  bootstrap();", "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { renderItems };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { renderItems };\\n})();"
             );
             class Node {
               constructor() { this.children = []; this.className = ""; this.dataset = {}; }
@@ -654,24 +501,19 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
             vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
             const root = sandbox.window.__testHooks.renderItems({ favorites: [], deletedFavorite: true });
             console.log(JSON.stringify(root.children.map((child) => child.className)));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, ["favorites-panel-toolbar", "favorites-panel-feedback", "favorites-panel-empty"]);
+});
 
-        self.assertEqual(
-            result,
-            ["favorites-panel-toolbar", "favorites-panel-feedback", "favorites-panel-empty"],
-        )
-
-    def test_compact_item_tooltip_omits_a_base_type_that_is_already_the_title(self) -> None:
-        result = self.run_node(
-            r'''
+test("compact item tooltip omits a base type that is already the title", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
-            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            const bootstrapCall = \`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));\`;
             let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { getCompactFavoritePresentation };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { getCompactFavoritePresentation };\\n})();"
             );
             const sandbox = {
               window: { addEventListener() {} },
@@ -688,28 +530,19 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
               mods: []
             });
             console.log(JSON.stringify(presentation.tooltipGroups[0].values));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, [{"text": "Waystone (Tier 15)", "source": null, "heading": true}, {"text": "Category: Waystone", "source": null}, {"text": "Rarity: RARE", "source": null}]);
+});
 
-        self.assertEqual(
-            result,
-            [
-                {"text": "Waystone (Tier 15)", "source": None, "heading": True},
-                {"text": "Category: Waystone", "source": None},
-                {"text": "Rarity: RARE", "source": None},
-            ],
-        )
-
-    def test_full_item_favorite_uses_custom_tooltip_groups(self) -> None:
-        result = self.run_node(
-            r'''
+test("full item favorite uses custom tooltip groups", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
             let source = fs.readFileSync("favorites-panel.js", "utf8");
-            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace("  bindUi();\\n  bootstrap();", "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { getFavoriteTooltipLink };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { getFavoriteTooltipLink };\\n})();"
             );
             const sandbox = {
               window: {},
@@ -730,47 +563,19 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
                 { text: "40% increased Physical Damage", source: "desecrated" }
               ]
             })));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"filterGroups": [{"label": "Item", "hideLabel": true, "values": [{"text": "Storm Ward", "heading": true}, "Base type: Rider Bow", "Category: Bow", "Rarity: RARE"]}, {"label": "Modifiers", "values": ["+60 to maximum Life", {"text": "40% increased Physical Damage", "source": {"key": "desecrated", "label": "DESECRATED"}}]}]});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "filterGroups": [
-                    {
-                        "label": "Item",
-                        "hideLabel": True,
-                        "values": [
-                            {"text": "Storm Ward", "heading": True},
-                            "Base type: Rider Bow",
-                            "Category: Bow",
-                            "Rarity: RARE",
-                        ],
-                    },
-                    {
-                        "label": "Modifiers",
-                        "values": [
-                            "+60 to maximum Life",
-                            {
-                                "text": "40% increased Physical Damage",
-                                "source": {"key": "desecrated", "label": "DESECRATED"},
-                            },
-                        ],
-                    },
-                ]
-            },
-        )
-
-    def test_full_item_tooltip_keeps_the_hidden_item_group_through_group_normalization(self) -> None:
-        result = self.run_node(
-            r'''
+test("full item tooltip keeps the hidden item group through group normalization", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
             let source = fs.readFileSync("favorites-panel.js", "utf8");
-            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace("  bindUi();\\n  bootstrap();", "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { getFavoriteTooltipLink, getLinkFavoriteTooltipGroups };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { getFavoriteTooltipLink, getLinkFavoriteTooltipGroups };\\n})();"
             );
             const sandbox = {
               window: {},
@@ -789,36 +594,19 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
               mods: [{ text: "+60 to maximum Life" }]
             });
             console.log(JSON.stringify(hooks.getLinkFavoriteTooltipGroups(favorite)));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, [{"label": "Item", "hideLabel": true, "values": [{"text": "Storm Ward", "source": null, "heading": true}, {"text": "Base type: Rider Bow", "source": null}, {"text": "Category: Bow", "source": null}, {"text": "Rarity: RARE", "source": null}]}, {"label": "Modifiers", "values": [{"text": "+60 to maximum Life", "source": null}]}]);
+});
 
-        self.assertEqual(
-            result,
-            [
-                {
-                    "label": "Item",
-                    "hideLabel": True,
-                    "values": [
-                        {"text": "Storm Ward", "source": None, "heading": True},
-                        {"text": "Base type: Rider Bow", "source": None},
-                        {"text": "Category: Bow", "source": None},
-                        {"text": "Rarity: RARE", "source": None},
-                    ],
-                },
-                {"label": "Modifiers", "values": [{"text": "+60 to maximum Life", "source": None}]},
-            ],
-        )
-
-    def test_full_view_drag_handles_publish_a_recoverable_drag_source(self) -> None:
-        result = self.run_node(
-            r'''
+test("full view drag handles publish a recoverable drag source", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
             let source = fs.readFileSync("favorites-panel.js", "utf8");
-            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace("  bindUi();\\n  bootstrap();", "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { setDragSource };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { setDragSource };\\n})();"
             );
             const listeners = {};
             const classes = [];
@@ -851,30 +639,19 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
               effectAllowed: transfer.effectAllowed,
               classes
             }));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"draggable": true, "draggableAttribute": "true", "source": {"kind": "link", "id": "link-1", "folderId": "folder-1"}, "effectAllowed": "move", "classes": ["favorites-panel-dragging"]});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "draggable": True,
-                "draggableAttribute": "true",
-                "source": {"kind": "link", "id": "link-1", "folderId": "folder-1"},
-                "effectAllowed": "move",
-                "classes": ["favorites-panel-dragging"],
-            },
-        )
-
-    def test_full_view_drop_recovers_the_drag_source_from_data_transfer(self) -> None:
-        result = self.run_node(
-            r'''
+test("full view drop recovers the drag source from data transfer", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
             let source = fs.readFileSync("favorites-panel.js", "utf8");
-            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace("  bindUi();\\n  bootstrap();", "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { getFavoritePanelDragSource };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { getFavoritePanelDragSource };\\n})();"
             );
             const sandbox = {
               window: {},
@@ -894,21 +671,19 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
                 }
               }
             })));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"kind": "link", "id": "link-1", "folderId": "folder-1"});
+});
 
-        self.assertEqual(result, {"kind": "link", "id": "link-1", "folderId": "folder-1"})
-
-    def test_full_view_drag_targets_show_insert_position_and_accept_top_level_links(self) -> None:
-        result = self.run_node(
-            r'''
+test("full view drag targets show insert position and accept top level links", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
             let source = fs.readFileSync("favorites-panel.js", "utf8");
-            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace("  bindUi();\\n  bootstrap();", "");
             source = source.replace(
-              /\n\}\)\(\);\s*$/,
-              "\n  window.__testHooks = { setDragSource, setDropTarget, setGroupDropTarget, setFolderTopDropTarget };\n})();"
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { setDragSource, setDropTarget, setGroupDropTarget, setFolderTopDropTarget };\\n})();"
             );
             function makeElement() {
               const listeners = {};
@@ -974,22 +749,6 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
               folderTopPosition: folderTopTarget.dataset.dropPosition,
               folderTopHighlighted: folderTopTarget.classList.contains("favorites-panel-drop-target")
             }));
-            ''',
-        )
-
-        self.assertEqual(
-            result,
-            {
-                "rowPrevented": True,
-                "rowPosition": "after",
-                "rowHighlighted": True,
-                "rootPrevented": True,
-                "rootHighlighted": True,
-                "folderTopPrevented": True,
-                "folderTopPosition": "before",
-                "folderTopHighlighted": True,
-            },
-        )
-
-if __name__ == "__main__":
-    unittest.main()
+            `);
+  assert.deepStrictEqual(result, {"rowPrevented": true, "rowPosition": "after", "rowHighlighted": true, "rootPrevented": true, "rootHighlighted": true, "folderTopPrevented": true, "folderTopPosition": "before", "folderTopHighlighted": true});
+});

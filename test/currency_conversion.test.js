@@ -1,29 +1,12 @@
-import json
-import subprocess
-import textwrap
-import unittest
-from pathlib import Path
+"use strict";
 
+const assert = require("node:assert/strict");
+const { readFileSync } = require("node:fs");
+const { test } = require("node:test");
+const { runScript } = require("./helpers/run-script");
 
-REPO_ROOT = Path(__file__).resolve().parents[2]
-
-
-class CurrencyConversionBehaviorTests(unittest.TestCase):
-    def run_node(self, script: str) -> object:
-        result = subprocess.run(
-            ["node", "-e", textwrap.dedent(script)],
-            cwd=REPO_ROOT,
-            capture_output=True,
-            text=True,
-            check=False,
-        )
-        if result.returncode != 0:
-            self.fail(result.stderr or result.stdout)
-        return json.loads(result.stdout)
-
-    def test_extracts_selected_league_and_converts_ecd_listing_currency(self) -> None:
-        result = self.run_node(
-            r'''
+test("extracts selected league and converts ecd listing currency", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
             const sandbox = { console };
@@ -60,32 +43,12 @@ class CurrencyConversionBehaviorTests(unittest.TestCase):
               exaltedSymbol: tools.getCurrencySymbol("exalted"),
               divineIconPath: tools.getCurrencyIconPath("divine")
             }));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"league": "HC Runes of Aldur", "delayedLeague": "Dawn of the Hunt", "missingLeague": "Runes of Aldur", "listing": {"amount": 3, "currency": "exalted"}, "chaos": 0.04, "divine": 0.005, "chaosToDivine": 18.75, "divineToChaos": 16, "display": "0.005", "targetsFromExalted": ["chaos", "divine"], "targetsFromChaos": ["exalted", "divine"], "targetsFromDivine": ["exalted", "chaos"], "exaltedSymbol": "E", "divineIconPath": "images/currency/divine-orb.png"});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "league": "HC Runes of Aldur",
-                "delayedLeague": "Dawn of the Hunt",
-                "missingLeague": "Runes of Aldur",
-                "listing": {"amount": 3, "currency": "exalted"},
-                "chaos": 0.04,
-                "divine": 0.005,
-                "chaosToDivine": 18.75,
-                "divineToChaos": 16,
-                "display": "0.005",
-                "targetsFromExalted": ["chaos", "divine"],
-                "targetsFromChaos": ["exalted", "divine"],
-                "targetsFromDivine": ["exalted", "chaos"],
-                "exaltedSymbol": "E",
-                "divineIconPath": "images/currency/divine-orb.png",
-            },
-        )
-
-    def test_accepts_fixed_buyout_prices_and_ignores_non_ecd_or_non_fixed_listings(self) -> None:
-        result = self.run_node(
-            r'''
+test("accepts fixed buyout prices and ignores non ecd or non fixed listings", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
             const sandbox = { console };
@@ -102,24 +65,12 @@ class CurrencyConversionBehaviorTests(unittest.TestCase):
               missing: tools.readListingPrice({ listing: {} }),
               invalid: tools.convert(2, 0, 10)
             }));
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"note": {"amount": 2, "currency": "exalted"}, "buyout": {"amount": 2, "currency": "divine"}, "negotiable": null, "unsupported": null, "missing": null, "invalid": null});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "note": {"amount": 2, "currency": "exalted"},
-                "buyout": {"amount": 2, "currency": "divine"},
-                "negotiable": None,
-                "unsupported": None,
-                "missing": None,
-                "invalid": None,
-            },
-        )
-
-    def test_refresh_uses_the_league_from_the_current_trade_search_url(self) -> None:
-        result = self.run_node(
-            r'''
+test("refresh uses the league from the current trade search url", async () => {
+  const result = await runScript(`
             (async () => {
             const fs = require("fs");
             const vm = require("vm");
@@ -163,34 +114,12 @@ class CurrencyConversionBehaviorTests(unittest.TestCase):
             await feature.refresh();
             console.log(JSON.stringify({ requests, leagues }));
             })();
-            ''',
-        )
+            `);
+  assert.deepStrictEqual(result, {"requests": [{"type": "fetch-poe2scout-reference-currencies", "league": "Runes of Aldur", "force": true, "queryId": null, "searchUrl": "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur/QLBP87yeHw", "tradeUrl": null}], "leagues": [{"league": "Runes of Aldur", "searchUrl": "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur/QLBP87yeHw"}]});
+});
 
-        self.assertEqual(
-            result,
-            {
-                "requests": [
-                    {
-                        "type": "fetch-poe2scout-reference-currencies",
-                        "league": "Runes of Aldur",
-                        "force": True,
-                        "queryId": None,
-                        "searchUrl": "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur/QLBP87yeHw",
-                        "tradeUrl": None,
-                    }
-                ],
-                "leagues": [
-                    {
-                        "league": "Runes of Aldur",
-                        "searchUrl": "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur/QLBP87yeHw",
-                    }
-                ],
-            },
-        )
-
-    def test_places_buttons_after_the_price_label_and_value_after_the_price_field(self) -> None:
-        result = self.run_node(
-            r'''
+test("places buttons after the price label and value after the price field", async () => {
+  const result = await runScript(`
             const fs = require("fs");
             const vm = require("vm");
 
@@ -287,19 +216,6 @@ class CurrencyConversionBehaviorTests(unittest.TestCase):
               valueClass: priceField.children[1]?.className || null,
               priceFieldAfter: priceField.after.length
             }));
-            ''',
-        )
-
-        self.assertEqual(
-            result,
-            {
-                "buttons": ["E", "C"],
-                "valueBreakClass": "poe2-marketwright-currency-conversion-break",
-                "valueClass": "poe2-marketwright-currency-conversion-value",
-                "priceFieldAfter": 0,
-            },
-        )
-
-
-if __name__ == "__main__":
-    unittest.main()
+            `);
+  assert.deepStrictEqual(result, {"buttons": ["E", "C"], "valueBreakClass": "poe2-marketwright-currency-conversion-break", "valueClass": "poe2-marketwright-currency-conversion-value", "priceFieldAfter": 0});
+});
