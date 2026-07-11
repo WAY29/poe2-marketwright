@@ -34,6 +34,9 @@ jobs:
           cp currency-conversion.js dist/poe2-marketwright/
           cp content.js dist/poe2-marketwright/
           cp content.css dist/poe2-marketwright/
+          cp favorites-panel.html dist/poe2-marketwright/
+          cp favorites-panel.js dist/poe2-marketwright/
+          cp favorites-panel.css dist/poe2-marketwright/
           cp page-bridge.js dist/poe2-marketwright/
           cp README.md dist/poe2-marketwright/
           cp -R data dist/poe2-marketwright/

@@ -42,6 +42,9 @@
         "_locales/zh_CN/messages.json",
         "_locales/zh_TW/messages.json",
         "data/affix-filter-data.json",
+        "favorites-panel.html",
+        "favorites-panel.js",
+        "favorites-panel.css",
         "page-bridge.js",
         "images/currency/*.png"
       ],

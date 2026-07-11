@@ -7,12 +7,46 @@
   font: 11px/1.35 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
+#poe2-marketwright-favorites-panel-frame {
+  position: fixed !important;
+  z-index: 2147483647 !important;
+  top: 0 !important;
+  right: 0 !important;
+  bottom: auto !important;
+  left: auto !important;
+  display: block !important;
+  width: min(360px, 30vw) !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  height: 100vh !important;
+  min-height: 0 !important;
+  max-height: none !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: #130e09 !important;
+  box-shadow: -10px 0 28px rgba(0, 0, 0, 0.58) !important;
+}
+
+#poe2-marketwright-favorites-panel-frame[hidden] {
+  display: none !important;
+}
+
+#poe2-trade2-affix-filter-root.poe2-marketwright-favorites-full-view-open {
+  left: auto !important;
+  right: calc(min(360px, 30vw) + 14px) !important;
+}
+
 #poe2-trade2-affix-filter-root.poe2-trade2-affix-filter-collapsed {
   left: auto;
   top: 14px;
   right: 14px;
   width: 36px;
   height: 36px;
+}
+
+#poe2-trade2-affix-filter-root.poe2-trade2-affix-filter-collapsed.poe2-marketwright-favorites-full-view-open {
+  right: calc(min(360px, 30vw) + 14px) !important;
 }
 
 #poe2-trade2-affix-filter-root * {
@@ -34,6 +68,36 @@
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease;
+}
+
+.poe2-marketwright-favorites-view-mode {
+  display: inline-flex;
+  position: relative;
+  z-index: 1;
+  flex: 0 0 20px;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  border: 1px solid rgba(136, 104, 57, 0.96);
+  border-radius: 3px;
+  color: #d9c79e;
+  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  cursor: pointer;
+}
+
+.poe2-marketwright-favorites-view-mode svg {
+  width: 12px;
+  height: 12px;
+  fill: currentColor;
+}
+
+.poe2-marketwright-favorites-view-mode:hover,
+.poe2-marketwright-favorites-view-mode:focus-visible {
+  border-color: #d0a45c;
+  filter: brightness(1.08);
+  outline: none;
 }
 
 .poe2-trade2-affix-filter-collapsed .poe2-trade2-affix-filter-panel {
@@ -192,7 +256,7 @@
 }
 
 .poe2-marketwright-favorite-meta,
-.poe2-marketwright-favorite-mods,
+.poe2-marketwright-favorite-mod,
 .poe2-marketwright-favorite-more {
   overflow: hidden;
   color: #a99064;
@@ -200,19 +264,6 @@
   line-height: 1.25;
   text-overflow: ellipsis;
   white-space: nowrap;
-}
-
-.poe2-marketwright-favorite-mods {
-  display: grid;
-  overflow: visible;
-  color: #d0bd91;
-  text-overflow: clip;
-  white-space: normal;
-}
-
-.poe2-marketwright-favorite-mods span {
-  overflow-wrap: anywhere;
-  white-space: normal;
 }
 
 .poe2-marketwright-favorite-more {
@@ -575,6 +626,9 @@
 }
 
 .poe2-marketwright-link-favorite-launch {
+  display: grid;
+  align-content: start;
+  gap: 2px;
   min-width: 0;
   padding: 7px 8px;
   overflow: hidden;
@@ -582,15 +636,142 @@
   color: #ead7aa;
   background: transparent;
   cursor: pointer;
-  font: 700 11px/1.2 Georgia, "Times New Roman", serif;
   text-align: left;
+}
+
+.poe2-marketwright-link-favorite-name {
+  overflow: hidden;
+  color: #ead7aa;
+  font: 700 11px/1.2 Georgia, "Times New Roman", serif;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.poe2-marketwright-link-favorite-stat,
+.poe2-marketwright-link-favorite-more {
+  overflow: hidden;
+  color: #b5a078;
+  font: 10px/1.25 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.poe2-marketwright-link-favorite-more {
+  color: #907a57;
+}
+
+.poe2-marketwright-link-favorite-stat-source {
+  display: inline-block;
+  margin-right: 3px;
+  padding: 1px 4px;
+  color: #f5eddf;
+  font: italic 700 10px/1.2 Georgia, "Times New Roman", serif;
+}
+
+.poe2-marketwright-link-favorite-stat-source-crafted {
+  background: #0866ba;
+}
+
+.poe2-marketwright-link-favorite-stat-source-desecrated {
+  background: #8f9a4c;
+}
+
+.poe2-marketwright-link-favorite-stat-source-fractured {
+  background: #9a8c5c;
+}
+
+.poe2-marketwright-link-favorite-stat-source-enchant {
+  background: #9255a3;
+}
+
+.poe2-marketwright-link-favorite-stat-source-augment {
+  background: #4a4747;
+}
+
+.poe2-marketwright-link-favorite-stat-source-implicit {
+  background: #827c11;
 }
 
 .poe2-marketwright-link-favorite-launch:focus-visible {
   outline: none;
   box-shadow: inset 2px 0 0 #d0a45c;
+}
+
+.poe2-marketwright-link-favorite-tooltip {
+  position: fixed;
+  z-index: 10;
+  width: min(330px, calc(100vw - 16px));
+  border: 1px solid rgba(172, 126, 65, 0.92);
+  padding: 8px;
+  color: #d9c79e;
+  background: #20160d;
+  box-shadow: 0 7px 18px rgba(0, 0, 0, 0.58), inset 0 1px 0 rgba(255, 239, 202, 0.08);
+  opacity: 0;
+  transform: translateY(4px);
+  pointer-events: none;
+  transition: opacity 100ms ease-out, transform 100ms ease-out;
+}
+
+.poe2-marketwright-link-favorite-tooltip-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+.poe2-marketwright-link-favorite-tooltip::after {
+  position: absolute;
+  left: calc(var(--poe2-marketwright-link-favorite-tooltip-arrow-x, 20px) - 6px);
+  width: 0;
+  height: 0;
+  content: "";
+  border-right: 6px solid transparent;
+  border-left: 6px solid transparent;
+}
+
+.poe2-marketwright-link-favorite-tooltip[data-placement="above"]::after {
+  bottom: -7px;
+  border-top: 7px solid rgba(172, 126, 65, 0.92);
+}
+
+.poe2-marketwright-link-favorite-tooltip[data-placement="below"]::after {
+  top: -7px;
+  border-bottom: 7px solid rgba(172, 126, 65, 0.92);
+}
+
+.poe2-marketwright-link-favorite-tooltip-content,
+.poe2-marketwright-link-favorite-tooltip-group,
+.poe2-marketwright-link-favorite-tooltip-values {
+  display: grid;
+}
+
+.poe2-marketwright-link-favorite-tooltip-content {
+  gap: 8px;
+  max-height: calc(100vh - 32px);
+  overflow: auto;
+}
+
+.poe2-marketwright-link-favorite-tooltip-group {
+  gap: 3px;
+}
+
+.poe2-marketwright-link-favorite-tooltip-group-label {
+  color: #d5b576;
+  font: 700 11px/1.2 Georgia, "Times New Roman", serif;
+}
+
+.poe2-marketwright-link-favorite-tooltip-values {
+  gap: 2px;
+}
+
+.poe2-marketwright-link-favorite-tooltip-value,
+.poe2-marketwright-link-favorite-tooltip-stat {
+  color: #c9b895;
+  font: 11px/1.3 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.poe2-marketwright-link-favorite-tooltip-stat {
+  overflow: visible;
+  white-space: normal;
 }
 
 .poe2-marketwright-link-favorite-actions {
@@ -973,10 +1154,15 @@
   cursor: default;
 }
 
+.poe2-marketwright-favorites-feature .poe2-marketwright-favorites-view-mode,
+.poe2-marketwright-link-favorites-feature .poe2-marketwright-favorites-view-mode {
+  margin: 7px 0 7px auto;
+}
+
 .poe2-marketwright-favorites-feature .poe2-trade2-affix-filter-feature-toggle {
   position: relative;
   z-index: 1;
-  margin: 7px 7px 7px auto;
+  margin: 7px 7px 7px 5px;
 }
 
 .poe2-marketwright-link-favorites-feature {
@@ -1018,7 +1204,7 @@
 .poe2-marketwright-link-favorites-feature .poe2-trade2-affix-filter-feature-toggle {
   position: relative;
   z-index: 1;
-  margin: 7px 7px 7px auto;
+  margin: 7px 7px 7px 5px;
 }
 
 .poe2-trade2-affix-filter-currency-league {

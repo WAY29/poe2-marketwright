@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>PoE2 Marketwright Favorites</title>
+    <link rel="stylesheet" href="favorites-panel.css">
+  </head>
+  <body>
+    <main class="favorites-panel-shell">
+      <header class="favorites-panel-header">
+        <div class="favorites-panel-title-row">
+          <div class="favorites-panel-title-group">
+            <span class="favorites-panel-mark" aria-hidden="true">M</span>
+            <div>
+              <h1 id="favorites-panel-title"></h1>
+              <p id="favorites-panel-league" class="favorites-panel-league"></p>
+            </div>
+          </div>
+          <div class="favorites-panel-header-actions">
+            <button id="favorites-panel-compact" class="favorites-panel-icon-button" type="button" aria-label="" title="">
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M2 2h5v5H2V2zm7 0h5v5H9V2zM2 9h5v5H2V9zm7 0h5v5H9V9z"></path></svg>
+            </button>
+            <button id="favorites-panel-close" class="favorites-panel-icon-button" type="button" aria-label="" title="">
+              <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8m0-8-8 8" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"></path></svg>
+            </button>
+          </div>
+        </div>
+        <div class="favorites-panel-tabs" role="tablist" aria-label="">
+          <button id="favorites-panel-items-tab" class="favorites-panel-tab" type="button" role="tab" aria-selected="true"></button>
+          <button id="favorites-panel-links-tab" class="favorites-panel-tab" type="button" role="tab" aria-selected="false"></button>
+        </div>
+      </header>
+      <section id="favorites-panel-content" class="favorites-panel-content" aria-live="polite"></section>
+    </main>
+    <aside id="favorites-panel-tooltip" class="favorites-panel-tooltip" role="tooltip" hidden></aside>
+    <script src="favorites.js"></script>
+    <script src="favorites-panel.js"></script>
+  </body>
+</html>

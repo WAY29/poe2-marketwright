@@ -347,5 +347,32 @@
   },
   "expandAllLinkFavoriteFolders": {
     "message": "Expand all folders"
+  },
+  "openFavoritesFullView": {
+    "message": "Use full favorites view"
+  },
+  "openFavoritesCompactView": {
+    "message": "Use compact favorites view"
+  },
+  "favoritesFullViewTitle": {
+    "message": "Favorites"
+  },
+  "closeFavoritesFullView": {
+    "message": "Close full favorites view"
+  },
+  "favoritesPanelItems": {
+    "message": "Items"
+  },
+  "favoritesPanelLinks": {
+    "message": "Links"
+  },
+  "favoritesPanelSearchLinks": {
+    "message": "Search bookmarks"
+  },
+  "favoritesPanelUnavailable": {
+    "message": "Open a trade search result to view favorites for this league"
+  },
+  "favoritesPanelNoLinkMatches": {
+    "message": "No matching bookmarks"
   }
 }

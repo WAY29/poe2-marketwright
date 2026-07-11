@@ -635,5 +635,32 @@
   },
   "expandAllLinkFavoriteFolders": {
     "message": "展開全部資料夾"
+  },
+  "openFavoritesFullView": {
+    "message": "使用完整收藏檢視"
+  },
+  "openFavoritesCompactView": {
+    "message": "使用簡潔收藏檢視"
+  },
+  "favoritesFullViewTitle": {
+    "message": "收藏"
+  },
+  "closeFavoritesFullView": {
+    "message": "關閉完整收藏檢視"
+  },
+  "favoritesPanelItems": {
+    "message": "物品"
+  },
+  "favoritesPanelLinks": {
+    "message": "連結"
+  },
+  "favoritesPanelSearchLinks": {
+    "message": "搜尋書籤"
+  },
+  "favoritesPanelUnavailable": {
+    "message": "請開啟市集搜尋結果以檢視目前賽季的收藏"
+  },
+  "favoritesPanelNoLinkMatches": {
+    "message": "沒有相符的書籤"
   }
 }

@@ -96,6 +96,17 @@ class FavoriteBehaviorTests(unittest.TestCase):
         )
         self.assertEqual(len(result["favorite"]["mods"]), 6)
         self.assertEqual(
+            result["favorite"]["mods"],
+            [
+                {"text": "+60 to maximum Life", "source": "explicit"},
+                {"text": "Adds 12 to 24 Fire Damage", "source": "explicit"},
+                {"text": "Adds 14 to 26 Fire Damage", "source": "explicit"},
+                {"text": "Leeches 7% of Physical Damage as Life", "source": "desecrated"},
+                {"text": "+20 to Dexterity", "source": "fractured"},
+                {"text": "Cannot be Shocked", "source": "crafted"},
+            ],
+        )
+        self.assertEqual(
             result["payload"],
             {
                 "query": {
@@ -370,7 +381,12 @@ class FavoriteBehaviorTests(unittest.TestCase):
               displayName: "Warmonger Bow",
               folderId: "folder-1",
               id: "link-1",
-              createdAt: 123
+              createdAt: 123,
+              filterGroups: [
+                { label: "Type Filters", values: ["Bow", " Rare ", "Bow"] },
+                { label: "Stat Filters", values: ["+# to maximum Life", ""] },
+                { label: "", values: ["ignored"] }
+              ]
             });
             let invalidCode = null;
             try {
@@ -395,8 +411,45 @@ class FavoriteBehaviorTests(unittest.TestCase):
                     "folderId": "folder-1",
                     "createdAt": 123,
                     "lastUsedAt": None,
+                    "filterGroups": [
+                        {"label": "Type Filters", "values": ["Bow", "Rare"]},
+                        {"label": "Stat Filters", "values": ["+# to maximum Life"]},
+                    ],
                 },
                 "invalidCode": "invalid_trade_search_url",
+            },
+        )
+
+    def test_link_favorite_stat_summary_removes_random_prefixes_and_formats_special_sources(self) -> None:
+        result = self.run_node(
+            r'''
+            const fs = require("fs");
+            const vm = require("vm");
+            const sandbox = { console, URL };
+            vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+              filename: "favorites.js"
+            });
+
+            const tools = sandbox.Poe2MarketwrightFavorites.createLinkFavoriteTools();
+            console.log(JSON.stringify({
+              regular: tools.formatLinkFavoriteStatFilter(
+                "隨機屬性 攻擊附加#至#冰冷傷害[Adds # to # Cold damage to Attacks]:最小40.5/最大40.5"
+              ),
+              special: tools.formatLinkFavoriteStatFilter(
+                "FRACTURED +#% to Item Rarity: Min 18 / Max 18"
+              )
+            }));
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "regular": {"text": "攻擊附加40.5至40.5冰冷傷害", "source": None},
+                "special": {
+                    "text": "+18% to Item Rarity",
+                    "source": {"key": "fractured", "label": "FRACTURED"},
+                },
             },
         )
 

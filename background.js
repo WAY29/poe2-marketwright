@@ -2,7 +2,20 @@
   const ENGLISH_ORIGINS = new Set(["https://pathofexile.com", "https://www.pathofexile.com"]);
   const POE2SCOUT_API_ORIGIN = "https://api.poe2scout.com";
   const POE2SCOUT_CACHE_TTL_MS = 60 * 1000;
+  const FAVORITES_PANEL_SESSION_PREFIX = "poe2-marketwright:favorites-panel:";
   const poe2ScoutCache = new Map();
+
+  const normalizeFavoritesPanelSessionId = (value) => {
+    if (typeof value !== "string") {
+      return null;
+    }
+    const sessionId = value.trim();
+    return /^[a-zA-Z0-9_-]{8,128}$/.test(sessionId) ? sessionId : null;
+  };
+
+  const getFavoritesPanelSessionKey = (sessionId) => `${FAVORITES_PANEL_SESSION_PREFIX}${sessionId}`;
+
+  const isExtensionSender = (sender) => sender?.id === chrome.runtime.id;
 
   const normalizeEnglishUrl = (input) => {
     let url;
@@ -91,6 +104,71 @@
 
   chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     if (!message) {
+      return;
+    }
+
+    if (message.type === "favorites-panel-register") {
+      const sessionId = normalizeFavoritesPanelSessionId(message.sessionId);
+      const tabId = sender?.tab?.id;
+      if (!isExtensionSender(sender) || !sessionId || !Number.isInteger(tabId)) {
+        sendResponse({ ok: false, error: "invalid_panel_registration" });
+        return;
+      }
+      chrome.storage.session
+        .set({ [getFavoritesPanelSessionKey(sessionId)]: { tabId } })
+        .then(() => sendResponse({ ok: true }))
+        .catch((error) => sendResponse({ ok: false, error: error?.message || String(error) }));
+      return true;
+    }
+
+    if (message.type === "favorites-panel-request") {
+      const sessionId = normalizeFavoritesPanelSessionId(message.sessionId);
+      const command = typeof message.command === "string" ? message.command : "";
+      if (!isExtensionSender(sender) || !sessionId || !command) {
+        sendResponse({ ok: false, error: "invalid_panel_request" });
+        return;
+      }
+      chrome.storage.session
+        .get(getFavoritesPanelSessionKey(sessionId))
+        .then((stored) => {
+          const tabId = stored?.[getFavoritesPanelSessionKey(sessionId)]?.tabId;
+          if (!Number.isInteger(tabId)) {
+            sendResponse({ ok: false, error: "unknown_panel_session" });
+            return null;
+          }
+          return chrome.tabs.sendMessage(tabId, {
+            type: "favorites-panel-command",
+            sessionId,
+            command,
+            payload: message.payload
+          });
+        })
+        .then((response) => {
+          sendResponse(response || { ok: false, error: "panel_tab_unavailable" });
+        })
+        .catch((error) => sendResponse({ ok: false, error: error?.message || String(error) }));
+      return true;
+    }
+
+    if (message.type === "favorites-panel-state-update") {
+      const sessionId = normalizeFavoritesPanelSessionId(message.sessionId);
+      if (!isExtensionSender(sender) || !sessionId || !sender?.tab || !message.state) {
+        return;
+      }
+      chrome.storage.session
+        .get(getFavoritesPanelSessionKey(sessionId))
+        .then((stored) => {
+          const tabId = stored?.[getFavoritesPanelSessionKey(sessionId)]?.tabId;
+          if (tabId !== sender.tab.id) {
+            return null;
+          }
+          return chrome.runtime.sendMessage({
+            type: "favorites-panel-state",
+            sessionId,
+            state: message.state
+          });
+        })
+        .catch(() => {});
       return;
     }
 

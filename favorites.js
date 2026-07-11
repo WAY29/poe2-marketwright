@@ -108,10 +108,10 @@
           }
 
           const next = getStatValue(text);
-          mods.push({ text });
           const separatorIndex = id.indexOf(".");
           const source = id.slice(0, separatorIndex);
           const baseStatId = id.slice(separatorIndex + 1);
+          mods.push({ text, source });
           if (source !== "explicit" && next.value != null) {
             const total = specialStatTotals.get(baseStatId) || 0;
             specialStatTotals.set(baseStatId, normalizeNumber(total + next.value));
@@ -255,6 +255,97 @@
 
     const normalizeName = (value) => String(value || "").replace(/\s+/g, " ").trim();
 
+    const normalizeLinkFavoriteFilterGroups = (value) => {
+      if (!Array.isArray(value)) {
+        return [];
+      }
+
+      const groups = [];
+      for (const rawGroup of value) {
+        if (groups.length >= 24) {
+          break;
+        }
+        const label = normalizeName(rawGroup?.label);
+        if (!label || label.length > 120 || !Array.isArray(rawGroup?.values)) {
+          continue;
+        }
+        const values = [];
+        const seen = new Set();
+        for (const rawValue of rawGroup.values) {
+          if (values.length >= 16) {
+            break;
+          }
+          const entry = normalizeName(rawValue);
+          const key = entry.toLocaleLowerCase();
+          if (!entry || entry.length > 300 || seen.has(key)) {
+            continue;
+          }
+          seen.add(key);
+          values.push(entry);
+        }
+        if (values.length) {
+          groups.push({ label, values });
+        }
+      }
+      return groups;
+    };
+
+    const LINK_FAVORITE_SPECIAL_SOURCES = [
+      { key: "crafted", pattern: /^(crafted\b\s*|\u5de5\u85dd\s*|\u5de5\u827a\s*)/i },
+      { key: "desecrated", pattern: /^(desecrated\b\s*|\u893b\u7006\s*|\u4eb5\u6e0e\s*)/i },
+      { key: "fractured", pattern: /^(fractured\b\s*|\u7834\u88c2\s*)/i },
+      { key: "enchant", pattern: /^(enchant\b\s*|\u9644\u9b54\s*)/i },
+      { key: "augment", pattern: /^(augment\b\s*|\u589e\u5e45\s*)/i },
+      { key: "implicit", pattern: /^(implicit\b\s*|\u96b1\u6027\s*|\u9690\u6027\s*)/i }
+    ];
+    const LINK_FAVORITE_RANDOM_PREFIX_RE = /^(?:random attribute|\u96a8\u6a5f\u5c6c\u6027|\u968f\u673a\u5c5e\u6027)\s*/i;
+    const LINK_FAVORITE_MIN_VALUE_RE = /(?:minimum|min|\u6700\u5c0f)\s*[:\uff1a]?\s*(-?\d+(?:\.\d+)?)/i;
+    const LINK_FAVORITE_MAX_VALUE_RE = /(?:maximum|max|\u6700\u5927)\s*[:\uff1a]?\s*(-?\d+(?:\.\d+)?)/i;
+
+    const formatLinkFavoriteStatFilter = (value) => {
+      let text = String(value || "")
+        .replace(/\[[^\]]*]/g, "")
+        .replace(/\s+/g, " ")
+        .trim()
+        .replace(LINK_FAVORITE_RANDOM_PREFIX_RE, "");
+      let source = null;
+      for (const candidate of LINK_FAVORITE_SPECIAL_SOURCES) {
+        const match = text.match(candidate.pattern);
+        if (!match) {
+          continue;
+        }
+        source = { key: candidate.key, label: match[0].trim().toUpperCase() };
+        text = text.slice(match[0].length).replace(/^[:\uff1a]\s*/, "").trim();
+        break;
+      }
+
+      const minimum = text.match(LINK_FAVORITE_MIN_VALUE_RE);
+      const maximum = text.match(LINK_FAVORITE_MAX_VALUE_RE);
+      const values = [minimum?.[1], maximum?.[1]].filter(Boolean);
+      const thresholdIndex = Math.min(
+        ...[minimum?.index, maximum?.index].filter((index) => Number.isInteger(index))
+      );
+      if (Number.isFinite(thresholdIndex)) {
+        text = text.slice(0, thresholdIndex).replace(/[\s:\uff1a]+$/, "").trim();
+      }
+
+      const threshold = values.length === 2 && values[0] !== values[1] ? values.join("-") : values[0] || "";
+      const placeholders = text.match(/#/g) || [];
+      if (placeholders.length) {
+        let index = 0;
+        text = text.replace(/#/g, () => {
+          if (placeholders.length === 1) {
+            return threshold || "#";
+          }
+          return values[index++] || values[values.length - 1] || "#";
+        });
+      } else if (threshold) {
+        text = `${text} ${threshold}`.trim();
+      }
+
+      return { text, source };
+    };
+
     const validateTradeSearchUrl = (value) => {
       let parsedUrl;
       try {
@@ -293,12 +384,20 @@
       return { url: parsedUrl.toString(), league, queryId };
     };
 
-    const createLinkFavoriteRecord = ({ url, displayName, folderId = null, id = null, createdAt = Date.now() } = {}) => {
+    const createLinkFavoriteRecord = ({
+      url,
+      displayName,
+      folderId = null,
+      id = null,
+      createdAt = Date.now(),
+      filterGroups = []
+    } = {}) => {
       const parsed = validateTradeSearchUrl(url);
       const name = normalizeName(displayName);
       if (!name) {
         throw createLinkFavoriteError("missing_link_favorite_name", "Link favorite requires a display name");
       }
+      const normalizedFilterGroups = normalizeLinkFavoriteFilterGroups(filterGroups);
       return {
         id: normalizeId(id) || createLinkFavoriteId("link"),
         league: parsed.league,
@@ -307,7 +406,8 @@
         displayName: name,
         folderId: normalizeId(folderId),
         createdAt: normalizeTimestamp(createdAt, Date.now()),
-        lastUsedAt: null
+        lastUsedAt: null,
+        ...(normalizedFilterGroups.length ? { filterGroups: normalizedFilterGroups } : {})
       };
     };
 
@@ -385,6 +485,7 @@
         }
         linkIds.add(id);
         const folderId = normalizeId(rawLink?.folderId);
+        const filterGroups = normalizeLinkFavoriteFilterGroups(rawLink?.filterGroups);
         links.push({
           id,
           league,
@@ -393,7 +494,8 @@
           displayName,
           folderId: folderId && folderIds.has(folderId) ? folderId : null,
           createdAt: normalizeTimestamp(rawLink?.createdAt),
-          lastUsedAt: rawLink?.lastUsedAt == null ? null : normalizeTimestamp(rawLink.lastUsedAt)
+          lastUsedAt: rawLink?.lastUsedAt == null ? null : normalizeTimestamp(rawLink.lastUsedAt),
+          ...(filterGroups.length ? { filterGroups } : {})
         });
       }
 
@@ -637,7 +739,9 @@
       createLinkFavoriteId,
       createLinkFavoriteRecord,
       exportExternalLinkFavorites,
+      formatLinkFavoriteStatFilter,
       importExternalLinkFavorites,
+      normalizeLinkFavoriteFilterGroups,
       normalizeLinkFavoritesState,
       validateTradeSearchUrl
     };

@@ -635,5 +635,32 @@
   },
   "expandAllLinkFavoriteFolders": {
     "message": "展开全部文件夹"
+  },
+  "openFavoritesFullView": {
+    "message": "使用完整收藏视图"
+  },
+  "openFavoritesCompactView": {
+    "message": "使用简洁收藏视图"
+  },
+  "favoritesFullViewTitle": {
+    "message": "收藏"
+  },
+  "closeFavoritesFullView": {
+    "message": "关闭完整收藏视图"
+  },
+  "favoritesPanelItems": {
+    "message": "物品"
+  },
+  "favoritesPanelLinks": {
+    "message": "链接"
+  },
+  "favoritesPanelSearchLinks": {
+    "message": "搜索书签"
+  },
+  "favoritesPanelUnavailable": {
+    "message": "请打开市集搜索结果以查看当前赛季的收藏"
+  },
+  "favoritesPanelNoLinkMatches": {
+    "message": "没有匹配的书签"
   }
 }

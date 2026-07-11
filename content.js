@@ -16,6 +16,9 @@
     favoritesEnabled: true,
     favorites: [],
     favoritesDrawerOpen: false,
+    favoritesViewMode: "compact",
+    favoritesPanelOpen: false,
+    favoritesPanelTab: "items",
     linkFavoritesEnabled: true,
     linkFavorites: { version: 1, leagues: {} },
     linkFavoritesDrawerOpen: false,
@@ -27,6 +30,7 @@
   const ROOT_ID = "poe2-trade2-affix-filter-root";
   const COLLAPSED_PANEL_SIZE = 36;
   const HIDDEN_CLASS = "poe2-trade2-affix-filter-hidden";
+  const FAVORITE_SPECIAL_MODIFIER_SOURCES = new Set(["crafted", "desecrated", "fractured", "enchant", "augment", "implicit"]);
   const BRIDGE_SCRIPT_ID = "poe2-marketwright-page-bridge";
   const BRIDGE_SOURCE = "poe2-marketwright";
   const BRIDGE_UPDATE_TYPE = "POE2_MARKETWRIGHT_UPDATE";
@@ -368,7 +372,11 @@
     collapseAllLinkFavoriteFolders: "Collapse all folders",
     expandAllLinkFavoriteFolders: "Expand all folders",
     closeFavoritesDrawer: "Close favorites",
-    favoriteTooltipRarity: "Rarity: $1"
+    favoriteTooltipRarity: "Rarity: $1",
+    openFavoritesFullView: "Use full favorites view",
+    openFavoritesCompactView: "Use compact favorites view",
+    favoritesFullViewTitle: "Favorites",
+    closeFavoritesFullView: "Close full favorites view"
   };
   const EXTENSION_CONTEXT_INVALIDATED_RE = /extension context invalidated|context invalidated|message port closed/i;
 
@@ -409,6 +417,11 @@
     linkFavoriteFeedbackTimer: null,
     linkFavoriteImporting: false,
     linkFavoriteImportText: "",
+    compactLinkFavoriteTooltipShowTimer: null,
+    compactLinkFavoriteTooltipHideTimer: null,
+    compactLinkFavoriteTooltipDismissTimer: null,
+    compactLinkFavoriteTooltipPointer: null,
+    favoritesPanelSessionId: null,
     ui: {}
   };
 
@@ -481,6 +494,12 @@
         typeof savedState.favoritesDrawerOpen === "boolean"
           ? savedState.favoritesDrawerOpen
           : DEFAULT_STATE.favoritesDrawerOpen,
+      favoritesViewMode: savedState.favoritesViewMode === "full" ? "full" : DEFAULT_STATE.favoritesViewMode,
+      favoritesPanelOpen:
+        typeof savedState.favoritesPanelOpen === "boolean"
+          ? savedState.favoritesPanelOpen
+          : DEFAULT_STATE.favoritesPanelOpen,
+      favoritesPanelTab: savedState.favoritesPanelTab === "links" ? "links" : DEFAULT_STATE.favoritesPanelTab,
       linkFavoritesEnabled:
         typeof savedState.linkFavoritesEnabled === "boolean"
           ? savedState.linkFavoritesEnabled
@@ -622,12 +641,14 @@
           <button id="poe2-marketwright-favorites-disclosure" class="poe2-marketwright-favorites-disclosure" type="button" aria-label="" title="">
             <span id="poe2-marketwright-favorites-title" class="poe2-trade2-affix-filter-feature-title"></span>
           </button>
+          <button id="poe2-marketwright-favorites-view-mode" class="poe2-marketwright-favorites-view-mode" type="button" aria-label="" title=""></button>
           <button id="poe2-marketwright-favorites-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
         </section>
         <section class="poe2-trade2-affix-filter-feature poe2-marketwright-link-favorites-feature">
           <button id="poe2-marketwright-link-favorites-disclosure" class="poe2-marketwright-link-favorites-disclosure" type="button" aria-label="" title="">
             <span id="poe2-marketwright-link-favorites-title" class="poe2-trade2-affix-filter-feature-title"></span>
           </button>
+          <button id="poe2-marketwright-link-favorites-view-mode" class="poe2-marketwright-favorites-view-mode" type="button" aria-label="" title=""></button>
           <button id="poe2-marketwright-link-favorites-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
         </section>
         <section class="poe2-trade2-affix-filter-feature poe2-trade2-affix-filter-currency-feature">
@@ -648,9 +669,30 @@
       </button>
     `;
 
+    const compactLinkFavoriteTooltip = document.createElement("aside");
+    compactLinkFavoriteTooltip.id = "poe2-marketwright-link-favorite-tooltip";
+    compactLinkFavoriteTooltip.className = "poe2-marketwright-link-favorite-tooltip";
+    compactLinkFavoriteTooltip.setAttribute("role", "tooltip");
+    compactLinkFavoriteTooltip.setAttribute("aria-hidden", "true");
+    compactLinkFavoriteTooltip.hidden = true;
+    root.appendChild(compactLinkFavoriteTooltip);
     document.documentElement.appendChild(root);
 
+    const favoritesPanelFrame = document.createElement("iframe");
+    favoritesPanelFrame.id = "poe2-marketwright-favorites-panel-frame";
+    favoritesPanelFrame.title = t("favoritesFullViewTitle");
+    favoritesPanelFrame.hidden = true;
+    favoritesPanelFrame.setAttribute("aria-hidden", "true");
+    favoritesPanelFrame.src = chrome.runtime.getURL(
+      `favorites-panel.html?session=${encodeURIComponent(getFavoritesPanelSessionId())}`
+    );
+    document.documentElement.appendChild(favoritesPanelFrame);
+
     runtime.ui.root = root;
+    runtime.ui.favoritesPanelFrame = favoritesPanelFrame;
+    runtime.ui.compactLinkFavoriteTooltip = compactLinkFavoriteTooltip;
+    compactLinkFavoriteTooltip.addEventListener("pointerenter", clearCompactLinkFavoriteTooltipHideTimer);
+    compactLinkFavoriteTooltip.addEventListener("pointerleave", scheduleCompactLinkFavoriteTooltipHide);
     runtime.ui.panel = root.querySelector(".poe2-trade2-affix-filter-panel");
     runtime.ui.linkFavoritesDrawer = root.querySelector(".poe2-marketwright-link-favorites-drawer");
     runtime.ui.linkFavoritesClose = root.querySelector("#poe2-marketwright-link-favorites-close");
@@ -682,6 +724,11 @@
     runtime.ui.pobEnabled = root.querySelector("#poe2-trade2-affix-filter-pob-enabled");
     runtime.ui.currencyEnabled = root.querySelector("#poe2-trade2-affix-filter-currency-enabled");
     runtime.ui.currencyRefresh = root.querySelector("#poe2-trade2-affix-filter-currency-refresh");
+    runtime.ui.favoritesViewModes = [
+      root.querySelector("#poe2-marketwright-favorites-view-mode"),
+      root.querySelector("#poe2-marketwright-link-favorites-view-mode")
+    ].filter(Boolean);
+    runtime.ui.favoritesViewMode = runtime.ui.favoritesViewModes[0] || null;
     runtime.ui.currencyLeague = root.querySelector("#poe2-trade2-affix-filter-currency-league");
     runtime.ui.statTitle = root.querySelector("#poe2-trade2-affix-filter-stat-title");
     runtime.ui.pobTitle = root.querySelector("#poe2-trade2-affix-filter-pob-title");
@@ -706,7 +753,9 @@
     applyLinkFavoritesDrawerState();
     applyPanelCollapsed();
     applyPanelPosition();
+    applyFavoritesView();
     bindPanelDrag();
+    void registerFavoritesPanelSession();
 
     runtime.ui.collapse.addEventListener("click", () => {
       runAsync(() => setPanelCollapsed(true), "collapse panel");
@@ -719,11 +768,15 @@
       runAsync(() => setPanelCollapsed(false), "expand panel");
     });
 
+    for (const button of runtime.ui.favoritesViewModes) {
+      button.addEventListener("click", () => {
+        const nextMode = getFavoritesViewMode() === "full" ? "compact" : "full";
+        setFavoritesViewMode(nextMode).catch((error) => handleAsyncError(error, "change favorites view mode"));
+      });
+    }
+
     runtime.ui.favoritesDisclosure.addEventListener("click", () => {
-      runAsync(
-        () => setFavoritesDrawerOpen(!runtime.state.favoritesDrawerOpen),
-        "toggle favorites drawer"
-      );
+      toggleFavoritesView("items").catch((error) => handleAsyncError(error, "toggle favorites view"));
     });
 
     runtime.ui.favoritesClose.addEventListener("click", () => {
@@ -731,10 +784,7 @@
     });
 
     runtime.ui.linkFavoritesDisclosure.addEventListener("click", () => {
-      runAsync(
-        () => setLinkFavoritesDrawerOpen(!runtime.state.linkFavoritesDrawerOpen),
-        "toggle link favorites drawer"
-      );
+      toggleFavoritesView("links").catch((error) => handleAsyncError(error, "toggle link favorites view"));
     });
 
     runtime.ui.linkFavoritesClose.addEventListener("click", () => {
@@ -882,6 +932,7 @@
     runtime.ui.currencyTitle.textContent = t("currencyConversionTitle");
     runtime.ui.currencyRefresh.setAttribute("aria-label", t("refreshCurrencyConversion"));
     runtime.ui.currencyRefresh.title = t("refreshCurrencyConversion");
+    updateFavoritesViewModeButton();
     runtime.ui.favoritesSearch.placeholder = t("favoritesSearch");
     runtime.ui.favoritesSearch.setAttribute("aria-label", t("favoritesSearch"));
     runtime.ui.favoritesUndoText.textContent = t("favoriteDeleted");
@@ -992,6 +1043,24 @@
     return values.reduce((text, value, index) => text.replaceAll(`$${index + 1}`, String(value)), template);
   }
 
+  function updateFavoritesViewModeButton() {
+    const buttons = runtime.ui?.favoritesViewModes || [runtime.ui?.favoritesViewMode].filter(Boolean);
+    if (!buttons.length) {
+      return;
+    }
+    const full = getFavoritesViewMode() === "full";
+    const title = t(full ? "openFavoritesCompactView" : "openFavoritesFullView");
+    const path = full
+      ? "M4 4h8v8H4V4zm1.5 1.5v5h5v-5h-5zM2 2h12v12H2V2zm1.5 1.5v9h9v-9h-9z"
+      : "M2 2h12v12H2V2zm1.5 1.5v9h5v-9h-5zm6.5 0v9h2.5v-9H10z";
+    for (const button of buttons) {
+      button.setAttribute("aria-label", title);
+      button.setAttribute("aria-pressed", String(full));
+      button.title = title;
+      button.innerHTML = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="${path}"></path></svg>`;
+    }
+  }
+
   function getFavoriteTools() {
     const factory = globalThis.Poe2MarketwrightFavorites?.createFavoriteTools;
     return factory ? factory() : null;
@@ -1000,6 +1069,271 @@
   function getLinkFavoriteTools() {
     const factory = globalThis.Poe2MarketwrightFavorites?.createLinkFavoriteTools;
     return factory ? factory() : null;
+  }
+
+  function getFavoritesViewMode() {
+    return runtime.state?.favoritesViewMode === "full" ? "full" : "compact";
+  }
+
+  function getFavoritesPanelTab() {
+    return runtime.state?.favoritesPanelTab === "links" ? "links" : "items";
+  }
+
+  function isFavoritesFullViewFallbackActive() {
+    return false;
+  }
+
+  function getFavoritesPanelSessionId() {
+    if (runtime.favoritesPanelSessionId) {
+      return runtime.favoritesPanelSessionId;
+    }
+    const id = globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    runtime.favoritesPanelSessionId = `favorites-${id}`.replace(/[^a-zA-Z0-9_-]/g, "");
+    return runtime.favoritesPanelSessionId;
+  }
+
+  async function registerFavoritesPanelSession() {
+    if (!chrome.runtime?.sendMessage) {
+      return;
+    }
+    try {
+      await chrome.runtime.sendMessage({
+        type: "favorites-panel-register",
+        sessionId: getFavoritesPanelSessionId()
+      });
+    } catch (error) {
+      if (!isExtensionContextInvalidated(error)) {
+        console.debug("[PoE2 Marketwright] unable to register favorites panel", error);
+      }
+    }
+  }
+
+  function applyFavoritesView() {
+    const visible = getFavoritesViewMode() === "full" && runtime.state.favoritesPanelOpen;
+    const frame = runtime.ui?.favoritesPanelFrame;
+    if (frame) {
+      frame.hidden = !visible;
+      frame.setAttribute("aria-hidden", String(!visible));
+    }
+    runtime.ui?.root?.classList?.toggle("poe2-marketwright-favorites-full-view-open", visible);
+    applyFavoritesDrawerState();
+    applyLinkFavoritesDrawerState();
+    updateFavoritesViewModeButton();
+  }
+
+  async function setFavoritesViewMode(mode) {
+    const nextMode = mode === "full" ? "full" : "compact";
+    const previousMode = getFavoritesViewMode();
+    const tab = previousMode === "full"
+      ? getFavoritesPanelTab()
+      : runtime.state.linkFavoritesDrawerOpen
+        ? "links"
+        : "items";
+    const wasOpen = previousMode === "full"
+      ? Boolean(runtime.state.favoritesPanelOpen)
+      : Boolean(runtime.state.favoritesDrawerOpen || runtime.state.linkFavoritesDrawerOpen);
+    runtime.state.favoritesViewMode = nextMode;
+    runtime.state.favoritesPanelTab = tab;
+    runtime.state.favoritesDrawerOpen = nextMode === "compact" && wasOpen && tab === "items";
+    runtime.state.linkFavoritesDrawerOpen = nextMode === "compact" && wasOpen && tab === "links";
+    const shouldOpen = nextMode === "full" && wasOpen;
+    runtime.state.favoritesPanelOpen = shouldOpen;
+    applyFavoritesView();
+    renderFavoriteDrawer();
+    renderLinkFavoritesDrawer();
+    await saveState();
+    publishFavoritesPanelState();
+  }
+
+  async function toggleFavoritesView(tab) {
+    const nextTab = tab === "links" ? "links" : "items";
+    if (getFavoritesViewMode() === "full") {
+      const shouldOpen = !runtime.state.favoritesPanelOpen || getFavoritesPanelTab() !== nextTab;
+      await setFavoritesPanelOpen(shouldOpen, nextTab);
+      return;
+    }
+    if (nextTab === "items") {
+      await setFavoritesDrawerOpen(!runtime.state.favoritesDrawerOpen);
+      return;
+    }
+    await setLinkFavoritesDrawerOpen(!runtime.state.linkFavoritesDrawerOpen);
+  }
+
+  async function setFavoritesPanelOpen(open, tab = getFavoritesPanelTab()) {
+    runtime.state.favoritesPanelTab = tab === "links" ? "links" : "items";
+    runtime.state.favoritesPanelOpen = Boolean(open);
+    runtime.state.favoritesDrawerOpen = false;
+    runtime.state.linkFavoritesDrawerOpen = false;
+    if (!open) {
+      runtime.linkFavoriteImporting = false;
+      runtime.linkFavoriteImportText = "";
+    }
+    applyFavoritesView();
+    renderFavoriteDrawer();
+    renderLinkFavoritesDrawer();
+    await saveState();
+    publishFavoritesPanelState();
+  }
+
+  function getFavoritesPanelState() {
+    const favoriteLeague = getCurrentFavoriteLeague();
+    const linkContext = getCurrentLinkFavoriteContext();
+    const league = linkContext?.league || favoriteLeague;
+    const favorites = league
+      ? (runtime.state.favorites || [])
+          .filter((favorite) => favorite?.league === league)
+          .sort((left, right) => Number(right.createdAt || 0) - Number(left.createdAt || 0))
+      : [];
+    const leagueState = league ? getLinkFavoriteLeagueState(runtime.state.linkFavorites, league) : null;
+    const folders = (leagueState?.folderOrder || [])
+      .map((folderId) => getLinkFavoriteFolder(leagueState, folderId))
+      .filter(Boolean);
+    return {
+      available: Boolean(league),
+      league: league || null,
+      favoritesViewMode: getFavoritesViewMode(),
+      favoritesPanelOpen: Boolean(runtime.state.favoritesPanelOpen),
+      favoritesPanelTab: getFavoritesPanelTab(),
+      favoritesEnabled: Boolean(runtime.state.favoritesEnabled),
+      linkFavoritesEnabled: Boolean(runtime.state.linkFavoritesEnabled),
+      favorites,
+      linkFavorites: {
+        folders,
+        links: leagueState?.links || [],
+        rootLinkIds: leagueState?.rootLinkIds || [],
+        folderLinkIds: leagueState?.folderLinkIds || {}
+      },
+      canSaveCurrentLink: Boolean(linkContext),
+      deletedFavorite: Boolean(runtime.deletedFavorite),
+      deletedLinkCount: runtime.deletedLinkFavorites.length,
+      feedback: runtime.linkFavoriteFeedback || null
+    };
+  }
+
+  function publishFavoritesPanelState() {
+    if (!chrome.runtime?.sendMessage || !runtime.favoritesPanelSessionId) {
+      return;
+    }
+    Promise.resolve(
+      chrome.runtime.sendMessage({
+        type: "favorites-panel-state-update",
+        sessionId: runtime.favoritesPanelSessionId,
+        state: getFavoritesPanelState()
+      })
+    ).catch((error) => {
+      if (!isExtensionContextInvalidated(error)) {
+        console.debug("[PoE2 Marketwright] unable to update favorites panel", error);
+      }
+    });
+  }
+
+  async function handleFavoritesPanelCommand(command, payload = {}) {
+    switch (command) {
+      case "get-state":
+        break;
+      case "close-panel":
+        await setFavoritesPanelOpen(false);
+        break;
+      case "set-view-mode":
+        await setFavoritesViewMode(payload.mode);
+        break;
+      case "select-tab":
+        await setFavoritesPanelOpen(true, payload.tab);
+        break;
+      case "rename-favorite": {
+        const favorite = runtime.state.favorites.find((entry) => entry?.signature === payload.signature);
+        if (favorite) {
+          await renameFavorite(favorite, payload.name);
+        }
+        break;
+      }
+      case "delete-favorite": {
+        const favorite = runtime.state.favorites.find((entry) => entry?.signature === payload.signature);
+        if (favorite) {
+          await deleteFavorite(favorite);
+        }
+        break;
+      }
+      case "undo-favorite":
+        await undoDeletedFavorite();
+        break;
+      case "launch-favorite": {
+        const favorite = runtime.state.favorites.find((entry) => entry?.signature === payload.signature);
+        if (favorite) {
+          await launchFavoriteSearch(favorite);
+        }
+        break;
+      }
+      case "open-link":
+        await launchLinkFavorite(payload.linkId);
+        break;
+      case "create-folder":
+        await createLinkFavoriteFolder(payload.name);
+        break;
+      case "rename-folder":
+        await renameLinkFavoriteFolder(payload.folderId, payload.name);
+        break;
+      case "delete-folder":
+        if (payload.confirm === true) {
+          await deleteLinkFavoriteFolder(payload.folderId);
+        }
+        break;
+      case "save-link":
+        await createCurrentLinkFavorite(payload.folderId || null);
+        break;
+      case "import-links":
+        await importLinkFavorites(payload.text);
+        break;
+      case "export-links":
+        await exportLinkFavorites();
+        break;
+      case "rename-link":
+        await renameLinkFavorite(payload.linkId, payload.name);
+        break;
+      case "move-link":
+        await moveLinkFavorite(payload.linkId, payload.folderId || null, payload.targetId || null, payload.placeAfter !== false);
+        break;
+      case "delete-link":
+        await deleteLinkFavorite(payload.linkId);
+        break;
+      case "undo-link":
+        await undoDeletedLinkFavorite();
+        break;
+      case "reorder-link":
+        await reorderLinkFavorite(payload.linkId, payload.folderId || null, payload.targetId, payload.placeAfter !== false);
+        break;
+      case "reorder-folder":
+        await reorderLinkFavoriteFolder(payload.folderId, payload.targetId, payload.placeAfter !== false);
+        break;
+      case "toggle-folder":
+        await setLinkFavoriteFolderCollapsed(payload.folderId, Boolean(payload.collapsed));
+        break;
+      case "toggle-all-folders":
+        await toggleAllLinkFavoriteFoldersCollapsed();
+        break;
+      default:
+        return { ok: false, error: "unsupported_panel_command" };
+    }
+    return { ok: true, state: getFavoritesPanelState() };
+  }
+
+  function bindFavoritesPanelMessages() {
+    if (!chrome.runtime?.onMessage) {
+      return;
+    }
+    chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (
+        message?.type !== "favorites-panel-command" ||
+        message.sessionId !== runtime.favoritesPanelSessionId ||
+        sender?.id !== chrome.runtime.id
+      ) {
+        return;
+      }
+      handleFavoritesPanelCommand(message.command, message.payload)
+        .then(sendResponse)
+        .catch((error) => sendResponse({ ok: false, error: error?.message || String(error) }));
+      return true;
+    });
   }
 
   function getCurrentFavoriteLeague() {
@@ -1013,7 +1347,12 @@
     }
     try {
       const current = tools.validateTradeSearchUrl(window.location.href);
-      return { ...current, displayName: getCurrentLinkFavoriteDisplayName() };
+      const filterGroups = getCurrentLinkFavoriteFilterGroups();
+      return {
+        ...current,
+        displayName: getCurrentLinkFavoriteDisplayName(),
+        ...(filterGroups.length ? { filterGroups } : {})
+      };
     } catch (error) {
       return null;
     }
@@ -1028,6 +1367,127 @@
       collectMultiselectSelectedTexts(getItemSearchRoot() || getItemSearchInput()),
       collectMultiselectSelectedTexts(getTypeCategoryMultiselect())
     );
+  }
+
+  function getCurrentLinkFavoriteFilterGroups() {
+    const groups = [];
+    for (const group of document.querySelectorAll(`${TRADE_ROOT_SELECTOR} .search-advanced-pane .filter-group`)) {
+      const label = getLinkFavoriteFilterGroupLabel(group);
+      const values = getLinkFavoriteFilterGroupValues(group);
+      if (label && values.length && !isLinkFavoriteExcludedFilterGroup(label)) {
+        groups.push({ label, values });
+      }
+    }
+    return getLinkFavoriteTools()?.normalizeLinkFavoriteFilterGroups?.(groups) || groups;
+  }
+
+  function getLinkFavoriteFilterGroupLabel(group) {
+    const header = group.querySelector(
+      ".filter-group-header .filter-group-title, .filter-group-header .filter-title, .filter-group-title, .filter-group-header"
+    );
+    return getLinkFavoriteFilterText(header?.textContent || "");
+  }
+
+  function isLinkFavoriteExcludedFilterGroup(label) {
+    const normalized = normalizeLookupText(label);
+    return normalized === "trade filters" || normalized === "交易過濾" || normalized === "交易过滤";
+  }
+
+  function getLinkFavoriteFilterGroupValues(group) {
+    const body = group.querySelector(".filter-group-body") || group;
+    const directFields = Array.from(body.children || []).filter(
+      (element) => element.matches?.(".filter, .filter-property")
+    );
+    const fields = directFields.length
+      ? directFields
+      : Array.from(body.querySelectorAll(".filter.filter-property, .filter"));
+    const values = [];
+    for (const field of fields) {
+      const label = getLinkFavoriteFilterFieldLabel(field);
+      const fieldValues = getLinkFavoriteFilterFieldValues(field, label);
+      if (!fieldValues.length) {
+        continue;
+      }
+      const value = fieldValues.join(" / ");
+      values.push(label && value !== label ? `${label}: ${value}` : value);
+    }
+    return values;
+  }
+
+  function getLinkFavoriteFilterFieldLabel(field) {
+    const selectors = [
+      ".filter-title",
+      ".filter-label",
+      ".filter-name",
+      ".filter-property-name",
+      "[data-field-label]",
+      "label"
+    ];
+    for (const selector of selectors) {
+      const label = field.querySelector(selector);
+      const text = getLinkFavoriteFilterText(
+        label?.getAttribute?.("data-field-label") || label?.textContent || ""
+      );
+      if (text) {
+        return text;
+      }
+    }
+    return "";
+  }
+
+  function getLinkFavoriteFilterFieldValues(field, fieldLabel) {
+    const values = [];
+    const addValue = (value) => {
+      const text = getLinkFavoriteFilterText(value);
+      if (text && !isIgnorableSelectionText(text) && !values.includes(text)) {
+        values.push(text);
+      }
+    };
+
+    for (const multiselect of field.querySelectorAll(".multiselect")) {
+      if (multiselect.parentElement?.closest?.(".multiselect")) {
+        continue;
+      }
+      for (const value of collectMultiselectSelectedTexts(multiselect)) {
+        addValue(value);
+      }
+    }
+
+    for (const select of field.querySelectorAll("select")) {
+      const option = select.selectedOptions?.[0];
+      addValue(option?.textContent || select.value || "");
+    }
+
+    for (const input of field.querySelectorAll("input")) {
+      const type = String(input.type || "text").toLowerCase();
+      if (input.closest(".multiselect") || type === "hidden" || type === "button" || type === "submit") {
+        continue;
+      }
+      if (type === "checkbox" || type === "radio") {
+        if (input.checked) {
+          addValue(input.getAttribute("aria-label") || input.name || input.value || fieldLabel);
+        }
+        continue;
+      }
+      const value = getLinkFavoriteFilterText(input.value || "");
+      if (!value) {
+        continue;
+      }
+      const qualifier = getLinkFavoriteFilterText(
+        input.getAttribute("aria-label") || input.placeholder || input.name || ""
+      );
+      addValue(qualifier && qualifier !== fieldLabel ? `${qualifier} ${value}` : value);
+    }
+
+    for (const button of field.querySelectorAll("button.selected, button.active, [role='button'][aria-pressed='true']")) {
+      addValue(button.textContent || button.getAttribute("aria-label") || "");
+    }
+
+    return values;
+  }
+
+  function getLinkFavoriteFilterText(value) {
+    return String(value || "").replace(/\s+/g, " ").trim();
   }
 
   function getLinkFavoriteDisplayNameFromSelections(itemTexts, categoryTexts) {
@@ -1111,10 +1571,38 @@
     return lines.filter(Boolean).join("\n");
   }
 
+  function getCompactFavoriteModifierPresentation(modifier) {
+    const sourceKey = String(modifier?.source || "").trim().toLowerCase();
+    return {
+      text: String(modifier?.text || ""),
+      source: FAVORITE_SPECIAL_MODIFIER_SOURCES.has(sourceKey) ? { key: sourceKey, label: sourceKey.toUpperCase() } : null
+    };
+  }
+
+  function getCompactFavoritePresentation(favorite) {
+    const itemValues = [
+      `Rarity: ${String(favorite?.rarity || "").toUpperCase()}`,
+      favorite?.originalName || favorite?.displayName || "",
+      favorite?.baseName || "",
+      favorite?.itemType || ""
+    ]
+      .filter(Boolean)
+      .map((text) => ({ text, source: null }));
+    const modifiers = (favorite?.mods || []).map(getCompactFavoriteModifierPresentation).filter((modifier) => modifier.text);
+    return {
+      stats: modifiers,
+      tooltipGroups: [
+        ...(itemValues.length ? [{ label: "Item", values: itemValues }] : []),
+        ...(modifiers.length ? [{ label: "Modifiers", values: modifiers }] : [])
+      ]
+    };
+  }
+
   function renderFavoriteDrawer() {
     if (!runtime.ui.favoritesList) {
       return;
     }
+    hideCompactLinkFavoriteTooltip();
     const league = getCurrentFavoriteLeague();
     runtime.favoriteLeague = league;
     runtime.ui.favoritesLeague.textContent = league ? t("favoritesLeague", league) : t("favoritesLeagueUnavailable");
@@ -1148,7 +1636,8 @@
       launch.type = "button";
       launch.className = "poe2-marketwright-favorite-launch";
       launch.setAttribute("aria-label", favorite.displayName || favorite.baseName || "");
-      launch.title = buildFavoriteTooltip(favorite);
+      const presentation = getCompactFavoritePresentation(favorite);
+      bindCompactLinkFavoriteTooltip(launch, presentation);
       launch.addEventListener("click", () => {
         void launchFavoriteSearch(favorite, launch, row);
       });
@@ -1156,26 +1645,18 @@
       const name = document.createElement("span");
       name.className = "poe2-marketwright-favorite-name";
       name.textContent = favorite.displayName || favorite.baseName;
-      const meta = document.createElement("span");
-      meta.className = "poe2-marketwright-favorite-meta";
-      meta.textContent = [favorite.baseName, favorite.itemType, favorite.rarity].filter(Boolean).join(" / ");
-      const mods = document.createElement("span");
-      mods.className = "poe2-marketwright-favorite-mods";
-      const visibleMods = Array.isArray(favorite.mods) ? favorite.mods.slice(0, 3) : [];
+      launch.appendChild(name);
+      const visibleMods = presentation.stats.slice(0, 3);
       for (const mod of visibleMods) {
-        const line = document.createElement("span");
-        const text = mod?.text || "";
-        line.textContent = text;
-        mods.appendChild(line);
+        launch.appendChild(renderCompactLinkFavoriteStat(mod));
       }
       const extraModCount = Math.max(0, (favorite.mods?.length || 0) - visibleMods.length);
       if (extraModCount) {
         const more = document.createElement("span");
         more.className = "poe2-marketwright-favorite-more";
         more.textContent = t("favoriteMoreMods", extraModCount);
-        mods.appendChild(more);
+        launch.appendChild(more);
       }
-      launch.append(name, meta, mods);
 
       const actions = document.createElement("div");
       actions.className = "poe2-marketwright-favorite-actions";
@@ -1218,6 +1699,7 @@
     renderFavoriteDrawer();
     try {
       await saveState();
+      publishFavoritesPanelState();
     } catch (error) {
       runtime.state.favorites = previousFavorites;
       runtime.favorites?.setFavorites(previousFavorites);
@@ -1293,6 +1775,7 @@
       renderFavoriteUndo();
     }, 5000);
     renderFavoriteUndo();
+    publishFavoritesPanelState();
   }
 
   async function undoDeletedFavorite() {
@@ -1306,6 +1789,7 @@
       runtime.deletedFavoriteTimer = null;
     }
     await replaceFavorites([favorite, ...runtime.state.favorites]);
+    publishFavoritesPanelState();
   }
 
   async function launchFavoriteSearch(favorite, launchButton, row) {
@@ -1313,12 +1797,16 @@
     if (!tools) {
       throw new Error("Favorite tools are unavailable");
     }
-    launchButton.disabled = true;
-    row.dataset.status = "loading";
-    const status = document.createElement("span");
-    status.className = "poe2-marketwright-favorite-search-status";
-    status.textContent = t("favoriteSearchLoading");
-    row.appendChild(status);
+    const hasRow = Boolean(launchButton && row);
+    let status = null;
+    if (hasRow) {
+      launchButton.disabled = true;
+      row.dataset.status = "loading";
+      status = document.createElement("span");
+      status.className = "poe2-marketwright-favorite-search-status";
+      status.textContent = t("favoriteSearchLoading");
+      row.appendChild(status);
+    }
     try {
       const response = await fetch(
         new URL(`/api/trade2/search/${encodeURIComponent(favorite.league)}`, window.location.origin),
@@ -1344,9 +1832,13 @@
       );
     } catch (error) {
       console.debug("[PoE2 Marketwright] favorite search failed", error);
-      row.dataset.status = "error";
-      status.textContent = t("favoriteSearchError");
-      launchButton.disabled = false;
+      if (hasRow) {
+        row.dataset.status = "error";
+        status.textContent = t("favoriteSearchError");
+        launchButton.disabled = false;
+        return;
+      }
+      throw error;
     }
   }
 
@@ -1399,6 +1891,7 @@
       renderLinkFavoritesDrawer();
     }, 2600);
     renderLinkFavoritesDrawer();
+    publishFavoritesPanelState();
   }
 
   function clearLinkFavoriteFeedback() {
@@ -1407,6 +1900,7 @@
     }
     runtime.linkFavoriteFeedback = null;
     runtime.linkFavoriteFeedbackTimer = null;
+    publishFavoritesPanelState();
   }
 
   async function replaceLinkFavorites(nextLinkFavorites) {
@@ -1419,6 +1913,7 @@
     renderLinkFavoritesDrawer();
     try {
       await saveState();
+      publishFavoritesPanelState();
     } catch (error) {
       runtime.state.linkFavorites = previous;
       renderLinkFavoritesDrawer();
@@ -1978,6 +2473,206 @@
     return select;
   }
 
+  function isCompactLinkFavoriteStatFilterGroup(group) {
+    const label = String(group?.label || "").replace(/\s+/g, " ").trim().toLocaleLowerCase();
+    return label === "stat filters" || label === "stat filter" || label === "\u7be9\u9078\u5668" || label === "\u7b5b\u9009\u5668";
+  }
+
+  function formatCompactLinkFavoriteStatFilter(value) {
+    const formatter = getLinkFavoriteTools()?.formatLinkFavoriteStatFilter;
+    return typeof formatter === "function" ? formatter(value) : { text: String(value || ""), source: null };
+  }
+
+  function getCompactLinkFavoritePresentation(link) {
+    const tooltipGroups = (link?.filterGroups || [])
+      .map((group) => {
+        const label = String(group?.label || "").trim();
+        const statFilters = isCompactLinkFavoriteStatFilterGroup(group);
+        const values = (group?.values || [])
+          .filter(Boolean)
+          .map((value) => (statFilters ? formatCompactLinkFavoriteStatFilter(value) : { text: String(value), source: null }));
+        return label && values.length ? { label, values } : null;
+      })
+      .filter(Boolean);
+    return {
+      stats: tooltipGroups.filter((group) => isCompactLinkFavoriteStatFilterGroup(group)).flatMap((group) => group.values),
+      tooltipGroups
+    };
+  }
+
+  function renderCompactLinkFavoriteStat(stat, className = "") {
+    const line = document.createElement("span");
+    line.className = `poe2-marketwright-link-favorite-stat ${className}`.trim();
+    if (stat.source?.key && stat.source?.label) {
+      const source = document.createElement("span");
+      source.className = `poe2-marketwright-link-favorite-stat-source poe2-marketwright-link-favorite-stat-source-${stat.source.key}`;
+      source.textContent = stat.source.label;
+      line.appendChild(source);
+      line.appendChild(document.createTextNode(" "));
+    }
+    line.appendChild(document.createTextNode(stat.text || ""));
+    return line;
+  }
+
+  function renderCompactLinkFavoriteTooltip(presentation) {
+    const root = document.createElement("div");
+    root.className = "poe2-marketwright-link-favorite-tooltip-content";
+    for (const group of presentation.tooltipGroups) {
+      const section = document.createElement("section");
+      section.className = "poe2-marketwright-link-favorite-tooltip-group";
+      const label = document.createElement("span");
+      label.className = "poe2-marketwright-link-favorite-tooltip-group-label";
+      label.textContent = group.label;
+      const values = document.createElement("div");
+      values.className = "poe2-marketwright-link-favorite-tooltip-values";
+      for (const value of group.values) {
+        if (value.source) {
+          values.appendChild(renderCompactLinkFavoriteStat(value, "poe2-marketwright-link-favorite-tooltip-stat"));
+          continue;
+        }
+        const item = document.createElement("span");
+        item.className = "poe2-marketwright-link-favorite-tooltip-value";
+        item.textContent = value.text;
+        values.appendChild(item);
+      }
+      section.append(label, values);
+      root.appendChild(section);
+    }
+    return root;
+  }
+
+  function clearCompactLinkFavoriteTooltipShowTimer() {
+    if (runtime.compactLinkFavoriteTooltipShowTimer) {
+      window.clearTimeout(runtime.compactLinkFavoriteTooltipShowTimer);
+      runtime.compactLinkFavoriteTooltipShowTimer = null;
+    }
+  }
+
+  function clearCompactLinkFavoriteTooltipHideTimer() {
+    if (runtime.compactLinkFavoriteTooltipHideTimer) {
+      window.clearTimeout(runtime.compactLinkFavoriteTooltipHideTimer);
+      runtime.compactLinkFavoriteTooltipHideTimer = null;
+    }
+  }
+
+  function clearCompactLinkFavoriteTooltipDismissTimer() {
+    if (runtime.compactLinkFavoriteTooltipDismissTimer) {
+      window.clearTimeout(runtime.compactLinkFavoriteTooltipDismissTimer);
+      runtime.compactLinkFavoriteTooltipDismissTimer = null;
+    }
+  }
+
+  function clearCompactLinkFavoriteTooltipTimers() {
+    clearCompactLinkFavoriteTooltipShowTimer();
+    clearCompactLinkFavoriteTooltipHideTimer();
+    clearCompactLinkFavoriteTooltipDismissTimer();
+  }
+
+  function hideCompactLinkFavoriteTooltip() {
+    clearCompactLinkFavoriteTooltipShowTimer();
+    clearCompactLinkFavoriteTooltipHideTimer();
+    const tooltip = runtime.ui.compactLinkFavoriteTooltip;
+    if (!tooltip) {
+      return;
+    }
+    tooltip.classList.remove("poe2-marketwright-link-favorite-tooltip-visible");
+    tooltip.setAttribute("aria-hidden", "true");
+    clearCompactLinkFavoriteTooltipDismissTimer();
+    runtime.compactLinkFavoriteTooltipDismissTimer = window.setTimeout(() => {
+      if (tooltip.classList.contains("poe2-marketwright-link-favorite-tooltip-visible")) {
+        return;
+      }
+      tooltip.hidden = true;
+      tooltip.replaceChildren();
+      runtime.compactLinkFavoriteTooltipDismissTimer = null;
+    }, 100);
+  }
+
+  function scheduleCompactLinkFavoriteTooltipHide() {
+    clearCompactLinkFavoriteTooltipShowTimer();
+    clearCompactLinkFavoriteTooltipHideTimer();
+    runtime.compactLinkFavoriteTooltipHideTimer = window.setTimeout(hideCompactLinkFavoriteTooltip, 180);
+  }
+
+  function getCompactLinkFavoriteTooltipPosition(pointer, tooltipRect) {
+    const margin = 8;
+    const gap = 12;
+    const width = Math.max(0, Number(tooltipRect?.width) || 0);
+    const height = Math.max(0, Number(tooltipRect?.height) || 0);
+    const x = Number(pointer?.x) || 0;
+    const y = Number(pointer?.y) || 0;
+    const left = Math.min(Math.max(margin, x - width / 2), Math.max(margin, window.innerWidth - width - margin));
+    const aboveTop = y - height - gap;
+    const belowTop = y + gap;
+    const aboveFits = aboveTop >= margin;
+    const belowFits = belowTop + height <= window.innerHeight - margin;
+    const placement = aboveFits || (!belowFits && y >= window.innerHeight - y) ? "above" : "below";
+    const desiredTop = placement === "above" ? aboveTop : belowTop;
+    const top = Math.min(Math.max(margin, desiredTop), Math.max(margin, window.innerHeight - height - margin));
+    const arrowX = Math.min(Math.max(14, x - left), Math.max(14, width - 14));
+    return { left: Math.round(left), top: Math.round(top), placement, arrowX: Math.round(arrowX) };
+  }
+
+  function getCompactLinkFavoriteTooltipPointer(anchor) {
+    if (runtime.compactLinkFavoriteTooltipPointer) {
+      return runtime.compactLinkFavoriteTooltipPointer;
+    }
+    const rect = anchor.getBoundingClientRect();
+    return { x: rect.left + rect.width / 2, y: rect.top };
+  }
+
+  function showCompactLinkFavoriteTooltip(anchor, presentation) {
+    const tooltip = runtime.ui.compactLinkFavoriteTooltip;
+    if (!tooltip || !presentation.tooltipGroups.length) {
+      return;
+    }
+    clearCompactLinkFavoriteTooltipTimers();
+    tooltip.replaceChildren(renderCompactLinkFavoriteTooltip(presentation));
+    tooltip.hidden = false;
+    tooltip.setAttribute("aria-hidden", "false");
+    tooltip.classList.remove("poe2-marketwright-link-favorite-tooltip-visible");
+    tooltip.style.visibility = "hidden";
+    const position = getCompactLinkFavoriteTooltipPosition(getCompactLinkFavoriteTooltipPointer(anchor), tooltip.getBoundingClientRect());
+    tooltip.style.left = `${position.left}px`;
+    tooltip.style.top = `${position.top}px`;
+    tooltip.style.setProperty("--poe2-marketwright-link-favorite-tooltip-arrow-x", `${position.arrowX}px`);
+    tooltip.dataset.placement = position.placement;
+    tooltip.style.visibility = "";
+    window.requestAnimationFrame(() => {
+      if (!tooltip.hidden && tooltip.getAttribute("aria-hidden") === "false") {
+        tooltip.classList.add("poe2-marketwright-link-favorite-tooltip-visible");
+      }
+    });
+  }
+
+  function scheduleCompactLinkFavoriteTooltipShow(anchor, presentation, event) {
+    clearCompactLinkFavoriteTooltipShowTimer();
+    clearCompactLinkFavoriteTooltipHideTimer();
+    clearCompactLinkFavoriteTooltipDismissTimer();
+    runtime.compactLinkFavoriteTooltipPointer = { x: event.clientX, y: event.clientY };
+    runtime.compactLinkFavoriteTooltipShowTimer = window.setTimeout(() => {
+      runtime.compactLinkFavoriteTooltipShowTimer = null;
+      showCompactLinkFavoriteTooltip(anchor, presentation);
+    }, 420);
+  }
+
+  function bindCompactLinkFavoriteTooltip(anchor, presentation) {
+    if (!presentation.tooltipGroups.length) {
+      return;
+    }
+    anchor.setAttribute("aria-describedby", "poe2-marketwright-link-favorite-tooltip");
+    anchor.addEventListener("pointerenter", (event) => scheduleCompactLinkFavoriteTooltipShow(anchor, presentation, event));
+    anchor.addEventListener("pointermove", (event) => {
+      runtime.compactLinkFavoriteTooltipPointer = { x: event.clientX, y: event.clientY };
+    });
+    anchor.addEventListener("pointerleave", scheduleCompactLinkFavoriteTooltipHide);
+    anchor.addEventListener("focus", () => {
+      runtime.compactLinkFavoriteTooltipPointer = null;
+      showCompactLinkFavoriteTooltip(anchor, presentation);
+    });
+    anchor.addEventListener("blur", hideCompactLinkFavoriteTooltip);
+  }
+
   function renderLinkFavoriteRow(link) {
     const row = document.createElement("article");
     row.className = "poe2-marketwright-link-favorite-row";
@@ -1993,8 +2688,22 @@
     const launch = document.createElement("button");
     launch.type = "button";
     launch.className = "poe2-marketwright-link-favorite-launch";
-    launch.textContent = link.displayName;
-    launch.title = link.url;
+    const presentation = getCompactLinkFavoritePresentation(link);
+    const name = document.createElement("span");
+    name.className = "poe2-marketwright-link-favorite-name";
+    name.textContent = link.displayName;
+    launch.appendChild(name);
+    for (const stat of presentation.stats.slice(0, 3)) {
+      launch.appendChild(renderCompactLinkFavoriteStat(stat));
+    }
+    const moreCount = Math.max(0, presentation.stats.length - 3);
+    if (moreCount) {
+      const more = document.createElement("span");
+      more.className = "poe2-marketwright-link-favorite-more";
+      more.textContent = t("favoriteMoreMods", moreCount);
+      launch.appendChild(more);
+    }
+    bindCompactLinkFavoriteTooltip(launch, presentation);
     launch.addEventListener("click", () => runAsync(() => launchLinkFavorite(link.id), "open link favorite"));
 
     const actions = document.createElement("div");
@@ -2162,6 +2871,7 @@
     if (!runtime.ui.linkFavoritesList) {
       return;
     }
+    hideCompactLinkFavoriteTooltip();
     const league = getCurrentLinkFavoriteLeague();
     runtime.linkFavoriteLeague = league;
     runtime.ui.linkFavoritesLeague.textContent = league ? t("linkFavoritesLeague", league) : t("linkFavoritesLeagueUnavailable");
@@ -2307,6 +3017,10 @@
     if (!runtime.state.favoritesEnabled) {
       return;
     }
+    if (getFavoritesViewMode() === "full") {
+      await setFavoritesPanelOpen(open, "items");
+      return;
+    }
     const nextOpen = Boolean(open);
     if (runtime.state.favoritesDrawerOpen === nextOpen) {
       return;
@@ -2321,10 +3035,15 @@
     applyLinkFavoritesDrawerState();
     applyPanelPosition();
     await saveState();
+    publishFavoritesPanelState();
   }
 
   async function setLinkFavoritesDrawerOpen(open) {
     if (!runtime.state.linkFavoritesEnabled) {
+      return;
+    }
+    if (getFavoritesViewMode() === "full") {
+      await setFavoritesPanelOpen(open, "links");
       return;
     }
     const nextOpen = Boolean(open);
@@ -2342,6 +3061,7 @@
     applyLinkFavoritesDrawerState();
     applyPanelPosition();
     await saveState();
+    publishFavoritesPanelState();
   }
 
   function applyFavoritesDrawerState() {
@@ -2349,7 +3069,10 @@
       return;
     }
     const open = Boolean(
-      runtime.state.favoritesEnabled && runtime.state.favoritesDrawerOpen && !runtime.state.collapsed
+      runtime.state.favoritesEnabled &&
+        !runtime.state.collapsed &&
+        ((getFavoritesViewMode() === "compact" && runtime.state.favoritesDrawerOpen) ||
+          (isFavoritesFullViewFallbackActive() && getFavoritesPanelTab() === "items"))
     );
     runtime.ui.root.classList.toggle("poe2-marketwright-favorites-open", open);
     runtime.ui.favoritesDisclosure.disabled = !runtime.state.favoritesEnabled;
@@ -2363,7 +3086,10 @@
       return;
     }
     const open = Boolean(
-      runtime.state.linkFavoritesEnabled && runtime.state.linkFavoritesDrawerOpen && !runtime.state.collapsed
+      runtime.state.linkFavoritesEnabled &&
+        !runtime.state.collapsed &&
+        ((getFavoritesViewMode() === "compact" && runtime.state.linkFavoritesDrawerOpen) ||
+          (isFavoritesFullViewFallbackActive() && getFavoritesPanelTab() === "links"))
     );
     runtime.ui.root.classList.toggle("poe2-marketwright-link-favorites-open", open);
     runtime.ui.linkFavoritesDisclosure.disabled = !runtime.state.linkFavoritesEnabled;
@@ -2548,6 +3274,7 @@
     }
 
     window.addEventListener("resize", () => {
+      applyFavoritesView();
       if (runtime.state.collapsed && !runtime.state.collapsedPosition) {
         return;
       }
@@ -2672,6 +3399,7 @@
   }
 
   function bindGlobalListeners() {
+    bindFavoritesPanelMessages();
     bindTradeControlListeners();
     bindTradeInteractionListeners();
     startSelectionPolling();
@@ -2687,6 +3415,11 @@
 
     window.addEventListener("popstate", scheduleRefreshAfterDomUpdate, true);
     window.addEventListener("hashchange", scheduleRefreshAfterDomUpdate, true);
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        hideCompactLinkFavoriteTooltip();
+      }
+    });
   }
 
   function bindTradeInteractionListeners() {

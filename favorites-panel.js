@@ -1,0 +1,985 @@
+(function () {
+  const sessionId = new URLSearchParams(location.search).get("session") || "";
+  const fallbackMessages = {
+    favoritesFullViewTitle: "Favorites",
+    favoritesPanelItems: "Items",
+    favoritesPanelLinks: "Links",
+    closeFavoritesFullView: "Close full favorites view",
+    openFavoritesCompactView: "Use compact favorites view",
+    favoritesPanelUnavailable: "Open a trade search result to view favorites for this league",
+    favoritesSearch: "Search favorites",
+    favoritesPanelSearchLinks: "Search bookmarks",
+    favoritesEmpty: "No favorites in this league",
+    favoritesNoMatches: "No matching favorites",
+    favoritesPanelNoLinkMatches: "No matching bookmarks",
+    linkFavoritesEmpty: "No saved bookmarks",
+    favoriteMoreMods: "+$1 more",
+    renameFavorite: "Rename favorite",
+    deleteFavorite: "Delete favorite",
+    undoFavoriteDelete: "Undo",
+    favoriteDeleted: "Favorite deleted",
+    renameLinkFavorite: "Rename bookmark",
+    moveLinkFavorite: "Move bookmark",
+    deleteLinkFavorite: "Delete bookmark",
+    renameLinkFavoriteFolder: "Rename folder",
+    deleteLinkFavoriteFolder: "Delete folder",
+    createLinkFavorite: "Save current search",
+    createLinkFavoriteUnavailable: "Open a search result before saving",
+    createLinkFavoriteFolder: "Create folder",
+    importLinkFavorites: "Import bookmarks",
+    exportLinkFavorites: "Export bookmarks to clipboard",
+    importLinkFavoritesPlaceholder: "Paste exported bookmark JSON",
+    confirmLinkFavoriteImport: "Import",
+    cancelLinkFavoriteImport: "Cancel",
+    confirmDeleteLinkFavoriteFolder: "Delete folder and $1 bookmarks",
+    cancelLinkFavoriteFolderDelete: "Cancel",
+    moveLinkFavoriteToRoot: "Top level",
+    reorderLinkFavorite: "Drag to reorder bookmark",
+    reorderLinkFavoriteFolder: "Drag to reorder folder",
+    expandLinkFavoriteFolder: "Expand folder",
+    collapseLinkFavoriteFolder: "Collapse folder",
+    collapseAllLinkFavoriteFolders: "Collapse all folders",
+    expandAllLinkFavoriteFolders: "Expand all folders",
+    linkFavoriteFolderNameRequired: "Folder name is required"
+  };
+  const icons = {
+    edit: "M2.5 11.8V14h2.2l6.5-6.5-2.2-2.2-6.5 6.5zm10.2-6.2a.9.9 0 0 0 0-1.3L11.3 2.9a.9.9 0 0 0-1.3 0L9 4l2.2 2.2 1.5-1.5z",
+    delete: "M4 4.5h8l-.6 9H4.6l-.6-9zm2-2h4l.6 1H13v1.5H3V3.5h2.4L6 2.5zm1 4v5h1.5v-5H7zm2.5 0v5H11v-5H9.5z",
+    move: "M3 4h6V2l4 3-4 3V6H3V4zm10 8H7v2l-4-3 4-3v2h6v2z",
+    bookmark: "M4 1.75h8a1 1 0 0 1 1 1v11.1l-5-2.85-5 2.85V2.75a1 1 0 0 1 1-1z",
+    folderAdd: "M1.75 4.25h4l1.2 1.5h7.3v7.5H1.75v-9zm9.5 3v2h-2v1.5h2v2h1.5v-2h2V9.25h-2v-2h-1.5z",
+    import: "M7.25 1.5h1.5v6.1l2.1-2.1 1.05 1.05L8 10.25 4.2 6.55l1.05-1.05 2 2V1.5zm-5.5 9.2h12.5v3.8H1.75v-3.8zm1.5 1.5v.8h9.5v-.8h-9.5z",
+    export: "M8 1.5 4.25 5.25h2.35v4.5h2.8v-4.5h2.35L8 1.5zM1.75 10.5h12.5v4H1.75v-4zm1.5 1.5V13h9.5V12h-9.5z",
+    collapse: "M3.2 2.5 8 7.3l4.8-4.8v2.15L8 9.45 3.2 4.65V2.5zm0 6.05L8 13.35l4.8-4.8v2.15L8 15.5 3.2 10.7V8.55z",
+    expand: "M3.2 13.5 8 8.7l4.8 4.8v-2.15L8 6.55 3.2 11.35v2.15zm0-6.05L8 2.65l4.8 4.8V5.3L8 .5 3.2 5.3v2.15z",
+    drag: "M6 3h1.5v1.5H6V3zm2.5 0H10v1.5H8.5V3zM6 7.25h1.5v1.5H6V7.25zm2.5 0H10v1.5H8.5V7.25zM6 11.5h1.5V13H6v-1.5zm2.5 0H10V13H8.5z"
+  };
+  const LINK_FAVORITE_TOOLTIP_SHOW_DELAY = 420;
+  const LINK_FAVORITE_TOOLTIP_HIDE_DELAY = 180;
+  const LINK_FAVORITE_TOOLTIP_DISMISS_DELAY = 100;
+  const FAVORITE_SPECIAL_MODIFIER_SOURCES = new Set(["crafted", "desecrated", "fractured", "enchant", "augment", "implicit"]);
+
+  const ui = {
+    title: document.querySelector("#favorites-panel-title"),
+    league: document.querySelector("#favorites-panel-league"),
+    compact: document.querySelector("#favorites-panel-compact"),
+    close: document.querySelector("#favorites-panel-close"),
+    itemsTab: document.querySelector("#favorites-panel-items-tab"),
+    linksTab: document.querySelector("#favorites-panel-links-tab"),
+    content: document.querySelector("#favorites-panel-content"),
+    tooltip: document.querySelector("#favorites-panel-tooltip")
+  };
+  const local = {
+    state: null,
+    tab: "items",
+    itemSearch: "",
+    linkSearch: "",
+    editing: null,
+    creatingFolder: false,
+    importing: false,
+    confirmingFolderId: null,
+    movingLinkId: null,
+    drag: null,
+    tooltipShowTimer: null,
+    tooltipHideTimer: null,
+    tooltipDismissTimer: null,
+    tooltipPointer: null
+  };
+
+  function t(key, substitutions = []) {
+    const values = Array.isArray(substitutions) ? substitutions : [substitutions];
+    const message = chrome.i18n?.getMessage?.(key, values.map(String));
+    const template = message || fallbackMessages[key] || key;
+    return values.reduce((text, value, index) => text.replaceAll(`$${index + 1}`, String(value)), template);
+  }
+
+  function createElement(tagName, className, text = null) {
+    const element = document.createElement(tagName);
+    if (className) {
+      element.className = className;
+    }
+    if (text != null) {
+      element.textContent = text;
+    }
+    return element;
+  }
+
+  function createIconButton(title, icon, className = "") {
+    const button = createElement("button", `favorites-panel-action-button ${className}`.trim());
+    button.type = "button";
+    button.title = title;
+    button.setAttribute("aria-label", title);
+    button.innerHTML = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="${icon}"></path></svg>`;
+    return button;
+  }
+
+  function makeTextButton(text, className = "") {
+    const button = createElement("button", `favorites-panel-text-button ${className}`.trim(), text);
+    button.type = "button";
+    return button;
+  }
+
+  async function request(command, payload = {}) {
+    const response = await chrome.runtime.sendMessage({
+      type: "favorites-panel-request",
+      sessionId,
+      command,
+      payload
+    });
+    if (!response?.ok) {
+      throw new Error(response?.error || "favorites_panel_request_failed");
+    }
+    if (response.state) {
+      setState(response.state);
+    }
+    return response;
+  }
+
+  function setState(nextState) {
+    local.state = nextState;
+    local.tab = nextState?.favoritesPanelTab === "links" ? "links" : "items";
+    render();
+  }
+
+  function render() {
+    const state = local.state;
+    hideLinkFavoriteTooltip();
+    ui.title.textContent = t("favoritesFullViewTitle");
+    ui.league.textContent = state?.available ? state.league : "";
+    ui.league.title = state?.league || "";
+    ui.compact.title = t("openFavoritesCompactView");
+    ui.compact.setAttribute("aria-label", ui.compact.title);
+    ui.close.title = t("closeFavoritesFullView");
+    ui.close.setAttribute("aria-label", ui.close.title);
+    ui.itemsTab.textContent = t("favoritesPanelItems");
+    ui.linksTab.textContent = t("favoritesPanelLinks");
+    ui.itemsTab.setAttribute("aria-selected", String(local.tab === "items"));
+    ui.linksTab.setAttribute("aria-selected", String(local.tab === "links"));
+    ui.itemsTab.tabIndex = local.tab === "items" ? 0 : -1;
+    ui.linksTab.tabIndex = local.tab === "links" ? 0 : -1;
+    ui.content.replaceChildren();
+
+    if (!state?.available) {
+      ui.content.appendChild(createElement("p", "favorites-panel-unavailable", t("favoritesPanelUnavailable")));
+      return;
+    }
+    ui.content.appendChild(local.tab === "links" ? renderLinks(state) : renderItems(state));
+  }
+
+  function makeSearch(value, placeholder, onInput) {
+    const search = createElement("input", "favorites-panel-search");
+    search.type = "search";
+    search.autocomplete = "off";
+    search.spellcheck = false;
+    search.value = value;
+    search.placeholder = placeholder;
+    search.setAttribute("aria-label", placeholder);
+    search.addEventListener("input", () => onInput(search.value));
+    return search;
+  }
+
+  function getFavoriteModifierPresentation(modifier) {
+    const sourceKey = String(modifier?.source || "").trim().toLowerCase();
+    return {
+      text: String(modifier?.text || ""),
+      source: FAVORITE_SPECIAL_MODIFIER_SOURCES.has(sourceKey) ? { key: sourceKey, label: sourceKey.toUpperCase() } : null
+    };
+  }
+
+  function getFavoriteTooltipLink(favorite) {
+    const itemValues = [
+      `Rarity: ${String(favorite?.rarity || "").toUpperCase()}`,
+      favorite?.originalName || favorite?.displayName || "",
+      favorite?.baseName || "",
+      favorite?.itemType || ""
+    ]
+      .filter(Boolean);
+    const modifiers = (favorite?.mods || [])
+      .map(getFavoriteModifierPresentation)
+      .filter((modifier) => modifier.text)
+      .map((modifier) => (modifier.source ? modifier : modifier.text));
+    return {
+      filterGroups: [
+        ...(itemValues.length ? [{ label: "Item", values: itemValues }] : []),
+        ...(modifiers.length ? [{ label: "Modifiers", values: modifiers }] : [])
+      ]
+    };
+  }
+
+  function renderItems(state) {
+    const root = createElement("div");
+    const toolbar = createElement("div", "favorites-panel-toolbar");
+    toolbar.appendChild(
+      makeSearch(local.itemSearch, t("favoritesSearch"), (value) => {
+        local.itemSearch = value;
+        render();
+      })
+    );
+    root.appendChild(toolbar);
+    const query = local.itemSearch.trim().toLocaleLowerCase();
+    const favorites = (state.favorites || []).filter((favorite) => {
+      if (!query) {
+        return true;
+      }
+      return [favorite.displayName, favorite.baseName, favorite.itemType, favorite.rarity, ...(favorite.mods || []).map((mod) => mod?.text)]
+        .filter(Boolean)
+        .some((value) => String(value).toLocaleLowerCase().includes(query));
+    });
+    if (!favorites.length) {
+      root.appendChild(
+        createElement("p", "favorites-panel-empty", query ? t("favoritesNoMatches") : t("favoritesEmpty"))
+      );
+    } else {
+      const list = createElement("div", "favorites-panel-list");
+      for (const favorite of favorites) {
+        list.appendChild(renderFavoriteRow(favorite));
+      }
+      root.appendChild(list);
+    }
+    if (state.deletedFavorite) {
+      const feedback = createElement("div", "favorites-panel-feedback");
+      feedback.appendChild(createElement("span", "", t("favoriteDeleted")));
+      const undo = makeTextButton(t("undoFavoriteDelete"));
+      undo.addEventListener("click", () => run("undo-favorite"));
+      feedback.appendChild(undo);
+      root.appendChild(feedback);
+    }
+    return root;
+  }
+
+  function renderFavoriteRow(favorite) {
+    const row = createElement("article", "favorites-panel-item-row");
+    const launch = createElement("button", "favorites-panel-item-launch");
+    launch.type = "button";
+    launch.setAttribute("aria-label", favorite.displayName || favorite.baseName || "");
+    bindLinkFavoriteTooltip(launch, getFavoriteTooltipLink(favorite));
+    launch.addEventListener("click", () => run("launch-favorite", { signature: favorite.signature }));
+    appendEditableName(
+      launch,
+      "favorite",
+      favorite.signature,
+      favorite.displayName || favorite.baseName || "",
+      (name) => run("rename-favorite", { signature: favorite.signature, name })
+    );
+    const time = Number(favorite.createdAt);
+    if (Number.isFinite(time) && time > 0) {
+      launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
+    }
+    const visibleMods = (favorite.mods || []).slice(0, 3);
+    for (const mod of visibleMods) {
+      launch.appendChild(renderLinkFavoriteStat(getFavoriteModifierPresentation(mod)));
+    }
+    const moreCount = Math.max(0, (favorite.mods || []).length - visibleMods.length);
+    if (moreCount) {
+      launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
+    }
+    const actions = createElement("div", "favorites-panel-row-actions");
+    const rename = createIconButton(t("renameFavorite"), icons.edit);
+    rename.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      local.editing = { kind: "favorite", id: favorite.signature };
+      render();
+    });
+    const remove = createIconButton(t("deleteFavorite"), icons.delete, "favorites-panel-delete");
+    remove.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      run("delete-favorite", { signature: favorite.signature });
+    });
+    actions.append(rename, remove);
+    row.append(launch, actions);
+    return row;
+  }
+
+  function appendEditableName(parent, kind, id, initialValue, save) {
+    if (local.editing?.kind !== kind || local.editing.id !== id) {
+      parent.appendChild(createElement("span", "favorites-panel-name", initialValue));
+      return;
+    }
+    const input = createElement("input", "favorites-panel-rename-input");
+    input.type = "text";
+    input.value = initialValue;
+    input.setAttribute(
+      "aria-label",
+      t(kind === "folder" ? "renameLinkFavoriteFolder" : kind === "link" ? "renameLinkFavorite" : "renameFavorite")
+    );
+    let finished = false;
+    const commit = () => {
+      if (finished) {
+        return;
+      }
+      finished = true;
+      local.editing = null;
+      const value = input.value.trim();
+      if (value && value !== initialValue) {
+        void save(value);
+      } else {
+        render();
+      }
+    };
+    input.addEventListener("keydown", (event) => {
+      if (event.key === "Enter") {
+        event.preventDefault();
+        input.blur();
+      }
+      if (event.key === "Escape") {
+        finished = true;
+        local.editing = null;
+        render();
+      }
+    });
+    input.addEventListener("blur", commit, { once: true });
+    parent.appendChild(input);
+    window.setTimeout(() => {
+      input.focus();
+      input.select();
+    }, 0);
+  }
+
+  function renderLinks(state) {
+    const root = createElement("div");
+    const toolbar = createElement("div", "favorites-panel-toolbar");
+    toolbar.appendChild(
+      makeSearch(local.linkSearch, t("favoritesPanelSearchLinks"), (value) => {
+        local.linkSearch = value;
+        render();
+      })
+    );
+    const saveRoot = createIconButton(
+      state.canSaveCurrentLink ? t("createLinkFavorite") : t("createLinkFavoriteUnavailable"),
+      icons.bookmark
+    );
+    saveRoot.disabled = !state.canSaveCurrentLink || !state.linkFavoritesEnabled;
+    saveRoot.addEventListener("click", () => run("save-link"));
+    const createFolder = createIconButton(t("createLinkFavoriteFolder"), icons.folderAdd);
+    createFolder.disabled = !state.linkFavoritesEnabled;
+    createFolder.addEventListener("click", () => {
+      local.creatingFolder = true;
+      render();
+    });
+    const importButton = createIconButton(t("importLinkFavorites"), icons.import);
+    importButton.disabled = !state.linkFavoritesEnabled;
+    importButton.addEventListener("click", () => {
+      local.importing = true;
+      local.creatingFolder = false;
+      render();
+    });
+    const exportButton = createIconButton(t("exportLinkFavorites"), icons.export);
+    exportButton.disabled = !state.linkFavoritesEnabled;
+    exportButton.addEventListener("click", () => run("export-links"));
+    const folders = state.linkFavorites?.folders || [];
+    const allCollapsed = folders.length > 0 && folders.every((folder) => folder.collapsed);
+    const collapseAll = createIconButton(
+      t(allCollapsed ? "expandAllLinkFavoriteFolders" : "collapseAllLinkFavoriteFolders"),
+      allCollapsed ? icons.expand : icons.collapse
+    );
+    collapseAll.disabled = !state.linkFavoritesEnabled || folders.length === 0;
+    collapseAll.addEventListener("click", () => run("toggle-all-folders"));
+    toolbar.append(saveRoot, createFolder, importButton, exportButton, collapseAll);
+    root.appendChild(toolbar);
+
+    if (state.feedback) {
+      const feedback = createElement("div", "favorites-panel-feedback");
+      feedback.dataset.state = state.feedback.state || "ready";
+      feedback.appendChild(createElement("span", "", state.feedback.text || ""));
+      if (state.deletedLinkCount) {
+        const undo = makeTextButton(t("undoFavoriteDelete"));
+        undo.addEventListener("click", () => run("undo-link"));
+        feedback.appendChild(undo);
+      }
+      root.appendChild(feedback);
+    }
+
+    if (local.importing) {
+      root.appendChild(renderImportForm());
+      return root;
+    }
+    if (local.creatingFolder) {
+      const input = createElement("input", "favorites-panel-folder-input");
+      input.type = "text";
+      input.placeholder = t("createLinkFavoriteFolder");
+      input.setAttribute("aria-label", t("createLinkFavoriteFolder"));
+      let cancelled = false;
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          input.blur();
+        }
+        if (event.key === "Escape") {
+          cancelled = true;
+          local.creatingFolder = false;
+          render();
+        }
+      });
+      input.addEventListener(
+        "blur",
+        () => {
+          local.creatingFolder = false;
+          if (cancelled || !input.value.trim()) {
+            render();
+            return;
+          }
+          run("create-folder", { name: input.value });
+        },
+        { once: true }
+      );
+      root.appendChild(input);
+      window.setTimeout(() => input.focus(), 0);
+    }
+
+    const query = local.linkSearch.trim().toLocaleLowerCase();
+    const rootLinks = getLinksForFolder(state, null).filter((link) => matchesLink(link, query));
+    const rootList = createElement("div", "favorites-panel-link-list");
+    setDropTarget(rootList, { kind: "root" });
+    rootList.appendChild(createElement("p", "favorites-panel-root-label", t("moveLinkFavoriteToRoot")));
+    if (rootLinks.length) {
+      for (const link of rootLinks) {
+        rootList.appendChild(renderLinkRow(state, link));
+      }
+    } else if (!folders.length) {
+      rootList.appendChild(createElement("p", "favorites-panel-empty", t("linkFavoritesEmpty")));
+    }
+    root.appendChild(rootList);
+    const folderList = createElement("div", "favorites-panel-list");
+    setDropTarget(folderList, { kind: "folder-top", folders });
+    for (const folder of folders) {
+      const links = getLinksForFolder(state, folder.id).filter((link) => matchesLink(link, query));
+      if (query && !links.length && !folder.name.toLocaleLowerCase().includes(query)) {
+        continue;
+      }
+      folderList.appendChild(renderFolder(state, folder, links));
+    }
+    if (!folderList.childElementCount && query && !rootLinks.length) {
+      folderList.appendChild(createElement("p", "favorites-panel-empty", t("favoritesPanelNoLinkMatches")));
+    }
+    root.appendChild(folderList);
+    return root;
+  }
+
+  function renderImportForm() {
+    const form = createElement("form", "favorites-panel-confirm");
+    const textarea = createElement("textarea", "favorites-panel-import-input");
+    textarea.placeholder = t("importLinkFavoritesPlaceholder");
+    textarea.setAttribute("aria-label", t("importLinkFavorites"));
+    textarea.spellcheck = false;
+    const actions = createElement("div", "favorites-panel-confirm-actions");
+    const cancel = makeTextButton(t("cancelLinkFavoriteImport"));
+    cancel.type = "button";
+    cancel.addEventListener("click", () => {
+      local.importing = false;
+      render();
+    });
+    const submit = makeTextButton(t("confirmLinkFavoriteImport"));
+    submit.type = "submit";
+    actions.append(cancel, submit);
+    form.append(textarea, actions);
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      run("import-links", { text: textarea.value }).finally(() => {
+        local.importing = false;
+      });
+    });
+    window.setTimeout(() => textarea.focus(), 0);
+    return form;
+  }
+
+  function getLinksForFolder(state, folderId) {
+    const ids = folderId ? state.linkFavorites?.folderLinkIds?.[folderId] || [] : state.linkFavorites?.rootLinkIds || [];
+    const links = state.linkFavorites?.links || [];
+    return ids.map((id) => links.find((link) => link.id === id)).filter(Boolean);
+  }
+
+  function matchesLink(link, query) {
+    return !query || [
+      link.displayName,
+      link.url,
+      ...(link.filterGroups || []).flatMap((group) => [group?.label, ...(group?.values || [])])
+    ].some((value) => String(value || "").toLocaleLowerCase().includes(query));
+  }
+
+  function isLinkFavoriteStatFilterGroup(group) {
+    const label = String(group?.label || "").replace(/\s+/g, " ").trim().toLocaleLowerCase();
+    return label === "stat filters" || label === "stat filter" || label === "\u7be9\u9078\u5668" || label === "\u7b5b\u9009\u5668";
+  }
+
+  function getLinkFavoriteStatFilters(link) {
+    return (link.filterGroups || [])
+      .filter(isLinkFavoriteStatFilterGroup)
+      .flatMap((group) => group?.values || [])
+      .filter(Boolean);
+  }
+
+  function formatLinkFavoriteStatFilter(value) {
+    const formatter = globalThis.Poe2MarketwrightFavorites?.createLinkFavoriteTools?.().formatLinkFavoriteStatFilter;
+    if (typeof formatter !== "function") {
+      return { text: String(value || ""), source: null };
+    }
+    return formatter(value);
+  }
+
+  function getLinkFavoriteTooltipValue(value) {
+    if (value && typeof value === "object" && "text" in value) {
+      return {
+        text: String(value.text || ""),
+        source: value.source || null
+      };
+    }
+    return { text: String(value || ""), source: null };
+  }
+
+  function getLinkFavoriteTooltipGroups(link) {
+    return (link.filterGroups || [])
+      .map((group) => {
+        const label = String(group?.label || "").trim();
+        const statFilters = isLinkFavoriteStatFilterGroup(group);
+        const values = (group?.values || [])
+          .filter(Boolean)
+          .map((value) => (statFilters ? formatLinkFavoriteStatFilter(value) : getLinkFavoriteTooltipValue(value)));
+        return label && values.length ? { label, values } : null;
+      })
+      .filter(Boolean);
+  }
+
+  function renderLinkFavoriteStat(stat, fallback = "", className = "") {
+    const line = createElement("span", `favorites-panel-mod favorites-panel-link-stat ${className}`.trim());
+    if (stat.source?.key && stat.source?.label) {
+      line.appendChild(
+        createElement(
+          "span",
+          `favorites-panel-link-stat-source favorites-panel-link-stat-source-${stat.source.key}`,
+          stat.source.label
+        )
+      );
+      line.appendChild(document.createTextNode(" "));
+    }
+    line.appendChild(document.createTextNode(stat.text || fallback));
+    return line;
+  }
+
+  function renderLinkFavoriteStatFilter(value) {
+    return renderLinkFavoriteStat(formatLinkFavoriteStatFilter(value), String(value || ""));
+  }
+
+  function renderLinkFavoriteTooltip(link) {
+    const root = createElement("div", "favorites-panel-tooltip-content");
+    for (const group of getLinkFavoriteTooltipGroups(link)) {
+      const section = createElement("section", "favorites-panel-tooltip-group");
+      section.appendChild(createElement("span", "favorites-panel-tooltip-group-label", group.label));
+      const values = createElement("div", "favorites-panel-tooltip-values");
+      for (const value of group.values) {
+        values.appendChild(
+          value.source
+            ? renderLinkFavoriteStat(value, "", "favorites-panel-tooltip-stat")
+            : createElement("span", "favorites-panel-tooltip-value", value.text)
+        );
+      }
+      section.appendChild(values);
+      root.appendChild(section);
+    }
+    return root;
+  }
+
+  function clearLinkFavoriteTooltipShowTimer() {
+    if (local.tooltipShowTimer) {
+      window.clearTimeout(local.tooltipShowTimer);
+      local.tooltipShowTimer = null;
+    }
+  }
+
+  function clearLinkFavoriteTooltipHideTimer() {
+    if (local.tooltipHideTimer) {
+      window.clearTimeout(local.tooltipHideTimer);
+      local.tooltipHideTimer = null;
+    }
+  }
+
+  function clearLinkFavoriteTooltipDismissTimer() {
+    if (local.tooltipDismissTimer) {
+      window.clearTimeout(local.tooltipDismissTimer);
+      local.tooltipDismissTimer = null;
+    }
+  }
+
+  function clearLinkFavoriteTooltipTimers() {
+    clearLinkFavoriteTooltipShowTimer();
+    clearLinkFavoriteTooltipHideTimer();
+    clearLinkFavoriteTooltipDismissTimer();
+  }
+
+  function hideLinkFavoriteTooltip() {
+    clearLinkFavoriteTooltipShowTimer();
+    clearLinkFavoriteTooltipHideTimer();
+    if (!ui.tooltip) {
+      return;
+    }
+    ui.tooltip.classList.remove("favorites-panel-tooltip-visible");
+    ui.tooltip.setAttribute("aria-hidden", "true");
+    clearLinkFavoriteTooltipDismissTimer();
+    local.tooltipDismissTimer = window.setTimeout(() => {
+      if (ui.tooltip.classList.contains("favorites-panel-tooltip-visible")) {
+        return;
+      }
+      ui.tooltip.hidden = true;
+      ui.tooltip.replaceChildren();
+      local.tooltipDismissTimer = null;
+    }, LINK_FAVORITE_TOOLTIP_DISMISS_DELAY);
+  }
+
+  function scheduleLinkFavoriteTooltipHide() {
+    clearLinkFavoriteTooltipShowTimer();
+    clearLinkFavoriteTooltipHideTimer();
+    local.tooltipHideTimer = window.setTimeout(hideLinkFavoriteTooltip, LINK_FAVORITE_TOOLTIP_HIDE_DELAY);
+  }
+
+  function getLinkFavoriteTooltipPosition(pointer, tooltipRect, viewport) {
+    const margin = 8;
+    const gap = 12;
+    const width = Math.max(0, Number(tooltipRect?.width) || 0);
+    const height = Math.max(0, Number(tooltipRect?.height) || 0);
+    const viewportWidth = Math.max(0, Number(viewport?.width) || 0);
+    const viewportHeight = Math.max(0, Number(viewport?.height) || 0);
+    const x = Number(pointer?.x) || 0;
+    const y = Number(pointer?.y) || 0;
+    const left = Math.min(Math.max(margin, x - width / 2), Math.max(margin, viewportWidth - width - margin));
+    const aboveTop = y - height - gap;
+    const belowTop = y + gap;
+    const aboveFits = aboveTop >= margin;
+    const belowFits = belowTop + height <= viewportHeight - margin;
+    const placement = aboveFits || (!belowFits && y >= viewportHeight - y) ? "above" : "below";
+    const desiredTop = placement === "above" ? aboveTop : belowTop;
+    const top = Math.min(Math.max(margin, desiredTop), Math.max(margin, viewportHeight - height - margin));
+    const arrowX = Math.min(Math.max(14, x - left), Math.max(14, width - 14));
+    return {
+      left: Math.round(left),
+      top: Math.round(top),
+      placement,
+      arrowX: Math.round(arrowX)
+    };
+  }
+
+  function getLinkFavoriteTooltipPointer(anchor) {
+    if (local.tooltipPointer) {
+      return local.tooltipPointer;
+    }
+    const rect = anchor.getBoundingClientRect();
+    return { x: rect.left + rect.width / 2, y: rect.top };
+  }
+
+  function showLinkFavoriteTooltip(anchor, link) {
+    const groups = getLinkFavoriteTooltipGroups(link);
+    if (!ui.tooltip || !groups.length) {
+      return;
+    }
+    clearLinkFavoriteTooltipTimers();
+    ui.tooltip.replaceChildren(renderLinkFavoriteTooltip(link));
+    ui.tooltip.hidden = false;
+    ui.tooltip.setAttribute("aria-hidden", "false");
+    ui.tooltip.classList.remove("favorites-panel-tooltip-visible");
+    ui.tooltip.style.visibility = "hidden";
+    const tooltipRect = ui.tooltip.getBoundingClientRect();
+    const position = getLinkFavoriteTooltipPosition(getLinkFavoriteTooltipPointer(anchor), tooltipRect, {
+      width: window.innerWidth,
+      height: window.innerHeight
+    });
+    ui.tooltip.style.left = `${position.left}px`;
+    ui.tooltip.style.top = `${position.top}px`;
+    ui.tooltip.style.setProperty("--favorites-panel-tooltip-arrow-x", `${position.arrowX}px`);
+    ui.tooltip.dataset.placement = position.placement;
+    ui.tooltip.style.visibility = "";
+    window.requestAnimationFrame(() => {
+      if (!ui.tooltip.hidden && ui.tooltip.getAttribute("aria-hidden") === "false") {
+        ui.tooltip.classList.add("favorites-panel-tooltip-visible");
+      }
+    });
+  }
+
+  function scheduleLinkFavoriteTooltipShow(anchor, link, event) {
+    clearLinkFavoriteTooltipShowTimer();
+    clearLinkFavoriteTooltipHideTimer();
+    clearLinkFavoriteTooltipDismissTimer();
+    local.tooltipPointer = { x: event.clientX, y: event.clientY };
+    local.tooltipShowTimer = window.setTimeout(() => {
+      local.tooltipShowTimer = null;
+      showLinkFavoriteTooltip(anchor, link);
+    }, LINK_FAVORITE_TOOLTIP_SHOW_DELAY);
+  }
+
+  function bindLinkFavoriteTooltip(anchor, link) {
+    if (!getLinkFavoriteTooltipGroups(link).length) {
+      return;
+    }
+    anchor.setAttribute("aria-describedby", "favorites-panel-tooltip");
+    anchor.addEventListener("pointerenter", (event) => scheduleLinkFavoriteTooltipShow(anchor, link, event));
+    anchor.addEventListener("pointermove", (event) => {
+      local.tooltipPointer = { x: event.clientX, y: event.clientY };
+    });
+    anchor.addEventListener("pointerleave", scheduleLinkFavoriteTooltipHide);
+    anchor.addEventListener("focus", () => {
+      local.tooltipPointer = null;
+      showLinkFavoriteTooltip(anchor, link);
+    });
+    anchor.addEventListener("blur", hideLinkFavoriteTooltip);
+  }
+
+  function renderLinkRow(state, link) {
+    const row = createElement("article", "favorites-panel-link-row");
+    setDropTarget(row, { kind: "link", id: link.id, folderId: link.folderId || null });
+    const drag = createIconButton(t("reorderLinkFavorite"), icons.drag, "favorites-panel-drag-handle");
+    setDragSource(drag, { kind: "link", id: link.id, folderId: link.folderId || null });
+    const launch = createElement("button", "favorites-panel-link-launch");
+    launch.type = "button";
+    launch.setAttribute("aria-label", link.displayName || "");
+    bindLinkFavoriteTooltip(launch, link);
+    launch.appendChild(createElement("span", "favorites-panel-name", link.displayName || ""));
+    const time = Number(link.lastUsedAt || link.createdAt);
+    if (Number.isFinite(time) && time > 0) {
+      launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
+    }
+    const statFilters = getLinkFavoriteStatFilters(link);
+    for (const filter of statFilters.slice(0, 3)) {
+      launch.appendChild(renderLinkFavoriteStatFilter(filter));
+    }
+    const moreCount = Math.max(0, statFilters.length - 3);
+    if (moreCount) {
+      launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
+    }
+    launch.addEventListener("click", () => run("open-link", { linkId: link.id }));
+    const actions = createElement("div", "favorites-panel-row-actions");
+    if (local.movingLinkId === link.id) {
+      const select = createElement("select", "favorites-panel-move-select");
+      select.setAttribute("aria-label", t("moveLinkFavorite"));
+      const groups = [{ id: "", name: t("moveLinkFavoriteToRoot") }].concat(
+        (state.linkFavorites?.folders || []).map((folder) => ({ id: folder.id, name: folder.name }))
+      );
+      for (const group of groups) {
+        const option = createElement("option", "", group.name);
+        option.value = group.id;
+        option.selected = group.id === (link.folderId || "");
+        select.appendChild(option);
+      }
+      select.addEventListener("change", () => run("move-link", { linkId: link.id, folderId: select.value || null }));
+      select.addEventListener("blur", () => {
+        local.movingLinkId = null;
+        render();
+      }, { once: true });
+      actions.appendChild(select);
+      window.setTimeout(() => select.focus(), 0);
+    } else {
+      const rename = createIconButton(t("renameLinkFavorite"), icons.edit);
+      rename.addEventListener("click", () => {
+        local.editing = { kind: "link", id: link.id };
+        render();
+      });
+      const move = createIconButton(t("moveLinkFavorite"), icons.move);
+      move.addEventListener("click", () => {
+        local.movingLinkId = link.id;
+        render();
+      });
+      const remove = createIconButton(t("deleteLinkFavorite"), icons.delete, "favorites-panel-delete");
+      remove.addEventListener("click", () => run("delete-link", { linkId: link.id }));
+      actions.append(rename, move, remove);
+    }
+    if (local.editing?.kind === "link" && local.editing.id === link.id) {
+      launch.replaceChildren();
+      appendEditableName(launch, "link", link.id, link.displayName || "", (name) => run("rename-link", { linkId: link.id, name }));
+    }
+    row.append(drag, launch, actions);
+    return row;
+  }
+
+  function renderFolder(state, folder, links) {
+    const section = createElement("section", "favorites-panel-folder");
+    const header = createElement("div", "favorites-panel-folder-header");
+    setDropTarget(header, { kind: "folder", id: folder.id });
+    const drag = createIconButton(t("reorderLinkFavoriteFolder"), icons.drag, "favorites-panel-drag-handle");
+    setDragSource(drag, { kind: "folder", id: folder.id });
+    const collapse = createIconButton(
+      t(folder.collapsed ? "expandLinkFavoriteFolder" : "collapseLinkFavoriteFolder"),
+      folder.collapsed ? icons.expand : icons.collapse
+    );
+    collapse.setAttribute("aria-expanded", String(!folder.collapsed));
+    collapse.addEventListener("click", () => run("toggle-folder", { folderId: folder.id, collapsed: !folder.collapsed }));
+    const nameHost = createElement("div", "favorites-panel-folder-name");
+    appendEditableName(nameHost, "folder", folder.id, folder.name || "", (name) => run("rename-folder", { folderId: folder.id, name }));
+    const actions = createElement("div", "favorites-panel-folder-actions");
+    const save = createIconButton(
+      state.canSaveCurrentLink ? t("createLinkFavorite") : t("createLinkFavoriteUnavailable"),
+      icons.bookmark
+    );
+    save.disabled = !state.canSaveCurrentLink || !state.linkFavoritesEnabled;
+    save.addEventListener("click", () => run("save-link", { folderId: folder.id }));
+    const rename = createIconButton(t("renameLinkFavoriteFolder"), icons.edit);
+    rename.addEventListener("click", () => {
+      local.editing = { kind: "folder", id: folder.id };
+      render();
+    });
+    const remove = createIconButton(t("deleteLinkFavoriteFolder"), icons.delete, "favorites-panel-delete");
+    remove.addEventListener("click", () => {
+      local.confirmingFolderId = folder.id;
+      render();
+    });
+    actions.append(save, rename, remove);
+    header.append(drag, collapse, nameHost, actions);
+    section.appendChild(header);
+    if (!folder.collapsed) {
+      const list = createElement("div", "favorites-panel-link-list");
+      setDropTarget(list, { kind: "folder", id: folder.id });
+      for (const link of links) {
+        list.appendChild(renderLinkRow(state, link));
+      }
+      section.appendChild(list);
+    }
+    if (local.confirmingFolderId === folder.id) {
+      const confirm = createElement("div", "favorites-panel-confirm");
+      const count = getLinksForFolder(state, folder.id).length;
+      confirm.appendChild(createElement("span", "", t("confirmDeleteLinkFavoriteFolder", count)));
+      const buttons = createElement("div", "favorites-panel-confirm-actions");
+      const cancel = makeTextButton(t("cancelLinkFavoriteFolderDelete"));
+      cancel.addEventListener("click", () => {
+        local.confirmingFolderId = null;
+        render();
+      });
+      const remove = makeTextButton(t("confirmDeleteLinkFavoriteFolder", count), "favorites-panel-confirm-delete");
+      remove.addEventListener("click", () => run("delete-folder", { folderId: folder.id, confirm: true }));
+      buttons.append(cancel, remove);
+      confirm.appendChild(buttons);
+      section.appendChild(confirm);
+    }
+    return section;
+  }
+
+  function setDragSource(element, source) {
+    element.draggable = true;
+    element.addEventListener("dragstart", (event) => {
+      local.drag = source;
+      event.dataTransfer.effectAllowed = "move";
+      event.dataTransfer.setData("text/plain", JSON.stringify(source));
+      element.classList.add("favorites-panel-dragging");
+    });
+    element.addEventListener("dragend", () => {
+      local.drag = null;
+      element.classList.remove("favorites-panel-dragging");
+      document.querySelectorAll(".favorites-panel-drop-target").forEach((target) => {
+        target.classList.remove("favorites-panel-drop-target");
+      });
+    });
+  }
+
+  function setDropTarget(element, target) {
+    element.addEventListener("dragover", (event) => {
+      if (!local.drag || !canDrop(local.drag, target)) {
+        return;
+      }
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      element.classList.add("favorites-panel-drop-target");
+    });
+    element.addEventListener("dragleave", () => element.classList.remove("favorites-panel-drop-target"));
+    element.addEventListener("drop", (event) => {
+      if (!local.drag || !canDrop(local.drag, target)) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      element.classList.remove("favorites-panel-drop-target");
+      void drop(local.drag, target);
+    });
+  }
+
+  function canDrop(source, target) {
+    if (source.kind === "link") {
+      return target.kind === "link" || target.kind === "folder" || target.kind === "root";
+    }
+    return source.kind === "folder" && (target.kind === "folder" || target.kind === "folder-top");
+  }
+
+  async function drop(source, target) {
+    if (source.kind === "link") {
+      if (target.kind === "link") {
+        if ((source.folderId || null) === (target.folderId || null)) {
+          await run("reorder-link", {
+            linkId: source.id,
+            folderId: target.folderId || null,
+            targetId: target.id,
+            placeAfter: true
+          });
+        } else {
+          await run("move-link", {
+            linkId: source.id,
+            folderId: target.folderId || null,
+            targetId: target.id,
+            placeAfter: true
+          });
+        }
+        return;
+      }
+      await run("move-link", { linkId: source.id, folderId: target.kind === "folder" ? target.id : null });
+      return;
+    }
+    if (target.kind === "folder") {
+      await run("reorder-folder", { folderId: source.id, targetId: target.id, placeAfter: true });
+      return;
+    }
+    const firstFolderId = target.folders?.[0]?.id;
+    if (firstFolderId) {
+      await run("reorder-folder", { folderId: source.id, targetId: firstFolderId, placeAfter: false });
+    }
+  }
+
+  async function run(command, payload) {
+    try {
+      await request(command, payload);
+      if (command === "delete-folder") {
+        local.confirmingFolderId = null;
+      }
+      if (command === "create-folder") {
+        local.creatingFolder = false;
+      }
+      if (command === "import-links") {
+        local.importing = false;
+      }
+      if (command === "move-link") {
+        local.movingLinkId = null;
+      }
+      render();
+    } catch (error) {
+      console.debug("[PoE2 Marketwright] favorites panel command failed", error);
+    }
+  }
+
+  function bindUi() {
+    ui.itemsTab.addEventListener("click", () => run("select-tab", { tab: "items" }));
+    ui.linksTab.addEventListener("click", () => run("select-tab", { tab: "links" }));
+    ui.compact.addEventListener("click", () => run("set-view-mode", { mode: "compact" }));
+    ui.close.addEventListener("click", () => run("close-panel"));
+    ui.tooltip?.addEventListener("pointerenter", clearLinkFavoriteTooltipHideTimer);
+    ui.tooltip?.addEventListener("pointerleave", scheduleLinkFavoriteTooltipHide);
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        hideLinkFavoriteTooltip();
+      }
+    });
+    chrome.runtime.onMessage.addListener((message) => {
+      if (message?.type === "favorites-panel-state" && message.sessionId === sessionId && message.state) {
+        setState(message.state);
+      }
+    });
+  }
+
+  async function bootstrap(attempt = 0) {
+    if (!/^[a-zA-Z0-9_-]{8,128}$/.test(sessionId)) {
+      return;
+    }
+    try {
+      await request("get-state");
+    } catch (error) {
+      if (attempt < 4 && String(error?.message || "") === "unknown_panel_session") {
+        window.setTimeout(() => bootstrap(attempt + 1), 160 * (attempt + 1));
+      }
+    }
+  }
+
+  bindUi();
+  bootstrap();
+})();
