@@ -474,6 +474,94 @@ test("full view restores search focus and selection after filter render", async 
   assert.deepStrictEqual(result, {"focus": {"tab": "items", "selectionStart": 1, "selectionEnd": 3}, "focusOptions": {"preventScroll": true}, "selection": [1, 3]});
 });
 
+test("full view filters without replacing active search inputs", async () => {
+  const result = await runScript(`
+            const fs = require("fs");
+            const vm = require("vm");
+            let source = fs.readFileSync("favorites-panel.js", "utf8");
+            source = source.replace("  bindUi();\\n  bootstrap();", "");
+            source = source.replace(
+              /\\n\\}\\)\\(\\);\\s*$/,
+              "\\n  window.__testHooks = { local, render };\\n})();"
+            );
+            class Node {
+              constructor(className = "") {
+                this.children = [];
+                this.className = className;
+                this.listeners = {};
+                this.attributes = {};
+                this.classList = {
+                  contains: (name) => this.className.split(/\\s+/).includes(name),
+                  remove() {}
+                };
+              }
+              appendChild(child) { this.children.push(child); return child; }
+              append(...children) { children.forEach((child) => this.appendChild(child)); }
+              replaceChildren(...children) { this.children = children; }
+              addEventListener(type, listener) { this.listeners[type] = listener; }
+              setAttribute(name, value) { this.attributes[name] = value; }
+              querySelector(selector) {
+                const className = selector.startsWith(".") ? selector.slice(1) : "";
+                const queue = [...this.children];
+                while (queue.length) {
+                  const child = queue.shift();
+                  if (child.classList?.contains(className)) return child;
+                  queue.push(...(child.children || []));
+                }
+                return null;
+              }
+              focus() {}
+              setSelectionRange() {}
+            }
+            const elements = {
+              "#favorites-panel-title": new Node(),
+              "#favorites-panel-league": new Node(),
+              "#favorites-panel-compact": new Node(),
+              "#favorites-panel-close": new Node(),
+              "#favorites-panel-items-tab": new Node(),
+              "#favorites-panel-links-tab": new Node(),
+              "#favorites-panel-content": new Node(),
+              "#favorites-panel-tooltip": new Node()
+            };
+            const document = {
+              activeElement: null,
+              createElement() { return new Node(); },
+              querySelector(selector) { return elements[selector] || null; }
+            };
+            const sandbox = {
+              window: { clearTimeout() {}, setTimeout() { return 1; } },
+              document,
+              location: { search: "" },
+              URLSearchParams,
+              console
+            };
+            vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
+            const hooks = sandbox.window.__testHooks;
+            hooks.local.state = { available: true, favorites: [] };
+            hooks.render();
+            const content = elements["#favorites-panel-content"];
+            const search = content.children[0].children[0].children[0];
+            document.activeElement = search;
+            search.value = "bow";
+            search.listeners.input();
+            const currentSearch = content.children[0].children[0].children[0];
+            hooks.local.tab = "links";
+            hooks.render();
+            const linkSearch = content.children[0].children[0].children[0];
+            document.activeElement = linkSearch;
+            linkSearch.value = "orb";
+            linkSearch.listeners.input();
+            const currentLinkSearch = content.children[0].children[0].children[0];
+            console.log(JSON.stringify({
+              itemInputPreserved: currentSearch === search,
+              linkInputPreserved: currentLinkSearch === linkSearch,
+              itemQuery: hooks.local.itemSearch,
+              linkQuery: hooks.local.linkSearch
+            }));
+            `);
+  assert.deepStrictEqual(result, {"itemInputPreserved": true, "linkInputPreserved": true, "itemQuery": "bow", "linkQuery": "orb"});
+});
+
 test("full item delete feedback precedes the favorite list", async () => {
   const result = await runScript(`
             const fs = require("fs");
@@ -488,6 +576,7 @@ test("full item delete feedback precedes the favorite list", async () => {
               constructor() { this.children = []; this.className = ""; this.dataset = {}; }
               appendChild(child) { this.children.push(child); return child; }
               append(...children) { children.forEach((child) => this.appendChild(child)); }
+              replaceChildren(...children) { this.children = children; }
               addEventListener() {}
               setAttribute() {}
             }
@@ -500,7 +589,11 @@ test("full item delete feedback precedes the favorite list", async () => {
             };
             vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
             const root = sandbox.window.__testHooks.renderItems({ favorites: [], deletedFavorite: true });
-            console.log(JSON.stringify(root.children.map((child) => child.className)));
+            console.log(JSON.stringify(root.children.flatMap((child) =>
+              child.className === "favorites-panel-results"
+                ? child.children.map((result) => result.className)
+                : [child.className]
+            )));
             `);
   assert.deepStrictEqual(result, ["favorites-panel-toolbar", "favorites-panel-feedback", "favorites-panel-empty"]);
 });

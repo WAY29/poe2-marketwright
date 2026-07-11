@@ -227,6 +227,10 @@ h1 {
   width: 100%;
 }
 
+.favorites-panel-results {
+  min-width: 0;
+}
+
 .favorites-panel-rename-input,
 .favorites-panel-folder-input {
   width: 100%;

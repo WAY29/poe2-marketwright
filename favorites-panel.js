@@ -276,14 +276,20 @@
   function renderItems(state) {
     const root = createElement("div");
     const toolbar = createElement("div", "favorites-panel-toolbar");
+    const results = createElement("div", "favorites-panel-results");
     toolbar.appendChild(
       makeSearch(local.itemSearch, t("favoritesSearch"), (value) => {
         local.itemSearch = value;
-        render();
+        renderItemResults(state, results);
       })
     );
-    root.appendChild(toolbar);
+    root.append(toolbar, results);
+    renderItemResults(state, results);
+    return root;
+  }
 
+  function renderItemResults(state, root) {
+    root.replaceChildren();
     if (state.deletedFavorite) {
       const feedback = createElement("div", "favorites-panel-feedback");
       feedback.appendChild(createElement("span", "", t("favoriteDeleted")));
@@ -319,7 +325,6 @@
       }
       root.appendChild(list);
     }
-    return root;
   }
 
   function renderFavoriteRow(favorite) {
@@ -415,10 +420,11 @@
   function renderLinks(state) {
     const root = createElement("div");
     const toolbar = createElement("div", "favorites-panel-toolbar");
+    const results = createElement("div", "favorites-panel-results");
     toolbar.appendChild(
       makeSearch(local.linkSearch, t("favoritesPanelSearchLinks"), (value) => {
         local.linkSearch = value;
-        render();
+        renderLinkResults(state, results);
       })
     );
     const saveRoot = createIconButton(
@@ -452,8 +458,14 @@
     collapseAll.disabled = !state.linkFavoritesEnabled || folders.length === 0;
     collapseAll.addEventListener("click", () => run("toggle-all-folders"));
     toolbar.append(saveRoot, createFolder, importButton, exportButton, collapseAll);
-    root.appendChild(toolbar);
+    root.append(toolbar, results);
+    renderLinkResults(state, results);
+    return root;
+  }
 
+  function renderLinkResults(state, root) {
+    root.replaceChildren();
+    const folders = state.linkFavorites?.folders || [];
     if (state.feedback) {
       const feedback = createElement("div", "favorites-panel-feedback");
       feedback.dataset.state = state.feedback.state || "ready";
@@ -468,7 +480,7 @@
 
     if (local.importing) {
       root.appendChild(renderImportForm());
-      return root;
+      return;
     }
     if (local.creatingFolder) {
       const input = createElement("input", "favorites-panel-folder-input");
@@ -539,7 +551,6 @@
     }
     root.appendChild(folderList);
     root.appendChild(rootList);
-    return root;
   }
 
   function renderImportForm() {
