@@ -360,6 +360,33 @@
   "disableFiltering": {
     "message": "關閉過濾"
   },
+  "generalSettingsTitle": {
+    "message": "一般設定"
+  },
+  "language": {
+    "message": "語言"
+  },
+  "languageEnglish": {
+    "message": "English"
+  },
+  "languageSimplifiedChinese": {
+    "message": "簡體中文"
+  },
+  "languageTraditionalChinese": {
+    "message": "繁體中文"
+  },
+  "favoriteTooltipItem": {
+    "message": "物品"
+  },
+  "favoriteTooltipBaseType": {
+    "message": "基礎類型"
+  },
+  "favoriteTooltipCategory": {
+    "message": "類別"
+  },
+  "favoriteTooltipModifiers": {
+    "message": "詞綴"
+  },
   "statFilterTitle": {
     "message": "詞綴過濾"
   },

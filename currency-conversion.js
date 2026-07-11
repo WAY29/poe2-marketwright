@@ -496,6 +496,12 @@
       }
     };
 
+    const setLabels = (nextLabels) => {
+      Object.assign(labels, nextLabels || {});
+      document.querySelectorAll(`.${CONTROL_CLASS}`).forEach((control) => control.remove());
+      scanAndInject();
+    };
+
     const refresh = async () => {
       syncLeagueFromPageUrl();
       if (!activeLeague) {
@@ -551,6 +557,7 @@
     return {
       start,
       setEnabled,
+      setLabels,
       storeResults,
       handleMessage,
       refresh,

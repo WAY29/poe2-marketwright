@@ -98,12 +98,12 @@ class FavoriteBehaviorTests(unittest.TestCase):
         self.assertEqual(
             result["favorite"]["mods"],
             [
-                {"text": "+60 to maximum Life", "source": "explicit"},
-                {"text": "Adds 12 to 24 Fire Damage", "source": "explicit"},
-                {"text": "Adds 14 to 26 Fire Damage", "source": "explicit"},
-                {"text": "Leeches 7% of Physical Damage as Life", "source": "desecrated"},
-                {"text": "+20 to Dexterity", "source": "fractured"},
-                {"text": "Cannot be Shocked", "source": "crafted"},
+                {"id": "explicit.stat_3299347043", "text": "+60 to maximum Life", "source": "explicit"},
+                {"id": "explicit.stat_709508406", "text": "Adds 12 to 24 Fire Damage", "source": "explicit"},
+                {"id": "explicit.stat_709508406", "text": "Adds 14 to 26 Fire Damage", "source": "explicit"},
+                {"id": "desecrated.stat_55876295", "text": "Leeches 7% of Physical Damage as Life", "source": "desecrated"},
+                {"id": "fractured.stat_3261801346", "text": "+20 to Dexterity", "source": "fractured"},
+                {"id": "crafted.stat_491899612", "text": "Cannot be Shocked", "source": "crafted"},
             ],
         )
         self.assertEqual(
@@ -420,6 +420,101 @@ class FavoriteBehaviorTests(unittest.TestCase):
             },
         )
 
+    def test_link_favorite_keeps_a_bounded_official_query_display_snapshot(self) -> None:
+        result = self.run_node(
+            r'''
+            const fs = require("fs");
+            const vm = require("vm");
+            const sandbox = { console, URL };
+            vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+              filename: "favorites.js"
+            });
+            const tools = sandbox.Poe2MarketwrightFavorites.createLinkFavoriteTools();
+            const record = tools.createLinkFavoriteRecord({
+              url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-7",
+              displayName: "Bow search",
+              displaySnapshot: {
+                type: "Rider Bow",
+                category: "weapon.bow",
+                rarity: "rare",
+                stats: [
+                  { id: "explicit.stat_3299347043", value: { min: 50, max: 80 } },
+                  { id: "not-a-trade-stat", value: { min: 1 } }
+                ]
+              }
+            });
+            console.log(JSON.stringify(record.displaySnapshot));
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "type": "Rider Bow",
+                "category": "weapon.bow",
+                "rarity": "rare",
+                "stats": [{"id": "explicit.stat_3299347043", "value": {"min": 50, "max": 80}}],
+            },
+        )
+
+    def test_page_bridge_forwards_trade_search_request_and_query_id_for_link_snapshots(self) -> None:
+        result = self.run_node(
+            r'''
+            (async () => {
+            const fs = require("fs");
+            const vm = require("vm");
+            const listeners = [];
+            const messages = [];
+            const window = {
+              app: { $data: { static_: { knownStats: [] } } },
+              addEventListener(type, listener) { if (type === "message") listeners.push(listener); },
+              postMessage(message) { messages.push(message); },
+              fetch(url) {
+                return Promise.resolve({
+                  clone() { return { text: () => Promise.resolve('{"id":"query-7"}') }; }
+                });
+              }
+            };
+            vm.runInNewContext(fs.readFileSync("page-bridge.js", "utf8"), { window, console }, {
+              filename: "page-bridge.js"
+            });
+            listeners[0]({
+              source: window,
+              data: { source: "poe2-marketwright", type: "POE2_MARKETWRIGHT_UPDATE", payload: { favoritesEnabled: true } }
+            });
+            const query = {
+              query: {
+                type: "Rider Bow",
+                stats: [{ filters: [{ id: "explicit.stat_3299347043", value: { min: 50 } }] }]
+              }
+            };
+            await window.fetch("/api/trade2/search/Dawn", { method: "POST", body: JSON.stringify(query) });
+            await new Promise((resolve) => setTimeout(resolve, 0));
+            console.log(JSON.stringify(messages.filter((message) => message.type === "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT")));
+            })();
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            [
+                {
+                    "source": "poe2-marketwright",
+                    "type": "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT",
+                    "payload": {
+                        "league": "Dawn",
+                        "queryId": "query-7",
+                        "query": {
+                            "query": {
+                                "type": "Rider Bow",
+                                "stats": [{"filters": [{"id": "explicit.stat_3299347043", "value": {"min": 50}}]}],
+                            }
+                        },
+                    },
+                }
+            ],
+        )
+
     def test_link_favorite_stat_summary_removes_random_prefixes_and_formats_special_sources(self) -> None:
         result = self.run_node(
             r'''
@@ -503,7 +598,7 @@ class FavoriteBehaviorTests(unittest.TestCase):
         self.assertEqual(
             result,
             {
-                "version": 1,
+                "version": 2,
                 "leagues": {
                     "Dawn": {
                         "folders": [

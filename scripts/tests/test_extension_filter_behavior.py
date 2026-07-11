@@ -681,6 +681,7 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
                 "baseName": "Warmonger Bow",
                 "category": "weapon.bow",
                 "itemType": "Bow",
+                "selection": {"kind": "page", "id": "Bows"},
             },
         )
 

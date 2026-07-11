@@ -6,7 +6,7 @@
   const ENGLISH_ORIGINS = new Set(["https://pathofexile.com", "https://www.pathofexile.com"]);
   const SOURCE_SETS = ["explicitMods", "fracturedMods", "craftedMods", "desecratedMods"];
   const NUMBER_RE = /-?\d+(?:\.\d+)?/g;
-  const LINK_FAVORITES_VERSION = 1;
+  const LINK_FAVORITES_VERSION = 2;
   const TRADE_SEARCH_ORIGINS = new Set(["https://pathofexile.com", "https://www.pathofexile.com"]);
   const RESET_DELAY_MS = 1200;
   const ITEM_DETAILS_WAIT_TIMEOUT_MS = 6000;
@@ -111,7 +111,7 @@
           const separatorIndex = id.indexOf(".");
           const source = id.slice(0, separatorIndex);
           const baseStatId = id.slice(separatorIndex + 1);
-          mods.push({ text, source });
+          mods.push({ id, text, source });
           if (source !== "explicit" && next.value != null) {
             const total = specialStatTotals.get(baseStatId) || 0;
             specialStatTotals.set(baseStatId, normalizeNumber(total + next.value));
@@ -153,13 +153,18 @@
         return { id: stat.id, value: { min: stat.value, max: stat.value } };
       });
       const favorite = {
-        version: 1,
+        version: 2,
         league: normalizedLeague,
         displayName: originalName || baseName,
+        nameSource: "automatic",
         originalName,
         baseName,
         category,
         itemType,
+        itemSelection:
+          itemClassification?.selection?.kind && itemClassification?.selection?.id
+            ? { kind: itemClassification.selection.kind, id: itemClassification.selection.id }
+            : null,
         rarity,
         stats,
         mods,
@@ -384,13 +389,54 @@
       return { url: parsedUrl.toString(), league, queryId };
     };
 
+    const normalizeLinkFavoriteDisplaySnapshot = (snapshot) => {
+      if (!snapshot || typeof snapshot !== "object") {
+        return null;
+      }
+      const normalizeValue = (value) => {
+        const number = Number(value);
+        return Number.isFinite(number) ? number : null;
+      };
+      const normalizeText = (value, limit = 160) => String(value || "").trim().slice(0, limit);
+      const type = normalizeText(snapshot.type);
+      const category = normalizeText(snapshot.category);
+      const rarity = normalizeText(snapshot.rarity);
+      const stats = (Array.isArray(snapshot.stats) ? snapshot.stats : [])
+        .slice(0, 80)
+        .map((stat) => {
+          const id = normalizeText(stat?.id);
+          if (!/^(?:pseudo|explicit|implicit|fractured|crafted|enchant|rune|desecrated|sanctum|skill)\.[\w.|-]+$/i.test(id)) {
+            return null;
+          }
+          const min = normalizeValue(stat?.value?.min);
+          const max = normalizeValue(stat?.value?.max);
+          return {
+            id,
+            ...(min != null || max != null
+              ? { value: { ...(min != null ? { min } : {}), ...(max != null ? { max } : {}) } }
+              : {})
+          };
+        })
+        .filter(Boolean);
+      if (!type && !category && !rarity && !stats.length) {
+        return null;
+      }
+      return {
+        ...(type ? { type } : {}),
+        ...(category ? { category } : {}),
+        ...(rarity ? { rarity } : {}),
+        ...(stats.length ? { stats } : {})
+      };
+    };
+
     const createLinkFavoriteRecord = ({
       url,
       displayName,
       folderId = null,
       id = null,
       createdAt = Date.now(),
-      filterGroups = []
+      filterGroups = [],
+      displaySnapshot = null
     } = {}) => {
       const parsed = validateTradeSearchUrl(url);
       const name = normalizeName(displayName);
@@ -398,6 +444,7 @@
         throw createLinkFavoriteError("missing_link_favorite_name", "Link favorite requires a display name");
       }
       const normalizedFilterGroups = normalizeLinkFavoriteFilterGroups(filterGroups);
+      const normalizedDisplaySnapshot = normalizeLinkFavoriteDisplaySnapshot(displaySnapshot);
       return {
         id: normalizeId(id) || createLinkFavoriteId("link"),
         league: parsed.league,
@@ -407,7 +454,8 @@
         folderId: normalizeId(folderId),
         createdAt: normalizeTimestamp(createdAt, Date.now()),
         lastUsedAt: null,
-        ...(normalizedFilterGroups.length ? { filterGroups: normalizedFilterGroups } : {})
+        ...(normalizedFilterGroups.length ? { filterGroups: normalizedFilterGroups } : {}),
+        ...(normalizedDisplaySnapshot ? { displaySnapshot: normalizedDisplaySnapshot } : {})
       };
     };
 
@@ -486,6 +534,7 @@
         linkIds.add(id);
         const folderId = normalizeId(rawLink?.folderId);
         const filterGroups = normalizeLinkFavoriteFilterGroups(rawLink?.filterGroups);
+        const displaySnapshot = normalizeLinkFavoriteDisplaySnapshot(rawLink?.displaySnapshot);
         links.push({
           id,
           league,
@@ -495,7 +544,8 @@
           folderId: folderId && folderIds.has(folderId) ? folderId : null,
           createdAt: normalizeTimestamp(rawLink?.createdAt),
           lastUsedAt: rawLink?.lastUsedAt == null ? null : normalizeTimestamp(rawLink.lastUsedAt),
-          ...(filterGroups.length ? { filterGroups } : {})
+          ...(filterGroups.length ? { filterGroups } : {}),
+          ...(displaySnapshot ? { displaySnapshot } : {})
         });
       }
 
@@ -742,6 +792,7 @@
       formatLinkFavoriteStatFilter,
       importExternalLinkFavorites,
       normalizeLinkFavoriteFilterGroups,
+      normalizeLinkFavoriteDisplaySnapshot,
       normalizeLinkFavoritesState,
       validateTradeSearchUrl
     };
@@ -1062,6 +1113,11 @@
       refreshButtons();
     };
 
+    const setLabels = (nextLabels) => {
+      Object.assign(labels, nextLabels || {});
+      refreshButtons();
+    };
+
     const setEnabled = (nextEnabled) => {
       enabled = Boolean(nextEnabled);
       if (!started) {
@@ -1097,7 +1153,7 @@
       rescanTimer = window.setInterval(scanAndInject, 2000);
     };
 
-    return { start, setEnabled, setFavorites, handleApiMessage, storeResults };
+    return { start, setEnabled, setFavorites, setLabels, handleApiMessage, storeResults };
   }
 
   globalThis[GLOBAL_NAME] = { createFavoriteTools, createFavoriteFeature, createLinkFavoriteTools };

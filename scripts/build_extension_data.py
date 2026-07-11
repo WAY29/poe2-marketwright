@@ -26,9 +26,14 @@ NUMBER_RE = re.compile(r"([-+]?\d+(?:\.\d+)?)")
 WHITESPACE_RE = re.compile(r"\s+")
 HTML_BREAK_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
 HTML_TAG_RE = re.compile(r"<[^>]+>")
+HTML_TITLE_RE = re.compile(r"<title\b[^>]*>(.*?)</title\s*>", re.IGNORECASE | re.DOTALL)
 GRANTED_SKILL_RE = re.compile(r"\bGrants\s+Skill:\s*(?:Level\s+(?:#|\d+)\s*)?(.+?)\s*$", re.IGNORECASE)
 TRADE_STATS_URL = "https://www.pathofexile.com/api/trade2/data/stats"
 TRADE_ITEMS_URL = "https://www.pathofexile.com/api/trade2/data/items"
+TRADE_STATS_ZH_CN_URL = "https://poe.game.qq.com/api/trade2/data/stats"
+TRADE_STATS_ZH_TW_URL = "https://pathofexile.tw/api/trade2/data/stats"
+TRADE_ITEMS_ZH_CN_URL = "https://poe.game.qq.com/api/trade2/data/items"
+TRADE_ITEMS_ZH_TW_URL = "https://pathofexile.tw/api/trade2/data/items"
 POE2DB_ITEM_ROOT_URL = "https://poe2db.tw/us/"
 TRADE_STAT_WILDCARD_PLACEHOLDERS = {
     "azmeri spirit",
@@ -337,6 +342,10 @@ class TradeStatRecord:
     stat_id: str
 
 
+class DisplayMetadataCoverageError(ValueError):
+    """Raised when build-time localized metadata is too incomplete to ship."""
+
+
 class Poe2dbPageArtifactsParser(HTMLParser):
     def __init__(self, item_class_code: str | None = None) -> None:
         super().__init__()
@@ -472,6 +481,40 @@ class Poe2dbPageArtifactsParser(HTMLParser):
         self.current_base_item_mod_text = []
 
 
+class Poe2dbItemLinkParser(HTMLParser):
+    def __init__(self) -> None:
+        super().__init__()
+        self.items: dict[str, tuple[str, str]] = {}
+        self.capture_href: str | None = None
+        self.current_text: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag != "a" or self.capture_href is not None:
+            return
+        attrs_dict = dict(attrs)
+        if "whiteitem" not in (attrs_dict.get("class") or "").split():
+            return
+        href = str(attrs_dict.get("href") or "").strip()
+        if not href or href.startswith(("?", "http://", "https://")):
+            return
+        self.capture_href = href
+        self.current_text = []
+
+    def handle_data(self, data: str) -> None:
+        if self.capture_href is not None:
+            self.current_text.append(data)
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag != "a" or self.capture_href is None:
+            return
+        name = WHITESPACE_RE.sub(" ", "".join(self.current_text)).strip()
+        slug = self.capture_href.rstrip("/").rsplit("/", 1)[-1]
+        if name and slug:
+            self.items.setdefault(normalize_lookup_text(name), (name, slug))
+        self.capture_href = None
+        self.current_text = []
+
+
 def humanize_slug(slug: str) -> str:
     return slug.replace("_", " ")
 
@@ -600,6 +643,193 @@ def build_trade_stat_records(trade_stats_payload: dict[str, Any]) -> list[TradeS
             for key in trade_stat_lookup_keys(text):
                 records.append(TradeStatRecord(key=key, pattern=pattern, stat_id=stat_id))
     return records
+
+
+def build_trade_stat_text_map(trade_stats_payload: dict[str, Any]) -> dict[str, str]:
+    text_by_id: dict[str, str] = {}
+    for group in trade_stats_payload.get("result", []):
+        for entry in group.get("entries", []):
+            stat_id = str(entry.get("id") or "").strip()
+            text = str(entry.get("text") or "").strip()
+            if stat_id and text and stat_id not in text_by_id:
+                text_by_id[stat_id] = text
+    return text_by_id
+
+
+def trade_stat_bare_id(stat_id: str) -> str:
+    value = str(stat_id or "").strip()
+    return value.split(".", 1)[1] if "." in value else value
+
+
+def build_display_metadata(
+    english_payload: dict[str, Any],
+    simplified_payload: dict[str, Any],
+    traditional_payload: dict[str, Any],
+    supported_stat_ids: set[str],
+    minimum_coverage: float = 0.95,
+) -> dict[str, Any]:
+    """Create deterministic localized stat text with conservative bare-ID reuse.
+
+    The regional APIs expose many, but not all, of the international full IDs.
+    A fallback may only cross source prefixes when the international English template
+    for both IDs is identical after canonicalization.
+    """
+
+    english_by_id = build_trade_stat_text_map(english_payload)
+    requested_ids = sorted(stat_id for stat_id in supported_stat_ids if stat_id in english_by_id)
+    region_payloads = {"zh_CN": simplified_payload, "zh_TW": traditional_payload}
+    stats: dict[str, dict[str, Any]] = {}
+    coverage: dict[str, dict[str, Any]] = {}
+
+    for locale, payload in region_payloads.items():
+        region_by_id = build_trade_stat_text_map(payload)
+        candidates_by_bare: dict[str, list[tuple[str, str]]] = {}
+        for candidate_id, candidate_text in region_by_id.items():
+            english_candidate = english_by_id.get(candidate_id)
+            if not english_candidate:
+                continue
+            candidates_by_bare.setdefault(trade_stat_bare_id(candidate_id), []).append((candidate_id, candidate_text))
+
+        matched = 0
+        exact = 0
+        reused = 0
+        for stat_id in requested_ids:
+            record = stats.setdefault(
+                stat_id,
+                {
+                    "en": english_by_id[stat_id],
+                    "zh_CN": english_by_id[stat_id],
+                    "zh_TW": english_by_id[stat_id],
+                    "sources": {},
+                },
+            )
+            localized = region_by_id.get(stat_id)
+            source = "exact_id" if localized else "fallback"
+            if localized:
+                exact += 1
+            else:
+                english_key = canonicalize_match_key(english_by_id[stat_id])
+                valid_texts = {
+                    candidate_text
+                    for candidate_id, candidate_text in candidates_by_bare.get(trade_stat_bare_id(stat_id), [])
+                    if canonicalize_match_key(english_by_id[candidate_id]) == english_key
+                }
+                if len(valid_texts) == 1:
+                    localized = valid_texts.pop()
+                    source = "same_bare_and_template"
+                    reused += 1
+            if source != "fallback":
+                matched += 1
+            record[locale] = localized or english_by_id[stat_id]
+            record["sources"][locale] = source
+
+        denominator = len(requested_ids)
+        ratio = matched / denominator if denominator else 1.0
+        coverage[locale] = {
+            "matched": matched,
+            "total": denominator,
+            "ratio": round(ratio, 6),
+            "exactId": exact,
+            "sameBareAndTemplate": reused,
+        }
+        if ratio < minimum_coverage:
+            raise DisplayMetadataCoverageError(
+                f"{locale} localized stat coverage {ratio:.2%} is below the required {minimum_coverage:.2%} "
+                f"({matched}/{denominator})"
+            )
+
+    return {"stats": stats, "coverage": coverage}
+
+
+def parse_poe2db_item_title(html: str) -> str:
+    match = HTML_TITLE_RE.search(str(html or ""))
+    if not match:
+        return ""
+    title = WHITESPACE_RE.sub(" ", unescape(strip_html(match.group(1)))).strip()
+    return title.rsplit(" - ", 1)[0].strip() if " - " in title else title
+
+
+def parse_poe2db_item_name_slugs(html: str) -> dict[str, tuple[str, str]]:
+    parser = Poe2dbItemLinkParser()
+    parser.feed(html)
+    return parser.items
+
+
+def build_item_display_metadata(
+    item_names: list[str],
+    english_names: dict[str, str],
+    simplified_names: dict[str, str],
+    traditional_names: dict[str, str],
+    minimum_coverage: float = 0.95,
+) -> dict[str, Any]:
+    items: dict[str, dict[str, str]] = {}
+    coverage: dict[str, dict[str, Any]] = {}
+    requested_names = sorted({str(name).strip() for name in item_names if str(name).strip()})
+    verified_names = [name for name in requested_names if english_names.get(name) == name]
+
+    for name in verified_names:
+        items[name] = {
+            "en": name,
+            "zh_CN": simplified_names.get(name) or name,
+            "zh_TW": traditional_names.get(name) or name,
+        }
+
+    for locale, names in (("zh_CN", simplified_names), ("zh_TW", traditional_names)):
+        matched = sum(1 for name in verified_names if names.get(name))
+        total = len(requested_names)
+        ratio = matched / total if total else 1.0
+        coverage[locale] = {"matched": matched, "total": total, "ratio": round(ratio, 6)}
+        if ratio < minimum_coverage:
+            raise DisplayMetadataCoverageError(
+                f"{locale} localized item coverage {ratio:.2%} is below the required {minimum_coverage:.2%} "
+                f"({matched}/{total})"
+            )
+    return {"items": items, "coverage": coverage}
+
+
+def build_safe_numeric_trade_item_localizations(
+    english_payload: dict[str, Any],
+    localized_payload: dict[str, Any],
+    requested_names: set[str],
+) -> dict[str, str]:
+    """Match localized names only when a stable group and numeric signature are unique.
+
+    Regional trade item payloads do not provide per-entry identifiers, so matching
+    list positions would be unsafe. Numeric signatures let generated parameterized
+    names use the official localized item data without guessing at list order.
+    """
+
+    localized_groups = {
+        str(group.get("id") or ""): group.get("entries") or []
+        for group in localized_payload.get("result", [])
+        if group.get("id")
+    }
+    candidates: dict[str, set[str]] = {}
+
+    def index_entries(entries: list[Any]) -> dict[tuple[str, ...], list[str]]:
+        indexed: dict[tuple[str, ...], list[str]] = {}
+        for entry in entries:
+            item_name = str(entry.get("type") or "").strip() if isinstance(entry, dict) else ""
+            if not item_name:
+                continue
+            signature = tuple(NUMBER_RE.findall(item_name))
+            if signature:
+                indexed.setdefault(signature, []).append(item_name)
+        return indexed
+
+    for english_group in english_payload.get("result", []):
+        group_id = str(english_group.get("id") or "")
+        localized_entries = localized_groups.get(group_id)
+        if not group_id or not isinstance(localized_entries, list):
+            continue
+        english_by_signature = index_entries(english_group.get("entries") or [])
+        localized_by_signature = index_entries(localized_entries)
+        for signature, english_names in english_by_signature.items():
+            localized_names = localized_by_signature.get(signature, [])
+            if english_names[0] in requested_names and len(english_names) == 1 and len(localized_names) == 1:
+                candidates.setdefault(english_names[0], set()).add(localized_names[0])
+
+    return {name: next(iter(names)) for name, names in candidates.items() if len(names) == 1}
 
 
 def build_trade_stat_universe(trade_stats_payload: dict[str, Any]) -> tuple[list[str], list[str]]:
@@ -853,6 +1083,92 @@ async def fetch_trade_items(url: str) -> dict[str, Any]:
         return json.loads(await fetch_text(client, url))
 
 
+async def collect_localized_item_names(
+    item_names: list[str],
+    page_urls: list[str],
+    workers: int,
+) -> tuple[dict[str, str], dict[str, str], dict[str, str]]:
+    locales = ("us", "cn", "tw")
+    items_by_locale: dict[str, dict[str, tuple[str, str]]] = {locale: {} for locale in locales}
+
+    async with build_async_client(max_connections=max(1, workers)) as client:
+        async def fetch_html(url: str) -> str:
+            error: Exception | None = None
+            for attempt in range(3):
+                try:
+                    return await fetch_text(client, url)
+                except Exception as caught:
+                    error = caught
+                    if attempt < 2:
+                        await asyncio.sleep(attempt + 1)
+            raise error or RuntimeError(f"Unable to fetch {url}")
+
+        async def fetch_page(page_url: str, locale: str) -> tuple[str, dict[str, tuple[str, str]]]:
+            page_slug = page_slug_from_url(page_url)
+            url = f"https://poe2db.tw/{locale}/{page_slug}"
+            try:
+                html = await fetch_html(url)
+                return locale, parse_poe2db_item_name_slugs(html)
+            except Exception as error:
+                print(f"[build_extension_data] failed to fetch localized item category {url}: {error}", file=sys.stderr)
+                return locale, {}
+
+        tasks = [
+            fetch_page(page_url, locale)
+            for page_url in page_urls
+            for locale in locales
+        ]
+        for locale, items in await asyncio.gather(*tasks):
+            for normalized_name, item in items.items():
+                items_by_locale[locale].setdefault(normalized_name, item)
+
+        english_names: dict[str, str] = {}
+        simplified_names: dict[str, str] = {}
+        traditional_names: dict[str, str] = {}
+        localized_by_slug = {
+            locale: {slug: name for name, slug in records.values()}
+            for locale, records in items_by_locale.items()
+        }
+        pending: list[tuple[str, str, str]] = []
+        for item_name in item_names:
+            english_item = items_by_locale["us"].get(normalize_lookup_text(item_name))
+            slug = english_item[1] if english_item and english_item[0] == item_name else poe2db_item_slug(item_name)
+            if english_item and english_item[0] == item_name:
+                english_names[item_name] = item_name
+            elif slug:
+                pending.append((item_name, slug, "us"))
+            localized_name = localized_by_slug["cn"].get(slug, "")
+            if localized_name:
+                simplified_names[item_name] = localized_name
+            elif slug:
+                pending.append((item_name, slug, "cn"))
+            localized_name = localized_by_slug["tw"].get(slug, "")
+            if localized_name:
+                traditional_names[item_name] = localized_name
+            elif slug:
+                pending.append((item_name, slug, "tw"))
+
+        async def fetch_item(item_name: str, slug: str, locale: str) -> tuple[str, str, str]:
+            url = f"https://poe2db.tw/{locale}/{slug}"
+            try:
+                return item_name, locale, parse_poe2db_item_title(await fetch_html(url))
+            except Exception as error:
+                print(f"[build_extension_data] failed to verify localized item page {url}: {error}", file=sys.stderr)
+                return item_name, locale, ""
+
+        for item_name, locale, localized_name in await asyncio.gather(
+            *(fetch_item(item_name, slug, locale) for item_name, slug, locale in pending)
+        ):
+            if locale == "us" and localized_name == item_name:
+                english_names[item_name] = item_name
+            elif locale == "cn" and localized_name:
+                simplified_names[item_name] = localized_name
+            elif locale == "tw" and localized_name:
+                traditional_names[item_name] = localized_name
+
+    return english_names, simplified_names, traditional_names
+
+
 def load_page_artifacts(split_dir: Path, trade_stat_index: dict[str, set[str]]) -> list[PageArtifacts]:
     index_payload = json.loads((split_dir / "index.json").read_text(encoding="utf-8"))
     artifacts: list[PageArtifacts] = []
@@ -1048,6 +1364,34 @@ def build_item_name_selection_map(
     return item_name_to_selection
 
 
+def build_favorite_item_display_names(
+    trade_items_payload: dict[str, Any],
+    page_categories: dict[str, Any],
+) -> list[str]:
+    names: list[str] = []
+    default_page_lookup = build_page_item_name_lookup(page_categories, include_item_names=True)
+    map_page_lookup = build_map_page_item_name_lookup(page_categories)
+    for group in trade_items_payload.get("result", []):
+        group_id = group.get("id")
+        logical_id = TRADE_ITEM_GROUP_TO_LOGICAL_CATEGORY.get(group_id)
+        if not logical_id:
+            continue
+        page_lookup = (
+            default_page_lookup
+            if group_id in TRADE_ITEM_GROUPS_WITH_TRUSTED_PAGE_ITEM_NAMES
+            else map_page_lookup
+        )
+        for entry in group.get("entries", []):
+            if not isinstance(entry, dict) or not select_trade_item_entry(entry, logical_id, page_lookup):
+                continue
+            # Result items store the trade entry's base `type`, not the optional
+            # unique-name search aliases in `text`.
+            item_name = str(entry.get("type") or "").strip()
+            if item_name:
+                names.append(item_name)
+    return dedupe_preserve_order(names)
+
+
 def build_page_item_name_lookup(
     page_categories: dict[str, Any],
     include_item_names: bool,
@@ -1154,11 +1498,70 @@ async def main() -> int:
         default=TRADE_ITEMS_URL,
         help="Official trade2 items API URL used to map selected item names to filter categories.",
     )
+    parser.add_argument(
+        "--zh-cn-trade-stats-url",
+        default=TRADE_STATS_ZH_CN_URL,
+        help="Official China trade2 stats API URL used only at build time for simplified Chinese display text.",
+    )
+    parser.add_argument(
+        "--zh-tw-trade-stats-url",
+        default=TRADE_STATS_ZH_TW_URL,
+        help="Official Taiwan trade2 stats API URL used only at build time for traditional Chinese display text.",
+    )
+    parser.add_argument(
+        "--zh-cn-trade-items-url",
+        default=TRADE_ITEMS_ZH_CN_URL,
+        help="Official China trade2 items API URL used only at build time for safe localized item names.",
+    )
+    parser.add_argument(
+        "--zh-tw-trade-items-url",
+        default=TRADE_ITEMS_ZH_TW_URL,
+        help="Official Taiwan trade2 items API URL used only at build time for safe localized item names.",
+    )
+    parser.add_argument(
+        "--minimum-display-coverage",
+        type=float,
+        default=0.95,
+        help="Minimum localized coverage for favorite-compatible stat IDs.",
+    )
+    parser.add_argument(
+        "--localized-item-workers",
+        type=int,
+        default=2,
+        help="Concurrent PoE2DB category-page requests for build-time item display metadata.",
+    )
+    parser.add_argument(
+        "--localized-item-cache",
+        default=str(REPO_ROOT / "build/localized-item-names.json"),
+        help="Build cache for verified PoE2DB item names. It is regenerated when absent.",
+    )
+    parser.add_argument(
+        "--refresh-localized-items",
+        action="store_true",
+        help="Ignore the localized item-name cache and fetch the current PoE2DB category pages.",
+    )
+    parser.add_argument(
+        "--minimum-item-display-coverage",
+        type=float,
+        default=0.95,
+        help="Minimum localized coverage for favorite item names.",
+    )
     args = parser.parse_args()
 
     split_dir = Path(args.split_dir)
     trade_stats_payload = await fetch_trade_stats(args.trade_stats_url)
     trade_items_payload = await fetch_trade_items(args.trade_items_url)
+    (
+        simplified_stats_payload,
+        traditional_stats_payload,
+        simplified_items_payload,
+        traditional_items_payload,
+    ) = await asyncio.gather(
+        fetch_trade_stats(args.zh_cn_trade_stats_url),
+        fetch_trade_stats(args.zh_tw_trade_stats_url),
+        fetch_trade_items(args.zh_cn_trade_items_url),
+        fetch_trade_items(args.zh_tw_trade_items_url),
+    )
     trade_stat_index = build_trade_stat_index(trade_stats_payload)
     trade_stat_records = build_trade_stat_records(trade_stats_payload)
     trade_skill_stat_index = build_trade_skill_stat_index(trade_stats_payload)
@@ -1220,6 +1623,18 @@ async def main() -> int:
     )
     logical_categories = build_logical_categories(page_categories)
     item_name_to_selection = build_item_name_selection_map(trade_items_payload, page_categories)
+    favorite_item_display_names = build_favorite_item_display_names(trade_items_payload, page_categories)
+    favorite_item_display_name_set = set(favorite_item_display_names)
+    simplified_numeric_item_names = build_safe_numeric_trade_item_localizations(
+        trade_items_payload,
+        simplified_items_payload,
+        favorite_item_display_name_set,
+    )
+    traditional_numeric_item_names = build_safe_numeric_trade_item_localizations(
+        trade_items_payload,
+        traditional_items_payload,
+        favorite_item_display_name_set,
+    )
     item_name_to_page = build_item_name_map(page_categories, item_name_to_selection)
     category_alias_to_selection = build_category_alias_map(page_categories, logical_categories)
     selection_options = build_selection_options(logical_categories, page_categories)
@@ -1241,12 +1656,78 @@ async def main() -> int:
             for stat_id in page["allowedStatIds"]
         }
     )
+    favorite_stat_ids = {
+        stat_id
+        for stat_id in build_trade_stat_text_map(trade_stats_payload)
+        if stat_id.split(".", 1)[0] in {"explicit", "fractured", "crafted", "desecrated"}
+    }
+    display_metadata = build_display_metadata(
+        trade_stats_payload,
+        simplified_stats_payload,
+        traditional_stats_payload,
+        favorite_stat_ids,
+        args.minimum_display_coverage,
+    )
+    item_cache_path = Path(args.localized_item_cache)
+    cached_item_names: dict[str, dict[str, str]] | None = None
+    if item_cache_path.exists() and not args.refresh_localized_items:
+        try:
+            cached_item_names = json.loads(item_cache_path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError) as error:
+            print(f"[build_extension_data] ignoring unreadable localized item cache {item_cache_path}: {error}", file=sys.stderr)
+    if cached_item_names:
+        english_item_names = cached_item_names.get("us", {})
+        simplified_item_names = cached_item_names.get("cn", {})
+        traditional_item_names = cached_item_names.get("tw", {})
+    else:
+        english_item_names, simplified_item_names, traditional_item_names = await collect_localized_item_names(
+            favorite_item_display_names,
+            [artifact.page_url for artifact in artifacts],
+            args.localized_item_workers,
+        )
+        item_cache_path.parent.mkdir(parents=True, exist_ok=True)
+        item_cache_path.write_text(
+            json.dumps(
+                {"us": english_item_names, "cn": simplified_item_names, "tw": traditional_item_names},
+                ensure_ascii=False,
+                indent=2,
+            )
+            + "\n",
+            encoding="utf-8",
+        )
+    # The requested names originate from the official English item payload, so
+    # they remain valid even when PoE2DB has no individual item page for them.
+    english_item_names = {name: name for name in favorite_item_display_names}
+    for item_name, localized_name in simplified_numeric_item_names.items():
+        simplified_item_names.setdefault(item_name, localized_name)
+    for item_name, localized_name in traditional_numeric_item_names.items():
+        traditional_item_names.setdefault(item_name, localized_name)
+    item_display_metadata = build_item_display_metadata(
+        favorite_item_display_names,
+        english_item_names,
+        simplified_item_names,
+        traditional_item_names,
+        args.minimum_item_display_coverage,
+    )
+    display_metadata["items"] = item_display_metadata["items"]
+    display_metadata["coverage"] = {
+        "stats": display_metadata["coverage"],
+        "items": item_display_metadata["coverage"],
+    }
 
     output = {
-        "version": 1,
+        "version": 2,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "source": "https://poe2db.tw/us/Modifiers",
         "tradeStatsSource": args.trade_stats_url,
+        "displayMetadataSources": {
+            "zh_CN": args.zh_cn_trade_stats_url,
+            "zh_TW": args.zh_tw_trade_stats_url,
+        },
+        "displayItemMetadataSources": {
+            "zh_CN": args.zh_cn_trade_items_url,
+            "zh_TW": args.zh_tw_trade_items_url,
+        },
         "tradeItemsSource": args.trade_items_url,
         "pageCategories": page_categories,
         "logicalCategories": logical_categories,
@@ -1256,6 +1737,7 @@ async def main() -> int:
         "selectionOptions": selection_options,
         "allPatterns": all_patterns,
         "allStatIds": all_stat_ids,
+        "displayMetadata": display_metadata,
     }
 
     out_path = Path(args.out)

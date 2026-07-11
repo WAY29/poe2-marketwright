@@ -8,6 +8,7 @@
   const UPDATE_TYPE = "POE2_MARKETWRIGHT_UPDATE";
   const READY_TYPE = "POE2_MARKETWRIGHT_READY";
   const STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
+  const SEARCH_SNAPSHOT_TYPE = "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT";
   const POB_MESSAGE_SOURCE = "poe2-marketwright-pob-copy";
   const FAVORITES_MESSAGE_SOURCE = "poe2-marketwright-favorites";
   const CURRENCY_MESSAGE_SOURCE = "poe2-marketwright-currency-conversion";
@@ -179,6 +180,47 @@
       }
     };
 
+    const getTradeSearchRequest = (url, body) => {
+      const match = String(url || "").match(/\/api\/trade2\/search\/(?:poe2\/)?([^/?#]+)/i);
+      if (!match || typeof body !== "string") {
+        return null;
+      }
+      try {
+        const league = decodeURIComponent(match[1]).trim();
+        const query = JSON.parse(body);
+        return league && query && typeof query === "object" ? { league, query } : null;
+      } catch (error) {
+        return null;
+      }
+    };
+
+    const emitLinkSearchSnapshot = (url, requestBody, responseBody) => {
+      if (!runtime.lastPayload.favoritesEnabled) {
+        return;
+      }
+      const request = getTradeSearchRequest(url, requestBody);
+      if (!request || typeof responseBody !== "string") {
+        return;
+      }
+      try {
+        const response = JSON.parse(responseBody);
+        const queryId = String(response?.id || "").trim();
+        if (!queryId) {
+          return;
+        }
+        window.postMessage(
+          {
+            source: SOURCE,
+            type: SEARCH_SNAPSHOT_TYPE,
+            payload: { league: request.league, queryId, query: request.query }
+          },
+          "*"
+        );
+      } catch (error) {
+        // A failed or non-JSON request must not affect the native trade request.
+      }
+    };
+
     const emitCurrencyUpdate = (url, body, searchUrl) => {
       if (!runtime.lastPayload.currencyConversionEnabled || !url) {
         return;
@@ -253,7 +295,14 @@
         }
 
         const searchUrl = window.location?.href || null;
+        const requestBody = typeof args[1]?.body === "string" ? args[1].body : null;
         const responsePromise = originalFetch.apply(this, args);
+        if (targetUrl?.includes("/api/trade2/search/")) {
+          responsePromise
+            .then((response) => response.clone().text())
+            .then((body) => emitLinkSearchSnapshot(targetUrl, requestBody, body))
+            .catch(() => {});
+        }
         if (
           targetUrl?.includes("/api/trade2/fetch/") &&
           (
@@ -278,9 +327,26 @@
         this.__poe2MarketwrightPobUrl =
           typeof url === "string" && url.includes("/api/trade2/fetch/") ? url : null;
         this.__poe2MarketwrightTradeSearchUrl = this.__poe2MarketwrightPobUrl ? window.location?.href || null : null;
+        this.__poe2MarketwrightLinkSearchUrl =
+          typeof url === "string" && url.includes("/api/trade2/search/") ? url : null;
         return originalOpen.call(this, method, url, ...rest);
       };
       XMLHttpRequest.prototype.send = function (...args) {
+        this.__poe2MarketwrightLinkSearchBody = typeof args[0] === "string" ? args[0] : null;
+        if (this.__poe2MarketwrightLinkSearchUrl) {
+          this.addEventListener(
+            "load",
+            () => {
+              try {
+                const body = this.responseType === "json" ? JSON.stringify(this.response) : this.responseText;
+                emitLinkSearchSnapshot(this.__poe2MarketwrightLinkSearchUrl, this.__poe2MarketwrightLinkSearchBody, body);
+              } catch (error) {
+                // Ignore inaccessible XHR responses.
+              }
+            },
+            { once: true }
+          );
+        }
         if (this.__poe2MarketwrightPobUrl) {
           this.addEventListener(
             "load",

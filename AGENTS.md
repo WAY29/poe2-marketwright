@@ -39,6 +39,13 @@ uv run --project scripts python scripts/poe2_scraper.py scrape --scope all --spl
 uv run --project scripts python scripts/build_extension_data.py --split-dir build/all-affixes-split --out data/affix-filter-data.json
 ```
 
+## Root-Cause Resolution
+
+- Do not hard-code handling for one failing item, error text, locale, URL, or observed data value merely to make the current case pass. Treat it as evidence of a missing data contract, unstable identity, incomplete model, or broken producer-consumer boundary.
+- Before implementing a fix, identify the failure's source, the invariant that should hold, and the full set of inputs governed by that invariant. Prefer stable IDs, structured fields, and verified relationships over list position, incidental text, or one-off string tables.
+- Implement the narrowest general rule that follows from the verified invariant. If a safe general mapping is unavailable, retain an explicit fallback and report the limitation rather than guessing or silently mislabeling data.
+- Add tests for the reported case, the general rule, and its ambiguity or failure boundary. A special-case exception is acceptable only when it represents a documented domain rule and is modeled as such, not as an unverified workaround.
+
 ## Price Conversion Rules
 
 - Read the active league from the current official trade page URL, not from an API response or a Poe2Scout league lookup.

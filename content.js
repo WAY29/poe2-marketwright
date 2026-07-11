@@ -10,6 +10,7 @@
 
   const STORAGE_KEY = "poe2Trade2AffixFilterState";
   const DEFAULT_STATE = {
+    uiLanguage: null,
     filteringEnabled: true,
     pobCopyEnabled: true,
     currencyConversionEnabled: true,
@@ -36,8 +37,10 @@
   const BRIDGE_UPDATE_TYPE = "POE2_MARKETWRIGHT_UPDATE";
   const BRIDGE_READY_TYPE = "POE2_MARKETWRIGHT_READY";
   const BRIDGE_STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
+  const BRIDGE_SEARCH_SNAPSHOT_TYPE = "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT";
   const TRADE_ROOT_SELECTOR = "#trade";
   const LOCALIZED_ALIAS_LOCALES = ["zh_CN", "zh_TW"];
+  const SUPPORTED_UI_LANGUAGES = Object.freeze(["en", "zh_CN", "zh_TW"]);
   const ITEM_SEARCH_ROOT_SELECTOR =
     "#trade .top .search-panel > .search-bar:not(.search-advanced) .search-left .multiselect.search-select";
   const ITEM_SEARCH_INPUT_SELECTOR = `${ITEM_SEARCH_ROOT_SELECTOR} input.multiselect__input`;
@@ -277,6 +280,15 @@
     selectionSourceAuto: "Auto",
     selectionSourceManual: "Manual",
     statsText: "Available $1 / Keep $2 / Ignore $3",
+    generalSettingsTitle: "General",
+    language: "Language",
+    languageEnglish: "English",
+    languageSimplifiedChinese: "Simplified Chinese",
+    languageTraditionalChinese: "Traditional Chinese",
+    favoriteTooltipItem: "Item",
+    favoriteTooltipBaseType: "Base type",
+    favoriteTooltipCategory: "Category",
+    favoriteTooltipModifiers: "Modifiers",
     statFilterTitle: "Stat filter",
     pobCopyTitle: "PoB Copy Button",
     currencyConversionTitle: "Price Conversion",
@@ -382,6 +394,7 @@
 
   const runtime = {
     data: null,
+    messages: null,
     state: { ...DEFAULT_STATE },
     allPatterns: new Set(),
     allStatIds: new Set(),
@@ -402,6 +415,7 @@
     selectionPollTimer: null,
     bridgeStats: null,
     bridgePayloadSignature: "",
+    tradeSearchSnapshots: new Map(),
     lastFilterStats: null,
     favoriteLeague: null,
     linkFavoriteLeague: null,
@@ -429,6 +443,7 @@
 
   async function bootstrap() {
     runtime.state = await loadState();
+    await loadUiMessages(runtime.state.uiLanguage);
     initializePobCopy();
     initializeFavorites();
     initializeCurrencyConversion();
@@ -479,12 +494,36 @@
     return messagesByLocale;
   }
 
+  function resolveUiLanguage(value) {
+    if (SUPPORTED_UI_LANGUAGES.includes(value)) {
+      return value;
+    }
+    const browserLanguage = globalThis.chrome?.i18n?.getUILanguage?.() || "";
+    const normalized = String(browserLanguage).replace("-", "_");
+    return SUPPORTED_UI_LANGUAGES.includes(normalized) ? normalized : "en";
+  }
+
+  async function loadUiMessages(language) {
+    const locale = resolveUiLanguage(language);
+    try {
+      const response = await fetch(chrome.runtime.getURL(`_locales/${locale}/messages.json`));
+      if (!response.ok) {
+        throw new Error(`Unable to load ${locale} messages: ${response.status}`);
+      }
+      runtime.messages = await response.json();
+    } catch (error) {
+      runtime.messages = null;
+      console.debug(`[PoE2 Marketwright] unable to load ${locale} messages`, error);
+    }
+  }
+
   async function loadState() {
     const stored = await chrome.storage.local.get(STORAGE_KEY);
     const savedState = stored[STORAGE_KEY] || {};
     return {
       ...DEFAULT_STATE,
       ...savedState,
+      uiLanguage: resolveUiLanguage(savedState.uiLanguage),
       favoritesEnabled:
         typeof savedState.favoritesEnabled === "boolean"
           ? savedState.favoritesEnabled
@@ -620,6 +659,15 @@
             </svg>
           </button>
         </div>
+        <section class="poe2-trade2-affix-filter-feature poe2-trade2-affix-filter-settings-feature">
+          <div class="poe2-trade2-affix-filter-feature-header">
+            <span id="poe2-trade2-affix-filter-settings-title" class="poe2-trade2-affix-filter-feature-title"></span>
+          </div>
+          <label class="poe2-trade2-affix-filter-field">
+            <span id="poe2-trade2-affix-filter-language-label" class="poe2-trade2-affix-filter-field-label"></span>
+            <select id="poe2-trade2-affix-filter-language"></select>
+          </label>
+        </section>
         <section class="poe2-trade2-affix-filter-feature poe2-trade2-affix-filter-stat-feature">
           <div class="poe2-trade2-affix-filter-feature-header">
             <span id="poe2-trade2-affix-filter-stat-title" class="poe2-trade2-affix-filter-feature-title"></span>
@@ -730,6 +778,9 @@
     ].filter(Boolean);
     runtime.ui.favoritesViewMode = runtime.ui.favoritesViewModes[0] || null;
     runtime.ui.currencyLeague = root.querySelector("#poe2-trade2-affix-filter-currency-league");
+    runtime.ui.settingsTitle = root.querySelector("#poe2-trade2-affix-filter-settings-title");
+    runtime.ui.languageLabel = root.querySelector("#poe2-trade2-affix-filter-language-label");
+    runtime.ui.language = root.querySelector("#poe2-trade2-affix-filter-language");
     runtime.ui.statTitle = root.querySelector("#poe2-trade2-affix-filter-stat-title");
     runtime.ui.pobTitle = root.querySelector("#poe2-trade2-affix-filter-pob-title");
     runtime.ui.favoritesTitle = root.querySelector("#poe2-marketwright-favorites-title");
@@ -744,8 +795,10 @@
     const leagueContext = runtime.currencyConversion?.getActiveLeagueContext?.();
     updateCurrencyLeague(leagueContext?.league, leagueContext?.searchUrl);
     populateSelectionOptions(runtime.ui.selection);
+    populateLanguageOptions(runtime.ui.language);
 
     runtime.ui.selection.value = runtime.state.selection;
+    runtime.ui.language.value = runtime.state.uiLanguage;
     updateToggleButton();
     renderFavoriteDrawer();
     renderLinkFavoritesDrawer();
@@ -918,6 +971,10 @@
         scheduleRefreshAfterDomUpdate();
       }, "change stat selection");
     });
+
+    runtime.ui.language.addEventListener("change", () => {
+      runAsync(() => setUiLanguage(runtime.ui.language.value), "change display language");
+    });
   }
 
   function updateStaticUiText() {
@@ -925,6 +982,8 @@
     runtime.ui.collapse.title = t("collapsePanel");
     runtime.ui.expand.setAttribute("aria-label", t("expandPanel"));
     runtime.ui.expand.title = t("expandPanel");
+    runtime.ui.settingsTitle.textContent = t("generalSettingsTitle");
+    runtime.ui.languageLabel.textContent = t("language");
     runtime.ui.statTitle.textContent = t("statFilterTitle");
     runtime.ui.pobTitle.textContent = t("pobCopyTitle");
     runtime.ui.favoritesTitle.textContent = t("favoritesTitle");
@@ -955,6 +1014,78 @@
     runtime.ui.linkFavoritesClose.title = t("closeLinkFavoritesDrawer");
     applyFavoritesDrawerState();
     applyLinkFavoritesDrawerState();
+  }
+
+  function populateLanguageOptions(select) {
+    if (!select) {
+      return;
+    }
+    select.replaceChildren();
+    const labels = {
+      en: t("languageEnglish"),
+      zh_CN: t("languageSimplifiedChinese"),
+      zh_TW: t("languageTraditionalChinese")
+    };
+    for (const language of SUPPORTED_UI_LANGUAGES) {
+      const option = document.createElement("option");
+      option.value = language;
+      option.textContent = labels[language];
+      select.appendChild(option);
+    }
+  }
+
+  async function setUiLanguage(language) {
+    const nextLanguage = resolveUiLanguage(language);
+    if (runtime.state.uiLanguage === nextLanguage) {
+      runtime.ui.language.value = nextLanguage;
+      return;
+    }
+    runtime.state.uiLanguage = nextLanguage;
+    await loadUiMessages(nextLanguage);
+    refreshLocalizedUi();
+    await saveState();
+  }
+
+  function refreshLocalizedUi() {
+    if (!runtime.ui.root) {
+      return;
+    }
+    updateStaticUiText();
+    populateLanguageOptions(runtime.ui.language);
+    runtime.ui.language.value = runtime.state.uiLanguage;
+    const selection = runtime.state.selection;
+    populateSelectionOptions(runtime.ui.selection);
+    runtime.ui.selection.value = selection;
+    runtime.ui.favoritesPanelFrame.title = t("favoritesFullViewTitle");
+    runtime.pobCopy?.setLabels?.({
+      ready: t("pobCopyReady"),
+      loading: t("pobCopyLoading"),
+      ok: t("pobCopyOk"),
+      error: t("pobCopyError")
+    });
+    runtime.favorites?.setLabels?.({
+      add: t("favoriteSave"),
+      remove: t("favoriteRemove"),
+      loading: t("favoriteLoading"),
+      saved: t("favoriteSaved"),
+      removed: t("favoriteRemoved"),
+      error: t("favoriteError")
+    });
+    runtime.currencyConversion?.setLabels?.({
+      showExalted: t("showExalted"),
+      showChaos: t("showChaos"),
+      showDivine: t("showDivine"),
+      currencyExalted: t("currencyExalted"),
+      currencyChaos: t("currencyChaos"),
+      currencyDivine: t("currencyDivine"),
+      loading: t("currencyLoading"),
+      unavailable: t("currencyUnavailable")
+    });
+    updateToggleButton();
+    renderFavoriteDrawer();
+    renderLinkFavoritesDrawer();
+    publishFavoritesPanelState();
+    scheduleRefresh();
   }
 
   function updateCurrencyLeague(league, searchUrl = null) {
@@ -1035,12 +1166,20 @@
 
   function t(key, substitutions = [], fallback = "") {
     const values = Array.isArray(substitutions) ? substitutions : [substitutions];
-    const message = globalThis.chrome?.i18n?.getMessage?.(
+    const entry = runtime.messages?.[key];
+    const message = entry?.message || globalThis.chrome?.i18n?.getMessage?.(
       key,
       values.map((value) => String(value))
     );
     const template = message || fallback || I18N_FALLBACKS[key] || key;
-    return values.reduce((text, value, index) => text.replaceAll(`$${index + 1}`, String(value)), template);
+    const namedValues = entry?.placeholders || {};
+    const withNamedSubstitutions = Object.entries(namedValues).reduce((text, [name, placeholder]) => {
+      const index = Number(String(placeholder?.content || "").match(/^\$(\d+)$/)?.[1]);
+      return Number.isInteger(index) && index > 0
+        ? text.replaceAll(`$${name.toUpperCase()}$`, String(values[index - 1] ?? ""))
+        : text;
+    }, template);
+    return values.reduce((text, value, index) => text.replaceAll(`$${index + 1}`, String(value)), withNamedSubstitutions);
   }
 
   function updateFavoritesViewModeButton() {
@@ -1191,15 +1330,16 @@
     return {
       available: Boolean(league),
       league: league || null,
+      uiLanguage: runtime.state.uiLanguage,
       favoritesViewMode: getFavoritesViewMode(),
       favoritesPanelOpen: Boolean(runtime.state.favoritesPanelOpen),
       favoritesPanelTab: getFavoritesPanelTab(),
       favoritesEnabled: Boolean(runtime.state.favoritesEnabled),
       linkFavoritesEnabled: Boolean(runtime.state.linkFavoritesEnabled),
-      favorites,
+      favorites: favorites.map(getFavoritePresentation),
       linkFavorites: {
         folders,
-        links: leagueState?.links || [],
+        links: (leagueState?.links || []).map(getLinkFavoritePresentation),
         rootLinkIds: leagueState?.rootLinkIds || [],
         folderLinkIds: leagueState?.folderLinkIds || {}
       },
@@ -1348,10 +1488,12 @@
     try {
       const current = tools.validateTradeSearchUrl(window.location.href);
       const filterGroups = getCurrentLinkFavoriteFilterGroups();
+      const displaySnapshot = runtime.tradeSearchSnapshots.get(`${current.league}\u0000${current.queryId}`) || null;
       return {
         ...current,
         displayName: getCurrentLinkFavoriteDisplayName(),
-        ...(filterGroups.length ? { filterGroups } : {})
+        ...(filterGroups.length ? { filterGroups } : {}),
+        ...(displaySnapshot ? { displaySnapshot } : {})
       };
     } catch (error) {
       return null;
@@ -1533,7 +1675,130 @@
     return {
       baseName,
       category,
-      itemType: FAVORITE_TRADE_CATEGORY_LABELS[category] || category
+      itemType: FAVORITE_TRADE_CATEGORY_LABELS[category] || category,
+      selection: { kind: selection.kind, id: selection.id }
+    };
+  }
+
+  function getDisplayMetadata() {
+    return runtime.data?.displayMetadata || {};
+  }
+
+  function getLocalizedDisplayText(record, fallback) {
+    const language = runtime.state.uiLanguage;
+    if (language === "en") {
+      return String(record?.en || fallback || "");
+    }
+    return String(record?.[language] || record?.en || fallback || "");
+  }
+
+  function getFavoriteItemRecord(name) {
+    const items = getDisplayMetadata().items || {};
+    return items[name] || items[normalizeLookupText(name)] || null;
+  }
+
+  function getFavoriteSelection(favorite) {
+    const selection = favorite?.itemSelection;
+    if (selection?.kind && selection?.id) {
+      return selection;
+    }
+    return lookupItemNameSelection(normalizeLookupText(favorite?.baseName || ""));
+  }
+
+  function getLocalizedFavoriteBaseName(favorite) {
+    return getLocalizedDisplayText(getFavoriteItemRecord(favorite?.baseName), favorite?.baseName);
+  }
+
+  function getLocalizedFavoriteItemType(favorite) {
+    const selection = getFavoriteSelection(favorite);
+    return selection ? localizeSelectionLabel(selection, favorite?.itemType || favorite?.category) : favorite?.itemType || favorite?.category || "";
+  }
+
+  function getLocalizedFavoriteCategory(category) {
+    const pageId = Object.entries(FAVORITE_TRADE_CATEGORY_BY_PAGE).find(([, value]) => value === category)?.[0];
+    const fallback = FAVORITE_TRADE_CATEGORY_LABELS[category] || category || "";
+    return pageId ? localizeSelectionLabel({ kind: "page", id: pageId }, fallback) : fallback;
+  }
+
+  function getLocalizedFavoriteRarity(rarity) {
+    const labels = {
+      normal: { en: "Normal", zh_CN: "普通", zh_TW: "普通" },
+      magic: { en: "Magic", zh_CN: "魔法", zh_TW: "魔法" },
+      rare: { en: "Rare", zh_CN: "稀有", zh_TW: "稀有" },
+      unique: { en: "Unique", zh_CN: "传奇", zh_TW: "傳奇" }
+    };
+    return getLocalizedDisplayText(labels[String(rarity || "").toLowerCase()], rarity);
+  }
+
+  function formatLocalizedFavoriteModifier(modifier) {
+    const text = String(modifier?.text || "");
+    const localizedTemplate = getLocalizedDisplayText(getDisplayMetadata().stats?.[modifier?.id], text);
+    const numbers = text.match(NUMBER_RE) || [];
+    let numberIndex = 0;
+    const localizedText = localizedTemplate.replace(/#/g, (placeholder, offset, template) => {
+      const value = numbers[numberIndex++] || placeholder;
+      return template[offset - 1] === "+" ? value.replace(/^\+/, "") : value;
+    });
+    return { ...modifier, text: localizedText || text };
+  }
+
+  function formatLocalizedLinkSnapshotStat(stat) {
+    const metadata = getDisplayMetadata().stats?.[stat?.id];
+    const englishTemplate = String(metadata?.en || stat?.id || "");
+    const values = [stat?.value?.min, stat?.value?.max].filter(Number.isFinite).map(String);
+    let valueIndex = 0;
+    const englishText = englishTemplate.replace(/#/g, () => values[valueIndex++] || values.at(-1) || "#");
+    return formatLocalizedFavoriteModifier({ id: stat?.id, text: englishText, source: String(stat?.id || "").split(".", 1)[0] });
+  }
+
+  function getLinkFavoritePresentation(link) {
+    const snapshot = link?.displaySnapshot;
+    if (!snapshot) {
+      return link;
+    }
+    const type = getLocalizedDisplayText(getFavoriteItemRecord(snapshot.type), snapshot.type);
+    return {
+      ...link,
+      localizedSnapshot: {
+        ...(type ? { type } : {}),
+        ...(snapshot.category ? { category: getLocalizedFavoriteCategory(snapshot.category) } : {}),
+        ...(snapshot.rarity ? { rarity: getLocalizedFavoriteRarity(snapshot.rarity) } : {}),
+        stats: (snapshot.stats || []).map(formatLocalizedLinkSnapshotStat).filter((stat) => stat.text)
+      }
+    };
+  }
+
+  function getFavoritePresentation(favorite) {
+    const baseName = getLocalizedFavoriteBaseName(favorite);
+    const automaticName = String(favorite?.originalName || favorite?.displayName || "").trim();
+    const automaticNameRecord = getFavoriteItemRecord(automaticName);
+    const displayName =
+      favorite?.nameSource === "automatic"
+        ? automaticNameRecord
+          ? getLocalizedDisplayText(automaticNameRecord, baseName)
+          : automaticName || baseName
+        : favorite?.displayName || baseName;
+    const mods = (favorite?.mods || []).map(formatLocalizedFavoriteModifier);
+    return {
+      ...favorite,
+      displayName,
+      originalName: favorite?.nameSource === "automatic" ? "" : favorite?.originalName || "",
+      baseName,
+      itemType: getLocalizedFavoriteItemType(favorite),
+      rarity: getLocalizedFavoriteRarity(favorite?.rarity),
+      mods,
+      searchTerms: [
+        favorite?.displayName,
+        favorite?.originalName,
+        favorite?.baseName,
+        favorite?.itemType,
+        favorite?.rarity,
+        baseName,
+        getLocalizedFavoriteItemType(favorite),
+        getLocalizedFavoriteRarity(favorite?.rarity),
+        ...mods.map((modifier) => modifier.text),
+        ...(favorite?.mods || []).map((modifier) => modifier?.text)
+      ].filter(Boolean)
     };
   }
 
@@ -1547,7 +1812,9 @@
     if (!search) {
       return favorites;
     }
-    return favorites.filter((favorite) => String(favorite.displayName || "").toLowerCase().includes(search));
+    return favorites.filter((favorite) =>
+      getFavoritePresentation(favorite).searchTerms.some((term) => String(term).toLowerCase().includes(search))
+    );
   }
 
   function createFavoriteIconButton(className, title, path) {
@@ -1579,21 +1846,28 @@
     };
   }
 
+  function getFavoriteTooltipItemValues(favorite) {
+    const name = favorite?.displayName || favorite?.originalName || favorite?.baseName || "";
+    const baseName = favorite?.baseName || "";
+    return [
+      name && { text: name, source: null, heading: true },
+      baseName && baseName !== name && { text: `${t("favoriteTooltipBaseType")}: ${baseName}`, source: null },
+      (favorite?.itemType || favorite?.category) && {
+        text: `${t("favoriteTooltipCategory")}: ${favorite.itemType || favorite.category}`,
+        source: null
+      },
+      { text: t("favoriteTooltipRarity", String(favorite?.rarity || "").toUpperCase()), source: null }
+    ].filter(Boolean);
+  }
+
   function getCompactFavoritePresentation(favorite) {
-    const itemValues = [
-      `Rarity: ${String(favorite?.rarity || "").toUpperCase()}`,
-      favorite?.originalName || favorite?.displayName || "",
-      favorite?.baseName || "",
-      favorite?.itemType || ""
-    ]
-      .filter(Boolean)
-      .map((text) => ({ text, source: null }));
+    const itemValues = getFavoriteTooltipItemValues(favorite);
     const modifiers = (favorite?.mods || []).map(getCompactFavoriteModifierPresentation).filter((modifier) => modifier.text);
     return {
       stats: modifiers,
       tooltipGroups: [
-        ...(itemValues.length ? [{ label: "Item", values: itemValues }] : []),
-        ...(modifiers.length ? [{ label: "Modifiers", values: modifiers }] : [])
+        ...(itemValues.length ? [{ label: t("favoriteTooltipItem"), hideLabel: true, values: itemValues }] : []),
+        ...(modifiers.length ? [{ label: t("favoriteTooltipModifiers"), values: modifiers }] : [])
       ]
     };
   }
@@ -1629,14 +1903,15 @@
     }
 
     for (const favorite of favorites) {
+      const presentationFavorite = getFavoritePresentation(favorite);
       const row = document.createElement("article");
       row.className = "poe2-marketwright-favorite-row";
 
       const launch = document.createElement("button");
       launch.type = "button";
       launch.className = "poe2-marketwright-favorite-launch";
-      launch.setAttribute("aria-label", favorite.displayName || favorite.baseName || "");
-      const presentation = getCompactFavoritePresentation(favorite);
+      launch.setAttribute("aria-label", presentationFavorite.displayName || presentationFavorite.baseName || "");
+      const presentation = getCompactFavoritePresentation(presentationFavorite);
       bindCompactLinkFavoriteTooltip(launch, presentation);
       launch.addEventListener("click", () => {
         void launchFavoriteSearch(favorite, launch, row);
@@ -1644,13 +1919,13 @@
 
       const name = document.createElement("span");
       name.className = "poe2-marketwright-favorite-name";
-      name.textContent = favorite.displayName || favorite.baseName;
+      name.textContent = presentationFavorite.displayName || presentationFavorite.baseName;
       launch.appendChild(name);
       const visibleMods = presentation.stats.slice(0, 3);
       for (const mod of visibleMods) {
         launch.appendChild(renderCompactLinkFavoriteStat(mod));
       }
-      const extraModCount = Math.max(0, (favorite.mods?.length || 0) - visibleMods.length);
+      const extraModCount = Math.max(0, (presentationFavorite.mods?.length || 0) - visibleMods.length);
       if (extraModCount) {
         const more = document.createElement("span");
         more.className = "poe2-marketwright-favorite-more";
@@ -1727,7 +2002,7 @@
     }
     await replaceFavorites(
       runtime.state.favorites.map((entry) =>
-        entry?.signature === favorite.signature ? { ...entry, displayName: name } : entry
+        entry?.signature === favorite.signature ? { ...entry, displayName: name, nameSource: "custom" } : entry
       )
     );
   }
@@ -2484,7 +2759,15 @@
   }
 
   function getCompactLinkFavoritePresentation(link) {
-    const tooltipGroups = (link?.filterGroups || [])
+    const snapshot = link?.localizedSnapshot;
+    const snapshotItemValues = [snapshot?.type, snapshot?.category, snapshot?.rarity]
+      .filter(Boolean)
+      .map((text) => ({ text, source: null }));
+    const snapshotStats = snapshot?.stats || [];
+    const tooltipGroups = [
+      ...(snapshotItemValues.length ? [{ label: t("favoriteTooltipItem"), values: snapshotItemValues }] : []),
+      ...(snapshotStats.length ? [{ label: t("favoriteTooltipModifiers"), values: snapshotStats }] : []),
+      ...(link?.filterGroups || [])
       .map((group) => {
         const label = String(group?.label || "").trim();
         const statFilters = isCompactLinkFavoriteStatFilterGroup(group);
@@ -2493,9 +2776,12 @@
           .map((value) => (statFilters ? formatCompactLinkFavoriteStatFilter(value) : { text: String(value), source: null }));
         return label && values.length ? { label, values } : null;
       })
-      .filter(Boolean);
+      .filter(Boolean)
+    ];
     return {
-      stats: tooltipGroups.filter((group) => isCompactLinkFavoriteStatFilterGroup(group)).flatMap((group) => group.values),
+      stats: snapshotStats.length
+        ? snapshotStats
+        : tooltipGroups.filter((group) => isCompactLinkFavoriteStatFilterGroup(group)).flatMap((group) => group.values),
       tooltipGroups
     };
   }
@@ -2531,11 +2817,14 @@
           continue;
         }
         const item = document.createElement("span");
-        item.className = "poe2-marketwright-link-favorite-tooltip-value";
+        item.className = `poe2-marketwright-link-favorite-tooltip-value${value.heading ? " poe2-marketwright-link-favorite-tooltip-value-heading" : ""}`;
         item.textContent = value.text;
         values.appendChild(item);
       }
-      section.append(label, values);
+      if (!group.hideLabel) {
+        section.appendChild(label);
+      }
+      section.appendChild(values);
       root.appendChild(section);
     }
     return root;
@@ -2688,7 +2977,7 @@
     const launch = document.createElement("button");
     launch.type = "button";
     launch.className = "poe2-marketwright-link-favorite-launch";
-    const presentation = getCompactLinkFavoritePresentation(link);
+    const presentation = getCompactLinkFavoritePresentation(getLinkFavoritePresentation(link));
     const name = document.createElement("span");
     name.className = "poe2-marketwright-link-favorite-name";
     name.textContent = link.displayName;
@@ -3583,6 +3872,20 @@
         return;
       }
 
+      if (event.data.type === BRIDGE_SEARCH_SNAPSHOT_TYPE) {
+        const payload = event.data.payload || {};
+        const snapshot = buildLinkFavoriteDisplaySnapshot(payload.query);
+        const league = String(payload.league || "").trim();
+        const queryId = String(payload.queryId || "").trim();
+        if (snapshot && league && queryId) {
+          runtime.tradeSearchSnapshots.set(`${league}\u0000${queryId}`, snapshot);
+          if (runtime.tradeSearchSnapshots.size > 12) {
+            runtime.tradeSearchSnapshots.delete(runtime.tradeSearchSnapshots.keys().next().value);
+          }
+        }
+        return;
+      }
+
       if (event.data.type !== BRIDGE_STATE_TYPE) {
         return;
       }
@@ -3593,6 +3896,38 @@
         scheduleRefresh();
       }
     });
+  }
+
+  function buildLinkFavoriteDisplaySnapshot(payload) {
+    const query = payload?.query && typeof payload.query === "object" ? payload.query : payload;
+    if (!query || typeof query !== "object") {
+      return null;
+    }
+    const typeFilters = query.filters?.type_filters?.filters || {};
+    const type = String(query.type || "").trim();
+    const category = String(typeFilters.category?.option || "").trim();
+    const rarity = String(typeFilters.rarity?.option || "").trim();
+    const stats = (Array.isArray(query.stats) ? query.stats : [])
+      .flatMap((group) => (Array.isArray(group?.filters) ? group.filters : []))
+      .slice(0, 80)
+      .map((stat) => {
+        const id = String(stat?.id || "").trim();
+        if (!id) {
+          return null;
+        }
+        const min = Number(stat?.value?.min);
+        const max = Number(stat?.value?.max);
+        return {
+          id,
+          ...(Number.isFinite(min) || Number.isFinite(max)
+            ? { value: { ...(Number.isFinite(min) ? { min } : {}), ...(Number.isFinite(max) ? { max } : {}) } }
+            : {})
+        };
+      })
+      .filter(Boolean);
+    return type || category || rarity || stats.length
+      ? { ...(type ? { type } : {}), ...(category ? { category } : {}), ...(rarity ? { rarity } : {}), ...(stats.length ? { stats } : {}) }
+      : null;
   }
 
   function injectPageBridge() {
@@ -4712,6 +5047,7 @@
       pobCopyEnabled: Boolean(runtime.state.pobCopyEnabled),
       favoritesEnabled: Boolean(runtime.state.favoritesEnabled),
       currencyConversionEnabled: Boolean(runtime.state.currencyConversionEnabled),
+      uiLanguage: runtime.state.uiLanguage,
       allowedKeys: enabled ? Array.from(allowedPatterns || []) : [],
       allowedStatIds: enabled ? Array.from(allowedStatIds || []) : [],
       allKeys: Array.from(runtime.allPatterns),
@@ -4722,6 +5058,7 @@
       payload.pobCopyEnabled,
       payload.favoritesEnabled,
       payload.currencyConversionEnabled,
+      payload.uiLanguage,
       payload.allowedKeys.join("|"),
       payload.allowedStatIds.join("|"),
       payload.allKeys.join("|"),

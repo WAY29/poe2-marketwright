@@ -549,11 +549,12 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
                 "tooltipGroups": [
                     {
                         "label": "Item",
+                        "hideLabel": True,
                         "values": [
+                            {"text": "Storm Ward", "source": None, "heading": True},
+                            {"text": "Base type: Rider Bow", "source": None},
+                            {"text": "Category: Bow", "source": None},
                             {"text": "Rarity: RARE", "source": None},
-                            {"text": "Storm Ward", "source": None},
-                            {"text": "Rider Bow", "source": None},
-                            {"text": "Bow", "source": None},
                         ],
                     },
                     {
@@ -568,6 +569,99 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
                     },
                 ],
             },
+        )
+
+    def test_full_view_restores_search_focus_and_selection_after_filter_render(self) -> None:
+        result = self.run_node(
+            r'''
+            const fs = require("fs");
+            const vm = require("vm");
+            let source = fs.readFileSync("favorites-panel.js", "utf8");
+            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { captureSearchFocus, restoreSearchFocus, local };\n})();"
+            );
+            const nextSearch = {
+              focusOptions: null,
+              selection: null,
+              focus(options) { this.focusOptions = options; },
+              setSelectionRange(start, end) { this.selection = [start, end]; }
+            };
+            const activeSearch = {
+              value: "bow",
+              selectionStart: 1,
+              selectionEnd: 3,
+              classList: { contains(name) { return name === "favorites-panel-search"; } }
+            };
+            const sandbox = {
+              window: {},
+              document: {
+                activeElement: activeSearch,
+                querySelector(selector) {
+                  return selector === "#favorites-panel-content"
+                    ? { querySelector() { return nextSearch; } }
+                    : null;
+                }
+              },
+              location: { search: "" },
+              URLSearchParams,
+              console
+            };
+            vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
+            const hooks = sandbox.window.__testHooks;
+            hooks.local.tab = "items";
+            const focus = hooks.captureSearchFocus();
+            hooks.restoreSearchFocus(focus);
+            console.log(JSON.stringify({ focus, focusOptions: nextSearch.focusOptions, selection: nextSearch.selection }));
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "focus": {"tab": "items", "selectionStart": 1, "selectionEnd": 3},
+                "focusOptions": {"preventScroll": True},
+                "selection": [1, 3],
+            },
+        )
+
+    def test_compact_item_tooltip_omits_a_base_type_that_is_already_the_title(self) -> None:
+        result = self.run_node(
+            r'''
+            const fs = require("fs");
+            const vm = require("vm");
+            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { getCompactFavoritePresentation };\n})();"
+            );
+            const sandbox = {
+              window: { addEventListener() {} },
+              document: {},
+              location: { pathname: "/trade2" },
+              console
+            };
+            vm.runInNewContext(source, sandbox, { filename: "content.js" });
+            const presentation = sandbox.window.__testHooks.getCompactFavoritePresentation({
+              rarity: "rare",
+              displayName: "Waystone (Tier 15)",
+              baseName: "Waystone (Tier 15)",
+              itemType: "Waystone",
+              mods: []
+            });
+            console.log(JSON.stringify(presentation.tooltipGroups[0].values));
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            [
+                {"text": "Waystone (Tier 15)", "source": None, "heading": True},
+                {"text": "Category: Waystone", "source": None},
+                {"text": "Rarity: RARE", "source": None},
+            ],
         )
 
     def test_full_item_favorite_uses_custom_tooltip_groups(self) -> None:
@@ -607,7 +701,16 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
             result,
             {
                 "filterGroups": [
-                    {"label": "Item", "values": ["Rarity: RARE", "Storm Ward", "Rider Bow", "Bow"]},
+                    {
+                        "label": "Item",
+                        "hideLabel": True,
+                        "values": [
+                            {"text": "Storm Ward", "heading": True},
+                            "Base type: Rider Bow",
+                            "Category: Bow",
+                            "Rarity: RARE",
+                        ],
+                    },
                     {
                         "label": "Modifiers",
                         "values": [
@@ -620,6 +723,54 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
                     },
                 ]
             },
+        )
+
+    def test_full_item_tooltip_keeps_the_hidden_item_group_through_group_normalization(self) -> None:
+        result = self.run_node(
+            r'''
+            const fs = require("fs");
+            const vm = require("vm");
+            let source = fs.readFileSync("favorites-panel.js", "utf8");
+            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { getFavoriteTooltipLink, getLinkFavoriteTooltipGroups };\n})();"
+            );
+            const sandbox = {
+              window: {},
+              document: { querySelector() { return null; } },
+              location: { search: "" },
+              URLSearchParams,
+              console
+            };
+            vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
+            const hooks = sandbox.window.__testHooks;
+            const favorite = hooks.getFavoriteTooltipLink({
+              rarity: "rare",
+              displayName: "Storm Ward",
+              baseName: "Rider Bow",
+              itemType: "Bow",
+              mods: [{ text: "+60 to maximum Life" }]
+            });
+            console.log(JSON.stringify(hooks.getLinkFavoriteTooltipGroups(favorite)));
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            [
+                {
+                    "label": "Item",
+                    "hideLabel": True,
+                    "values": [
+                        {"text": "Storm Ward", "source": None, "heading": True},
+                        {"text": "Base type: Rider Bow", "source": None},
+                        {"text": "Category: Bow", "source": None},
+                        {"text": "Rarity: RARE", "source": None},
+                    ],
+                },
+                {"label": "Modifiers", "values": [{"text": "+60 to maximum Life", "source": None}]},
+            ],
         )
 
     def test_full_view_drag_handles_publish_a_recoverable_drag_source(self) -> None:

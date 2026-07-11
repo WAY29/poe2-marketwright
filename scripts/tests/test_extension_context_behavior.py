@@ -59,6 +59,113 @@ class ExtensionContextBehaviorTests(unittest.TestCase):
 
         self.assertEqual(result, {"resolved": True})
 
+    def test_global_language_prefers_the_saved_choice_and_migrates_browser_language(self) -> None:
+        result = self.run_node(
+            r'''
+            (async () => {
+            const fs = require("fs");
+            const vm = require("vm");
+            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { loadState, resolveUiLanguage };\n})();"
+            );
+            const sandbox = {
+              window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+              document: {},
+              location: { pathname: "/trade2" },
+              console,
+              chrome: {
+                i18n: { getUILanguage: () => "zh-TW" },
+                storage: {
+                  local: {
+                    get: async () => ({ poe2Trade2AffixFilterState: {} })
+                  }
+                }
+              }
+            };
+            vm.runInNewContext(source, sandbox, { filename: "content.js" });
+            const hooks = sandbox.window.__testHooks;
+            const migrated = await hooks.loadState();
+            sandbox.chrome.storage.local.get = async () => ({
+              poe2Trade2AffixFilterState: { uiLanguage: "zh_CN" }
+            });
+            const saved = await hooks.loadState();
+            console.log(JSON.stringify({
+              migrated: migrated.uiLanguage,
+              saved: saved.uiLanguage,
+              normalized: hooks.resolveUiLanguage("unsupported")
+            }));
+            })();
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            {"migrated": "zh_TW", "saved": "zh_CN", "normalized": "zh_TW"},
+        )
+
+    def test_favorite_presentation_uses_the_global_language_without_overwriting_custom_names(self) -> None:
+        result = self.run_node(
+            r'''
+            const fs = require("fs");
+            const vm = require("vm");
+            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { getFavoritePresentation, runtime };\n})();"
+            );
+            const sandbox = {
+              window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+              document: {},
+              location: { pathname: "/trade2" },
+              console,
+              chrome: {}
+            };
+            vm.runInNewContext(source, sandbox, { filename: "content.js" });
+            const hooks = sandbox.window.__testHooks;
+            hooks.runtime.state = { uiLanguage: "zh_CN" };
+            hooks.runtime.messages = { selectionPage_Bows: { message: "弓" } };
+            hooks.runtime.data = {
+              itemNameToSelection: { "rider bow": { kind: "page", id: "Bows" } },
+              displayMetadata: {
+                items: { "Rider Bow": { en: "Rider Bow", zh_CN: "骑射之弓", zh_TW: "騎士之弓" } },
+                stats: {
+                  "explicit.stat_life": { en: "+# to maximum Life", zh_CN: "+# 生命上限", zh_TW: "+# 最大生命" }
+                }
+              }
+            };
+            const automatic = hooks.getFavoritePresentation({
+              nameSource: "automatic",
+              displayName: "Storm Ward",
+              originalName: "Storm Ward",
+              baseName: "Rider Bow",
+              itemType: "Bow",
+              rarity: "rare",
+              mods: [{ id: "explicit.stat_life", text: "+60 to maximum Life", source: "explicit" }]
+            });
+            const custom = hooks.getFavoritePresentation({
+              nameSource: "custom",
+              displayName: "My saved bow",
+              baseName: "Rider Bow",
+              itemType: "Bow",
+              rarity: "rare",
+              mods: []
+            });
+            console.log(JSON.stringify({ automatic, custom }));
+            ''',
+        )
+
+        self.assertEqual(result["automatic"]["displayName"], "Storm Ward")
+        self.assertEqual(result["automatic"]["baseName"], "骑射之弓")
+        self.assertEqual(result["automatic"]["itemType"], "弓")
+        self.assertEqual(result["automatic"]["rarity"], "稀有")
+        self.assertEqual(result["automatic"]["mods"][0]["text"], "+60 生命上限")
+        self.assertIn("+60 to maximum Life", result["automatic"]["searchTerms"])
+        self.assertEqual(result["custom"]["displayName"], "My saved bow")
+
     def test_currency_panel_displays_the_detected_league(self) -> None:
         result = self.run_node(
             r'''

@@ -14,6 +14,11 @@
     favoritesPanelNoLinkMatches: "No matching bookmarks",
     linkFavoritesEmpty: "No saved bookmarks",
     favoriteMoreMods: "+$1 more",
+    favoriteTooltipItem: "Item",
+    favoriteTooltipBaseType: "Base type",
+    favoriteTooltipCategory: "Category",
+    favoriteTooltipRarity: "Rarity: $1",
+    favoriteTooltipModifiers: "Modifiers",
     renameFavorite: "Rename favorite",
     deleteFavorite: "Delete favorite",
     undoFavoriteDelete: "Undo",
@@ -74,6 +79,8 @@
   };
   const local = {
     state: null,
+    messages: null,
+    messageLanguage: null,
     tab: "items",
     itemSearch: "",
     linkSearch: "",
@@ -91,9 +98,35 @@
 
   function t(key, substitutions = []) {
     const values = Array.isArray(substitutions) ? substitutions : [substitutions];
-    const message = chrome.i18n?.getMessage?.(key, values.map(String));
+    const entry = local.messages?.[key];
+    const message = entry?.message || globalThis.chrome?.i18n?.getMessage?.(key, values.map(String));
     const template = message || fallbackMessages[key] || key;
-    return values.reduce((text, value, index) => text.replaceAll(`$${index + 1}`, String(value)), template);
+    const namedValues = entry?.placeholders || {};
+    const withNamedSubstitutions = Object.entries(namedValues).reduce((text, [name, placeholder]) => {
+      const index = Number(String(placeholder?.content || "").match(/^\$(\d+)$/)?.[1]);
+      return Number.isInteger(index) && index > 0
+        ? text.replaceAll(`$${name.toUpperCase()}$`, String(values[index - 1] ?? ""))
+        : text;
+    }, template);
+    return values.reduce((text, value, index) => text.replaceAll(`$${index + 1}`, String(value)), withNamedSubstitutions);
+  }
+
+  async function loadMessages(language) {
+    const locale = ["en", "zh_CN", "zh_TW"].includes(language) ? language : "en";
+    if (local.messageLanguage === locale) {
+      return;
+    }
+    local.messageLanguage = locale;
+    try {
+      const response = await fetch(globalThis.chrome?.runtime?.getURL?.(`_locales/${locale}/messages.json`));
+      if (!response.ok) {
+        throw new Error(`Unable to load ${locale} messages: ${response.status}`);
+      }
+      local.messages = await response.json();
+    } catch (error) {
+      local.messages = null;
+      console.debug(`[PoE2 Marketwright] unable to load ${locale} messages`, error);
+    }
   }
 
   function createElement(tagName, className, text = null) {
@@ -133,19 +166,21 @@
       throw new Error(response?.error || "favorites_panel_request_failed");
     }
     if (response.state) {
-      setState(response.state);
+      await setState(response.state);
     }
     return response;
   }
 
-  function setState(nextState) {
+  async function setState(nextState) {
     local.state = nextState;
+    await loadMessages(nextState?.uiLanguage);
     local.tab = nextState?.favoritesPanelTab === "links" ? "links" : "items";
     render();
   }
 
   function render() {
     const state = local.state;
+    const searchFocus = captureSearchFocus();
     hideLinkFavoriteTooltip();
     ui.title.textContent = t("favoritesFullViewTitle");
     ui.league.textContent = state?.available ? state.league : "";
@@ -167,6 +202,33 @@
       return;
     }
     ui.content.appendChild(local.tab === "links" ? renderLinks(state) : renderItems(state));
+    restoreSearchFocus(searchFocus);
+  }
+
+  function captureSearchFocus() {
+    const search = document.activeElement;
+    if (!search?.classList?.contains("favorites-panel-search")) {
+      return null;
+    }
+    return {
+      tab: local.tab,
+      selectionStart: Number.isInteger(search.selectionStart) ? search.selectionStart : null,
+      selectionEnd: Number.isInteger(search.selectionEnd) ? search.selectionEnd : null
+    };
+  }
+
+  function restoreSearchFocus(focus) {
+    if (!focus || focus.tab !== local.tab) {
+      return;
+    }
+    const search = ui.content?.querySelector(".favorites-panel-search");
+    if (!search) {
+      return;
+    }
+    search.focus({ preventScroll: true });
+    if (Number.isInteger(focus.selectionStart) && Number.isInteger(focus.selectionEnd)) {
+      search.setSelectionRange?.(focus.selectionStart, focus.selectionEnd);
+    }
   }
 
   function makeSearch(value, placeholder, onInput) {
@@ -190,21 +252,23 @@
   }
 
   function getFavoriteTooltipLink(favorite) {
+    const name = favorite?.displayName || favorite?.originalName || favorite?.baseName || "";
+    const baseName = favorite?.baseName || "";
     const itemValues = [
-      `Rarity: ${String(favorite?.rarity || "").toUpperCase()}`,
-      favorite?.originalName || favorite?.displayName || "",
-      favorite?.baseName || "",
-      favorite?.itemType || ""
-    ]
-      .filter(Boolean);
+      name && { text: name, heading: true },
+      baseName && baseName !== name && `${t("favoriteTooltipBaseType")}: ${baseName}`,
+      (favorite?.itemType || favorite?.category) &&
+        `${t("favoriteTooltipCategory")}: ${favorite.itemType || favorite.category}`,
+      t("favoriteTooltipRarity", String(favorite?.rarity || "").toUpperCase())
+    ].filter(Boolean);
     const modifiers = (favorite?.mods || [])
       .map(getFavoriteModifierPresentation)
       .filter((modifier) => modifier.text)
       .map((modifier) => (modifier.source ? modifier : modifier.text));
     return {
       filterGroups: [
-        ...(itemValues.length ? [{ label: "Item", values: itemValues }] : []),
-        ...(modifiers.length ? [{ label: "Modifiers", values: modifiers }] : [])
+        ...(itemValues.length ? [{ label: t("favoriteTooltipItem"), hideLabel: true, values: itemValues }] : []),
+        ...(modifiers.length ? [{ label: t("favoriteTooltipModifiers"), values: modifiers }] : [])
       ]
     };
   }
@@ -224,7 +288,14 @@
       if (!query) {
         return true;
       }
-      return [favorite.displayName, favorite.baseName, favorite.itemType, favorite.rarity, ...(favorite.mods || []).map((mod) => mod?.text)]
+      return [
+        ...(favorite.searchTerms || []),
+        favorite.displayName,
+        favorite.baseName,
+        favorite.itemType,
+        favorite.rarity,
+        ...(favorite.mods || []).map((mod) => mod?.text)
+      ]
         .filter(Boolean)
         .some((value) => String(value).toLocaleLowerCase().includes(query));
     });
@@ -507,6 +578,10 @@
     return !query || [
       link.displayName,
       link.url,
+      link.localizedSnapshot?.type,
+      link.localizedSnapshot?.category,
+      link.localizedSnapshot?.rarity,
+      ...(link.localizedSnapshot?.stats || []).map((stat) => stat?.text),
       ...(link.filterGroups || []).flatMap((group) => [group?.label, ...(group?.values || [])])
     ].some((value) => String(value || "").toLocaleLowerCase().includes(query));
   }
@@ -517,6 +592,9 @@
   }
 
   function getLinkFavoriteStatFilters(link) {
+    if (Array.isArray(link?.localizedSnapshot?.stats) && link.localizedSnapshot.stats.length) {
+      return link.localizedSnapshot.stats;
+    }
     return (link.filterGroups || [])
       .filter(isLinkFavoriteStatFilterGroup)
       .flatMap((group) => group?.values || [])
@@ -535,23 +613,32 @@
     if (value && typeof value === "object" && "text" in value) {
       return {
         text: String(value.text || ""),
-        source: value.source || null
+        source: value.source || null,
+        ...(value.heading ? { heading: true } : {})
       };
     }
     return { text: String(value || ""), source: null };
   }
 
   function getLinkFavoriteTooltipGroups(link) {
-    return (link.filterGroups || [])
+    const snapshot = link?.localizedSnapshot;
+    const snapshotItemValues = [snapshot?.type, snapshot?.category, snapshot?.rarity]
+      .filter(Boolean)
+      .map((text) => ({ text, source: null }));
+    return [
+      ...(snapshotItemValues.length ? [{ label: t("favoriteTooltipItem"), values: snapshotItemValues }] : []),
+      ...(snapshot?.stats?.length ? [{ label: t("favoriteTooltipModifiers"), values: snapshot.stats }] : []),
+      ...(link.filterGroups || [])
       .map((group) => {
         const label = String(group?.label || "").trim();
         const statFilters = isLinkFavoriteStatFilterGroup(group);
         const values = (group?.values || [])
           .filter(Boolean)
           .map((value) => (statFilters ? formatLinkFavoriteStatFilter(value) : getLinkFavoriteTooltipValue(value)));
-        return label && values.length ? { label, values } : null;
+        return label && values.length ? { label, ...(group.hideLabel ? { hideLabel: true } : {}), values } : null;
       })
-      .filter(Boolean);
+      .filter(Boolean)
+    ];
   }
 
   function renderLinkFavoriteStat(stat, fallback = "", className = "") {
@@ -571,6 +658,9 @@
   }
 
   function renderLinkFavoriteStatFilter(value) {
+    if (value && typeof value === "object" && "text" in value) {
+      return renderLinkFavoriteStat(value);
+    }
     return renderLinkFavoriteStat(formatLinkFavoriteStatFilter(value), String(value || ""));
   }
 
@@ -578,13 +668,19 @@
     const root = createElement("div", "favorites-panel-tooltip-content");
     for (const group of getLinkFavoriteTooltipGroups(link)) {
       const section = createElement("section", "favorites-panel-tooltip-group");
-      section.appendChild(createElement("span", "favorites-panel-tooltip-group-label", group.label));
+      if (group.label && !group.hideLabel) {
+        section.appendChild(createElement("span", "favorites-panel-tooltip-group-label", group.label));
+      }
       const values = createElement("div", "favorites-panel-tooltip-values");
       for (const value of group.values) {
         values.appendChild(
           value.source
             ? renderLinkFavoriteStat(value, "", "favorites-panel-tooltip-stat")
-            : createElement("span", "favorites-panel-tooltip-value", value.text)
+            : createElement(
+                "span",
+                `favorites-panel-tooltip-value${value.heading ? " favorites-panel-tooltip-value-heading" : ""}`,
+                value.text
+              )
         );
       }
       section.appendChild(values);
@@ -1082,7 +1178,7 @@
     });
     chrome.runtime.onMessage.addListener((message) => {
       if (message?.type === "favorites-panel-state" && message.sessionId === sessionId && message.state) {
-        setState(message.state);
+        void setState(message.state);
       }
     });
   }

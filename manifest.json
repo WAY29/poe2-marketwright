@@ -39,6 +39,7 @@
   "web_accessible_resources": [
     {
       "resources": [
+        "_locales/en/messages.json",
         "_locales/zh_CN/messages.json",
         "_locales/zh_TW/messages.json",
         "data/affix-filter-data.json",

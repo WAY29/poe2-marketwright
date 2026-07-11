@@ -355,6 +355,13 @@
       }
     };
 
+    const setLabels = (nextLabels) => {
+      Object.assign(labels, nextLabels || {});
+      document.querySelectorAll(`.${BUTTON_CLASS}`).forEach((button) => {
+        setButtonStatus(button, button.dataset.status || "ready");
+      });
+    };
+
     const start = () => {
       if (started) {
         return;
@@ -379,7 +386,7 @@
       rescanTimer = window.setInterval(scanAndInject, 2000);
     };
 
-    return { start, setEnabled, handleApiMessage, storeResults };
+    return { start, setEnabled, setLabels, handleApiMessage, storeResults };
   }
 
   globalThis[GLOBAL_NAME] = { createItemTextBuilder, createPobCopyFeature };

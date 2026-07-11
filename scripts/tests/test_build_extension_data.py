@@ -8,7 +8,11 @@ if str(SCRIPT_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_ROOT))
 
 from build_extension_data import (
+    DisplayMetadataCoverageError,
     PageArtifacts,
+    build_safe_numeric_trade_item_localizations,
+    build_display_metadata,
+    build_item_display_metadata,
     build_trade_stat_records,
     build_trade_stat_universe,
     collect_base_item_mod_stat_artifacts,
@@ -24,12 +28,167 @@ from build_extension_data import (
     map_affix_text_to_trade_stat_ids,
     map_trade_stat_texts_to_trade_stat_ids,
     parse_page_html_artifacts,
+    parse_poe2db_item_title,
+    parse_poe2db_item_name_slugs,
     poe2db_item_slug,
     split_affix_stat_lines,
 )
 
 
 class TradeStatMappingTests(unittest.TestCase):
+    def test_maps_unique_numeric_trade_item_names_without_relying_on_entry_order(self) -> None:
+        english = {
+            "result": [
+                {
+                    "id": "map",
+                    "entries": [
+                        {"type": "Waystone (Tier 1)"},
+                        {"type": "Waystone (Tier 15)"},
+                        {"type": "Target 9"},
+                        {"type": "Unrequested 9"},
+                    ],
+                }
+            ]
+        }
+        traditional = {
+            "result": [
+                {
+                    "id": "map",
+                    "entries": [
+                        {"type": "換界石（階級 15）"},
+                        {"type": "目標 9"},
+                        {"type": "換界石（階級 1）"},
+                    ],
+                }
+            ]
+        }
+
+        result = build_safe_numeric_trade_item_localizations(
+            english,
+            traditional,
+            {"Waystone (Tier 1)", "Waystone (Tier 15)", "Target 9"},
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "Waystone (Tier 1)": "換界石（階級 1）",
+                "Waystone (Tier 15)": "換界石（階級 15）",
+            },
+        )
+
+    def test_builds_item_display_metadata_only_for_verified_translations(self) -> None:
+        metadata = build_item_display_metadata(
+            ["Rider Bow", "Fur Plate"],
+            {"Rider Bow": "Rider Bow", "Fur Plate": "Fur Plate"},
+            {"Rider Bow": "骑射之弓", "Fur Plate": "毛皮胸甲"},
+            {"Rider Bow": "騎士之弓"},
+            minimum_coverage=0.5,
+        )
+
+        self.assertEqual(
+            metadata["items"]["Rider Bow"],
+            {"en": "Rider Bow", "zh_CN": "骑射之弓", "zh_TW": "騎士之弓"},
+        )
+        self.assertEqual(
+            metadata["items"]["Fur Plate"],
+            {"en": "Fur Plate", "zh_CN": "毛皮胸甲", "zh_TW": "Fur Plate"},
+        )
+        self.assertEqual(metadata["coverage"]["zh_TW"], {"matched": 1, "total": 2, "ratio": 0.5})
+
+    def test_extracts_poe2db_item_title(self) -> None:
+        self.assertEqual(
+            parse_poe2db_item_title("<title>骑射之弓 - 流亡2编年史, Path of Exile Wiki cn</title>"),
+            "骑射之弓",
+        )
+
+    def test_extracts_locale_independent_item_slugs_from_category_links(self) -> None:
+        self.assertEqual(
+            parse_poe2db_item_name_slugs(
+                '<a class="whiteitem Bow" href="Rider_Bow">Rider Bow</a>'
+                '<a class="whiteitem Bow" href="Rider_Bow"><img alt="Rider Bow"></a>'
+            ),
+            {"rider bow": ("Rider Bow", "Rider_Bow")},
+        )
+
+    def test_builds_display_metadata_from_exact_and_safe_bare_stat_matches(self) -> None:
+        english = {
+            "result": [
+                {
+                    "id": "explicit",
+                    "entries": [
+                        {"id": "explicit.stat_exact", "text": "+# to maximum Life"},
+                        {"id": "explicit.stat_shared", "text": "#% increased Attack Speed"},
+                        {"id": "crafted.stat_shared", "text": "#% increased Attack Speed"},
+                        {"id": "fractured.stat_shared", "text": "#% increased Attack Speed"},
+                        {"id": "fractured.stat_ambiguous", "text": "+# to Strength"},
+                        {"id": "explicit.stat_ambiguous", "text": "+# to Dexterity"},
+                    ],
+                }
+            ]
+        }
+        traditional = {
+            "result": [
+                {
+                    "id": "explicit",
+                    "entries": [
+                        {"id": "explicit.stat_exact", "text": "+# 最大生命"},
+                        {"id": "fractured.stat_shared", "text": "#% 攻擊速度提高"},
+                        {"id": "crafted.stat_ambiguous", "text": "+# 力量"},
+                        {"id": "desecrated.stat_ambiguous", "text": "+# 敏捷"},
+                    ],
+                }
+            ]
+        }
+        simplified = {
+            "result": [
+                {
+                    "id": "explicit",
+                    "entries": [
+                        {"id": "explicit.stat_exact", "text": "+# 生命上限"},
+                        {"id": "fractured.stat_shared", "text": "#% 攻击速度提高"},
+                    ],
+                }
+            ]
+        }
+
+        metadata = build_display_metadata(
+            english,
+            simplified,
+            traditional,
+            {"explicit.stat_exact", "explicit.stat_shared", "crafted.stat_shared", "fractured.stat_ambiguous"},
+            minimum_coverage=0.5,
+        )
+
+        self.assertEqual(
+            metadata["stats"]["explicit.stat_exact"],
+            {
+                "en": "+# to maximum Life",
+                "zh_CN": "+# 生命上限",
+                "zh_TW": "+# 最大生命",
+                "sources": {"zh_CN": "exact_id", "zh_TW": "exact_id"},
+            },
+        )
+        self.assertEqual(metadata["stats"]["crafted.stat_shared"]["zh_TW"], "#% 攻擊速度提高")
+        self.assertEqual(metadata["stats"]["crafted.stat_shared"]["sources"]["zh_TW"], "same_bare_and_template")
+        self.assertEqual(metadata["stats"]["fractured.stat_ambiguous"]["zh_TW"], "+# to Strength")
+        self.assertEqual(metadata["stats"]["fractured.stat_ambiguous"]["sources"]["zh_TW"], "fallback")
+        self.assertEqual(metadata["coverage"]["zh_CN"]["matched"], 3)
+        self.assertEqual(metadata["coverage"]["zh_TW"]["matched"], 3)
+
+    def test_rejects_display_metadata_below_minimum_coverage(self) -> None:
+        english = {"result": [{"id": "explicit", "entries": [{"id": "explicit.stat_life", "text": "+# to maximum Life"}]}]}
+        missing = {"result": []}
+
+        with self.assertRaises(DisplayMetadataCoverageError):
+            build_display_metadata(
+                english,
+                missing,
+                missing,
+                {"explicit.stat_life"},
+                minimum_coverage=0.95,
+            )
+
     def test_builds_trade_stat_universe_from_official_stats(self) -> None:
         patterns, stat_ids = build_trade_stat_universe(
             {

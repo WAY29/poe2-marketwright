@@ -72,6 +72,33 @@
   "disableFiltering": {
     "message": "Disable filtering"
   },
+  "generalSettingsTitle": {
+    "message": "General"
+  },
+  "language": {
+    "message": "Language"
+  },
+  "languageEnglish": {
+    "message": "English"
+  },
+  "languageSimplifiedChinese": {
+    "message": "Simplified Chinese"
+  },
+  "languageTraditionalChinese": {
+    "message": "Traditional Chinese"
+  },
+  "favoriteTooltipItem": {
+    "message": "Item"
+  },
+  "favoriteTooltipBaseType": {
+    "message": "Base type"
+  },
+  "favoriteTooltipCategory": {
+    "message": "Category"
+  },
+  "favoriteTooltipModifiers": {
+    "message": "Modifiers"
+  },
   "statFilterTitle": {
     "message": "Stat filter"
   },
