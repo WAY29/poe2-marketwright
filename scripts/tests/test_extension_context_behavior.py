@@ -231,6 +231,118 @@ class ExtensionContextBehaviorTests(unittest.TestCase):
             },
         )
 
+    def test_export_link_favorites_copies_compatible_json_to_the_clipboard(self) -> None:
+        result = self.run_node(
+            r'''
+            (async () => {
+            const fs = require("fs");
+            const vm = require("vm");
+            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { exportLinkFavorites, runtime };\n})();"
+            );
+            const writes = [];
+            const sandbox = {
+              window: {
+                addEventListener() {},
+                clearTimeout() {},
+                setTimeout() { return 1; },
+                innerWidth: 1280,
+                innerHeight: 900,
+                location: {
+                  href: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-current"
+                }
+              },
+              document: {
+                querySelector() { return null; },
+                querySelectorAll() { return []; }
+              },
+              location: {
+                pathname: "/trade2",
+                href: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-current"
+              },
+              navigator: {
+                clipboard: {
+                  async writeText(text) { writes.push(JSON.parse(text)); }
+                }
+              },
+              URL,
+              console,
+              chrome: {}
+            };
+            vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+              filename: "favorites.js"
+            });
+            vm.runInNewContext(source, sandbox, { filename: "content.js" });
+
+            const hooks = sandbox.window.__testHooks;
+            hooks.runtime.state = {
+              linkFavorites: {
+                version: 1,
+                leagues: {
+                  Dawn: {
+                    folders: [{ id: "folder-1", name: "Bows", createdAt: 1, collapsed: false }],
+                    folderOrder: ["folder-1"],
+                    links: [{
+                      id: "link-1",
+                      url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+                      displayName: "Bow",
+                      folderId: "folder-1",
+                      createdAt: 2
+                    }],
+                    rootLinkIds: [],
+                    folderLinkIds: { "folder-1": ["link-1"] }
+                  }
+                }
+              }
+            };
+            await hooks.exportLinkFavorites();
+            console.log(JSON.stringify({ writes, feedback: hooks.runtime.linkFavoriteFeedback }));
+            })();
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "writes": [
+                    {
+                        "folders": [
+                            {
+                                "id": "folder-1",
+                                "childIds": [],
+                                "parentId": None,
+                                "depth": 0,
+                                "index": 0,
+                                "name": "Bows",
+                                "bookmarks": [
+                                    {
+                                        "id": "link-1",
+                                        "name": "Bow",
+                                        "league": "Auto",
+                                        "poeVersion": "Poe2",
+                                        "endpoint": "query-1",
+                                        "type": "search",
+                                        "idx": 0,
+                                        "isDone": True,
+                                    }
+                                ],
+                                "isOpen": True,
+                            }
+                        ],
+                        "rootBookmarks": [],
+                    }
+                ],
+                "feedback": {
+                    "key": "linkFavoriteExported",
+                    "text": "Bookmarks copied to clipboard",
+                    "state": "ready",
+                },
+            },
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

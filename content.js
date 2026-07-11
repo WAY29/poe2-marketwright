@@ -331,6 +331,15 @@
     createLinkFavorite: "Save current search",
     createLinkFavoriteUnavailable: "Open a search result before saving",
     createLinkFavoriteFolder: "Create folder",
+    importLinkFavorites: "Import bookmarks",
+    importLinkFavoritesPlaceholder: "Paste exported bookmark JSON",
+    confirmLinkFavoriteImport: "Import",
+    cancelLinkFavoriteImport: "Cancel",
+    linkFavoriteImported: "Imported $1 bookmarks in $2 folders; skipped $3",
+    linkFavoriteImportInvalid: "Paste valid bookmark export JSON",
+    exportLinkFavorites: "Export bookmarks to clipboard",
+    linkFavoriteExported: "Bookmarks copied to clipboard",
+    linkFavoriteExportFailed: "Unable to copy bookmarks",
     renameLinkFavoriteFolder: "Rename folder",
     deleteLinkFavoriteFolder: "Delete folder",
     confirmDeleteLinkFavoriteFolder: "Delete folder and $1 bookmarks",
@@ -398,6 +407,8 @@
     pendingLinkFavoriteFolderDeleteId: null,
     linkFavoriteFeedback: null,
     linkFavoriteFeedbackTimer: null,
+    linkFavoriteImporting: false,
+    linkFavoriteImportText: "",
     ui: {}
   };
 
@@ -536,6 +547,12 @@
                 <span id="poe2-marketwright-link-favorites-feedback-text" class="poe2-marketwright-link-favorites-feedback-text"></span>
                 <button id="poe2-marketwright-link-favorites-feedback-undo" class="poe2-marketwright-link-favorites-feedback-undo" type="button" hidden></button>
               </div>
+              <button id="poe2-marketwright-link-favorites-import" class="poe2-marketwright-link-favorites-header-action" type="button" aria-label="" title="">
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M7.25 1.5h1.5v6.1l2.1-2.1 1.05 1.05L8 10.25 4.2 6.55l1.05-1.05 2 2V1.5zm-5.5 9.2h12.5v3.8H1.75v-3.8zm1.5 1.5v.8h9.5v-.8h-9.5z"></path></svg>
+              </button>
+              <button id="poe2-marketwright-link-favorites-export" class="poe2-marketwright-link-favorites-header-action" type="button" aria-label="" title="">
+                <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M8 1.5 4.25 5.25h2.35v4.5h2.8v-4.5h2.35L8 1.5zM1.75 10.5h12.5v4H1.75v-4zm1.5 1.5V13h9.5V12h-9.5z"></path></svg>
+              </button>
               <button id="poe2-marketwright-link-favorites-save-root" class="poe2-marketwright-link-favorites-header-action" type="button" aria-label="" title="">
                 <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 1.75h8a1 1 0 0 1 1 1v11.1l-5-2.85-5 2.85V2.75a1 1 0 0 1 1-1z"></path></svg>
               </button>
@@ -637,6 +654,8 @@
     runtime.ui.panel = root.querySelector(".poe2-trade2-affix-filter-panel");
     runtime.ui.linkFavoritesDrawer = root.querySelector(".poe2-marketwright-link-favorites-drawer");
     runtime.ui.linkFavoritesClose = root.querySelector("#poe2-marketwright-link-favorites-close");
+    runtime.ui.linkFavoritesImport = root.querySelector("#poe2-marketwright-link-favorites-import");
+    runtime.ui.linkFavoritesExport = root.querySelector("#poe2-marketwright-link-favorites-export");
     runtime.ui.linkFavoritesSaveRoot = root.querySelector("#poe2-marketwright-link-favorites-save-root");
     runtime.ui.linkFavoritesCollapseAll = root.querySelector("#poe2-marketwright-link-favorites-collapse-all");
     runtime.ui.linkFavoritesNewFolder = root.querySelector("#poe2-marketwright-link-favorites-new-folder");
@@ -720,6 +739,22 @@
 
     runtime.ui.linkFavoritesClose.addEventListener("click", () => {
       runAsync(() => setLinkFavoritesDrawerOpen(false), "close link favorites drawer");
+    });
+
+    runtime.ui.linkFavoritesImport.addEventListener("click", () => {
+      if (runtime.ui.linkFavoritesImport.disabled) {
+        return;
+      }
+      runtime.linkFavoriteCreatingFolder = false;
+      runtime.linkFavoriteImporting = true;
+      renderLinkFavoritesDrawer();
+    });
+
+    runtime.ui.linkFavoritesExport.addEventListener("click", () => {
+      if (runtime.ui.linkFavoritesExport.disabled) {
+        return;
+      }
+      runAsync(exportLinkFavorites, "export link favorites");
     });
 
     runtime.ui.linkFavoritesNewFolder.addEventListener("click", () => {
@@ -854,6 +889,10 @@
     runtime.ui.favoritesUndoButton.title = t("undoFavoriteDelete");
     runtime.ui.favoritesClose.setAttribute("aria-label", t("closeFavoritesDrawer"));
     runtime.ui.favoritesClose.title = t("closeFavoritesDrawer");
+    runtime.ui.linkFavoritesImport.setAttribute("aria-label", t("importLinkFavorites"));
+    runtime.ui.linkFavoritesImport.title = t("importLinkFavorites");
+    runtime.ui.linkFavoritesExport.setAttribute("aria-label", t("exportLinkFavorites"));
+    runtime.ui.linkFavoritesExport.title = t("exportLinkFavorites");
     runtime.ui.linkFavoritesNewFolder.setAttribute("aria-label", t("createLinkFavoriteFolder"));
     runtime.ui.linkFavoritesSaveRoot.setAttribute("aria-label", t("createLinkFavorite"));
     runtime.ui.linkFavoritesSaveRoot.title = t("createLinkFavorite");
@@ -1480,6 +1519,42 @@
     showLinkFavoriteFeedback("linkFavoriteSaved");
   }
 
+  async function importLinkFavorites(sourceText) {
+    const league = getCurrentLinkFavoriteLeague();
+    const tools = getLinkFavoriteTools();
+    if (!league || !tools?.importExternalLinkFavorites) {
+      showLinkFavoriteFeedback("createLinkFavoriteUnavailable", [], "error");
+      return;
+    }
+    try {
+      const result = tools.importExternalLinkFavorites(runtime.state.linkFavorites, sourceText, league);
+      await replaceLinkFavorites(result.state);
+      runtime.linkFavoriteImporting = false;
+      runtime.linkFavoriteImportText = "";
+      showLinkFavoriteFeedback("linkFavoriteImported", [result.importedLinks, result.importedFolders, result.skippedLinks]);
+    } catch (error) {
+      console.warn("[PoE2 Marketwright] link favorite import failed", error);
+      showLinkFavoriteFeedback("linkFavoriteImportInvalid", [], "error");
+    }
+  }
+
+  async function exportLinkFavorites() {
+    const league = getCurrentLinkFavoriteLeague();
+    const tools = getLinkFavoriteTools();
+    if (!league || !tools?.exportExternalLinkFavorites) {
+      showLinkFavoriteFeedback("createLinkFavoriteUnavailable", [], "error");
+      return;
+    }
+    try {
+      const exported = tools.exportExternalLinkFavorites(runtime.state.linkFavorites, league);
+      await navigator.clipboard.writeText(JSON.stringify(exported, null, 2));
+      showLinkFavoriteFeedback("linkFavoriteExported");
+    } catch (error) {
+      console.warn("[PoE2 Marketwright] link favorite export failed", error);
+      showLinkFavoriteFeedback("linkFavoriteExportFailed", [], "error");
+    }
+  }
+
   async function renameLinkFavorite(linkId, name) {
     const league = getCurrentLinkFavoriteLeague();
     const normalizedName = String(name || "").trim().replace(/\s+/g, " ");
@@ -2047,6 +2122,42 @@
     return group;
   }
 
+  function renderLinkFavoriteImportForm() {
+    const form = document.createElement("form");
+    form.className = "poe2-marketwright-link-favorite-import";
+    const textarea = document.createElement("textarea");
+    textarea.className = "poe2-marketwright-link-favorite-import-input";
+    textarea.value = runtime.linkFavoriteImportText;
+    textarea.placeholder = t("importLinkFavoritesPlaceholder");
+    textarea.setAttribute("aria-label", t("importLinkFavorites"));
+    textarea.spellcheck = false;
+    textarea.addEventListener("input", () => {
+      runtime.linkFavoriteImportText = textarea.value;
+    });
+    const actions = document.createElement("div");
+    actions.className = "poe2-marketwright-link-favorite-import-actions";
+    const cancel = document.createElement("button");
+    cancel.type = "button";
+    cancel.textContent = t("cancelLinkFavoriteImport");
+    cancel.addEventListener("click", () => {
+      runtime.linkFavoriteImporting = false;
+      runtime.linkFavoriteImportText = "";
+      renderLinkFavoritesDrawer();
+    });
+    const submit = document.createElement("button");
+    submit.type = "submit";
+    submit.className = "poe2-marketwright-link-favorite-import-submit";
+    submit.textContent = t("confirmLinkFavoriteImport");
+    actions.append(cancel, submit);
+    form.append(textarea, actions);
+    form.addEventListener("submit", (event) => {
+      event.preventDefault();
+      runtime.linkFavoriteImportText = textarea.value;
+      runAsync(() => importLinkFavorites(textarea.value), "import link favorites");
+    });
+    return form;
+  }
+
   function renderLinkFavoritesDrawer() {
     if (!runtime.ui.linkFavoritesList) {
       return;
@@ -2056,10 +2167,21 @@
     runtime.ui.linkFavoritesLeague.textContent = league ? t("linkFavoritesLeague", league) : t("linkFavoritesLeagueUnavailable");
     runtime.ui.linkFavoritesLeague.title = league || "";
     runtime.ui.linkFavoritesList.replaceChildren();
-    runtime.ui.linkFavoritesNewFolder.disabled = !league || !runtime.state.linkFavoritesEnabled;
+    const importing = runtime.linkFavoriteImporting;
+    if (runtime.ui.linkFavoritesImport) {
+      runtime.ui.linkFavoritesImport.disabled = !league || !runtime.state.linkFavoritesEnabled;
+      runtime.ui.linkFavoritesImport.title = league ? t("importLinkFavorites") : t("createLinkFavoriteUnavailable");
+      runtime.ui.linkFavoritesImport.setAttribute("aria-label", runtime.ui.linkFavoritesImport.title);
+    }
+    if (runtime.ui.linkFavoritesExport) {
+      runtime.ui.linkFavoritesExport.disabled = !league || !runtime.state.linkFavoritesEnabled || importing;
+      runtime.ui.linkFavoritesExport.title = league ? t("exportLinkFavorites") : t("createLinkFavoriteUnavailable");
+      runtime.ui.linkFavoritesExport.setAttribute("aria-label", runtime.ui.linkFavoritesExport.title);
+    }
+    runtime.ui.linkFavoritesNewFolder.disabled = !league || !runtime.state.linkFavoritesEnabled || importing;
     runtime.ui.linkFavoritesNewFolder.title = league ? t("createLinkFavoriteFolder") : t("createLinkFavoriteUnavailable");
     const canSaveRoot = Boolean(getCurrentLinkFavoriteContext());
-    runtime.ui.linkFavoritesSaveRoot.disabled = !runtime.state.linkFavoritesEnabled || !canSaveRoot;
+    runtime.ui.linkFavoritesSaveRoot.disabled = !runtime.state.linkFavoritesEnabled || !canSaveRoot || importing;
     runtime.ui.linkFavoritesSaveRoot.title = canSaveRoot ? t("createLinkFavorite") : t("createLinkFavoriteUnavailable");
     runtime.ui.linkFavoritesSaveRoot.setAttribute("aria-label", runtime.ui.linkFavoritesSaveRoot.title);
     if (runtime.ui.linkFavoritesCollapseAll) {
@@ -2078,10 +2200,17 @@
     runtime.ui.linkFavoritesFeedbackUndo.hidden = undoCount === 0;
     runtime.ui.linkFavoritesFeedbackUndo.disabled = undoCount === 0;
     if (!league) {
+      runtime.linkFavoriteImporting = false;
+      runtime.linkFavoriteImportText = "";
       const status = document.createElement("div");
       status.className = "poe2-marketwright-link-favorites-empty";
       status.textContent = t("createLinkFavoriteUnavailable");
       runtime.ui.linkFavoritesList.appendChild(status);
+      return;
+    }
+
+    if (importing) {
+      runtime.ui.linkFavoritesList.appendChild(renderLinkFavoriteImportForm());
       return;
     }
 
@@ -2185,6 +2314,8 @@
     runtime.state.favoritesDrawerOpen = nextOpen;
     if (nextOpen) {
       runtime.state.linkFavoritesDrawerOpen = false;
+      runtime.linkFavoriteImporting = false;
+      runtime.linkFavoriteImportText = "";
     }
     applyFavoritesDrawerState();
     applyLinkFavoritesDrawerState();
@@ -2203,6 +2334,9 @@
     runtime.state.linkFavoritesDrawerOpen = nextOpen;
     if (nextOpen) {
       runtime.state.favoritesDrawerOpen = false;
+    } else {
+      runtime.linkFavoriteImporting = false;
+      runtime.linkFavoriteImportText = "";
     }
     applyFavoritesDrawerState();
     applyLinkFavoritesDrawerState();

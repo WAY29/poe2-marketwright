@@ -240,6 +240,33 @@
   "createLinkFavoriteFolder": {
     "message": "Create folder"
   },
+  "importLinkFavorites": {
+    "message": "Import bookmarks"
+  },
+  "importLinkFavoritesPlaceholder": {
+    "message": "Paste exported bookmark JSON"
+  },
+  "confirmLinkFavoriteImport": {
+    "message": "Import"
+  },
+  "cancelLinkFavoriteImport": {
+    "message": "Cancel"
+  },
+  "linkFavoriteImported": {
+    "message": "Imported $1 bookmarks in $2 folders; skipped $3"
+  },
+  "linkFavoriteImportInvalid": {
+    "message": "Paste valid bookmark export JSON"
+  },
+  "exportLinkFavorites": {
+    "message": "Export bookmarks to clipboard"
+  },
+  "linkFavoriteExported": {
+    "message": "Bookmarks copied to clipboard"
+  },
+  "linkFavoriteExportFailed": {
+    "message": "Unable to copy bookmarks"
+  },
   "renameLinkFavoriteFolder": {
     "message": "Rename folder"
   },

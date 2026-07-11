@@ -528,6 +528,33 @@
   "createLinkFavoriteFolder": {
     "message": "新建文件夹"
   },
+  "importLinkFavorites": {
+    "message": "导入书签"
+  },
+  "importLinkFavoritesPlaceholder": {
+    "message": "粘贴导出的书签 JSON"
+  },
+  "confirmLinkFavoriteImport": {
+    "message": "导入"
+  },
+  "cancelLinkFavoriteImport": {
+    "message": "取消"
+  },
+  "linkFavoriteImported": {
+    "message": "已导入 $1 条书签、$2 个文件夹，跳过 $3 条"
+  },
+  "linkFavoriteImportInvalid": {
+    "message": "请粘贴有效的书签导出 JSON"
+  },
+  "exportLinkFavorites": {
+    "message": "导出书签到剪切板"
+  },
+  "linkFavoriteExported": {
+    "message": "书签已复制到剪切板"
+  },
+  "linkFavoriteExportFailed": {
+    "message": "无法复制书签"
+  },
   "renameLinkFavoriteFolder": {
     "message": "重命名文件夹"
   },

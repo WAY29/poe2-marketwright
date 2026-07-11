@@ -464,10 +464,180 @@
       return { version: LINK_FAVORITES_VERSION, leagues };
     };
 
+    const sortImportedEntries = (entries, indexKey) =>
+      entries
+        .map((entry, position) => ({ entry, position, index: Number(entry?.[indexKey]) }))
+        .sort((left, right) => {
+          const leftIndex = Number.isFinite(left.index) ? left.index : left.position;
+          const rightIndex = Number.isFinite(right.index) ? right.index : right.position;
+          return leftIndex - rightIndex || left.position - right.position;
+        })
+        .map(({ entry, position }) => ({ entry, position }));
+
+    const createExternalLinkFavoriteBookmark = (link, index) => ({
+      id: link.id,
+      name: link.displayName,
+      league: "Auto",
+      poeVersion: "Poe2",
+      endpoint: link.queryId,
+      type: "search",
+      idx: index,
+      isDone: true
+    });
+
+    const exportExternalLinkFavorites = (storedState, leagueValue) => {
+      const league = normalizeName(leagueValue);
+      if (!league) {
+        throw createLinkFavoriteError("missing_link_favorite_export_league", "A league is required");
+      }
+      const state = normalizeLinkFavoritesState(storedState);
+      const leagueState = state.leagues[league];
+      if (!leagueState) {
+        return { folders: [], rootBookmarks: [] };
+      }
+      const linksById = new Map(leagueState.links.map((link) => [link.id, link]));
+      const getBookmarks = (linkIds) =>
+        (linkIds || [])
+          .map((linkId) => linksById.get(linkId))
+          .filter(Boolean)
+          .map(createExternalLinkFavoriteBookmark);
+      const folders = leagueState.folderOrder
+        .map((folderId) => leagueState.folders.find((folder) => folder.id === folderId))
+        .filter(Boolean)
+        .map((folder, index) => ({
+          id: folder.id,
+          childIds: [],
+          parentId: null,
+          depth: 0,
+          index,
+          name: folder.name,
+          bookmarks: getBookmarks(leagueState.folderLinkIds[folder.id]),
+          isOpen: !folder.collapsed
+        }));
+      return { folders, rootBookmarks: getBookmarks(leagueState.rootLinkIds) };
+    };
+
+    const importExternalLinkFavorites = (storedState, sourceValue, destinationLeague, createdAt = Date.now()) => {
+      const league = normalizeName(destinationLeague);
+      if (!league) {
+        throw createLinkFavoriteError("missing_link_favorite_import_league", "A destination league is required");
+      }
+
+      let source = sourceValue;
+      if (typeof source === "string") {
+        try {
+          source = JSON.parse(source);
+        } catch (error) {
+          throw createLinkFavoriteError("invalid_link_favorite_import", "Import data is not valid JSON");
+        }
+      }
+      if (!source || typeof source !== "object" || !Array.isArray(source.folders)) {
+        throw createLinkFavoriteError("invalid_link_favorite_import", "Import data does not contain folders");
+      }
+
+      const next = normalizeLinkFavoritesState(storedState);
+      const leagueState = next.leagues[league] || {
+        folders: [],
+        folderOrder: [],
+        links: [],
+        rootLinkIds: [],
+        folderLinkIds: {}
+      };
+      next.leagues[league] = leagueState;
+
+      const folderIds = new Set(leagueState.folders.map((folder) => folder.id));
+      const linkIds = new Set(leagueState.links.map((link) => link.id));
+      let importedFolders = 0;
+      let importedLinks = 0;
+      let skippedLinks = 0;
+
+      const importBookmark = (rawBookmark, bookmarkPosition, folderId, fallbackId) => {
+        if (String(rawBookmark?.poeVersion || "").toLowerCase() !== "poe2" || rawBookmark?.type !== "search") {
+          skippedLinks += 1;
+          return;
+        }
+        const sourceBookmarkId = normalizeId(rawBookmark?.id) || fallbackId;
+        const prefixedId = sourceBookmarkId.startsWith("import-link-")
+          ? sourceBookmarkId
+          : `import-link-${sourceBookmarkId}`;
+        const linkId = linkIds.has(sourceBookmarkId) ? sourceBookmarkId : prefixedId;
+        if (linkIds.has(linkId)) {
+          skippedLinks += 1;
+          return;
+        }
+        const endpoint = normalizeId(rawBookmark?.endpoint);
+        const displayName = normalizeName(rawBookmark?.name);
+        if (!endpoint || !displayName) {
+          skippedLinks += 1;
+          return;
+        }
+        try {
+          const record = createLinkFavoriteRecord({
+            id: linkId,
+            displayName,
+            folderId,
+            createdAt,
+            url: `https://www.pathofexile.com/trade2/search/poe2/${encodeURIComponent(league)}/${encodeURIComponent(endpoint)}`
+          });
+          leagueState.links.push(record);
+          const targetLinkIds = folderId ? leagueState.folderLinkIds[folderId] : leagueState.rootLinkIds;
+          targetLinkIds.push(record.id);
+          linkIds.add(record.id);
+          importedLinks += 1;
+        } catch (error) {
+          skippedLinks += 1;
+        }
+      };
+
+      for (const { entry: rawFolder, position: folderPosition } of sortImportedEntries(source.folders, "index")) {
+        const folderName = normalizeName(rawFolder?.name);
+        if (!folderName) {
+          skippedLinks += Array.isArray(rawFolder?.bookmarks) ? rawFolder.bookmarks.length : 0;
+          continue;
+        }
+        const rawFolderId = normalizeId(rawFolder?.id) || `folder-${folderPosition}`;
+        const importedFolderId = rawFolderId.startsWith("import-folder-") ? rawFolderId : `import-folder-${rawFolderId}`;
+        const folderId = folderIds.has(rawFolderId) ? rawFolderId : importedFolderId;
+        if (!folderIds.has(folderId)) {
+          leagueState.folders.push({
+            id: folderId,
+            name: folderName,
+            createdAt: normalizeTimestamp(createdAt, Date.now()),
+            collapsed: rawFolder?.isOpen === false
+          });
+          leagueState.folderOrder.push(folderId);
+          leagueState.folderLinkIds[folderId] = [];
+          folderIds.add(folderId);
+          importedFolders += 1;
+        }
+
+        if (!leagueState.folderLinkIds[folderId]) {
+          leagueState.folderLinkIds[folderId] = [];
+        }
+
+        for (const { entry: rawBookmark, position: bookmarkPosition } of sortImportedEntries(rawFolder?.bookmarks || [], "idx")) {
+          importBookmark(rawBookmark, bookmarkPosition, folderId, `${rawFolderId}-${bookmarkPosition}`);
+        }
+      }
+
+      for (const { entry: rawBookmark, position: bookmarkPosition } of sortImportedEntries(source.rootBookmarks || [], "idx")) {
+        importBookmark(rawBookmark, bookmarkPosition, null, `root-${bookmarkPosition}`);
+      }
+
+      return {
+        state: normalizeLinkFavoritesState(next),
+        importedFolders,
+        importedLinks,
+        skippedLinks
+      };
+    };
+
     return {
       createEmptyLinkFavoritesState,
       createLinkFavoriteId,
       createLinkFavoriteRecord,
+      exportExternalLinkFavorites,
+      importExternalLinkFavorites,
       normalizeLinkFavoritesState,
       validateTradeSearchUrl
     };
