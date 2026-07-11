@@ -611,8 +611,8 @@
 }
 
 .poe2-marketwright-link-favorite-row > .poe2-marketwright-link-favorite-drag-handle {
-  align-self: center;
-  margin: 4px 0 4px 5px;
+  align-self: start;
+  margin: 7px 0 4px 5px;
 }
 
 .poe2-marketwright-link-favorite-root > .poe2-marketwright-link-favorite-row {

@@ -622,5 +622,187 @@ class FavoritesFullViewBehaviorTests(unittest.TestCase):
             },
         )
 
+    def test_full_view_drag_handles_publish_a_recoverable_drag_source(self) -> None:
+        result = self.run_node(
+            r'''
+            const fs = require("fs");
+            const vm = require("vm");
+            let source = fs.readFileSync("favorites-panel.js", "utf8");
+            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { setDragSource };\n})();"
+            );
+            const listeners = {};
+            const classes = [];
+            const attributes = {};
+            const element = {
+              draggable: false,
+              addEventListener(type, listener) { listeners[type] = listener; },
+              setAttribute(name, value) { attributes[name] = value; },
+              classList: { add(value) { classes.push(value); }, remove() {} }
+            };
+            const data = {};
+            const sandbox = {
+              window: {},
+              document: { querySelector() { return null; }, querySelectorAll() { return []; } },
+              location: { search: "" },
+              URLSearchParams,
+              console
+            };
+            vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
+            sandbox.window.__testHooks.setDragSource(element, { kind: "link", id: "link-1", folderId: "folder-1" });
+            const transfer = {
+              effectAllowed: "",
+              setData(type, value) { data[type] = value; }
+            };
+            listeners.dragstart({ dataTransfer: transfer });
+            console.log(JSON.stringify({
+              draggable: element.draggable,
+              draggableAttribute: attributes.draggable,
+              source: JSON.parse(data["application/x-poe2-marketwright-favorite-drag"]),
+              effectAllowed: transfer.effectAllowed,
+              classes
+            }));
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "draggable": True,
+                "draggableAttribute": "true",
+                "source": {"kind": "link", "id": "link-1", "folderId": "folder-1"},
+                "effectAllowed": "move",
+                "classes": ["favorites-panel-dragging"],
+            },
+        )
+
+    def test_full_view_drop_recovers_the_drag_source_from_data_transfer(self) -> None:
+        result = self.run_node(
+            r'''
+            const fs = require("fs");
+            const vm = require("vm");
+            let source = fs.readFileSync("favorites-panel.js", "utf8");
+            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { getFavoritePanelDragSource };\n})();"
+            );
+            const sandbox = {
+              window: {},
+              document: { querySelector() { return null; } },
+              location: { search: "" },
+              URLSearchParams,
+              console
+            };
+            vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
+            const sourceValue = { kind: "link", id: "link-1", folderId: "folder-1" };
+            console.log(JSON.stringify(sandbox.window.__testHooks.getFavoritePanelDragSource({
+              dataTransfer: {
+                getData(type) {
+                  return type === "application/x-poe2-marketwright-favorite-drag"
+                    ? JSON.stringify(sourceValue)
+                    : "";
+                }
+              }
+            })));
+            ''',
+        )
+
+        self.assertEqual(result, {"kind": "link", "id": "link-1", "folderId": "folder-1"})
+
+    def test_full_view_drag_targets_show_insert_position_and_accept_top_level_links(self) -> None:
+        result = self.run_node(
+            r'''
+            const fs = require("fs");
+            const vm = require("vm");
+            let source = fs.readFileSync("favorites-panel.js", "utf8");
+            source = source.replace("  bindUi();\n  bootstrap();", "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { setDragSource, setDropTarget, setGroupDropTarget, setFolderTopDropTarget };\n})();"
+            );
+            function makeElement() {
+              const listeners = {};
+              const classes = new Set();
+              return {
+                listeners,
+                dataset: {},
+                draggable: false,
+                addEventListener(type, listener) { listeners[type] = listener; },
+                setAttribute() {},
+                getBoundingClientRect() { return { top: 100, height: 40 }; },
+                contains() { return false; },
+                classList: {
+                  add(value) { classes.add(value); },
+                  remove(value) { classes.delete(value); },
+                  contains(value) { return classes.has(value); }
+                }
+              };
+            }
+            const sandbox = {
+              window: {},
+              document: { querySelector() { return null; }, querySelectorAll() { return []; } },
+              location: { search: "" },
+              URLSearchParams,
+              console
+            };
+            vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
+            const sourceHandle = makeElement();
+            const rowTarget = makeElement();
+            const rootTarget = makeElement();
+            const folderTopTarget = makeElement();
+            sandbox.window.__testHooks.setDragSource(sourceHandle, { kind: "link", id: "link-1", folderId: "folder-1" });
+            sandbox.window.__testHooks.setDropTarget(rowTarget, { kind: "link", id: "link-2", folderId: "folder-1" });
+            sandbox.window.__testHooks.setGroupDropTarget(rootTarget, null);
+            sandbox.window.__testHooks.setFolderTopDropTarget(folderTopTarget, [{ id: "folder-1" }]);
+            const transfer = { effectAllowed: "", setData() {}, dropEffect: "" };
+            sourceHandle.listeners.dragstart({ dataTransfer: transfer });
+            let rowPrevented = false;
+            rowTarget.listeners.dragover({
+              clientY: 130,
+              dataTransfer: transfer,
+              preventDefault() { rowPrevented = true; }
+            });
+            let rootPrevented = false;
+            rootTarget.listeners.dragover({
+              dataTransfer: transfer,
+              preventDefault() { rootPrevented = true; }
+            });
+            sandbox.window.__testHooks.setDragSource(sourceHandle, { kind: "folder", id: "folder-2" });
+            sourceHandle.listeners.dragstart({ dataTransfer: transfer });
+            let folderTopPrevented = false;
+            folderTopTarget.listeners.dragover({
+              dataTransfer: transfer,
+              preventDefault() { folderTopPrevented = true; }
+            });
+            console.log(JSON.stringify({
+              rowPrevented,
+              rowPosition: rowTarget.dataset.dropPosition,
+              rowHighlighted: rowTarget.classList.contains("favorites-panel-drop-target"),
+              rootPrevented,
+              rootHighlighted: rootTarget.classList.contains("favorites-panel-drop-target"),
+              folderTopPrevented,
+              folderTopPosition: folderTopTarget.dataset.dropPosition,
+              folderTopHighlighted: folderTopTarget.classList.contains("favorites-panel-drop-target")
+            }));
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "rowPrevented": True,
+                "rowPosition": "after",
+                "rowHighlighted": True,
+                "rootPrevented": True,
+                "rootHighlighted": True,
+                "folderTopPrevented": True,
+                "folderTopPosition": "before",
+                "folderTopHighlighted": True,
+            },
+        )
+
 if __name__ == "__main__":
     unittest.main()

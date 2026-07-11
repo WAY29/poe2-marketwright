@@ -34,6 +34,8 @@
     confirmDeleteLinkFavoriteFolder: "Delete folder and $1 bookmarks",
     cancelLinkFavoriteFolderDelete: "Cancel",
     moveLinkFavoriteToRoot: "Top level",
+    dropLinkFavoriteAtRoot: "Drop here to move to the top level",
+    dropLinkFavoriteFolderAtTop: "Drop here to move folder to the top",
     reorderLinkFavorite: "Drag to reorder bookmark",
     reorderLinkFavoriteFolder: "Drag to reorder folder",
     expandLinkFavoriteFolder: "Expand folder",
@@ -58,6 +60,7 @@
   const LINK_FAVORITE_TOOLTIP_HIDE_DELAY = 180;
   const LINK_FAVORITE_TOOLTIP_DISMISS_DELAY = 100;
   const FAVORITE_SPECIAL_MODIFIER_SOURCES = new Set(["crafted", "desecrated", "fractured", "enchant", "augment", "implicit"]);
+  const FAVORITES_PANEL_DRAG_TYPE = "application/x-poe2-marketwright-favorite-drag";
 
   const ui = {
     title: document.querySelector("#favorites-panel-title"),
@@ -430,9 +433,8 @@
 
     const query = local.linkSearch.trim().toLocaleLowerCase();
     const rootLinks = getLinksForFolder(state, null).filter((link) => matchesLink(link, query));
-    const rootList = createElement("div", "favorites-panel-link-list");
-    setDropTarget(rootList, { kind: "root" });
-    rootList.appendChild(createElement("p", "favorites-panel-root-label", t("moveLinkFavoriteToRoot")));
+    const rootList = createElement("div", "favorites-panel-link-list favorites-panel-root");
+    setGroupDropTarget(rootList, null);
     if (rootLinks.length) {
       for (const link of rootLinks) {
         rootList.appendChild(renderLinkRow(state, link));
@@ -440,20 +442,31 @@
     } else if (!folders.length) {
       rootList.appendChild(createElement("p", "favorites-panel-empty", t("linkFavoritesEmpty")));
     }
-    root.appendChild(rootList);
+    rootList.appendChild(createElement("div", "favorites-panel-root-drop-area", t("dropLinkFavoriteAtRoot")));
     const folderList = createElement("div", "favorites-panel-list");
-    setDropTarget(folderList, { kind: "folder-top", folders });
+    if (folders.length) {
+      const folderTopDropArea = createElement(
+        "div",
+        "favorites-panel-folder-top-drop-area",
+        t("dropLinkFavoriteFolderAtTop")
+      );
+      setFolderTopDropTarget(folderTopDropArea, folders);
+      folderList.appendChild(folderTopDropArea);
+    }
+    let visibleFolderCount = 0;
     for (const folder of folders) {
       const links = getLinksForFolder(state, folder.id).filter((link) => matchesLink(link, query));
       if (query && !links.length && !folder.name.toLocaleLowerCase().includes(query)) {
         continue;
       }
       folderList.appendChild(renderFolder(state, folder, links));
+      visibleFolderCount += 1;
     }
-    if (!folderList.childElementCount && query && !rootLinks.length) {
+    if (!visibleFolderCount && query && !rootLinks.length) {
       folderList.appendChild(createElement("p", "favorites-panel-empty", t("favoritesPanelNoLinkMatches")));
     }
     root.appendChild(folderList);
+    root.appendChild(rootList);
     return root;
   }
 
@@ -792,6 +805,7 @@
     const section = createElement("section", "favorites-panel-folder");
     const header = createElement("div", "favorites-panel-folder-header");
     setDropTarget(header, { kind: "folder", id: folder.id });
+    setGroupDropTarget(header, folder.id);
     const drag = createIconButton(t("reorderLinkFavoriteFolder"), icons.drag, "favorites-panel-drag-handle");
     setDragSource(drag, { kind: "folder", id: folder.id });
     const collapse = createIconButton(
@@ -824,7 +838,7 @@
     section.appendChild(header);
     if (!folder.collapsed) {
       const list = createElement("div", "favorites-panel-link-list");
-      setDropTarget(list, { kind: "folder", id: folder.id });
+      setGroupDropTarget(list, folder.id);
       for (const link of links) {
         list.appendChild(renderLinkRow(state, link));
       }
@@ -851,50 +865,161 @@
 
   function setDragSource(element, source) {
     element.draggable = true;
+    element.setAttribute("draggable", "true");
     element.addEventListener("dragstart", (event) => {
       local.drag = source;
-      event.dataTransfer.effectAllowed = "move";
-      event.dataTransfer.setData("text/plain", JSON.stringify(source));
+      ui.content?.classList.add("favorites-panel-drag-active", `favorites-panel-dragging-${source.kind}`);
+      if (event.dataTransfer) {
+        event.dataTransfer.effectAllowed = "move";
+        event.dataTransfer.setData(FAVORITES_PANEL_DRAG_TYPE, JSON.stringify(source));
+        event.dataTransfer.setData("text/plain", JSON.stringify(source));
+      }
       element.classList.add("favorites-panel-dragging");
     });
     element.addEventListener("dragend", () => {
       local.drag = null;
+      ui.content?.classList.remove("favorites-panel-drag-active", `favorites-panel-dragging-${source.kind}`);
       element.classList.remove("favorites-panel-dragging");
-      document.querySelectorAll(".favorites-panel-drop-target").forEach((target) => {
-        target.classList.remove("favorites-panel-drop-target");
-      });
+      clearDragStyles();
     });
+  }
+
+  function getFavoritePanelDragSource(event) {
+    if (local.drag) {
+      return local.drag;
+    }
+    const raw = event.dataTransfer?.getData?.(FAVORITES_PANEL_DRAG_TYPE);
+    if (!raw) {
+      return null;
+    }
+    try {
+      const source = JSON.parse(raw);
+      if (!source || typeof source.id !== "string" || !source.id) {
+        return null;
+      }
+      if (source.kind === "link") {
+        return { kind: "link", id: source.id, folderId: source.folderId || null };
+      }
+      return source.kind === "folder" ? { kind: "folder", id: source.id } : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function clearDropPosition(element) {
+    if (element.dataset) {
+      delete element.dataset.dropPosition;
+    }
+  }
+
+  function clearDragStyles() {
+    document.querySelectorAll(".favorites-panel-drop-target").forEach((target) => {
+      target.classList.remove("favorites-panel-drop-target");
+      clearDropPosition(target);
+    });
+  }
+
+  function getDropPosition(element, event) {
+    const rect = element.getBoundingClientRect();
+    return event.clientY > rect.top + rect.height / 2 ? "after" : "before";
   }
 
   function setDropTarget(element, target) {
     element.addEventListener("dragover", (event) => {
-      if (!local.drag || !canDrop(local.drag, target)) {
+      const source = getFavoritePanelDragSource(event);
+      if (!source || source.kind !== target.kind || source.id === target.id) {
         return;
       }
       event.preventDefault();
-      event.dataTransfer.dropEffect = "move";
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = "move";
+      }
+      element.dataset.dropPosition = getDropPosition(element, event);
       element.classList.add("favorites-panel-drop-target");
     });
-    element.addEventListener("dragleave", () => element.classList.remove("favorites-panel-drop-target"));
+    element.addEventListener("dragleave", (event) => {
+      if (!element.contains?.(event.relatedTarget)) {
+        element.classList.remove("favorites-panel-drop-target");
+        clearDropPosition(element);
+      }
+    });
     element.addEventListener("drop", (event) => {
-      if (!local.drag || !canDrop(local.drag, target)) {
+      const source = getFavoritePanelDragSource(event);
+      if (!source || source.kind !== target.kind || source.id === target.id) {
         return;
       }
       event.preventDefault();
       event.stopPropagation();
       element.classList.remove("favorites-panel-drop-target");
-      void drop(local.drag, target);
+      const placeAfter = getDropPosition(element, event) === "after";
+      clearDropPosition(element);
+      void drop(source, target, placeAfter);
     });
   }
 
-  function canDrop(source, target) {
-    if (source.kind === "link") {
-      return target.kind === "link" || target.kind === "folder" || target.kind === "root";
-    }
-    return source.kind === "folder" && (target.kind === "folder" || target.kind === "folder-top");
+  function setGroupDropTarget(element, folderId) {
+    element.addEventListener("dragover", (event) => {
+      const source = getFavoritePanelDragSource(event);
+      if (source?.kind !== "link" || source.folderId === folderId) {
+        return;
+      }
+      event.preventDefault();
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = "move";
+      }
+      element.classList.add("favorites-panel-drop-target");
+    });
+    element.addEventListener("dragleave", (event) => {
+      if (!element.contains?.(event.relatedTarget)) {
+        element.classList.remove("favorites-panel-drop-target");
+      }
+    });
+    element.addEventListener("drop", (event) => {
+      const source = getFavoritePanelDragSource(event);
+      if (source?.kind !== "link" || source.folderId === folderId) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      element.classList.remove("favorites-panel-drop-target");
+      void drop(source, folderId ? { kind: "folder", id: folderId } : { kind: "root" });
+    });
   }
 
-  async function drop(source, target) {
+  function setFolderTopDropTarget(element, folders) {
+    element.addEventListener("dragover", (event) => {
+      const source = getFavoritePanelDragSource(event);
+      if (source?.kind !== "folder") {
+        return;
+      }
+      event.preventDefault();
+      if (event.dataTransfer) {
+        event.dataTransfer.dropEffect = "move";
+      }
+      element.dataset.dropPosition = "before";
+      element.classList.add("favorites-panel-drop-target");
+    });
+    element.addEventListener("dragleave", (event) => {
+      if (!element.contains?.(event.relatedTarget)) {
+        element.classList.remove("favorites-panel-drop-target");
+        clearDropPosition(element);
+      }
+    });
+    element.addEventListener("drop", (event) => {
+      const source = getFavoritePanelDragSource(event);
+      const firstFolderId = folders[0]?.id;
+      if (source?.kind !== "folder" || !firstFolderId || source.id === firstFolderId) {
+        return;
+      }
+      event.preventDefault();
+      event.stopPropagation();
+      element.classList.remove("favorites-panel-drop-target");
+      clearDropPosition(element);
+      void drop(source, { kind: "folder", id: firstFolderId }, false);
+    });
+  }
+
+  async function drop(source, target, placeAfter = true) {
     if (source.kind === "link") {
       if (target.kind === "link") {
         if ((source.folderId || null) === (target.folderId || null)) {
@@ -902,14 +1027,14 @@
             linkId: source.id,
             folderId: target.folderId || null,
             targetId: target.id,
-            placeAfter: true
+            placeAfter
           });
         } else {
           await run("move-link", {
             linkId: source.id,
             folderId: target.folderId || null,
             targetId: target.id,
-            placeAfter: true
+            placeAfter
           });
         }
         return;
@@ -918,12 +1043,7 @@
       return;
     }
     if (target.kind === "folder") {
-      await run("reorder-folder", { folderId: source.id, targetId: target.id, placeAfter: true });
-      return;
-    }
-    const firstFolderId = target.folders?.[0]?.id;
-    if (firstFolderId) {
-      await run("reorder-folder", { folderId: source.id, targetId: firstFolderId, placeAfter: false });
+      await run("reorder-folder", { folderId: source.id, targetId: target.id, placeAfter });
     }
   }
 
