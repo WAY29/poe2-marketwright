@@ -1147,7 +1147,7 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
         self.assertEqual(result["folderLinkIds"], {"folder-b": []})
         self.assertIsNone(result["links"][0]["folderId"])
 
-    def test_root_drop_area_renders_after_folders_when_root_has_no_bookmarks(self) -> None:
+    def test_link_favorites_render_on_a_league_search_root_without_a_query_id(self) -> None:
         result = self.run_node(
             r"""
             const fs = require("fs");
@@ -1177,8 +1177,8 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
             }
             const window = {
               location: {
-                href: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
-                pathname: "/trade2/search/poe2/Dawn/query-1"
+                href: "https://www.pathofexile.com/trade2/search/poe2/Dawn",
+                pathname: "/trade2/search/poe2/Dawn"
               },
               addEventListener() {},
               clearTimeout() {},
@@ -1199,9 +1199,14 @@ class ExtensionFilterBehaviorTests(unittest.TestCase):
               MutationObserver: class {},
               chrome: { storage: { local: { set: async () => {} } } },
               Poe2MarketwrightFavorites: {
+                createFavoriteTools() {
+                  return {
+                    getLeagueFromTradeUrl() { return "Dawn"; }
+                  };
+                },
                 createLinkFavoriteTools() {
                   return {
-                    validateTradeSearchUrl(url) { return { url, league: "Dawn", queryId: "query-1" }; },
+                    validateTradeSearchUrl() { throw new Error("query id required"); },
                     normalizeLinkFavoritesState(state) { return state; }
                   };
                 }

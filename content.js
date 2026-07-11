@@ -1501,7 +1501,7 @@
   }
 
   function getCurrentLinkFavoriteLeague() {
-    return getCurrentLinkFavoriteContext()?.league || null;
+    return getFavoriteTools()?.getLeagueFromTradeUrl(window.location.href) || getCurrentLinkFavoriteContext()?.league || null;
   }
 
   function getCurrentLinkFavoriteDisplayName() {
