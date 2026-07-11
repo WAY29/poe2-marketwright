@@ -152,6 +152,85 @@ class ExtensionContextBehaviorTests(unittest.TestCase):
             },
         )
 
+    def test_expanding_from_the_collapsed_mark_keeps_the_toggle_at_the_mark_position(self) -> None:
+        result = self.run_node(
+            r'''
+            (async () => {
+            const fs = require("fs");
+            const vm = require("vm");
+            const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+            let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+            source = source.replace(
+              /\n\}\)\(\);\s*$/,
+              "\n  window.__testHooks = { setPanelCollapsed, runtime };\n})();"
+            );
+
+            const sandbox = {
+              window: {
+                addEventListener() {},
+                clearTimeout() {},
+                setTimeout() { return 1; },
+                innerWidth: 1280,
+                innerHeight: 900
+              },
+              document: {},
+              location: { pathname: "/trade2" },
+              console,
+              chrome: { storage: { local: { set: async () => {} } } }
+            };
+            vm.runInNewContext(source, sandbox, { filename: "content.js" });
+
+            const hooks = sandbox.window.__testHooks;
+            const classes = new Set();
+            const root = {
+              style: { left: "600px", top: "200px", right: "auto" },
+              classList: { toggle(name, enabled) { enabled ? classes.add(name) : classes.delete(name); } },
+              getBoundingClientRect() {
+                const left = Number.parseFloat(this.style.left || "600");
+                const top = Number.parseFloat(this.style.top || "200");
+                return {
+                  left,
+                  top,
+                  width: hooks.runtime.state.collapsed ? 36 : 238,
+                  height: hooks.runtime.state.collapsed ? 36 : 188
+                };
+              }
+            };
+            const collapse = {
+              setAttribute() {},
+              getBoundingClientRect() {
+                const rect = root.getBoundingClientRect();
+                return { left: rect.left + 200, top: rect.top + 8, width: 22, height: 20 };
+              }
+            };
+            const expand = {
+              setAttribute() {},
+              getBoundingClientRect() {
+                const rect = root.getBoundingClientRect();
+                return { left: rect.left, top: rect.top, width: 36, height: 36 };
+              }
+            };
+            hooks.runtime.ui = { root, collapse, expand };
+            hooks.runtime.state = {
+              collapsed: true,
+              panelPosition: { left: 600, top: 200 },
+              collapsedPosition: { left: 600, top: 200 }
+            };
+
+            await hooks.setPanelCollapsed(false);
+            console.log(JSON.stringify({ panelPosition: hooks.runtime.state.panelPosition, style: root.style }));
+            })();
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "panelPosition": {"left": 407, "top": 200},
+                "style": {"left": "407px", "top": "200px", "right": "auto"},
+            },
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

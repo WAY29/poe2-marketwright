@@ -503,5 +503,110 @@
   },
   "favoriteTooltipRarity": {
     "message": "稀有度：$1"
+  },
+  "linkFavoritesTitle": {
+    "message": "链接收藏"
+  },
+  "linkFavoritesLeague": {
+    "message": "链接收藏：$1"
+  },
+  "linkFavoritesLeagueUnavailable": {
+    "message": "链接收藏：未检测到赛季"
+  },
+  "linkFavoritesEmpty": {
+    "message": "暂无保存的书签"
+  },
+  "linkFavoriteUnnamedSearch": {
+    "message": "未命名搜索"
+  },
+  "createLinkFavorite": {
+    "message": "收藏当前搜索"
+  },
+  "createLinkFavoriteUnavailable": {
+    "message": "请先打开搜索结果再收藏"
+  },
+  "createLinkFavoriteFolder": {
+    "message": "新建文件夹"
+  },
+  "renameLinkFavoriteFolder": {
+    "message": "重命名文件夹"
+  },
+  "deleteLinkFavoriteFolder": {
+    "message": "删除文件夹"
+  },
+  "confirmDeleteLinkFavoriteFolder": {
+    "message": "删除文件夹及 $1 条书签"
+  },
+  "cancelLinkFavoriteFolderDelete": {
+    "message": "取消"
+  },
+  "renameLinkFavorite": {
+    "message": "重命名书签"
+  },
+  "moveLinkFavorite": {
+    "message": "移动书签"
+  },
+  "deleteLinkFavorite": {
+    "message": "删除书签"
+  },
+  "moveLinkFavoriteToRoot": {
+    "message": "最外层"
+  },
+  "dropLinkFavoriteAtRoot": {
+    "message": "拖到这里移至最外层"
+  },
+  "dropLinkFavoriteFolderAtTop": {
+    "message": "拖到这里置顶文件夹"
+  },
+  "linkFavoriteSaved": {
+    "message": "书签已保存"
+  },
+  "linkFavoriteDeleted": {
+    "message": "可撤销 $1 条书签删除"
+  },
+  "linkFavoriteDuplicateFolder": {
+    "message": "已存在同名文件夹"
+  },
+  "linkFavoriteFolderNameRequired": {
+    "message": "文件夹名称不能为空"
+  },
+  "linkFavoriteFolderDeleted": {
+    "message": "文件夹已删除"
+  },
+  "enableLinkFavorites": {
+    "message": "启用链接收藏"
+  },
+  "disableLinkFavorites": {
+    "message": "关闭链接收藏"
+  },
+  "toggleLinkFavoritesDrawer": {
+    "message": "切换链接收藏"
+  },
+  "expandLinkFavoritesDrawer": {
+    "message": "展开链接收藏"
+  },
+  "collapseLinkFavoritesDrawer": {
+    "message": "收起链接收藏"
+  },
+  "closeLinkFavoritesDrawer": {
+    "message": "关闭链接收藏"
+  },
+  "reorderLinkFavorite": {
+    "message": "拖拽排序书签"
+  },
+  "reorderLinkFavoriteFolder": {
+    "message": "拖拽排序文件夹"
+  },
+  "expandLinkFavoriteFolder": {
+    "message": "展开文件夹"
+  },
+  "collapseLinkFavoriteFolder": {
+    "message": "收起文件夹"
+  },
+  "collapseAllLinkFavoriteFolders": {
+    "message": "收起全部文件夹"
+  },
+  "expandAllLinkFavoriteFolders": {
+    "message": "展开全部文件夹"
   }
 }

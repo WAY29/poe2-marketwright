@@ -354,6 +354,139 @@ class FavoriteBehaviorTests(unittest.TestCase):
             ],
         )
 
+    def test_link_favorite_tools_validate_and_create_current_trade_search_records(self) -> None:
+        result = self.run_node(
+            r'''
+            const fs = require("fs");
+            const vm = require("vm");
+            const sandbox = { console, URL };
+            vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+              filename: "favorites.js"
+            });
+
+            const tools = sandbox.Poe2MarketwrightFavorites.createLinkFavoriteTools();
+            const record = tools.createLinkFavoriteRecord({
+              url: "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-7?ignored=value#anchor",
+              displayName: "Warmonger Bow",
+              folderId: "folder-1",
+              id: "link-1",
+              createdAt: 123
+            });
+            let invalidCode = null;
+            try {
+              tools.validateTradeSearchUrl("https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt");
+            } catch (error) {
+              invalidCode = error.code;
+            }
+
+            console.log(JSON.stringify({ record, invalidCode }));
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "record": {
+                    "id": "link-1",
+                    "league": "Dawn of the Hunt",
+                    "queryId": "query-7",
+                    "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-7",
+                    "displayName": "Warmonger Bow",
+                    "folderId": "folder-1",
+                    "createdAt": 123,
+                    "lastUsedAt": None,
+                },
+                "invalidCode": "invalid_trade_search_url",
+            },
+        )
+
+    def test_link_favorite_state_migrates_independently_and_removes_stale_folder_references(self) -> None:
+        result = self.run_node(
+            r'''
+            const fs = require("fs");
+            const vm = require("vm");
+            const sandbox = { console, URL };
+            vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+              filename: "favorites.js"
+            });
+
+            const tools = sandbox.Poe2MarketwrightFavorites.createLinkFavoriteTools();
+            const state = tools.normalizeLinkFavoritesState({
+              version: 0,
+              folders: [
+                { id: "folder-1", league: "Dawn", name: "Bows", createdAt: 10 },
+                { id: "folder-2", league: "Dawn", name: "Axes", createdAt: 11 }
+              ],
+              links: [
+                {
+                  id: "link-1",
+                  league: "Dawn",
+                  queryId: "query-1",
+                  url: "https://pathofexile.com/trade2/search/poe2/Dawn/query-1",
+                  displayName: "Warmonger Bow",
+                  folderId: "folder-1",
+                  createdAt: 20,
+                  lastUsedAt: 30
+                },
+                {
+                  id: "link-2",
+                  league: "Dawn",
+                  queryId: "query-2",
+                  url: "https://pathofexile.com/trade2/search/poe2/Dawn/query-2",
+                  displayName: "Unfiled",
+                  folderId: "missing-folder",
+                  createdAt: 21
+                }
+              ],
+              folderOrder: ["folder-2", "folder-1", "unknown-folder"],
+              rootLinkIds: ["link-2", "unknown-link"],
+              folderLinkIds: { "folder-1": ["link-1", "unknown-link"] }
+            });
+
+            console.log(JSON.stringify(state));
+            ''',
+        )
+
+        self.assertEqual(
+            result,
+            {
+                "version": 1,
+                "leagues": {
+                    "Dawn": {
+                        "folders": [
+                            {"id": "folder-1", "name": "Bows", "createdAt": 10, "collapsed": False},
+                            {"id": "folder-2", "name": "Axes", "createdAt": 11, "collapsed": False},
+                        ],
+                        "folderOrder": ["folder-2", "folder-1"],
+                        "links": [
+                            {
+                                "id": "link-1",
+                                "league": "Dawn",
+                                "queryId": "query-1",
+                                "url": "https://pathofexile.com/trade2/search/poe2/Dawn/query-1",
+                                "displayName": "Warmonger Bow",
+                                "folderId": "folder-1",
+                                "createdAt": 20,
+                                "lastUsedAt": 30,
+                            },
+                            {
+                                "id": "link-2",
+                                "league": "Dawn",
+                                "queryId": "query-2",
+                                "url": "https://pathofexile.com/trade2/search/poe2/Dawn/query-2",
+                                "displayName": "Unfiled",
+                                "folderId": None,
+                                "createdAt": 21,
+                                "lastUsedAt": None,
+                            },
+                        ],
+                        "rootLinkIds": ["link-2"],
+                        "folderLinkIds": {"folder-1": ["link-1"], "folder-2": []},
+                    }
+                },
+            },
+        )
+
 
 if __name__ == "__main__":
     unittest.main()

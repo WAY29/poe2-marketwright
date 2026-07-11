@@ -215,5 +215,110 @@
   },
   "favoriteTooltipRarity": {
     "message": "Rarity: $1"
+  },
+  "linkFavoritesTitle": {
+    "message": "Link bookmarks"
+  },
+  "linkFavoritesLeague": {
+    "message": "Bookmarks: $1"
+  },
+  "linkFavoritesLeagueUnavailable": {
+    "message": "Bookmarks: league unavailable"
+  },
+  "linkFavoritesEmpty": {
+    "message": "No saved bookmarks"
+  },
+  "linkFavoriteUnnamedSearch": {
+    "message": "Unnamed search"
+  },
+  "createLinkFavorite": {
+    "message": "Save current search"
+  },
+  "createLinkFavoriteUnavailable": {
+    "message": "Open a search result before saving"
+  },
+  "createLinkFavoriteFolder": {
+    "message": "Create folder"
+  },
+  "renameLinkFavoriteFolder": {
+    "message": "Rename folder"
+  },
+  "deleteLinkFavoriteFolder": {
+    "message": "Delete folder"
+  },
+  "confirmDeleteLinkFavoriteFolder": {
+    "message": "Delete folder and $1 bookmarks"
+  },
+  "cancelLinkFavoriteFolderDelete": {
+    "message": "Cancel"
+  },
+  "renameLinkFavorite": {
+    "message": "Rename bookmark"
+  },
+  "moveLinkFavorite": {
+    "message": "Move bookmark"
+  },
+  "deleteLinkFavorite": {
+    "message": "Delete bookmark"
+  },
+  "moveLinkFavoriteToRoot": {
+    "message": "Top level"
+  },
+  "dropLinkFavoriteAtRoot": {
+    "message": "Drop here to move to the top level"
+  },
+  "dropLinkFavoriteFolderAtTop": {
+    "message": "Drop here to move folder to the top"
+  },
+  "linkFavoriteSaved": {
+    "message": "Bookmark saved"
+  },
+  "linkFavoriteDeleted": {
+    "message": "$1 bookmark deletion(s) can be undone"
+  },
+  "linkFavoriteDuplicateFolder": {
+    "message": "A folder with that name already exists"
+  },
+  "linkFavoriteFolderNameRequired": {
+    "message": "Folder name is required"
+  },
+  "linkFavoriteFolderDeleted": {
+    "message": "Folder deleted"
+  },
+  "enableLinkFavorites": {
+    "message": "Enable link bookmarks"
+  },
+  "disableLinkFavorites": {
+    "message": "Disable link bookmarks"
+  },
+  "toggleLinkFavoritesDrawer": {
+    "message": "Toggle link bookmarks"
+  },
+  "expandLinkFavoritesDrawer": {
+    "message": "Expand link bookmarks"
+  },
+  "collapseLinkFavoritesDrawer": {
+    "message": "Collapse link bookmarks"
+  },
+  "closeLinkFavoritesDrawer": {
+    "message": "Close link bookmarks"
+  },
+  "reorderLinkFavorite": {
+    "message": "Drag to reorder bookmark"
+  },
+  "reorderLinkFavoriteFolder": {
+    "message": "Drag to reorder folder"
+  },
+  "expandLinkFavoriteFolder": {
+    "message": "Expand folder"
+  },
+  "collapseLinkFavoriteFolder": {
+    "message": "Collapse folder"
+  },
+  "collapseAllLinkFavoriteFolders": {
+    "message": "Collapse all folders"
+  },
+  "expandAllLinkFavoriteFolders": {
+    "message": "Expand all folders"
   }
 }

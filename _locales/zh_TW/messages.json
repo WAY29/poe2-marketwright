@@ -503,5 +503,110 @@
   },
   "favoriteTooltipRarity": {
     "message": "稀有度：$1"
+  },
+  "linkFavoritesTitle": {
+    "message": "連結收藏"
+  },
+  "linkFavoritesLeague": {
+    "message": "連結收藏：$1"
+  },
+  "linkFavoritesLeagueUnavailable": {
+    "message": "連結收藏：未偵測到賽季"
+  },
+  "linkFavoritesEmpty": {
+    "message": "暫無儲存的書籤"
+  },
+  "linkFavoriteUnnamedSearch": {
+    "message": "未命名搜尋"
+  },
+  "createLinkFavorite": {
+    "message": "收藏目前搜尋"
+  },
+  "createLinkFavoriteUnavailable": {
+    "message": "請先開啟搜尋結果再收藏"
+  },
+  "createLinkFavoriteFolder": {
+    "message": "新增資料夾"
+  },
+  "renameLinkFavoriteFolder": {
+    "message": "重新命名資料夾"
+  },
+  "deleteLinkFavoriteFolder": {
+    "message": "刪除資料夾"
+  },
+  "confirmDeleteLinkFavoriteFolder": {
+    "message": "刪除資料夾及 $1 條書籤"
+  },
+  "cancelLinkFavoriteFolderDelete": {
+    "message": "取消"
+  },
+  "renameLinkFavorite": {
+    "message": "重新命名書籤"
+  },
+  "moveLinkFavorite": {
+    "message": "移動書籤"
+  },
+  "deleteLinkFavorite": {
+    "message": "刪除書籤"
+  },
+  "moveLinkFavoriteToRoot": {
+    "message": "最外層"
+  },
+  "dropLinkFavoriteAtRoot": {
+    "message": "拖曳到這裡移至最外層"
+  },
+  "dropLinkFavoriteFolderAtTop": {
+    "message": "拖曳到這裡置頂資料夾"
+  },
+  "linkFavoriteSaved": {
+    "message": "書籤已儲存"
+  },
+  "linkFavoriteDeleted": {
+    "message": "可復原 $1 條書籤刪除"
+  },
+  "linkFavoriteDuplicateFolder": {
+    "message": "已存在同名資料夾"
+  },
+  "linkFavoriteFolderNameRequired": {
+    "message": "資料夾名稱不可為空"
+  },
+  "linkFavoriteFolderDeleted": {
+    "message": "資料夾已刪除"
+  },
+  "enableLinkFavorites": {
+    "message": "啟用連結收藏"
+  },
+  "disableLinkFavorites": {
+    "message": "關閉連結收藏"
+  },
+  "toggleLinkFavoritesDrawer": {
+    "message": "切換連結收藏"
+  },
+  "expandLinkFavoritesDrawer": {
+    "message": "展開連結收藏"
+  },
+  "collapseLinkFavoritesDrawer": {
+    "message": "收起連結收藏"
+  },
+  "closeLinkFavoritesDrawer": {
+    "message": "關閉連結收藏"
+  },
+  "reorderLinkFavorite": {
+    "message": "拖曳排序書籤"
+  },
+  "reorderLinkFavoriteFolder": {
+    "message": "拖曳排序資料夾"
+  },
+  "expandLinkFavoriteFolder": {
+    "message": "展開資料夾"
+  },
+  "collapseLinkFavoriteFolder": {
+    "message": "收起資料夾"
+  },
+  "collapseAllLinkFavoriteFolders": {
+    "message": "收起全部資料夾"
+  },
+  "expandAllLinkFavoriteFolders": {
+    "message": "展開全部資料夾"
   }
 }

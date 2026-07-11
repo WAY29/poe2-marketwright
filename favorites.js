@@ -6,6 +6,8 @@
   const ENGLISH_ORIGINS = new Set(["https://pathofexile.com", "https://www.pathofexile.com"]);
   const SOURCE_SETS = ["explicitMods", "fracturedMods", "craftedMods", "desecratedMods"];
   const NUMBER_RE = /-?\d+(?:\.\d+)?/g;
+  const LINK_FAVORITES_VERSION = 1;
+  const TRADE_SEARCH_ORIGINS = new Set(["https://pathofexile.com", "https://www.pathofexile.com"]);
   const RESET_DELAY_MS = 1200;
   const ITEM_DETAILS_WAIT_TIMEOUT_MS = 6000;
   const DEFAULT_LABELS = {
@@ -223,6 +225,252 @@
     };
 
     return { createFavoriteRecord, createTradeSearchPayload, getLeagueFromTradeUrl };
+  }
+
+  function createLinkFavoriteTools() {
+    const createLinkFavoriteError = (code, message, details = {}) => {
+      const error = new Error(message);
+      error.code = code;
+      error.details = details;
+      return error;
+    };
+
+    const createLinkFavoriteId = (prefix) => {
+      const randomId = globalThis.crypto?.randomUUID?.();
+      if (randomId) {
+        return `${prefix}-${randomId}`;
+      }
+      return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+    };
+
+    const normalizeTimestamp = (value, fallback = 0) => {
+      const timestamp = Number(value);
+      return Number.isFinite(timestamp) && timestamp >= 0 ? timestamp : fallback;
+    };
+
+    const normalizeId = (value) => {
+      const id = String(value || "").trim();
+      return id || null;
+    };
+
+    const normalizeName = (value) => String(value || "").replace(/\s+/g, " ").trim();
+
+    const validateTradeSearchUrl = (value) => {
+      let parsedUrl;
+      try {
+        parsedUrl = new URL(String(value || ""));
+      } catch (error) {
+        throw createLinkFavoriteError("invalid_trade_search_url", "Link must be an official PoE2 trade search URL");
+      }
+
+      if (parsedUrl.protocol !== "https:" || !TRADE_SEARCH_ORIGINS.has(parsedUrl.origin)) {
+        throw createLinkFavoriteError("invalid_trade_search_url", "Link must be an official PoE2 trade search URL", {
+          origin: parsedUrl.origin
+        });
+      }
+
+      const match = parsedUrl.pathname.match(/^\/trade2\/search\/poe2\/([^/]+)\/([^/]+)\/?$/i);
+      if (!match) {
+        throw createLinkFavoriteError("invalid_trade_search_url", "Link must include a PoE2 league and search id", {
+          pathname: parsedUrl.pathname
+        });
+      }
+
+      let league;
+      let queryId;
+      try {
+        league = decodeURIComponent(match[1]).trim();
+        queryId = decodeURIComponent(match[2]).trim();
+      } catch (error) {
+        throw createLinkFavoriteError("invalid_trade_search_url", "Link contains an invalid league or search id");
+      }
+      if (!league || !queryId || league.includes("/") || queryId.includes("/")) {
+        throw createLinkFavoriteError("invalid_trade_search_url", "Link must include a PoE2 league and search id");
+      }
+
+      parsedUrl.search = "";
+      parsedUrl.hash = "";
+      return { url: parsedUrl.toString(), league, queryId };
+    };
+
+    const createLinkFavoriteRecord = ({ url, displayName, folderId = null, id = null, createdAt = Date.now() } = {}) => {
+      const parsed = validateTradeSearchUrl(url);
+      const name = normalizeName(displayName);
+      if (!name) {
+        throw createLinkFavoriteError("missing_link_favorite_name", "Link favorite requires a display name");
+      }
+      return {
+        id: normalizeId(id) || createLinkFavoriteId("link"),
+        league: parsed.league,
+        queryId: parsed.queryId,
+        url: parsed.url,
+        displayName: name,
+        folderId: normalizeId(folderId),
+        createdAt: normalizeTimestamp(createdAt, Date.now()),
+        lastUsedAt: null
+      };
+    };
+
+    const createEmptyLinkFavoritesState = () => ({ version: LINK_FAVORITES_VERSION, leagues: {} });
+
+    const migrateVersionZeroLinkFavorites = (state) => {
+      const leagues = {};
+      const ensureLeague = (league) => {
+        if (!leagues[league]) {
+          leagues[league] = {
+            folders: [],
+            folderOrder: Array.isArray(state?.folderOrder) ? state.folderOrder.slice() : [],
+            links: [],
+            rootLinkIds: Array.isArray(state?.rootLinkIds) ? state.rootLinkIds.slice() : [],
+            folderLinkIds: state?.folderLinkIds && typeof state.folderLinkIds === "object" ? { ...state.folderLinkIds } : {}
+          };
+        }
+        return leagues[league];
+      };
+
+      for (const folder of Array.isArray(state?.folders) ? state.folders : []) {
+        const league = normalizeName(folder?.league);
+        if (league) {
+          ensureLeague(league).folders.push(folder);
+        }
+      }
+      for (const link of Array.isArray(state?.links) ? state.links : []) {
+        let league = normalizeName(link?.league);
+        if (!league) {
+          try {
+            league = validateTradeSearchUrl(link?.url).league;
+          } catch (error) {
+            continue;
+          }
+        }
+        ensureLeague(league).links.push(link);
+      }
+      return { version: LINK_FAVORITES_VERSION, leagues };
+    };
+
+    const normalizeLeagueState = (league, state) => {
+      const folders = [];
+      const folderIds = new Set();
+      for (const rawFolder of Array.isArray(state?.folders) ? state.folders : []) {
+        const id = normalizeId(rawFolder?.id);
+        const name = normalizeName(rawFolder?.name);
+        if (!id || !name || folderIds.has(id)) {
+          continue;
+        }
+        folderIds.add(id);
+        folders.push({
+          id,
+          name,
+          createdAt: normalizeTimestamp(rawFolder?.createdAt),
+          collapsed: Boolean(rawFolder?.collapsed)
+        });
+      }
+
+      const links = [];
+      const linkIds = new Set();
+      for (const rawLink of Array.isArray(state?.links) ? state.links : []) {
+        const id = normalizeId(rawLink?.id);
+        const displayName = normalizeName(rawLink?.displayName);
+        if (!id || !displayName || linkIds.has(id)) {
+          continue;
+        }
+        let parsed;
+        try {
+          parsed = validateTradeSearchUrl(rawLink?.url);
+        } catch (error) {
+          continue;
+        }
+        if (parsed.league !== league) {
+          continue;
+        }
+        linkIds.add(id);
+        const folderId = normalizeId(rawLink?.folderId);
+        links.push({
+          id,
+          league,
+          queryId: parsed.queryId,
+          url: parsed.url,
+          displayName,
+          folderId: folderId && folderIds.has(folderId) ? folderId : null,
+          createdAt: normalizeTimestamp(rawLink?.createdAt),
+          lastUsedAt: rawLink?.lastUsedAt == null ? null : normalizeTimestamp(rawLink.lastUsedAt)
+        });
+      }
+
+      const orderedIds = (ids, validIds) => {
+        const seen = new Set();
+        const ordered = [];
+        for (const id of Array.isArray(ids) ? ids : []) {
+          if (validIds.has(id) && !seen.has(id)) {
+            seen.add(id);
+            ordered.push(id);
+          }
+        }
+        return ordered;
+      };
+      const folderOrder = orderedIds(state?.folderOrder, folderIds);
+      for (const folder of folders) {
+        if (!folderOrder.includes(folder.id)) {
+          folderOrder.push(folder.id);
+        }
+      }
+
+      const rootLinkIds = orderedIds(
+        state?.rootLinkIds,
+        new Set(links.filter((link) => !link.folderId).map((link) => link.id))
+      );
+      const folderLinkIds = {};
+      for (const folderId of folderOrder) {
+        const folderLinks = new Set(links.filter((link) => link.folderId === folderId).map((link) => link.id));
+        folderLinkIds[folderId] = orderedIds(state?.folderLinkIds?.[folderId], folderLinks);
+      }
+      for (const link of links) {
+        const target = link.folderId ? folderLinkIds[link.folderId] : rootLinkIds;
+        if (!target.includes(link.id)) {
+          target.push(link.id);
+        }
+      }
+
+      return {
+        folders,
+        folderOrder,
+        links,
+        rootLinkIds,
+        folderLinkIds
+      };
+    };
+
+    const normalizeLinkFavoritesState = (storedState) => {
+      const state = storedState && typeof storedState === "object" ? storedState : null;
+      const migrated = state?.version === LINK_FAVORITES_VERSION || (state?.leagues && typeof state.leagues === "object")
+        ? state
+        : migrateVersionZeroLinkFavorites(state || {});
+      const leagues = {};
+      for (const [rawLeague, leagueState] of Object.entries(migrated.leagues || {})) {
+        const league = normalizeName(rawLeague);
+        if (!league || !leagueState || typeof leagueState !== "object") {
+          continue;
+        }
+        const normalized = normalizeLeagueState(league, leagueState);
+        if (
+          normalized.folders.length ||
+          normalized.links.length ||
+          normalized.folderOrder.length ||
+          normalized.rootLinkIds.length
+        ) {
+          leagues[league] = normalized;
+        }
+      }
+      return { version: LINK_FAVORITES_VERSION, leagues };
+    };
+
+    return {
+      createEmptyLinkFavoritesState,
+      createLinkFavoriteId,
+      createLinkFavoriteRecord,
+      normalizeLinkFavoritesState,
+      validateTradeSearchUrl
+    };
   }
 
   function createFavoriteFeature(options = {}) {
@@ -578,5 +826,5 @@
     return { start, setEnabled, setFavorites, handleApiMessage, storeResults };
   }
 
-  globalThis[GLOBAL_NAME] = { createFavoriteTools, createFavoriteFeature };
+  globalThis[GLOBAL_NAME] = { createFavoriteTools, createFavoriteFeature, createLinkFavoriteTools };
 })();
