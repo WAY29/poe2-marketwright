@@ -129,7 +129,12 @@ test("sidebar setting mirrors the full view and applies idle opacity only to sid
   });
   const root = { classList: classList(), style: style() };
   const frame = { classList: classList(), style: style() };
-  const sidebarPosition = { value: "left" };
+  const sidebarPositionOptions = ["left", "right"].map((position) => ({
+    dataset: { sidebarPosition: position },
+    classList: classList(),
+    attributes: {},
+    setAttribute(name, value) { this.attributes[name] = value; }
+  }));
   const sandbox = {
     window: { addEventListener() {}, innerHeight: 900 },
     document: {},
@@ -146,12 +151,12 @@ test("sidebar setting mirrors the full view and applies idle opacity only to sid
     idleTransparencyEnabled: true,
     idleTransparency: 50
   };
-  hooks.runtime.ui = { root, favoritesPanelFrame: frame, sidebarPosition };
+  hooks.runtime.ui = { root, favoritesPanelFrame: frame, sidebarPositionOptions };
   await hooks.setSidebarPosition("right");
   hooks.applyIdleTransparency();
   const result = structuredClone({
     sidebarPosition: hooks.runtime.state.sidebarPosition,
-    selectValue: sidebarPosition.value,
+    rightChecked: sidebarPositionOptions[1].attributes["aria-checked"],
     rootDockedRight: root.classList.has("poe2-marketwright-sidebar-right"),
     frameDockedRight: frame.classList.has("poe2-marketwright-sidebar-right"),
     rootIdle: root.classList.has("poe2-marketwright-idle"),
@@ -161,7 +166,7 @@ test("sidebar setting mirrors the full view and applies idle opacity only to sid
   });
   assert.deepStrictEqual(result, {
     sidebarPosition: "right",
-    selectValue: "right",
+    rightChecked: "true",
     rootDockedRight: true,
     frameDockedRight: true,
     rootIdle: true,

@@ -66,6 +66,27 @@
   "toggleOff": {
     "message": "OFF"
   },
+  "tierSelectorLabel": {
+    "message": "Tier"
+  },
+  "tierFeatureTitle": {
+    "message": "Tier Selection"
+  },
+  "tierMode": {
+    "message": "Tier mode"
+  },
+  "tierModeMinimum": {
+    "message": "Minimum"
+  },
+  "tierModeExact": {
+    "message": "Exact"
+  },
+  "enableTierSelection": {
+    "message": "Enable Tier selection"
+  },
+  "disableTierSelection": {
+    "message": "Disable Tier selection"
+  },
   "enableFiltering": {
     "message": "Enable filtering"
   },

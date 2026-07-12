@@ -12845,7 +12845,7 @@
     },
     "crafted.stat_350598685": {
       "zh_CN": "# 武器范围",
-      "zh_TW": "# to Weapon Range"
+      "zh_TW": "#武器距離"
     },
     "crafted.stat_3518449420": {
       "zh_CN": "植物蔓生时，有 #% 的几率获得自然执政官",
@@ -28661,7 +28661,7 @@
     },
     "explicit.stat_350598685": {
       "zh_CN": "# 武器范围",
-      "zh_TW": "# to Weapon Range"
+      "zh_TW": "#武器距離"
     },
     "explicit.stat_3507701584": {
       "zh_CN": "脆弱技能等级 #",
@@ -36257,7 +36257,7 @@
     },
     "fractured.stat_350598685": {
       "zh_CN": "# 武器范围",
-      "zh_TW": "# to Weapon Range"
+      "zh_TW": "#武器距離"
     },
     "fractured.stat_3513818125": {
       "zh_CN": "范围内的小型天赋同时提供 感电持续时间提高 #%",
@@ -41743,7 +41743,7 @@
     },
     "# to Weapon Range": {
       "zh_CN": "# 武器范围",
-      "zh_TW": "# to Weapon Range"
+      "zh_TW": "#武器距離"
     },
     "# to all Attributes per Level": {
       "zh_CN": "每级使全属性 #",

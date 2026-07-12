@@ -354,6 +354,27 @@
   "toggleOff": {
     "message": "关"
   },
+  "tierSelectorLabel": {
+    "message": "词缀等级"
+  },
+  "tierFeatureTitle": {
+    "message": "词缀等级选择"
+  },
+  "tierMode": {
+    "message": "词缀等级模式"
+  },
+  "tierModeMinimum": {
+    "message": "最低"
+  },
+  "tierModeExact": {
+    "message": "精确"
+  },
+  "enableTierSelection": {
+    "message": "开启词缀等级选择"
+  },
+  "disableTierSelection": {
+    "message": "关闭词缀等级选择"
+  },
   "enableFiltering": {
     "message": "启用过滤"
   },

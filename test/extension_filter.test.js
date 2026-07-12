@@ -91,6 +91,254 @@ test("page bridge applies native multi-token search only to item and stat select
   assert.equal(parent.underline("金光戒指", "金 戒指"), "<strong>金</strong>光<strong>戒指</strong>");
 });
 
+test("page bridge limits Tier options to the selected exact category", () => {
+  const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
+  let source = fs
+    .readFileSync("page-bridge.js", "utf8")
+    .replace(bootstrapCall, "")
+    .replace(
+      /\n\}\)\(\);\s*$/,
+      "\n  window.__testHooks = { getTierOptions, runtime };\n})();"
+    );
+  const sandbox = {
+    window: { addEventListener() {}, postMessage() {}, document: {} },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.tierMappings = {
+    Rings: { "explicit.stat_damage": [{ tier: 1, min: 17 }] },
+    Belts: { "explicit.stat_damage": [{ tier: 1, min: 25 }] }
+  };
+  hooks.runtime.tierPageLabels = { Rings: "戒指", Belts: "腰带" };
+
+  const global = structuredClone(hooks.getTierOptions("explicit.stat_damage"));
+  hooks.runtime.tierPageId = "Rings";
+  const exact = structuredClone(hooks.getTierOptions("explicit.stat_damage"));
+  assert.deepStrictEqual(global, [
+    { tier: 1, min: 25, pageId: "Belts", label: "腰带 T1" },
+    { tier: 1, min: 17, pageId: "Rings", label: "戒指 T1" }
+  ]);
+  assert.deepStrictEqual(exact, [{ tier: 1, min: 17, pageId: "Rings", label: "T1" }]);
+});
+
+test("page bridge inserts a Tier selector for a Vue stat filter and updates min", () => {
+  const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
+  let source = fs
+    .readFileSync("page-bridge.js", "utf8")
+    .replace(bootstrapCall, "")
+    .replace(
+      /\n\}\)\(\);\s*$/,
+      "\n  window.__testHooks = { getTierStatId, installTierControls, refreshTierControls, runtime };\n})();"
+    );
+
+  class FakeEvent {
+    constructor(type, options = {}) {
+      this.type = type;
+      this.bubbles = options.bubbles;
+    }
+  }
+
+  class FakeElement {
+    constructor(ownerDocument) {
+      this.ownerDocument = ownerDocument;
+      this.children = [];
+      this.listeners = new Map();
+      this.attributes = {};
+      this.emitted = [];
+      this.className = "";
+      const classes = new Set();
+      this.classList = {
+        add: (...names) => names.forEach((name) => classes.add(name)),
+        contains: (name) => classes.has(name),
+        remove: (...names) => names.forEach((name) => classes.delete(name)),
+        toggle: (name, force) => {
+          const enabled = force === undefined ? !classes.has(name) : force;
+          if (enabled) {
+            classes.add(name);
+          } else {
+            classes.delete(name);
+          }
+          return enabled;
+        }
+      };
+      this.value = "";
+    }
+
+    addEventListener(type, listener) {
+      this.listeners.set(type, [...(this.listeners.get(type) || []), listener]);
+    }
+
+    appendChild(child) {
+      this.children.push(child);
+      return child;
+    }
+
+    replaceChildren() {
+      this.children = [];
+    }
+
+    querySelector(selector) {
+      const className = selector.startsWith(".") ? selector.slice(1) : "";
+      return this.children.find((child) => child.className === className) || null;
+    }
+
+    setAttribute(name, value) {
+      this.attributes[name] = value;
+    }
+
+    dispatchEvent(event) {
+      this.emitted.push(event.type);
+      for (const listener of this.listeners.get(event.type) || []) {
+        listener.call(this, event);
+      }
+      return true;
+    }
+
+    contains(target) {
+      return target === this || this.children.some((child) => child.contains?.(target));
+    }
+
+    remove() {
+      this.removed = true;
+    }
+  }
+
+  class FakeInput extends FakeElement {
+    constructor(ownerDocument) {
+      super(ownerDocument);
+      this._value = "";
+    }
+
+    get value() {
+      return this._value;
+    }
+
+    set value(value) {
+      this._value = String(value);
+    }
+
+    before(control) {
+      this.tierControl = control;
+    }
+  }
+
+  let filter;
+  const documentListeners = new Map();
+  const document = {
+    documentElement: {},
+    addEventListener(type, listener) {
+      documentListeners.set(type, [...(documentListeners.get(type) || []), listener]);
+    },
+    createElement() {
+      return new FakeElement(document);
+    },
+    querySelector() {
+      return null;
+    },
+    querySelectorAll(selector) {
+      return selector === "#trade .search-advanced-pane .filter" ? [filter] : [];
+    }
+  };
+  const input = new FakeInput(document);
+  const maxInput = new FakeInput(document);
+  const filterBody = new FakeElement(document);
+  filter = {
+    __vue__: { filter: { id: "explicit.stat_3032590688" } },
+    parentElement: null,
+    children: [filterBody],
+    insertBefore(control, before) {
+      this.children.splice(this.children.indexOf(before), 0, control);
+      control.parentElement = this;
+      return control;
+    },
+    querySelector(selector) {
+      if (selector === "input.minmax") {
+        return input;
+      }
+      if (selector === ".filter-body") {
+        return filterBody;
+      }
+      if (selector === ".poe2-marketwright-tier-control") {
+        return this.children.find((child) => child.className === "poe2-marketwright-tier-control") || null;
+      }
+      return null;
+    },
+    querySelectorAll(selector) {
+      return selector === "input.minmax" ? [input, maxInput] : [];
+    }
+  };
+  class FakeMutationObserver {
+    constructor() {}
+
+    observe() {}
+  }
+  const sandbox = {
+    window: {
+      addEventListener() {},
+      postMessage() {},
+      document,
+      Event: FakeEvent,
+      HTMLInputElement: FakeInput
+    },
+    MutationObserver: FakeMutationObserver,
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.tierMappings = {
+    Rings: {
+      "explicit.stat_3032590688": [
+        { tier: 1, min: 20.6, exactMin: 17, exactMax: 25.5 },
+        { tier: 2, exactMin: 14, exactMax: 20.5 }
+      ]
+    }
+  };
+  hooks.runtime.tierPageLabels = { Rings: "Rings" };
+
+  assert.equal(hooks.getTierStatId(filter), "explicit.stat_3032590688");
+  hooks.refreshTierControls();
+
+  const control = filter.querySelector(".poe2-marketwright-tier-control");
+  const select = control.querySelector(".poe2-marketwright-tier-select");
+  const trigger = control.querySelector(".poe2-marketwright-tier-trigger");
+  assert.equal(control.parentElement, filter);
+  assert.equal(filter.children.indexOf(control), filter.children.indexOf(filterBody) - 1);
+  assert.equal(select.attributes["aria-label"], "Tier");
+  assert.equal(trigger.textContent, "T");
+  assert.equal(select.size, 3);
+  assert.deepEqual(select.children.map((option) => option.textContent), ["Tier", "Rings T1", "Rings T2"]);
+
+  hooks.installTierControls();
+  trigger.dispatchEvent(new FakeEvent("click"));
+  assert.equal(control.classList.contains("poe2-marketwright-tier-control-open"), true);
+  documentListeners.get("pointerdown")[0]({ target: {} });
+  assert.equal(control.classList.contains("poe2-marketwright-tier-control-open"), false);
+
+  select.value = "Rings:1";
+  select.dispatchEvent(new FakeEvent("change"));
+  assert.equal(input.value, "20.6");
+  assert.equal(maxInput.value, "");
+  assert.equal(trigger.textContent, "T1");
+
+  select.value = "Rings:2";
+  select.dispatchEvent(new FakeEvent("change"));
+  assert.equal(input.value, "");
+  assert.equal(trigger.textContent, "T2");
+
+  hooks.runtime.tierMode = "exact";
+  select.value = "Rings:1";
+  select.dispatchEvent(new FakeEvent("change"));
+  assert.equal(input.value, "17");
+  assert.equal(maxInput.value, "25.5");
+
+  hooks.runtime.tierMode = "minimum";
+  select.value = "Rings:1";
+  select.dispatchEvent(new FakeEvent("change"));
+  assert.equal(input.value, "20.6");
+  assert.equal(maxInput.value, "25.5");
+});
+
 test("page bridge hides unmatched known stats but keeps related pseudo", async () => {
   const listeners = [];
   const staticData = {

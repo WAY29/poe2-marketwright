@@ -75,15 +75,19 @@ test("global language prefers the saved choice and migrates browser language", a
     savedPageLanguage: saved.pageLanguage,
     splitUiLanguage: split.uiLanguage,
     splitPageLanguage: split.pageLanguage,
+    tierEnabled: migrated.tierEnabled,
+    tierMode: migrated.tierMode,
     normalized: hooks.resolveUiLanguage("unsupported")
   });
   assert.deepStrictEqual(result, {
     migrated: "zh_TW",
     saved: "zh_CN",
-    savedPageLanguage: "zh_CN",
-    splitUiLanguage: "zh_CN",
-    splitPageLanguage: "zh_TW_en",
-    normalized: "zh_TW"
+      savedPageLanguage: "zh_CN",
+      splitUiLanguage: "zh_CN",
+      splitPageLanguage: "zh_TW_en",
+      tierEnabled: true,
+      tierMode: "minimum",
+      normalized: "zh_TW"
   });
 });
 
@@ -140,6 +144,150 @@ test("Trade search uses no extension-owned suggestion component", () => {
   assert.doesNotMatch(source, /poe2-marketwright-search-suggestions/);
   assert.doesNotMatch(source, /getTradeSearchCandidates/);
   assert.doesNotMatch(source, /getNativeTradeItemSearchQuery/);
+});
+
+test("Tier bridge sends mappings with its first update and the active category", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { syncTierBridge, runtime };\n})();"
+  );
+  const messages = [];
+  const sandbox = {
+    window: {
+      addEventListener() {},
+      innerWidth: 1280,
+      innerHeight: 900,
+      postMessage(message) {
+        messages.push(message);
+      }
+    },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.data = {
+    tierMappings: {
+      Rings: {
+        "explicit.stat_cold_damage": [{ tier: 1, min: 20.5 }]
+      }
+    },
+    pageCategories: { Rings: { label: "Rings" } }
+  };
+  hooks.runtime.state = { uiLanguage: "en", tierEnabled: true, tierMode: "minimum" };
+
+  hooks.syncTierBridge({ kind: "page", id: "Rings" });
+  hooks.syncTierBridge({ kind: "page", id: "Rings" });
+
+  assert.equal(messages.length, 1);
+  assert.deepStrictEqual(structuredClone(messages[0].payload), {
+    tierMappings: {
+      Rings: { "explicit.stat_cold_damage": [{ tier: 1, min: 20.5 }] }
+    },
+    tierPageId: "Rings",
+    tierEnabled: true,
+    tierMode: "minimum",
+    tierPageLabels: { Rings: "Rings" },
+    tierLabel: "Tier"
+  });
+});
+
+test("Tier mode buttons reflect the active mode and disabled state", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { updateTierControls, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  const makeButton = (mode) => ({
+    dataset: { tierMode: mode },
+    classList: {
+      active: false,
+      toggle(_name, active) {
+        this.active = active;
+      }
+    },
+    attributes: {},
+    setAttribute(name, value) {
+      this.attributes[name] = value;
+    }
+  });
+  const minimum = makeButton("minimum");
+  const exact = makeButton("exact");
+  const toggle = { setAttribute() {} };
+  hooks.runtime.ui = { tierEnabled: toggle, tierModeOptions: [minimum, exact] };
+  hooks.runtime.state = { tierEnabled: true, tierMode: "exact" };
+
+  hooks.updateTierControls();
+
+  assert.equal(minimum.classList.active, false);
+  assert.equal(minimum.attributes["aria-checked"], "false");
+  assert.equal(minimum.disabled, false);
+  assert.equal(exact.classList.active, true);
+  assert.equal(exact.attributes["aria-checked"], "true");
+
+  hooks.runtime.state.tierEnabled = false;
+  hooks.updateTierControls();
+  assert.equal(minimum.disabled, true);
+  assert.equal(exact.disabled, true);
+});
+
+test("sidebar position buttons reflect the saved position", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { setSidebarPosition, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: { storage: { local: { set: async () => {} } } }
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  const makeButton = (position) => ({
+    dataset: { sidebarPosition: position },
+    classList: {
+      active: false,
+      toggle(_name, active) {
+        this.active = active;
+      }
+    },
+    attributes: {},
+    setAttribute(name, value) {
+      this.attributes[name] = value;
+    }
+  });
+  const left = makeButton("left");
+  const right = makeButton("right");
+  hooks.runtime.ui = {
+    root: { classList: { toggle() {} }, style: {} },
+    sidebarPositionOptions: [left, right]
+  };
+  hooks.runtime.state = { sidebarPosition: "left", collapsed: false, panelPosition: null };
+
+  await hooks.setSidebarPosition("right");
+
+  assert.equal(left.classList.active, false);
+  assert.equal(left.attributes["aria-checked"], "false");
+  assert.equal(right.classList.active, true);
+  assert.equal(right.attributes["aria-checked"], "true");
 });
 
 test("changing the Trade page language clears every native Trade search cache", () => {

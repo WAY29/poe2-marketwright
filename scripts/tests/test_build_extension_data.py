@@ -29,7 +29,10 @@ from build_extension_data import (
     build_item_name_selection_map,
     build_page_categories,
     build_trade_stat_index,
+    build_tier_mappings,
     canonicalize_stat_text,
+    extract_rollable_ranges,
+    extract_rollable_minimums,
     normalize_poe2db_localized_stat_template,
     load_page_artifacts,
     map_granted_skill_names_to_trade_stats,
@@ -48,6 +51,230 @@ from build_extension_data import (
 
 
 class TradeStatMappingTests(unittest.TestCase):
+    def test_ignores_fixed_numbers_when_extracting_rollable_minimums(self) -> None:
+        self.assertEqual(
+            extract_rollable_minimums(
+                "Adds <span class='mod-value'>(16-20)</span> to "
+                "<span class='mod-value'>(25-31)</span> Cold Damage per 25 Strength"
+            ),
+            [16.0, 25.0],
+        )
+
+    def test_extracts_complete_ranges_when_the_dash_is_in_a_nested_span(self) -> None:
+        self.assertEqual(
+            extract_rollable_ranges(
+                "Adds <span class='mod-value'>(12<span class=\"ndash\">—</span>19)</span> to "
+                "<span class='mod-value'>(22<span class=\"ndash\">—</span>32)</span> Physical Damage"
+            ),
+            [(12.0, 19.0), (22.0, 32.0)],
+        )
+
+    def test_skips_ambiguous_tier_sequences_for_one_trade_stat(self) -> None:
+        def affix(code: str, value: int) -> dict[str, object]:
+            return {
+                "affix_group": "normal",
+                "code": code,
+                "families": ["Strength"],
+                "text_html": f"<span class='mod-value'>+({value}-{value + 2})</span> to Strength",
+            }
+
+        self.assertEqual(
+            build_tier_mappings(
+                {"Rings": [affix("Strength1", 5), affix("Strength2", 9), affix("AltStrength1", 12), affix("AltStrength2", 16)]},
+                {"# to strength": {"explicit.stat_strength"}},
+            ),
+            {},
+        )
+
+    def test_requires_an_exact_trade_stat_for_semantic_suffixes(self) -> None:
+        def affix(code: str, values: tuple[int, int]) -> dict[str, object]:
+            return {
+                "affix_group": "normal",
+                "code": code,
+                "families": ["PhysicalDamage"],
+                "text_html": (
+                    "Adds "
+                    f"<span class='mod-value'>({values[0]}-{values[0] + 2})</span> to "
+                    f"<span class='mod-value'>({values[1]}-{values[1] + 2})</span> Physical Damage to Attacks"
+                ),
+            }
+
+        self.assertEqual(
+            build_tier_mappings(
+                {"Rings": [affix("AddedPhysicalDamage1", (1, 3)), affix("AddedPhysicalDamage2", (4, 8))]},
+                {
+                    "adds # to # physical damage": {"explicit.stat_generic_damage"},
+                },
+            ),
+            {},
+        )
+
+    def test_builds_page_scoped_tier_mappings_from_verified_affix_families(self) -> None:
+        trade_stat_index = {
+            "# to strength": {
+                "crafted.stat_strength",
+                "explicit.stat_strength",
+            },
+            "#% reduced curse effect": {"explicit.stat_curse_effect"},
+            "adds # to # cold damage to attacks": {"explicit.stat_cold_damage"},
+        }
+        affixes = {
+            "Rings": [
+                {
+                    "affix_group": "normal",
+                    "code": "Strength1",
+                    "hover": "?s=Data%5CMods%2FStrength1",
+                    "required_level": 1,
+                    "families": ["Strength"],
+                    "text_html": "<span class='mod-value'>+(5-8)</span> to Strength",
+                },
+                {
+                    "affix_group": "normal",
+                    "code": "Strength2",
+                    "hover": "?s=Data%5CMods%2FStrength2",
+                    "required_level": 11,
+                    "families": ["Strength"],
+                    "text_html": "<span class='mod-value'>+(9-12)</span> to Strength",
+                },
+                {
+                    "affix_group": "normal",
+                    "code": "Strength3",
+                    "hover": "?s=Data%5CMods%2FStrength3",
+                    "required_level": 22,
+                    "families": ["Strength"],
+                    "text_html": "<span class='mod-value'>+(13-16)</span> to Strength",
+                },
+                {
+                    "affix_group": "normal",
+                    "code": "CurseEffect1",
+                    "hover": "?s=Data%5CMods%2FCurseEffect1",
+                    "required_level": 1,
+                    "families": ["CurseEffect"],
+                    "text_html": "<span class='mod-value'>-(5-8)%</span> reduced Curse Effect",
+                },
+                {
+                    "affix_group": "normal",
+                    "code": "CurseEffect2",
+                    "hover": "?s=Data%5CMods%2FCurseEffect2",
+                    "required_level": 20,
+                    "families": ["CurseEffect"],
+                    "text_html": "<span class='mod-value'>-(10-12)%</span> reduced Curse Effect",
+                },
+                {
+                    "affix_group": "normal",
+                    "code": "ColdDamage1",
+                    "hover": "?s=Data%5CMods%2FColdDamage1",
+                    "required_level": 1,
+                    "families": ["ColdDamage"],
+                    "text_html": "Adds <span class='mod-value'>(4-6)</span> to <span class='mod-value'>(8-10)</span> Cold Damage to Attacks",
+                },
+                {
+                    "affix_group": "normal",
+                    "code": "ColdDamage2",
+                    "hover": "?s=Data%5CMods%2FColdDamage2",
+                    "required_level": 20,
+                    "families": ["ColdDamage"],
+                    "text_html": "Adds <span class='mod-value'>(16-20)</span> to <span class='mod-value'>(25-31)</span> Cold Damage to Attacks",
+                },
+                {
+                    "affix_group": "normal",
+                    "code": "Unmapped1",
+                    "hover": "?s=Data%5CMods%2FUnmapped1",
+                    "required_level": 1,
+                    "families": ["Unmapped"],
+                    "text_html": "<span class='mod-value'>(1-2)</span> to Unmapped Stat",
+                },
+                {
+                    "affix_group": "normal",
+                    "code": "Unmapped2",
+                    "hover": "?s=Data%5CMods%2FUnmapped2",
+                    "required_level": 20,
+                    "families": ["Unmapped"],
+                    "text_html": "<span class='mod-value'>(3-4)</span> to Unmapped Stat",
+                },
+            ],
+            "Belts": [
+                {
+                    "affix_group": "normal",
+                    "code": "Strength1",
+                    "hover": "?s=Data%5CMods%2FStrength1",
+                    "required_level": 1,
+                    "families": ["Strength"],
+                    "text_html": "<span class='mod-value'>+(5-8)</span> to Strength",
+                },
+                {
+                    "affix_group": "normal",
+                    "code": "Strength2",
+                    "hover": "?s=Data%5CMods%2FStrength2",
+                    "required_level": 11,
+                    "families": ["Strength"],
+                    "text_html": "<span class='mod-value'>+(34-36)</span> to Strength",
+                },
+            ],
+        }
+
+        self.assertEqual(
+            build_tier_mappings(affixes, trade_stat_index),
+            {
+                "Belts": {
+                    "explicit.stat_strength": [
+                        {"tier": 1, "exactMin": 34, "exactMax": 36, "min": 8.1},
+                        {"tier": 2, "exactMin": 5, "exactMax": 8},
+                    ]
+                },
+                "Rings": {
+                    "explicit.stat_cold_damage": [
+                        {"tier": 1, "exactMin": 20.5, "exactMax": 25.5, "min": 8.1},
+                        {"tier": 2, "exactMin": 6, "exactMax": 8},
+                    ],
+                    "explicit.stat_strength": [
+                        {"tier": 1, "exactMin": 13, "exactMax": 16, "min": 12.1},
+                        {"tier": 2, "exactMin": 9, "exactMax": 12, "min": 8.1},
+                        {"tier": 3, "exactMin": 5, "exactMax": 8},
+                    ],
+                },
+            },
+        )
+
+    def test_uses_the_next_tier_roll_ceiling_for_the_minimum(self) -> None:
+        affixes = {
+            "Rings": [
+                {
+                    "affix_group": "normal",
+                    "code": "AddedPhysicalDamage1",
+                    "families": ["PhysicalDamage"],
+                    "text_html": (
+                        "Adds <span class='mod-value'>(10-15)</span> to "
+                        "<span class='mod-value'>(18-26)</span> Physical Damage to Attacks"
+                    ),
+                },
+                {
+                    "affix_group": "normal",
+                    "code": "AddedPhysicalDamage2",
+                    "families": ["PhysicalDamage"],
+                    "text_html": (
+                        "Adds <span class='mod-value'>(12-19)</span> to "
+                        "<span class='mod-value'>(22-32)</span> Physical Damage to Attacks"
+                    ),
+                },
+            ]
+        }
+
+        self.assertEqual(
+            build_tier_mappings(
+                affixes,
+                {"adds # to # physical damage to attacks": {"explicit.stat_physical_damage"}},
+            ),
+            {
+                "Rings": {
+                    "explicit.stat_physical_damage": [
+                        {"tier": 1, "exactMin": 17, "exactMax": 25.5, "min": 20.6},
+                        {"tier": 2, "exactMin": 14, "exactMax": 20.5},
+                    ]
+                }
+            },
+        )
+
     def test_preserves_localized_numeric_ranges_in_stat_templates(self) -> None:
         self.assertEqual(
             normalize_poe2db_localized_stat_template("羁绊：附加 14 - 20 基础物理伤害"),

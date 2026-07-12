@@ -13,7 +13,7 @@ from html import unescape
 from html.parser import HTMLParser
 from pathlib import Path
 from typing import Any
-from urllib.parse import urljoin
+from urllib.parse import unquote, urljoin
 
 REPO_ROOT = Path(__file__).resolve().parents[1]
 if str(REPO_ROOT) not in sys.path:
@@ -26,6 +26,11 @@ NUMBER_RE = re.compile(r"([-+]?\d+(?:\.\d+)?)")
 WHITESPACE_RE = re.compile(r"\s+")
 HTML_BREAK_RE = re.compile(r"<br\s*/?>", re.IGNORECASE)
 HTML_TAG_RE = re.compile(r"<[^>]+>")
+ROLLABLE_RANGE_RE = re.compile(
+    r"([+-]?\d+(?:\.\d+)?)\s*(?:-|\u2013|\u2014|to)\s*([+-]?\d+(?:\.\d+)?)",
+    re.IGNORECASE,
+)
+TIER_SOURCE_RE = re.compile(r"^(.*?)(\d+)(?:_+)?$")
 HTML_TITLE_RE = re.compile(r"<title\b[^>]*>(.*?)</title\s*>", re.IGNORECASE | re.DOTALL)
 GRANTED_SKILL_RE = re.compile(r"\bGrants\s+Skill:\s*(?:Level\s+(?:#|\d+)\s*)?(.+?)\s*$", re.IGNORECASE)
 TRADE_STATS_URL = "https://www.pathofexile.com/api/trade2/data/stats"
@@ -889,6 +894,213 @@ def split_affix_stat_lines(text_html: str) -> list[str]:
         if line:
             lines.append(line)
     return lines
+
+
+def split_affix_stat_html_lines(text_html: str) -> list[str]:
+    text = HTML_BREAK_RE.sub("\n", str(text_html or ""))
+    return [line for line in text.splitlines() if strip_html(line)]
+
+
+def tier_trade_stat_lookup_variants(text_html: str) -> list[set[str]]:
+    pattern = canonicalize_stat_text(text_html)
+    variants = [pattern]
+    if pattern.startswith(("+", "-")):
+        variants.append(pattern[1:])
+
+    lookup_variants: list[set[str]] = []
+    for variant in variants:
+        keys = trade_stat_lookup_keys(variant)
+        if keys not in lookup_variants:
+            lookup_variants.append(keys)
+    return lookup_variants
+
+
+def get_tier_trade_stat_ids(
+    text_html: str,
+    trade_stat_index: dict[str, set[str]],
+    stat_group: str,
+) -> set[str]:
+    for keys in tier_trade_stat_lookup_variants(text_html):
+        stat_ids = {
+            stat_id
+            for key in keys
+            for stat_id in trade_stat_index.get(key, set())
+            if stat_id.startswith(f"{stat_group}.")
+        }
+        if stat_ids:
+            return stat_ids
+    return set()
+
+
+class ModValueTextParser(HTMLParser):
+    """Collect text in mod-value spans, including text from nested presentation spans."""
+
+    def __init__(self) -> None:
+        super().__init__(convert_charrefs=True)
+        self.values: list[str] = []
+        self._span_depth = 0
+        self._parts: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag.lower() != "span":
+            return
+        if self._span_depth:
+            self._span_depth += 1
+            return
+        classes = next((value or "" for name, value in attrs if name.lower() == "class"), "")
+        if "mod-value" in classes.split():
+            self._span_depth = 1
+            self._parts = []
+
+    def handle_endtag(self, tag: str) -> None:
+        if tag.lower() != "span" or not self._span_depth:
+            return
+        self._span_depth -= 1
+        if not self._span_depth:
+            self.values.append("".join(self._parts))
+            self._parts = []
+
+    def handle_data(self, data: str) -> None:
+        if self._span_depth:
+            self._parts.append(data)
+
+
+def extract_mod_value_texts(text_html: str) -> list[str]:
+    parser = ModValueTextParser()
+    parser.feed(str(text_html or ""))
+    parser.close()
+    return parser.values
+
+
+def extract_rollable_ranges(text_html: str) -> list[tuple[float, float]]:
+    ranges: list[tuple[float, float]] = []
+    for value in extract_mod_value_texts(text_html):
+        range_match = ROLLABLE_RANGE_RE.search(value)
+        numbers = NUMBER_RE.findall(value)
+        if range_match:
+            lower = float(range_match.group(1))
+            upper = float(range_match.group(2))
+        elif numbers:
+            lower = upper = float(numbers[0])
+        else:
+            continue
+        if value.lstrip().startswith("-("):
+            lower, upper = -abs(upper), -abs(lower)
+        ranges.append(tuple(sorted((lower, upper))))
+    return ranges
+
+
+def extract_rollable_minimums(text_html: str) -> list[float]:
+    return [minimum for minimum, _ in extract_rollable_ranges(text_html)]
+
+
+def get_affix_tier_source(affix: dict[str, Any]) -> tuple[str, int] | None:
+    source = str(affix.get("code") or "").strip()
+    if not source:
+        source = unquote(str(affix.get("hover") or "").strip()).removeprefix("?s=")
+    match = TIER_SOURCE_RE.match(source)
+    if not match:
+        return None
+    return match.group(1), int(match.group(2))
+
+
+def get_tier_trade_stat_group(affix: dict[str, Any]) -> str:
+    affix_group = str(affix.get("affix_group") or "").lower()
+    if affix_group == "desecrated":
+        return "desecrated"
+    if affix_group in {"socketable", "bonded"}:
+        return "rune"
+    if affix_group == "corrupted":
+        return "implicit"
+    return "explicit"
+
+
+def normalize_tier_minimum(value: float) -> int | float:
+    rounded = round(value, 6)
+    return int(rounded) if rounded.is_integer() else rounded
+
+
+def build_tier_mappings(
+    affixes_by_page: dict[str, list[dict[str, Any]]],
+    trade_stat_index: dict[str, set[str]],
+) -> dict[str, dict[str, list[dict[str, int | float]]]]:
+    sequences: dict[tuple[str, str, str, str, tuple[str, ...], str], list[tuple[int, float, float]]] = {}
+
+    for page_slug, affixes in affixes_by_page.items():
+        for affix in affixes:
+            tier_source = get_affix_tier_source(affix)
+            if not tier_source:
+                continue
+            source, source_rank = tier_source
+            stat_group = get_tier_trade_stat_group(affix)
+            affix_group = str(affix.get("affix_group") or "").lower()
+            families = tuple(sorted(str(value) for value in affix.get("families") or [] if value))
+            for line_html in split_affix_stat_html_lines(affix.get("text_html") or affix.get("text") or ""):
+                ranges = extract_rollable_ranges(line_html)
+                if not ranges:
+                    continue
+                stat_ids = get_tier_trade_stat_ids(line_html, trade_stat_index, stat_group)
+                if len(stat_ids) != 1:
+                    continue
+                stat_id = next(iter(stat_ids))
+                sequence_key = (
+                    page_slug,
+                    stat_id,
+                    affix_group,
+                    source,
+                    families,
+                    canonicalize_stat_text(line_html),
+                )
+                sequences.setdefault(sequence_key, []).append(
+                    (
+                        source_rank,
+                        sum(minimum for minimum, _ in ranges) / len(ranges),
+                        sum(maximum for _, maximum in ranges) / len(ranges),
+                    )
+                )
+
+    candidates: dict[tuple[str, str], list[list[dict[str, int | float]]]] = {}
+    for (page_slug, stat_id, _, _, _, _), values in sequences.items():
+        if len(values) < 2 or len({rank for rank, _, _ in values}) != len(values):
+            continue
+        ordered = sorted(values, key=lambda value: value[0], reverse=True)
+        tiers: list[dict[str, int | float]] = []
+        for index, (_, minimum, maximum) in enumerate(ordered):
+            tier: dict[str, int | float] = {
+                "tier": index + 1,
+                "exactMin": normalize_tier_minimum(minimum),
+                "exactMax": normalize_tier_minimum(maximum),
+            }
+            if index + 1 < len(ordered):
+                threshold = ordered[index + 1][2] + 0.1
+                if threshold > maximum:
+                    tiers = []
+                    break
+                tier["min"] = normalize_tier_minimum(threshold)
+            tiers.append(tier)
+        if tiers:
+            candidates.setdefault((page_slug, stat_id), []).append(tiers)
+
+    mappings: dict[str, dict[str, list[dict[str, int | float]]]] = {}
+    for (page_slug, stat_id), values in candidates.items():
+        if len(values) == 1:
+            mappings.setdefault(page_slug, {})[stat_id] = values[0]
+    return {
+        page_slug: dict(sorted(stat_mappings.items()))
+        for page_slug, stat_mappings in sorted(mappings.items())
+    }
+
+
+def load_tier_mappings(
+    split_dir: Path,
+    trade_stat_index: dict[str, set[str]],
+) -> dict[str, dict[str, list[dict[str, int | float]]]]:
+    index_payload = json.loads((split_dir / "index.json").read_text(encoding="utf-8"))
+    affixes_by_page = {
+        page["page_slug"]: json.loads((split_dir / page["file"]).read_text(encoding="utf-8")).get("affixes", [])
+        for page in index_payload["pages"]
+    }
+    return build_tier_mappings(affixes_by_page, trade_stat_index)
 
 
 def parse_page_html_artifacts(html: str, item_class_code: str | None = None) -> PageHtmlArtifacts:
@@ -2477,6 +2689,7 @@ async def main() -> int:
     trade_stat_records = build_trade_stat_records(trade_stats_payload)
     trade_skill_stat_index = build_trade_skill_stat_index(trade_stats_payload)
     artifacts = load_page_artifacts(split_dir, trade_stat_index)
+    tier_mappings = load_tier_mappings(split_dir, trade_stat_index)
     page_html_artifacts_by_slug = await collect_page_html_artifacts(
         [artifact.page_url for artifact in artifacts],
         args.workers,
@@ -2741,7 +2954,7 @@ async def main() -> int:
     display_metadata.pop("clientStrings", None)
 
     output = {
-        "version": 4,
+        "version": 6,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "source": "https://poe2db.tw/us/Modifiers",
         "tradeStatsSource": args.trade_stats_url,
@@ -2804,6 +3017,7 @@ async def main() -> int:
         "selectionOptions": selection_options,
         "allPatterns": all_patterns,
         "allStatIds": all_stat_ids,
+        "tierMappings": tier_mappings,
         "displayMetadata": display_metadata,
         "tradeLocalization": trade_localization,
     }

@@ -14,6 +14,8 @@
     pageLanguage: null,
     pageTranslationEnabled: true,
     filteringEnabled: true,
+    tierEnabled: true,
+    tierMode: "minimum",
     pobCopyEnabled: true,
     currencyConversionEnabled: true,
     favoritesEnabled: true,
@@ -59,6 +61,7 @@
   });
   const BRIDGE_SOURCE = "poe2-marketwright";
   const BRIDGE_UPDATE_TYPE = "POE2_MARKETWRIGHT_UPDATE";
+  const BRIDGE_TIER_UPDATE_TYPE = "POE2_MARKETWRIGHT_TIER_UPDATE";
   const BRIDGE_READY_TYPE = "POE2_MARKETWRIGHT_READY";
   const BRIDGE_STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
   const BRIDGE_SEARCH_SNAPSHOT_TYPE = "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT";
@@ -406,6 +409,13 @@
     selectionSourceAuto: "Auto",
     selectionSourceManual: "Manual",
     statsText: "Available $1 / Keep $2 / Ignore $3",
+    tierSelectorLabel: "Tier",
+    tierFeatureTitle: "Tier selection",
+    tierMode: "Tier mode",
+    tierModeMinimum: "Minimum",
+    tierModeExact: "Exact",
+    enableTierSelection: "Enable Tier selection",
+    disableTierSelection: "Disable Tier selection",
     generalSettingsTitle: "General",
     language: "Language",
     tradePageLanguage: "Trade page language",
@@ -577,6 +587,8 @@
     selectionPollTimer: null,
     bridgeStats: null,
     bridgePayloadSignature: "",
+    tierBridgeMappingsSent: false,
+    tierBridgeSignature: "",
     tradeSearchSnapshots: new Map(),
     lastFilterStats: null,
     favoriteLeague: null,
@@ -714,6 +726,9 @@
         typeof savedState.pageTranslationEnabled === "boolean"
           ? savedState.pageTranslationEnabled
           : DEFAULT_STATE.pageTranslationEnabled,
+      tierEnabled:
+        typeof savedState.tierEnabled === "boolean" ? savedState.tierEnabled : DEFAULT_STATE.tierEnabled,
+      tierMode: normalizeTierMode(savedState.tierMode),
       favoritesEnabled:
         typeof savedState.favoritesEnabled === "boolean"
           ? savedState.favoritesEnabled
@@ -760,6 +775,10 @@
     return Number.isInteger(opacity) && opacity >= 20 && opacity <= 90 && opacity % 10 === 0
       ? opacity
       : DEFAULT_STATE.idleTransparency;
+  }
+
+  function normalizeTierMode(value) {
+    return value === "exact" ? "exact" : "minimum";
   }
 
   function normalizePanelPosition(position) {
@@ -886,10 +905,13 @@
             <span id="poe2-trade2-affix-filter-page-translation-title" class="poe2-trade2-affix-filter-field-label"></span>
             <button id="poe2-trade2-affix-filter-page-translation-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
           </div>
-          <label class="poe2-trade2-affix-filter-field">
+          <div class="poe2-trade2-affix-filter-field">
             <span id="poe2-trade2-affix-filter-sidebar-position-label" class="poe2-trade2-affix-filter-field-label"></span>
-            <select id="poe2-trade2-affix-filter-sidebar-position"></select>
-          </label>
+            <div id="poe2-trade2-affix-filter-sidebar-position" class="poe2-marketwright-segmented-control" role="radiogroup" aria-labelledby="poe2-trade2-affix-filter-sidebar-position-label">
+              <button class="poe2-marketwright-segmented-option" type="button" data-sidebar-position="left" role="radio" aria-checked="false"></button>
+              <button class="poe2-marketwright-segmented-option" type="button" data-sidebar-position="right" role="radio" aria-checked="false"></button>
+            </div>
+          </div>
           <div class="poe2-trade2-affix-filter-feature-header">
             <span id="poe2-trade2-affix-filter-idle-transparency-title" class="poe2-trade2-affix-filter-field-label"></span>
             <button id="poe2-trade2-affix-filter-idle-transparency-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
@@ -909,6 +931,19 @@
             <select id="poe2-trade2-affix-filter-selection"></select>
           </label>
           <div id="poe2-trade2-affix-filter-meta" class="poe2-trade2-affix-filter-meta"></div>
+        </section>
+        <section class="poe2-trade2-affix-filter-feature poe2-marketwright-tier-feature">
+          <div class="poe2-trade2-affix-filter-feature-header">
+            <span id="poe2-marketwright-tier-title" class="poe2-trade2-affix-filter-feature-title"></span>
+            <button id="poe2-marketwright-tier-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
+          </div>
+          <div class="poe2-trade2-affix-filter-field">
+            <span id="poe2-marketwright-tier-mode-label" class="poe2-trade2-affix-filter-field-label"></span>
+            <div id="poe2-marketwright-tier-mode" class="poe2-marketwright-segmented-control" role="radiogroup" aria-labelledby="poe2-marketwright-tier-mode-label">
+              <button class="poe2-marketwright-segmented-option" type="button" data-tier-mode="minimum" role="radio" aria-checked="false"></button>
+              <button class="poe2-marketwright-segmented-option" type="button" data-tier-mode="exact" role="radio" aria-checked="false"></button>
+            </div>
+          </div>
         </section>
         <section class="poe2-trade2-affix-filter-feature poe2-trade2-affix-filter-pob-feature">
           <div class="poe2-trade2-affix-filter-feature-header">
@@ -1000,6 +1035,8 @@
     runtime.ui.collapse = root.querySelector("#poe2-trade2-affix-filter-collapse");
     runtime.ui.expand = root.querySelector("#poe2-trade2-affix-filter-expand");
     runtime.ui.enabled = root.querySelector("#poe2-trade2-affix-filter-enabled");
+    runtime.ui.tierEnabled = root.querySelector("#poe2-marketwright-tier-enabled");
+    runtime.ui.tierModeOptions = Array.from(root.querySelectorAll("[data-tier-mode]"));
     runtime.ui.pobEnabled = root.querySelector("#poe2-trade2-affix-filter-pob-enabled");
     runtime.ui.currencyEnabled = root.querySelector("#poe2-trade2-affix-filter-currency-enabled");
     runtime.ui.currencyRefresh = root.querySelector("#poe2-trade2-affix-filter-currency-refresh");
@@ -1017,12 +1054,14 @@
     runtime.ui.pageTranslationTitle = root.querySelector("#poe2-trade2-affix-filter-page-translation-title");
     runtime.ui.pageTranslationEnabled = root.querySelector("#poe2-trade2-affix-filter-page-translation-enabled");
     runtime.ui.sidebarPositionLabel = root.querySelector("#poe2-trade2-affix-filter-sidebar-position-label");
-    runtime.ui.sidebarPosition = root.querySelector("#poe2-trade2-affix-filter-sidebar-position");
+    runtime.ui.sidebarPositionOptions = Array.from(root.querySelectorAll("[data-sidebar-position]"));
     runtime.ui.idleTransparencyTitle = root.querySelector("#poe2-trade2-affix-filter-idle-transparency-title");
     runtime.ui.idleTransparencyEnabled = root.querySelector("#poe2-trade2-affix-filter-idle-transparency-enabled");
     runtime.ui.idleTransparencyOpacityLabel = root.querySelector("#poe2-trade2-affix-filter-idle-transparency-opacity-label");
     runtime.ui.idleTransparencyOpacity = root.querySelector("#poe2-trade2-affix-filter-idle-transparency-opacity");
     runtime.ui.statTitle = root.querySelector("#poe2-trade2-affix-filter-stat-title");
+    runtime.ui.tierTitle = root.querySelector("#poe2-marketwright-tier-title");
+    runtime.ui.tierModeLabel = root.querySelector("#poe2-marketwright-tier-mode-label");
     runtime.ui.pobTitle = root.querySelector("#poe2-trade2-affix-filter-pob-title");
     runtime.ui.favoritesTitle = root.querySelector("#poe2-marketwright-favorites-title");
     runtime.ui.linkFavoritesTitle = root.querySelector("#poe2-marketwright-link-favorites-title");
@@ -1038,12 +1077,10 @@
     populateSelectionOptions(runtime.ui.selection);
     populateLanguageOptions(runtime.ui.language);
     populatePageLanguageOptions(runtime.ui.pageLanguage);
-    populateSidebarPositionOptions(runtime.ui.sidebarPosition);
 
     runtime.ui.selection.value = runtime.state.selection;
     runtime.ui.language.value = runtime.state.uiLanguage;
     runtime.ui.pageLanguage.value = runtime.state.pageLanguage;
-    runtime.ui.sidebarPosition.value = getSidebarPosition();
     runtime.ui.idleTransparencyOpacity.value = String(runtime.state.idleTransparency);
     updateToggleButton();
     renderFavoriteDrawer();
@@ -1147,6 +1184,26 @@
       }, "toggle stat filtering");
     });
 
+    runtime.ui.tierEnabled.addEventListener("click", () => {
+      runtime.state.tierEnabled = !runtime.state.tierEnabled;
+      updateTierControls();
+      runAsync(async () => {
+        await saveState();
+        scheduleRefresh();
+      }, "toggle Tier selection");
+    });
+
+    runtime.ui.tierModeOptions.forEach((option) => {
+      option.addEventListener("click", () => {
+        runtime.state.tierMode = normalizeTierMode(option.dataset.tierMode);
+        updateTierControls();
+        runAsync(async () => {
+          await saveState();
+          scheduleRefresh();
+        }, "change Tier mode");
+      });
+    });
+
     runtime.ui.pobEnabled.addEventListener("click", () => {
       runtime.state.pobCopyEnabled = !runtime.state.pobCopyEnabled;
       runtime.pobCopy?.setEnabled(runtime.state.pobCopyEnabled);
@@ -1229,8 +1286,10 @@
     runtime.ui.pageTranslationEnabled.addEventListener("click", () => {
       runAsync(() => setPageTranslationEnabled(!isPageTranslationEnabled()), "toggle Trade page translation");
     });
-    runtime.ui.sidebarPosition.addEventListener("change", () => {
-      runAsync(() => setSidebarPosition(runtime.ui.sidebarPosition.value), "change sidebar position");
+    runtime.ui.sidebarPositionOptions.forEach((option) => {
+      option.addEventListener("click", () => {
+        runAsync(() => setSidebarPosition(option.dataset.sidebarPosition), "change sidebar position");
+      });
     });
     runtime.ui.idleTransparencyEnabled.addEventListener("click", () => {
       runAsync(() => setIdleTransparencyEnabled(!isIdleTransparencyEnabled()), "toggle idle transparency");
@@ -1253,8 +1312,13 @@
     runtime.ui.pageLanguageLabel.textContent = t("tradePageLanguage");
     runtime.ui.pageTranslationTitle.textContent = t("tradePageTranslation");
     runtime.ui.sidebarPositionLabel.textContent = t("sidebarPosition");
+    runtime.ui.sidebarPositionOptions.forEach((option) => {
+      option.textContent = t(option.dataset.sidebarPosition === "right" ? "sidebarPositionRight" : "sidebarPositionLeft");
+    });
     runtime.ui.idleTransparencyTitle.textContent = t("idleTransparency");
     runtime.ui.statTitle.textContent = t("statFilterTitle");
+    runtime.ui.tierTitle.textContent = t("tierFeatureTitle");
+    runtime.ui.tierModeLabel.textContent = t("tierMode");
     runtime.ui.pobTitle.textContent = t("pobCopyTitle");
     runtime.ui.favoritesTitle.textContent = t("favoritesTitle");
     runtime.ui.linkFavoritesTitle.textContent = t("linkFavoritesTitle");
@@ -1282,6 +1346,10 @@
     runtime.ui.linkFavoritesFeedbackUndo.title = t("undoFavoriteDelete");
     runtime.ui.linkFavoritesClose.setAttribute("aria-label", t("closeLinkFavoritesDrawer"));
     runtime.ui.linkFavoritesClose.title = t("closeLinkFavoritesDrawer");
+    runtime.ui.tierModeOptions.forEach((option) => {
+      option.textContent = t(option.dataset.tierMode === "exact" ? "tierModeExact" : "tierModeMinimum");
+    });
+    updateSidebarPositionControls();
     applyFavoritesDrawerState();
     applyLinkFavoritesDrawerState();
   }
@@ -1320,22 +1388,6 @@
       const option = document.createElement("option");
       option.value = language;
       option.textContent = labels[language];
-      select.appendChild(option);
-    }
-  }
-
-  function populateSidebarPositionOptions(select) {
-    if (!select) {
-      return;
-    }
-    select.replaceChildren();
-    for (const [value, label] of [
-      ["left", t("sidebarPositionLeft")],
-      ["right", t("sidebarPositionRight")]
-    ]) {
-      const option = document.createElement("option");
-      option.value = value;
-      option.textContent = label;
       select.appendChild(option);
     }
   }
@@ -1393,9 +1445,7 @@
   async function setSidebarPosition(position) {
     const nextPosition = position === "right" ? "right" : "left";
     runtime.state.sidebarPosition = nextPosition;
-    if (runtime.ui.sidebarPosition) {
-      runtime.ui.sidebarPosition.value = nextPosition;
-    }
+    updateSidebarPositionControls();
     applySidebarPosition();
     applyPanelPosition();
     await saveState();
@@ -1444,8 +1494,6 @@
     runtime.ui.language.value = runtime.state.uiLanguage;
     populatePageLanguageOptions(runtime.ui.pageLanguage);
     runtime.ui.pageLanguage.value = runtime.state.pageLanguage;
-    populateSidebarPositionOptions(runtime.ui.sidebarPosition);
-    runtime.ui.sidebarPosition.value = getSidebarPosition();
     const selection = runtime.state.selection;
     populateSelectionOptions(runtime.ui.selection);
     runtime.ui.selection.value = selection;
@@ -4980,6 +5028,7 @@
     const allowedPatterns = getAllowedPatterns(activeSelection);
     const allowedStatIds = getAllowedStatIds(activeSelection);
     syncPageBridge(allowedPatterns, allowedStatIds);
+    syncTierBridge(inferActiveSelection());
 
     const filterStats = {
       groups: 0,
@@ -5068,28 +5117,34 @@
 
   function getTypeCategoryMultiselect() {
     const group = findTypeFilterGroup();
-    const body = group?.querySelector(".filter-group-body");
-    if (!body) {
+    if (!group) {
       return null;
     }
-
+    const body = group.querySelector(".filter-group-body") || group;
     const fields = Array.from(body.children).filter((child) => child.matches?.(".filter.filter-property"));
+    if (!fields.length) {
+      fields.push(...(body.querySelectorAll?.(".filter.filter-property") || []));
+    }
     const categoryField =
       fields.find((field) => isCategoryFilterField(field)) ||
       fields.find((field) => field.matches(".filter-property.full-span")) ||
       fields[0];
 
-    return categoryField?.querySelector(".multiselect.filter-select, .multiselect") || null;
+    return categoryField?.querySelector(".multiselect.filter-select, .multiselect, select") || null;
   }
 
   function findTypeFilterGroup() {
-    for (const group of document.querySelectorAll(TYPE_FILTER_GROUP_SELECTOR)) {
+    const groups = new Set([
+      ...document.querySelectorAll(TYPE_FILTER_GROUP_SELECTOR),
+      ...document.querySelectorAll("#trade .filter-group")
+    ]);
+    for (const group of groups) {
       const text = normalizeLookupText(group.textContent || "");
-      if (/(type filters?|類別過濾|类别过滤)/.test(text) && /(item category|道具分類|道具分类)/.test(text)) {
+      if (/(type filters?|類別過濾|类别过滤|類別篩選器|类别筛选器)/.test(text) && /(item category|道具分類|道具分类)/.test(text)) {
         return group;
       }
     }
-    return document.querySelector(TYPE_FILTER_GROUP_SELECTOR);
+    return document.querySelector(TYPE_FILTER_GROUP_SELECTOR) || document.querySelector("#trade .filter-group");
   }
 
   function isCategoryFilterField(field) {
@@ -5549,12 +5604,38 @@
     runtime.ui.enabled.textContent = enabled ? t("toggleOn") : t("toggleOff");
     runtime.ui.enabled.setAttribute("aria-pressed", String(enabled));
     runtime.ui.enabled.title = enabled ? t("disableFiltering") : t("enableFiltering");
+    updateTierControls();
     updatePobCopyToggleButton();
     updateFavoritesToggleButton();
     updateLinkFavoritesToggleButton();
     updateCurrencyConversionToggleButton();
     updatePageTranslationToggleButton();
     updateIdleTransparencyControls();
+  }
+
+  function updateTierControls() {
+    if (!runtime.ui.tierEnabled || !runtime.ui.tierModeOptions?.length) {
+      return;
+    }
+    const enabled = Boolean(runtime.state.tierEnabled);
+    runtime.ui.tierEnabled.textContent = enabled ? t("toggleOn") : t("toggleOff");
+    runtime.ui.tierEnabled.setAttribute("aria-pressed", String(enabled));
+    runtime.ui.tierEnabled.title = enabled ? t("disableTierSelection") : t("enableTierSelection");
+    updateSegmentedOptions(runtime.ui.tierModeOptions, runtime.state.tierMode, "tierMode", !enabled);
+  }
+
+  function updateSidebarPositionControls() {
+    updateSegmentedOptions(runtime.ui.sidebarPositionOptions, getSidebarPosition(), "sidebarPosition");
+  }
+
+  function updateSegmentedOptions(options, activeValue, key, disabled = false) {
+    options?.forEach((option) => {
+      const active = option.dataset[key] === activeValue;
+      option.classList.toggle("poe2-marketwright-segmented-option-active", active);
+      option.setAttribute("aria-checked", String(active));
+      option.disabled = disabled;
+      option.setAttribute("aria-disabled", String(disabled));
+    });
   }
 
   function updatePobCopyToggleButton() {
@@ -6120,6 +6201,41 @@
         source: BRIDGE_SOURCE,
         type: BRIDGE_UPDATE_TYPE,
         payload
+      },
+      "*"
+    );
+  }
+
+  function syncTierBridge(selection) {
+    const tierMappings = runtime.data?.tierMappings || {};
+    const tierPageId = selection?.kind === "page" ? selection.id : null;
+    const tierEnabled = Boolean(runtime.state.tierEnabled);
+    const tierMode = normalizeTierMode(runtime.state.tierMode);
+    const pageLabels = Object.fromEntries(
+      Object.keys(tierMappings).map((pageId) => {
+        const page = runtime.data?.pageCategories?.[pageId];
+        return [pageId, localizeSelectionLabel({ kind: "page", id: pageId }, page?.label || pageId)];
+      })
+    );
+    const signature = [tierPageId || "", runtime.state.uiLanguage || "", tierEnabled, tierMode].join("|");
+    if (runtime.tierBridgeMappingsSent && signature === runtime.tierBridgeSignature) {
+      return;
+    }
+    const includeMappings = !runtime.tierBridgeMappingsSent;
+    runtime.tierBridgeMappingsSent = true;
+    runtime.tierBridgeSignature = signature;
+    window.postMessage(
+      {
+        source: BRIDGE_SOURCE,
+        type: BRIDGE_TIER_UPDATE_TYPE,
+        payload: {
+          ...(includeMappings ? { tierMappings } : {}),
+          tierPageId,
+          tierEnabled,
+          tierMode,
+          tierPageLabels: pageLabels,
+          tierLabel: t("tierSelectorLabel", [], "Tier")
+        }
       },
       "*"
     );

@@ -6,6 +6,7 @@
 
   const SOURCE = "poe2-marketwright";
   const UPDATE_TYPE = "POE2_MARKETWRIGHT_UPDATE";
+  const TIER_UPDATE_TYPE = "POE2_MARKETWRIGHT_TIER_UPDATE";
   const READY_TYPE = "POE2_MARKETWRIGHT_READY";
   const STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
   const SEARCH_SNAPSHOT_TYPE = "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT";
@@ -96,6 +97,11 @@
   const ITEM_SEARCH_ROOT_SELECTOR =
     "#trade .top .search-panel > .search-bar:not(.search-advanced) .search-left .multiselect.search-select";
   const FILTERABLE_STAT_ID_RE = /^(?:pseudo|explicit|implicit|fractured|crafted|enchant|rune|desecrated|sanctum|skill)\./i;
+  const TIER_FILTER_SELECTOR = "#trade .search-advanced-pane .filter";
+  const TIER_CONTROL_CLASS = "poe2-marketwright-tier-control";
+  const TIER_CONTROL_OPEN_CLASS = "poe2-marketwright-tier-control-open";
+  const TIER_TRIGGER_CLASS = "poe2-marketwright-tier-trigger";
+  const TIER_SELECT_CLASS = "poe2-marketwright-tier-select";
 
   const runtime = {
     app: null,
@@ -114,11 +120,42 @@
     lastFilterStats: null,
     whitespaceSearchFocusBound: false,
     whitespaceSearchWatchers: new WeakSet(),
-    whitespaceSearchUnderlines: new WeakMap()
+    whitespaceSearchUnderlines: new WeakMap(),
+    tierMappings: {},
+    tierPageLabels: {},
+    tierPageId: null,
+    tierEnabled: true,
+    tierMode: "minimum",
+    tierLabel: "Tier",
+    tierOpenControl: null,
+    tierOutsidePointerBound: false,
+    tierObserver: null,
+    tierRefreshTimer: null
   };
 
   window.addEventListener("message", (event) => {
-    if (event.source !== window || event.data?.source !== SOURCE || event.data.type !== UPDATE_TYPE) {
+    if (event.source !== window || event.data?.source !== SOURCE) {
+      return;
+    }
+
+    if (event.data.type === TIER_UPDATE_TYPE) {
+      const payload = event.data.payload || {};
+      if (payload.tierMappings && typeof payload.tierMappings === "object") {
+        runtime.tierMappings = payload.tierMappings;
+      }
+      runtime.tierPageLabels = payload.tierPageLabels || runtime.tierPageLabels;
+      runtime.tierPageId = typeof payload.tierPageId === "string" ? payload.tierPageId : null;
+      runtime.tierEnabled = payload.tierEnabled !== false;
+      runtime.tierMode = payload.tierMode === "exact" ? "exact" : "minimum";
+      if (typeof payload.tierLabel === "string" && payload.tierLabel) {
+        runtime.tierLabel = payload.tierLabel;
+      }
+      installTierControls();
+      scheduleTierControlRefresh();
+      return;
+    }
+
+    if (event.data.type !== UPDATE_TYPE) {
       return;
     }
 
@@ -198,6 +235,288 @@
       }
     }
     return null;
+  }
+
+  function installTierControls() {
+    const document = window.document;
+    if (!document?.documentElement) {
+      return;
+    }
+    if (!runtime.tierOutsidePointerBound) {
+      document.addEventListener(
+        "pointerdown",
+        (event) => {
+          const control = runtime.tierOpenControl;
+          if (control && !control.contains(event.target)) {
+            setTierControlOpen(control, false);
+          }
+        },
+        true
+      );
+      runtime.tierOutsidePointerBound = true;
+    }
+    if (runtime.tierObserver) {
+      return;
+    }
+    runtime.tierObserver = new MutationObserver(scheduleTierControlRefresh);
+    runtime.tierObserver.observe(document.querySelector("#trade") || document.documentElement, {
+      childList: true,
+      subtree: true
+    });
+  }
+
+  function scheduleTierControlRefresh() {
+    if (runtime.tierRefreshTimer) {
+      return;
+    }
+    runtime.tierRefreshTimer = window.setTimeout(() => {
+      runtime.tierRefreshTimer = null;
+      refreshTierControls();
+    }, 50);
+  }
+
+  function refreshTierControls() {
+    const document = window.document;
+    if (!document?.querySelectorAll) {
+      return;
+    }
+    for (const filterElement of document.querySelectorAll(TIER_FILTER_SELECTOR)) {
+      const statId = getTierStatId(filterElement);
+      const rangeInputs = filterElement.querySelectorAll("input.minmax");
+      const minInput = rangeInputs[0] || null;
+      const maxInput = rangeInputs[1] || null;
+      const existing = filterElement.querySelector(`.${TIER_CONTROL_CLASS}`);
+      const options = runtime.tierEnabled && statId ? getTierOptions(statId) : [];
+      if (!minInput || !options.length) {
+        removeTierControl(existing);
+        continue;
+      }
+      const control = existing || createTierControl(document, filterElement, minInput);
+      renderTierControl(control, minInput, maxInput, options);
+    }
+  }
+
+  function getTierStatId(element) {
+    let component = getVueComponentFromElement(element);
+    while (component) {
+      const statId = String(component.filter?.id || "");
+      if (FILTERABLE_STAT_ID_RE.test(statId)) {
+        return statId;
+      }
+      component = component.$parent;
+    }
+    return "";
+  }
+
+  function getTierOptions(statId) {
+    const mappings = runtime.tierMappings || {};
+    const pageIds = runtime.tierPageId ? [runtime.tierPageId] : Object.keys(mappings);
+    return pageIds
+      .flatMap((currentPageId) => {
+        const tiers = mappings[currentPageId]?.[statId];
+        return Array.isArray(tiers)
+          ? tiers.map((tier) => ({
+              ...tier,
+              pageId: currentPageId,
+              label: runtime.tierPageId
+                ? `T${tier.tier}`
+                : `${runtime.tierPageLabels[currentPageId] || currentPageId} T${tier.tier}`
+            }))
+          : [];
+      })
+      .sort((left, right) => left.pageId.localeCompare(right.pageId) || left.tier - right.tier);
+  }
+
+  function createTierControl(document, filterElement, minInput) {
+    const control = document.createElement("span");
+    control.className = TIER_CONTROL_CLASS;
+    const trigger = document.createElement("button");
+    trigger.type = "button";
+    trigger.className = TIER_TRIGGER_CLASS;
+    trigger.textContent = "T";
+    trigger.setAttribute("aria-label", runtime.tierLabel);
+    trigger.setAttribute("aria-expanded", "false");
+    const select = document.createElement("select");
+    select.className = TIER_SELECT_CLASS;
+    select.setAttribute("aria-label", runtime.tierLabel);
+    trigger.addEventListener("click", (event) => {
+      event.preventDefault?.();
+      setTierControlOpen(control, !control.classList.contains(TIER_CONTROL_OPEN_CLASS));
+      select.focus?.();
+    });
+    select.addEventListener("change", () => {
+      const selected = control.__poe2MarketwrightTierOptions?.find(
+        (option) => getTierOptionValue(option) === select.value
+      );
+      if (selected) {
+        applyTierSelection(control, selected);
+      }
+      setTierControlOpen(control, false);
+    });
+    control.appendChild(trigger);
+    control.appendChild(select);
+    const filterBody = filterElement.querySelector(".filter-body");
+    if (filterBody) {
+      filterElement.insertBefore(control, filterBody);
+    } else {
+      minInput.before(control);
+    }
+    return control;
+  }
+
+  function removeTierControl(control) {
+    control?.remove();
+  }
+
+  function renderTierControl(control, minInput, maxInput, options) {
+    const select = control.querySelector(`.${TIER_SELECT_CLASS}`);
+    if (!select) {
+      return;
+    }
+    const signature = options
+      .map((option) => `${option.pageId}:${option.tier}:${option.min}:${option.exactMin}:${option.exactMax}:${option.label}`)
+      .join("|");
+    if (control.__poe2MarketwrightTierSignature !== signature) {
+      select.replaceChildren();
+      const blank = select.ownerDocument.createElement("option");
+      blank.value = "";
+      blank.textContent = runtime.tierLabel;
+      select.appendChild(blank);
+      for (const option of options) {
+        const element = select.ownerDocument.createElement("option");
+        element.value = getTierOptionValue(option);
+        element.textContent = option.label;
+        select.appendChild(element);
+      }
+      control.__poe2MarketwrightTierSignature = signature;
+    }
+    control.__poe2MarketwrightTierOptions = options;
+    select.size = Math.min(options.length + 1, 8);
+    if (control.__poe2MarketwrightTierMinInput !== minInput) {
+      control.__poe2MarketwrightTierMinInput = minInput;
+      bindTierInput(control, minInput);
+    }
+    if (control.__poe2MarketwrightTierMaxInput !== maxInput) {
+      control.__poe2MarketwrightTierMaxInput = maxInput;
+      if (maxInput) {
+        bindTierInput(control, maxInput);
+      }
+    }
+    if (control.classList.contains(TIER_CONTROL_OPEN_CLASS)) {
+      return;
+    }
+    syncTierControlSelection(control);
+  }
+
+  function bindTierInput(control, input) {
+    const sync = () => {
+      if (!control.__poe2MarketwrightTierApplying) {
+        control.__poe2MarketwrightTierSelectedOptionValue = "";
+      }
+      syncTierControlSelection(control);
+    };
+    input.addEventListener("input", sync);
+    input.addEventListener("change", sync);
+  }
+
+  function applyTierSelection(control, option) {
+    const exact = runtime.tierMode === "exact";
+    control.__poe2MarketwrightTierSelectedOptionValue = getTierOptionValue(option);
+    control.__poe2MarketwrightTierApplying = true;
+    try {
+      setTierInputValue(control.__poe2MarketwrightTierMinInput, exact ? option.exactMin : option.min);
+      if (exact) {
+        setTierInputValue(control.__poe2MarketwrightTierMaxInput, option.exactMax);
+      }
+    } finally {
+      control.__poe2MarketwrightTierApplying = false;
+    }
+    syncTierControlSelection(control);
+  }
+
+  function setTierInputValue(input, value) {
+    if (!input) {
+      return;
+    }
+    const setter = Object.getOwnPropertyDescriptor(window.HTMLInputElement.prototype, "value")?.set;
+    const text = value == null ? "" : String(value);
+    if (setter) {
+      setter.call(input, text);
+    } else {
+      input.value = text;
+    }
+    input.dispatchEvent(new window.Event("input", { bubbles: true }));
+    input.dispatchEvent(new window.Event("change", { bubbles: true }));
+  }
+
+  function syncTierControlSelection(control) {
+    const select = control.querySelector(`.${TIER_SELECT_CLASS}`);
+    const trigger = control.querySelector(`.${TIER_TRIGGER_CLASS}`);
+    const options = control.__poe2MarketwrightTierOptions || [];
+    const option = getTierOptionForInputs(control, options);
+    select.value = option ? getTierOptionValue(option) : "";
+    select.title = option ? `${runtime.tierLabel} ${option.label}` : runtime.tierLabel;
+    if (trigger) {
+      trigger.textContent = option ? `T${option.tier}` : "T";
+      trigger.title = select.title;
+    }
+  }
+
+  function getTierOptionForInputs(control, options) {
+    const minInput = control.__poe2MarketwrightTierMinInput;
+    const maxInput = control.__poe2MarketwrightTierMaxInput;
+    if (runtime.tierMode === "exact") {
+      const minimum = Number(minInput?.value);
+      const maximum = Number(maxInput?.value);
+      if (String(minInput?.value || "").trim() && String(maxInput?.value || "").trim()) {
+        const exact = options.find(
+          (option) => Number(option.exactMin) === minimum && Number(option.exactMax) === maximum
+        );
+        if (exact) {
+          return exact;
+        }
+      }
+    } else {
+      const closest = getClosestTierOption(options, minInput?.value);
+      if (closest) {
+        return closest;
+      }
+    }
+    const selectedValue = control.__poe2MarketwrightTierSelectedOptionValue;
+    return options.find((option) => getTierOptionValue(option) === selectedValue) || null;
+  }
+
+  function setTierControlOpen(control, open) {
+    if (open && runtime.tierOpenControl && runtime.tierOpenControl !== control) {
+      runtime.tierOpenControl.classList.remove(TIER_CONTROL_OPEN_CLASS);
+      runtime.tierOpenControl.querySelector(`.${TIER_TRIGGER_CLASS}`)?.setAttribute("aria-expanded", "false");
+    }
+    control.classList.toggle(TIER_CONTROL_OPEN_CLASS, open);
+    control.querySelector(`.${TIER_TRIGGER_CLASS}`)?.setAttribute("aria-expanded", String(open));
+    runtime.tierOpenControl = open ? control : runtime.tierOpenControl === control ? null : runtime.tierOpenControl;
+  }
+
+  function getClosestTierOption(options, value) {
+    const rawValue = String(value ?? "").trim();
+    const minimum = Number(rawValue);
+    const optionsWithMinimum = options.filter((option) => Number.isFinite(Number(option.min)));
+    if (!rawValue || !Number.isFinite(minimum) || !optionsWithMinimum.length) {
+      return null;
+    }
+    return optionsWithMinimum.reduce((closest, option) => {
+      if (!closest) {
+        return option;
+      }
+      const distance = Math.abs(Number(option.min) - minimum);
+      const closestDistance = Math.abs(Number(closest.min) - minimum);
+      return distance < closestDistance || (distance === closestDistance && Number(option.min) > Number(closest.min))
+        ? option
+        : closest;
+    }, null);
+  }
+
+  function getTierOptionValue(option) {
+    return `${option.pageId}:${option.tier}`;
   }
 
   function isWhitespaceSearchTarget(component) {

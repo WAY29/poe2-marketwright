@@ -354,6 +354,27 @@
   "toggleOff": {
     "message": "關"
   },
+  "tierSelectorLabel": {
+    "message": "詞綴階級"
+  },
+  "tierFeatureTitle": {
+    "message": "詞綴階級選擇"
+  },
+  "tierMode": {
+    "message": "詞綴階級模式"
+  },
+  "tierModeMinimum": {
+    "message": "最低"
+  },
+  "tierModeExact": {
+    "message": "精確"
+  },
+  "enableTierSelection": {
+    "message": "開啟詞綴階級選擇"
+  },
+  "disableTierSelection": {
+    "message": "關閉詞綴階級選擇"
+  },
   "enableFiltering": {
     "message": "啟用過濾"
   },
