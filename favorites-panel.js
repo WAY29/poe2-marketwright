@@ -715,9 +715,6 @@
     const structuredStatGroups = getLinkFavoriteStructuredStatGroups(snapshot);
     return [
       ...(snapshotItemValues.length ? [{ label: t("favoriteTooltipItem"), values: snapshotItemValues }] : []),
-      ...(structuredStatGroups.length
-        ? structuredStatGroups
-        : []),
       ...(link.filterGroups || [])
       .filter((group) => !structuredStatGroups.length || !isLinkFavoriteStatFilterGroup(group))
       .map((group) => {
@@ -730,7 +727,10 @@
           );
         return label && values.length ? { label, ...(group.hideLabel ? { hideLabel: true } : {}), values } : null;
       })
-      .filter(Boolean)
+      .filter(Boolean),
+      ...(structuredStatGroups.length
+        ? structuredStatGroups
+        : [])
     ];
   }
 

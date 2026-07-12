@@ -190,10 +190,14 @@ test("bridge clears unmarked native Trade caches left by another extension", () 
 
 test("manifest starts the native item bridge before the Trade application", () => {
   const manifest = JSON.parse(fs.readFileSync("manifest.json", "utf8"));
-  const bridge = manifest.content_scripts.find((entry) => entry.world === "MAIN");
+  const bridge = manifest.content_scripts.find((entry) => entry.js?.includes("trade-localization-bridge.js"));
+  const pageBridge = manifest.content_scripts.find((entry) => entry.js?.includes("page-bridge.js"));
   const bootstrap = manifest.content_scripts.find((entry) => entry.js?.includes("trade-localization-bootstrap.js"));
 
   assert.deepStrictEqual(bridge?.js, ["trade-localization-bridge.js"]);
   assert.strictEqual(bridge?.run_at, "document_start");
+  assert.deepStrictEqual(pageBridge?.js, ["page-bridge.js"]);
+  assert.strictEqual(pageBridge?.run_at, "document_start");
+  assert.strictEqual(pageBridge?.world, "MAIN");
   assert.strictEqual(bootstrap?.run_at, "document_start");
 });

@@ -733,6 +733,38 @@ test("current link favorite uses selected base name for its default name", async
   assert.deepStrictEqual(result, {"context": {"url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1", "league": "Dawn", "queryId": "query-1", "displayName": "Warmonger Bow"}, "categoryName": "Bows", "unnamed": "Unnamed search"});
 });
 
+test("current link favorite remains available when Trade rerenders its filter DOM", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getCurrentLinkFavoriteContext };\n})();"
+  );
+  const location = {
+    href: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+    pathname: "/trade2/search/poe2/Dawn/query-1"
+  };
+  const sandbox = {
+    window: { location, addEventListener() {} },
+    document: {
+      querySelector() { throw new Error("Trade is rendering"); },
+      querySelectorAll() { throw new Error("Trade is rendering"); }
+    },
+    location,
+    console,
+    Poe2MarketwrightFavorites: {
+      createLinkFavoriteTools() {
+        return {
+          validateTradeSearchUrl(url) { return { url, league: "Dawn", queryId: "query-1" }; }
+        };
+      }
+    }
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const result = structuredClone(sandbox.window.__testHooks.getCurrentLinkFavoriteContext());
+  assert.deepStrictEqual(result, {"url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1", "league": "Dawn", "queryId": "query-1", "displayName": "Unnamed search"});
+});
+
 test("dragging a link to another folder moves it into that folder", async () => {
 
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;

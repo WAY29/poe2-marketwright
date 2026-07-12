@@ -251,7 +251,7 @@ test("saving a link captures active advanced filter groups", async () => {
       }
     };
   };
-  const groups = [
+  const leftGroups = [
     group("Type Filters", [field("Item Category", [select("Bow")])]),
     group("Item Requirements", [field("Item Level", [], [input("80", "Min"), input("100", "Max")])]),
     group("Equipment Filters", [
@@ -284,15 +284,26 @@ test("saving a link captures active advanced filter groups", async () => {
         getAttribute(name) { return name === "aria-label" ? "Includes base value, local modifiers, and maximum quality" : null; }
       }], label("Runic Ward Includes base value, local modifiers, and maximum quality", "Runic Ward"))
     ]),
+    group("Trade Filters", [field("Indexed", [select("Yes")])])
+  ];
+  const rightGroups = [
     group("Stat Filters", [
       field("+# to maximum Life", [], [input("50", "Min")], nestedLabel("+# to maximum Life")),
       field("+#% increased Movement Speed", [], [input("21", "Min")], nestedLabel("+#% increased Movement Speed"))
     ]),
-    group("Trade Filters", [field("Indexed", [select("Yes")])])
+    group("Weighted Sum Check each stat meets its minimum.", [
+      field("explicit +# to maximum Life", [], [input("50", "Min")])
+    ])
   ];
   const sandbox = {
     window: { addEventListener() {} },
-    document: { querySelectorAll() { return groups; } },
+    document: {
+      querySelectorAll(selector) {
+        return selector === "#trade .search-advanced-pane.blue > .filter-group"
+          ? leftGroups
+          : leftGroups.concat(rightGroups);
+      }
+    },
     location: { pathname: "/trade2", href: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1" },
     Poe2MarketwrightFavorites: {
       createLinkFavoriteTools() {
@@ -303,7 +314,7 @@ test("saving a link captures active advanced filter groups", async () => {
   };
   vm.runInNewContext(source, sandbox, { filename: "content.js" });
   const result = structuredClone(sandbox.window.__testHooks.getCurrentLinkFavoriteFilterGroups());
-  assert.deepStrictEqual(result, [{"label": "Type Filters", "values": ["Item Category: Bow"]}, {"label": "Item Requirements", "values": ["Item Level: 80 - 100"]}, {"label": "Equipment Filters", "values": ["Corrupted", "閃避: 700 - 900", "Armour: - 500", "Runic Ward: 100 -"]}, {"label": "Stat Filters", "values": ["+# to maximum Life: 50 -", "+#% increased Movement Speed: 21 -"]}]);
+  assert.deepStrictEqual(result, [{"label": "Type Filters", "values": ["Item Category: Bow"]}, {"label": "Item Requirements", "values": ["Item Level: 80 - 100"]}, {"label": "Equipment Filters", "values": ["Corrupted", "閃避: 700 - 900", "Armour: - 500", "Runic Ward: 100 -"]}]);
 });
 
 test("link snapshots preserve every official stat group and relationship", async () => {
@@ -405,9 +416,12 @@ test("link tooltip renders every structured stat group with its relationship", a
         { type: "not", value: { max: 3 }, filters: [{ text: "+20 to maximum Mana", source: null }] }
       ]
     },
-    filterGroups: [{ label: "Stat Filters", values: ["legacy filter"] }]
+    filterGroups: [
+      { label: "Stat Filters", values: ["legacy filter"] },
+      { label: "Other", values: ["Corrupted: No"] }
+    ]
   }));
-  assert.deepStrictEqual(result, [{"label": "Stat Filters: AND", "values": [{"text": "+50 to maximum Life", "source": null, "disabled": true}]}, {"label": "Stat Filters: OR", "values": [{"text": "+30% to Fire Resistance", "source": null}]}, {"label": "Stat Filters: COUNT (2 -)", "values": [{"text": "+30% to Cold Resistance", "source": null}]}, {"label": "Stat Filters: WEIGHTED SUM (120 - 200)", "values": [{"text": "20% increased Movement Speed", "source": null, "weight": 2}]}, {"label": "Stat Filters: NOT (- 3)", "values": [{"text": "+20 to maximum Mana", "source": null}]}]);
+  assert.deepStrictEqual(result, [{"label": "Other", "values": [{"text": "Corrupted: No", "source": null}]}, {"label": "Stat Filters: AND", "values": [{"text": "+50 to maximum Life", "source": null, "disabled": true}]}, {"label": "Stat Filters: OR", "values": [{"text": "+30% to Fire Resistance", "source": null}]}, {"label": "Stat Filters: COUNT (2 -)", "values": [{"text": "+30% to Cold Resistance", "source": null}]}, {"label": "Stat Filters: WEIGHTED SUM (120 - 200)", "values": [{"text": "20% increased Movement Speed", "source": null, "weight": 2}]}, {"label": "Stat Filters: NOT (- 3)", "values": [{"text": "+20 to maximum Mana", "source": null}]}]);
 });
 
 test("link tooltip prefers above the pointer and flips below at the top edge", async () => {
@@ -493,9 +507,10 @@ test("compact link tooltip renders structured stat group relationships", async (
         { type: "count", value: { min: 2, max: 3 }, filters: [{ text: "+30% to Fire Resistance", source: null }] },
         { type: "weighted", value: { max: 120 }, filters: [{ text: "+20 to maximum Mana", source: null, weight: 2 }] }
       ]
-    }
+    },
+    filterGroups: [{ label: "Other", values: ["Corrupted: No"] }]
   }));
-  assert.deepStrictEqual(result, {"stats": [{"text": "+50 to maximum Life", "source": null}, {"text": "+30% to Fire Resistance", "source": null}, {"text": "+20 to maximum Mana", "source": null, "weight": 2}], "tooltipGroups": [{"label": "Stat Filters: OR", "values": [{"text": "+50 to maximum Life", "source": null}]}, {"label": "Stat Filters: COUNT (2 - 3)", "values": [{"text": "+30% to Fire Resistance", "source": null}]}, {"label": "Stat Filters: WEIGHTED SUM (- 120)", "values": [{"text": "+20 to maximum Mana", "source": null, "weight": 2}]}]});
+  assert.deepStrictEqual(result, {"stats": [{"text": "+50 to maximum Life", "source": null}, {"text": "+30% to Fire Resistance", "source": null}, {"text": "+20 to maximum Mana", "source": null, "weight": 2}], "tooltipGroups": [{"label": "Other", "values": [{"text": "Corrupted: No", "source": null}]}, {"label": "Stat Filters: OR", "values": [{"text": "+50 to maximum Life", "source": null}]}, {"label": "Stat Filters: COUNT (2 - 3)", "values": [{"text": "+30% to Fire Resistance", "source": null}]}, {"label": "Stat Filters: WEIGHTED SUM (- 120)", "values": [{"text": "+20 to maximum Mana", "source": null, "weight": 2}]}]});
 });
 
 test("link favorite presentation localizes saved equipment filter labels", async () => {

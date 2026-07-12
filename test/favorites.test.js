@@ -366,10 +366,15 @@ test("link favorite preserves structured stat group relationships in its display
 test("page bridge forwards trade search request and query id for link snapshots", async () => {
   const listeners = [];
   const messages = [];
+  const stored = new Map();
   const window = {
     app: { $data: { static_: { knownStats: [] } } },
     addEventListener(type, listener) { if (type === "message") listeners.push(listener); },
     postMessage(message) { messages.push(message); },
+    sessionStorage: {
+      getItem(key) { return stored.get(key) || null; },
+      setItem(key, value) { stored.set(key, value); }
+    },
     fetch(url) {
       return Promise.resolve({
         clone() { return { text: () => Promise.resolve('{"id":"query-7"}') }; }
@@ -391,6 +396,40 @@ test("page bridge forwards trade search request and query id for link snapshots"
   };
   await window.fetch("/api/trade2/search/Dawn", { method: "POST", body: JSON.stringify(query) });
   await new Promise((resolve) => setTimeout(resolve, 0));
+  const result = structuredClone(messages.filter((message) => message.type === "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT"));
+  assert.deepStrictEqual(result, [{"source": "poe2-marketwright", "type": "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT", "payload": {"league": "Dawn", "queryId": "query-7", "query": {"query": {"type": "Rider Bow", "stats": [{"filters": [{"id": "explicit.stat_3299347043", "value": {"min": 50}}]}]}}}}]);
+  assert.deepStrictEqual(structuredClone(JSON.parse(stored.get("poe2-marketwright:search-snapshot"))), {"league": "Dawn", "queryId": "query-7", "query": {"query": {"type": "Rider Bow", "stats": [{"filters": [{"id": "explicit.stat_3299347043", "value": {"min": 50}}]}]}}});
+});
+
+test("page bridge restores the current search snapshot after navigation", () => {
+  const listeners = [];
+  const messages = [];
+  const query = {
+    query: {
+      type: "Rider Bow",
+      stats: [{ filters: [{ id: "explicit.stat_3299347043", value: { min: 50 } }] }]
+    }
+  };
+  const stored = new Map([
+    ["poe2-marketwright:search-snapshot", JSON.stringify({ league: "Dawn", queryId: "query-7", query })]
+  ]);
+  const window = {
+    app: { $data: { static_: { knownStats: [] } } },
+    location: { pathname: "/trade2/search/poe2/Dawn/query-7" },
+    addEventListener(type, listener) { if (type === "message") listeners.push(listener); },
+    postMessage(message) { messages.push(message); },
+    sessionStorage: {
+      getItem(key) { return stored.get(key) || null; },
+      setItem(key, value) { stored.set(key, value); }
+    }
+  };
+  vm.runInNewContext(fs.readFileSync("page-bridge.js", "utf8"), { window, console }, {
+    filename: "page-bridge.js"
+  });
+  listeners[0]({
+    source: window,
+    data: { source: "poe2-marketwright", type: "POE2_MARKETWRIGHT_UPDATE", payload: { favoritesEnabled: true } }
+  });
   const result = structuredClone(messages.filter((message) => message.type === "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT"));
   assert.deepStrictEqual(result, [{"source": "poe2-marketwright", "type": "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT", "payload": {"league": "Dawn", "queryId": "query-7", "query": {"query": {"type": "Rider Bow", "stats": [{"filters": [{"id": "explicit.stat_3299347043", "value": {"min": 50}}]}]}}}}]);
 });

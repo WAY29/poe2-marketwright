@@ -40,6 +40,21 @@
         "https://*.pathofexile.com/trade2/*"
       ],
       "js": [
+        "page-bridge.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://pathofexile.com/trade2",
+        "https://pathofexile.com/trade2/*",
+        "https://www.pathofexile.com/trade2",
+        "https://www.pathofexile.com/trade2/*",
+        "https://*.pathofexile.com/trade2",
+        "https://*.pathofexile.com/trade2/*"
+      ],
+      "js": [
         "trade-localization-bootstrap.js"
       ],
       "run_at": "document_start"

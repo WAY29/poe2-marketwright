@@ -9,6 +9,7 @@
   const READY_TYPE = "POE2_MARKETWRIGHT_READY";
   const STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
   const SEARCH_SNAPSHOT_TYPE = "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT";
+  const SEARCH_SNAPSHOT_STORAGE_KEY = "poe2-marketwright:search-snapshot";
   const POB_MESSAGE_SOURCE = "poe2-marketwright-pob-copy";
   const FAVORITES_MESSAGE_SOURCE = "poe2-marketwright-favorites";
   const CURRENCY_MESSAGE_SOURCE = "poe2-marketwright-currency-conversion";
@@ -117,6 +118,7 @@
 
     runtime.lastPayload = { ...runtime.lastPayload, ...(event.data.payload || {}) };
     applyKnownStatsFilter();
+    restoreCurrentSearchSnapshot();
     notifyState();
   });
 
@@ -208,14 +210,7 @@
         if (!queryId) {
           return;
         }
-        window.postMessage(
-          {
-            source: SOURCE,
-            type: SEARCH_SNAPSHOT_TYPE,
-            payload: { league: request.league, queryId, query: request.query }
-          },
-          "*"
-        );
+        emitSearchSnapshot({ league: request.league, queryId, query: request.query });
       } catch (error) {
         // A failed or non-JSON request must not affect the native trade request.
       }
@@ -374,6 +369,63 @@
         }
         return originalSend.apply(this, args);
       };
+    }
+  }
+
+  function emitSearchSnapshot(payload) {
+    cacheSearchSnapshot(payload);
+    window.postMessage(
+      {
+        source: SOURCE,
+        type: SEARCH_SNAPSHOT_TYPE,
+        payload
+      },
+      "*"
+    );
+  }
+
+  function cacheSearchSnapshot(payload) {
+    try {
+      window.sessionStorage?.setItem(SEARCH_SNAPSHOT_STORAGE_KEY, JSON.stringify(payload));
+    } catch (error) {
+      // Storage is optional; live search capture remains available in this document.
+    }
+  }
+
+  function restoreCurrentSearchSnapshot() {
+    if (!runtime.lastPayload.favoritesEnabled) {
+      return;
+    }
+    const current = getCurrentSearchLocation();
+    if (!current) {
+      return;
+    }
+    try {
+      const cached = JSON.parse(window.sessionStorage?.getItem(SEARCH_SNAPSHOT_STORAGE_KEY) || "null");
+      if (
+        cached?.league === current.league &&
+        cached?.queryId === current.queryId &&
+        cached?.query &&
+        typeof cached.query === "object"
+      ) {
+        emitSearchSnapshot(cached);
+      }
+    } catch (error) {
+      // A malformed or unavailable session cache must not affect Trade.
+    }
+  }
+
+  function getCurrentSearchLocation() {
+    const match = String(window.location?.pathname || "").match(/^\/trade2\/search\/poe2\/([^/]+)\/([^/]+)\/?$/i);
+    if (!match) {
+      return null;
+    }
+    try {
+      const league = decodeURIComponent(match[1]).trim();
+      const queryId = decodeURIComponent(match[2]).trim();
+      return league && queryId ? { league, queryId } : null;
+    } catch (error) {
+      return null;
     }
   }
 

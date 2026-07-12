@@ -44,7 +44,6 @@
     "skill",
     "augment"
   ]);
-  const BRIDGE_SCRIPT_ID = "poe2-marketwright-page-bridge";
   const BRIDGE_SOURCE = "poe2-marketwright";
   const BRIDGE_UPDATE_TYPE = "POE2_MARKETWRIGHT_UPDATE";
   const BRIDGE_READY_TYPE = "POE2_MARKETWRIGHT_READY";
@@ -583,7 +582,6 @@
     initializeFavorites();
     initializeCurrencyConversion();
     bindPageBridgeMessages();
-    injectPageBridge();
 
     runtime.data = await loadData();
     runtime.allPatterns = new Set((runtime.data.allPatterns || []).map(normalizeStatKey).filter(Boolean));
@@ -1746,19 +1744,32 @@
     if (!tools) {
       return null;
     }
+    let current;
     try {
-      const current = tools.validateTradeSearchUrl(window.location.href);
-      const filterGroups = getCurrentLinkFavoriteFilterGroups();
-      const displaySnapshot = runtime.tradeSearchSnapshots.get(`${current.league}\u0000${current.queryId}`) || null;
-      return {
-        ...current,
-        displayName: getCurrentLinkFavoriteDisplayName(),
-        ...(filterGroups.length ? { filterGroups } : {}),
-        ...(displaySnapshot ? { displaySnapshot } : {})
-      };
+      current = tools.validateTradeSearchUrl(window.location.href);
     } catch (error) {
       return null;
     }
+
+    const displaySnapshot = runtime.tradeSearchSnapshots?.get(`${current.league}\u0000${current.queryId}`) || null;
+    let filterGroups = [];
+    try {
+      filterGroups = getCurrentLinkFavoriteFilterGroups();
+    } catch (error) {
+      // Trade replaces advanced-filter nodes during updates; the URL is still a valid bookmark.
+    }
+    let displayName = t("linkFavoriteUnnamedSearch");
+    try {
+      displayName = getCurrentLinkFavoriteDisplayName() || displayName;
+    } catch (error) {
+      // A transient search-bar render must not disable link bookmarking.
+    }
+    return {
+      ...current,
+      displayName,
+      ...(filterGroups.length ? { filterGroups } : {}),
+      ...(displaySnapshot ? { displaySnapshot } : {})
+    };
   }
 
   function getCurrentLinkFavoriteLeague() {
@@ -1774,7 +1785,7 @@
 
   function getCurrentLinkFavoriteFilterGroups() {
     const groups = [];
-    for (const group of document.querySelectorAll(`${TRADE_ROOT_SELECTOR} .search-advanced-pane .filter-group`)) {
+    for (const group of document.querySelectorAll(TYPE_FILTER_GROUP_SELECTOR)) {
       const label = getLinkFavoriteFilterGroupLabel(group);
       const values = getLinkFavoriteFilterGroupValues(group);
       if (label && values.length && !isLinkFavoriteExcludedFilterGroup(label)) {
@@ -3117,7 +3128,7 @@
 
   function isCompactLinkFavoriteStatFilterGroup(group) {
     const label = String(group?.label || "").replace(/\s+/g, " ").trim().toLocaleLowerCase();
-    return label === "stat filters" || label === "stat filter" || label === "\u7be9\u9078\u5668" || label === "\u7b5b\u9009\u5668";
+    return ["stat filters", "stat filter", "\u5c5e\u6027\u7b5b\u9009\u5668", "\u5c6c\u6027\u7be9\u9078\u5668", "\u7be9\u9078\u5668", "\u7b5b\u9009\u5668"].includes(label);
   }
 
   function formatCompactLinkFavoriteStatFilter(value) {
@@ -3178,9 +3189,6 @@
     const structuredStatGroups = getCompactLinkFavoriteStructuredStatGroups(snapshot);
     const tooltipGroups = [
       ...(snapshotItemValues.length ? [{ label: t("favoriteTooltipItem"), values: snapshotItemValues }] : []),
-      ...(structuredStatGroups.length
-        ? structuredStatGroups
-        : []),
       ...(link?.filterGroups || [])
       .filter((group) => !structuredStatGroups.length || !isCompactLinkFavoriteStatFilterGroup(group))
       .map((group) => {
@@ -3195,7 +3203,10 @@
           );
         return label && values.length ? { label, values } : null;
       })
-      .filter(Boolean)
+      .filter(Boolean),
+      ...(structuredStatGroups.length
+        ? structuredStatGroups
+        : [])
     ];
     return {
       stats: snapshotStats.length
@@ -4799,18 +4810,6 @@
           ...(statGroups.length ? { statGroupsVersion: LINK_FAVORITE_STAT_GROUPS_VERSION } : {})
         }
       : null;
-  }
-
-  function injectPageBridge() {
-    if (document.getElementById(BRIDGE_SCRIPT_ID)) {
-      return;
-    }
-
-    const script = document.createElement("script");
-    script.id = BRIDGE_SCRIPT_ID;
-    script.src = chrome.runtime.getURL("page-bridge.js");
-    script.onload = () => script.remove();
-    (document.head || document.documentElement).appendChild(script);
   }
 
   function scheduleRefresh() {
