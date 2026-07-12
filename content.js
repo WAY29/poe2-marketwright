@@ -93,6 +93,16 @@
       en: "Each stat value that meets the `min` and `max` (if provided, otherwise existence) requirements will be multiplied by the `weight` before being summed together. Use the group's `min` and `max` to filter items based on the total summed value.",
       zh_CN: "每项满足 `min` 与 `max`（若未设置，则检查是否存在）条件的属性数值，都会先乘以权重再求和。\n使用该组的 `min` 与 `max`，按加权总和筛选物品。",
       zh_TW: "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
+    },
+    "match items that meet each stat's `min` and `max` requirements if the stat is present.": {
+      en: "Match items that meet each stat's `min` and `max` requirements if the stat is present.",
+      zh_CN: "若该属性存在，则匹配满足每项属性 `min` 与 `max` 要求的物品。",
+      zh_TW: "若該屬性存在，則配對符合每項屬性 `min` 與 `max` 要求的物品。"
+    },
+    "count each stat that meets the `min` and `max` (if provided, otherwise existence) requirements. use the group's `min` and `max` to filter items based on the count of matching stats.": {
+      en: "Count each stat that meets the `min` and `max` (if provided, otherwise existence) requirements. Use the group's `min` and `max` to filter items based on the count of matching stats.",
+      zh_CN: "计算每项符合 `min` 与 `max`（若未设置，则检查是否存在）条件的属性。\n使用该组的 `min` 与 `max`，按匹配属性数量筛选物品。",
+      zh_TW: "計算每項符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性。\n使用此群組的 `min` 與 `max`，依匹配屬性數量篩選物品。"
     }
   });
   const ITEM_SEARCH_ROOT_SELECTOR =
@@ -118,6 +128,8 @@
   const TRADE_TOOLTIP_COPY_PREFIXES = Object.freeze([
     "check each stat meets",
     "each stat value that meets",
+    "match items that meet",
+    "count each stat",
     "includes base value",
     "increased item rarity"
   ]);

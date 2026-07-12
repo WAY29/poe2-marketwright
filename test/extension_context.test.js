@@ -615,7 +615,19 @@ test("Trade tooltip copy is localized outside the Trade application root", () =>
     nodeType: 3,
     nodeValue: "Check each stat meets the `min` and `max` (if provided, otherwise existence) requirements before multiplying the stat value by the `weight` and finally summing them together.\nUse the group's `min` and `max` to filter items based on the total summed value."
   };
-  const body = new FakeElement([new FakeElement([tooltipText])]);
+  const andTooltipText = {
+    nodeType: 3,
+    nodeValue: "Match items that meet each stat's `min` and `max` requirements if the stat is present."
+  };
+  const countTooltipText = {
+    nodeType: 3,
+    nodeValue: "Count each stat that meets the `min` and `max` (if provided, otherwise existence) requirements.\nUse the group's `min` and `max` to filter items based on the count of matching stats."
+  };
+  const body = new FakeElement([
+    new FakeElement([tooltipText]),
+    new FakeElement([andTooltipText]),
+    new FakeElement([countTooltipText])
+  ]);
   const sandbox = {
     Element: FakeElement,
     window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
@@ -632,6 +644,11 @@ test("Trade tooltip copy is localized outside the Trade application root", () =>
   assert.equal(
     tooltipText.nodeValue,
     "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
+  );
+  assert.equal(andTooltipText.nodeValue, "若該屬性存在，則配對符合每項屬性 `min` 與 `max` 要求的物品。");
+  assert.equal(
+    countTooltipText.nodeValue,
+    "計算每項符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性。\n使用此群組的 `min` 與 `max`，依匹配屬性數量篩選物品。"
   );
 });
 
