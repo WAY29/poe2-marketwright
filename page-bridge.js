@@ -93,6 +93,9 @@
     "sanctum",
     "skill"
   ]);
+  const ITEM_SEARCH_ROOT_SELECTOR =
+    "#trade .top .search-panel > .search-bar:not(.search-advanced) .search-left .multiselect.search-select";
+  const FILTERABLE_STAT_ID_RE = /^(?:pseudo|explicit|implicit|fractured|crafted|enchant|rune|desecrated|sanctum|skill)\./i;
 
   const runtime = {
     app: null,
@@ -108,7 +111,10 @@
       allKeys: [],
       allStatIds: []
     },
-    lastFilterStats: null
+    lastFilterStats: null,
+    whitespaceSearchFocusBound: false,
+    whitespaceSearchWatchers: new WeakSet(),
+    whitespaceSearchUnderlines: new WeakMap()
   };
 
   window.addEventListener("message", (event) => {
@@ -118,6 +124,7 @@
 
     runtime.lastPayload = { ...runtime.lastPayload, ...(event.data.payload || {}) };
     applyKnownStatsFilter();
+    installWhitespaceSearch();
     restoreCurrentSearchSnapshot();
     notifyState();
   });
@@ -147,7 +154,221 @@
     if (!runtime.originalKnownStats) {
       runtime.originalKnownStats = cloneKnownStats(staticData.knownStats);
     }
+    installWhitespaceSearch();
     return true;
+  }
+
+  function installWhitespaceSearch() {
+    const document = window.document;
+    if (!document) {
+      return;
+    }
+
+    if (!runtime.whitespaceSearchFocusBound) {
+      document.addEventListener(
+        "focusin",
+        (event) => patchWhitespaceSearchFilter(getVueComponentFromElement(event.target)),
+        true
+      );
+      runtime.whitespaceSearchFocusBound = true;
+    }
+
+    patchWhitespaceSearchRefs(runtime.app);
+  }
+
+  function patchWhitespaceSearchRefs(component, seen = new Set()) {
+    if (!component || typeof component !== "object" || seen.has(component)) {
+      return;
+    }
+    seen.add(component);
+
+    const searchRefs = component.$refs?.search;
+    for (const search of Array.isArray(searchRefs) ? searchRefs : [searchRefs]) {
+      patchWhitespaceSearchFilter(search);
+    }
+    for (const child of Array.isArray(component.$children) ? component.$children : []) {
+      patchWhitespaceSearchRefs(child, seen);
+    }
+  }
+
+  function getVueComponentFromElement(element) {
+    for (let current = element; current; current = current.parentElement) {
+      if (current.__vue__) {
+        return current.__vue__;
+      }
+    }
+    return null;
+  }
+
+  function isWhitespaceSearchTarget(component) {
+    if (!component?._computedWatchers?.filteredOptions) {
+      return false;
+    }
+    if (component.$el?.matches?.(ITEM_SEARCH_ROOT_SELECTOR)) {
+      return true;
+    }
+    return hasFilterableStatOptions(component.options);
+  }
+
+  function hasFilterableStatOptions(options) {
+    if (!Array.isArray(options)) {
+      return false;
+    }
+    for (const option of options) {
+      if (FILTERABLE_STAT_ID_RE.test(String(option?.id || ""))) {
+        return true;
+      }
+      for (const entry of Array.isArray(option?.entries) ? option.entries : []) {
+        if (FILTERABLE_STAT_ID_RE.test(String(entry?.id || ""))) {
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+
+  function getNativeWhitespaceSearchQuery(value) {
+    const terms = getWhitespaceSearchTerms(value);
+    return terms.length > 1 ? `~${terms.join(" ")}` : null;
+  }
+
+  function getWhitespaceSearchTerms(value) {
+    const query = String(value || "");
+    if (query.startsWith("~")) {
+      return [];
+    }
+    return query
+      .split(" ")
+      .map((term) => term.trim())
+      .filter(Boolean);
+  }
+
+  function patchWhitespaceSearchFilter(component) {
+    if (!isWhitespaceSearchTarget(component)) {
+      return false;
+    }
+
+    patchWhitespaceSearchUnderline(component);
+
+    const watcher = component._computedWatchers.filteredOptions;
+    if (runtime.whitespaceSearchWatchers.has(watcher) || typeof watcher.getter !== "function") {
+      return runtime.whitespaceSearchWatchers.has(watcher);
+    }
+
+    const originalGetter = watcher.getter;
+    watcher.getter = function (...args) {
+      const target = typeof this?.search === "string" ? this : component;
+      const replacement = getNativeWhitespaceSearchQuery(target.search);
+      if (!replacement) {
+        return originalGetter.apply(target, args);
+      }
+      try {
+        return getWhitespaceSearchFilteredOptions(target, replacement);
+      } catch (error) {
+        return originalGetter.apply(target, args);
+      }
+    };
+    runtime.whitespaceSearchWatchers.add(watcher);
+    return true;
+  }
+
+  function getWhitespaceSearchFilteredOptions(component, query) {
+    const search = String(component.search || "");
+    const normalizedQuery = query.toLowerCase();
+    let options = component.options.concat();
+
+    if (component.internalSearch) {
+      options = component.groupValues
+        ? component.filterAndFlat(options, normalizedQuery, component.label)
+        : options.filter((option) => matchesNativeSearch(component.customLabel(option, component.label), normalizedQuery));
+      if (component.hideSelected) {
+        options = options.filter(component.isNotSelected);
+      }
+    } else if (component.groupValues) {
+      options = component.flatAndStrip(options);
+    }
+
+    const normalizedSearch = search.toLowerCase();
+    if (component.taggable && normalizedSearch.length && !component.isExistingOption(normalizedSearch)) {
+      options.unshift({ isTag: true, label: search });
+    }
+    return options.slice(0, component.optionsLimit);
+  }
+
+  function matchesNativeSearch(value, query) {
+    const text = String(value === undefined ? "undefined" : value === null ? "null" : value === false ? "false" : value)
+      .toLowerCase();
+    if (query.startsWith("~")) {
+      return query
+        .slice(1)
+        .split(" ")
+        .every((term) => text.includes(term.trim()));
+    }
+    return text.includes(query.trim());
+  }
+
+  function patchWhitespaceSearchUnderline(component) {
+    const seen = new Set();
+    for (let owner = component; owner && !seen.has(owner); owner = owner.$parent) {
+      seen.add(owner);
+      patchWhitespaceSearchUnderlineOwner(owner, component);
+    }
+  }
+
+  function patchWhitespaceSearchUnderlineOwner(owner, component) {
+    const existing = runtime.whitespaceSearchUnderlines.get(owner);
+    if (existing) {
+      existing.targets.add(component);
+      return;
+    }
+
+    const originalUnderline = owner.underline;
+    if (typeof originalUnderline !== "function") {
+      return;
+    }
+    const targets = new Set([component]);
+
+    function whitespaceSearchUnderline(text, search) {
+      const terms = getWhitespaceSearchTerms(search);
+      if (terms.length < 2 || !text || !isWhitespaceSearchQueryForTarget(targets, search)) {
+        return originalUnderline.apply(this, arguments);
+      }
+
+      const source = String(text);
+      const normalized = source.toLowerCase();
+      const normalizedTerms = Array.from(new Set(terms.map((term) => term.toLowerCase()))).sort(
+        (left, right) => right.length - left.length
+      );
+      const escape = (value) => originalUnderline.call(this, value, "");
+      let result = "";
+      let plain = "";
+
+      for (let index = 0; index < source.length;) {
+        const match = normalizedTerms.find((term) => normalized.startsWith(term, index));
+        if (!match) {
+          plain += source[index];
+          index += 1;
+          continue;
+        }
+        result += escape(plain);
+        result += `<strong>${escape(source.slice(index, index + match.length))}</strong>`;
+        plain = "";
+        index += match.length;
+      }
+      return `${result}${escape(plain)}`;
+    }
+
+    owner.underline = whitespaceSearchUnderline;
+    runtime.whitespaceSearchUnderlines.set(owner, { targets });
+  }
+
+  function isWhitespaceSearchQueryForTarget(targets, search) {
+    for (const target of targets) {
+      if (target?.search === search) {
+        return true;
+      }
+    }
+    return false;
   }
 
   function installTradeApiHook() {

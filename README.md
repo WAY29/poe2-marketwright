@@ -10,6 +10,7 @@ PoE2 Marketwright is a broader Path of Exile 2 market extension workspace. The c
 - Provides an English, Simplified Chinese, or Traditional Chinese display setting for extension controls and saved favorites.
 - Provides a separate Trade page language setting with English, Simplified Chinese, Traditional Chinese, and Chinese-first bilingual modes. It localizes supported native Trade UI and result fields while keeping unknown text in English.
 - Lets item, category, and stat selectors resolve English, Simplified Chinese, and Traditional Chinese aliases to the same native Trade option.
+- Supports space-separated fuzzy matching in native item and stat selectors. Enter two or more terms separated by ASCII spaces to require every term, so `金 戒指` matches `金光戒指`; matching terms are highlighted. Single-term and manual `~` searches retain native Trade behavior.
 - Separates stat filtering and PoB Copy Button controls with independent toggles.
 - Auto-detects the current category or item name from the trade2 filters.
 - Filters visible affix suggestion lists using the scraped PoE2DB data.

@@ -5,6 +5,92 @@ const fs = require("node:fs");
 const vm = require("node:vm");
 const { test } = require("node:test");
 
+test("page bridge applies native multi-token search only to item and stat selectors", () => {
+  const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
+  let source = fs
+    .readFileSync("page-bridge.js", "utf8")
+    .replace(bootstrapCall, "")
+    .replace(
+      /\n\}\)\(\);\s*$/,
+      "\n  window.__testHooks = { getNativeWhitespaceSearchQuery, patchWhitespaceSearchFilter, isWhitespaceSearchTarget, installWhitespaceSearch, runtime };\n})();"
+    );
+  const listeners = [];
+  const sandbox = {
+    window: {
+      addEventListener() {},
+      postMessage() {},
+      document: { addEventListener(type, listener) { listeners.push({ type, listener }); } }
+    },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
+
+  const hooks = sandbox.window.__testHooks;
+  const evaluated = [];
+  const parent = {
+    underline(text, search) {
+      return search ? `native:${text}:${search}` : String(text);
+    }
+  };
+  const item = {
+    search: "金 戒指",
+    $el: { matches(selector) { return selector.includes("search-bar"); } },
+    $parent: parent,
+    options: [{ label: "Items", entries: [{ text: "金光戒指" }, { text: "铜戒指" }] }],
+    groupValues: "entries",
+    groupLabel: "label",
+    label: "text",
+    internalSearch: true,
+    hideSelected: false,
+    taggable: false,
+    optionsLimit: 500,
+    filterAndFlat(groups, query) {
+      evaluated.push(query);
+      return query === "~金 戒指" ? [groups[0].entries[0]] : [];
+    },
+    underline(text, search) {
+      return search ? `native:${text}:${search}` : String(text);
+    },
+    _computedWatchers: {
+      filteredOptions: {
+        getter() {
+          return [];
+        }
+      }
+    }
+  };
+  const stat = {
+    search: "maximum life",
+    options: [{ entries: [{ id: "explicit.stat_life", text: "+# to maximum Life" }] }],
+    $el: { matches() { return false; } },
+    _computedWatchers: { filteredOptions: { getter() { return this.search; } } }
+  };
+  const unrelated = {
+    search: "gold ring",
+    options: [{ entries: [{ type: "Gold Ring" }] }],
+    $el: { matches() { return false; } },
+    _computedWatchers: { filteredOptions: { getter() { return this.search; } } }
+  };
+
+  assert.equal(hooks.getNativeWhitespaceSearchQuery("金 戒指"), "~金 戒指");
+  assert.equal(hooks.getNativeWhitespaceSearchQuery(" gold  ring "), "~gold ring");
+  assert.equal(hooks.getNativeWhitespaceSearchQuery("戒指"), null);
+  assert.equal(hooks.getNativeWhitespaceSearchQuery("~金 戒指"), null);
+  assert.equal(hooks.isWhitespaceSearchTarget(item), true);
+  assert.equal(hooks.isWhitespaceSearchTarget(stat), true);
+  assert.equal(hooks.isWhitespaceSearchTarget(unrelated), false);
+
+  hooks.runtime.app = { $children: [{ $refs: { search: item } }] };
+  hooks.installWhitespaceSearch();
+  assert.equal(listeners.length, 1);
+  assert.deepStrictEqual(item._computedWatchers.filteredOptions.getter.call(item), [{ text: "金光戒指" }]);
+  assert.equal(item.search, "金 戒指");
+  assert.deepStrictEqual(evaluated, ["~金 戒指"]);
+  assert.equal(item.underline("金光戒指", "金 戒指"), "<strong>金</strong>光<strong>戒指</strong>");
+  assert.equal(item.underline("金光戒指", "~金 戒指"), "native:金光戒指:~金 戒指");
+  assert.equal(parent.underline("金光戒指", "金 戒指"), "<strong>金</strong>光<strong>戒指</strong>");
+});
+
 test("page bridge hides unmatched known stats but keeps related pseudo", async () => {
   const listeners = [];
   const staticData = {
