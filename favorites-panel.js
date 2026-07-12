@@ -19,6 +19,15 @@
     favoriteTooltipCategory: "Category",
     favoriteTooltipRarity: "Rarity: $1",
     favoriteTooltipModifiers: "Modifiers",
+    favoriteTooltipStatFilters: "Stat Filters",
+    favoriteTooltipStatGroupAnd: "AND",
+    favoriteTooltipStatGroupOr: "OR",
+    favoriteTooltipStatGroupCount: "COUNT",
+    favoriteTooltipStatGroupWeighted: "WEIGHTED SUM",
+    favoriteTooltipStatGroupNot: "NOT",
+    favoriteTooltipStatGroupIf: "IF",
+    favoriteTooltipWeight: "WEIGHT: $1",
+    favoriteTooltipDisabled: "DISABLED",
     renameFavorite: "Rename favorite",
     deleteFavorite: "Delete favorite",
     undoFavoriteDelete: "Undo",
@@ -643,10 +652,59 @@
       return {
         text: String(value.text || ""),
         source: value.source || null,
-        ...(value.heading ? { heading: true } : {})
+        ...(value.heading ? { heading: true } : {}),
+        ...(value.disabled ? { disabled: true } : {}),
+        ...(Number.isFinite(Number(value.weight)) ? { weight: Number(value.weight) } : {})
       };
     }
     return { text: String(value || ""), source: null };
+  }
+
+  function formatLinkFavoriteRange(minimum, maximum) {
+    const min = String(minimum ?? "").trim();
+    const max = String(maximum ?? "").trim();
+    return min || max ? `${min} - ${max}`.trim() : "";
+  }
+
+  function formatLinkFavoriteFilterGroupValue(value) {
+    if (value && typeof value === "object" && "text" in value) {
+      return getLinkFavoriteTooltipValue(value);
+    }
+    const formatter = globalThis.Poe2MarketwrightFavorites?.createLinkFavoriteTools?.().formatLinkFavoriteFilterRange;
+    return {
+      text: typeof formatter === "function" ? formatter(value) : String(value || ""),
+      source: null
+    };
+  }
+
+  function getLinkFavoriteStatGroupTooltipLabel(group) {
+    const type = String(group?.type || "and").trim().toLocaleLowerCase().replace(/[\s-]+/g, "_");
+    const relation = {
+      and: t("favoriteTooltipStatGroupAnd"),
+      or: t("favoriteTooltipStatGroupOr"),
+      count: t("favoriteTooltipStatGroupCount"),
+      weighted: t("favoriteTooltipStatGroupWeighted"),
+      not: t("favoriteTooltipStatGroupNot"),
+      if: t("favoriteTooltipStatGroupIf")
+    }[type] || type.toUpperCase().replaceAll("_", " ");
+    const rawMin = group?.value?.min;
+    const rawMax = group?.value?.max;
+    const min = rawMin == null || rawMin === "" ? Number.NaN : Number(rawMin);
+    const max = rawMax == null || rawMax === "" ? Number.NaN : Number(rawMax);
+    const range = formatLinkFavoriteRange(Number.isFinite(min) ? min : "", Number.isFinite(max) ? max : "");
+    return `${t("favoriteTooltipStatFilters")}: ${relation}${range ? ` (${range})` : ""}`;
+  }
+
+  function getLinkFavoriteStructuredStatGroups(snapshot) {
+    return (snapshot?.statGroups || [])
+      .map((group) => {
+        const values = (group?.filters || [])
+          .filter(Boolean)
+          .map((value) => getLinkFavoriteTooltipValue(value))
+          .filter((value) => value.text);
+        return values.length ? { label: getLinkFavoriteStatGroupTooltipLabel(group), values } : null;
+      })
+      .filter(Boolean);
   }
 
   function getLinkFavoriteTooltipGroups(link) {
@@ -654,16 +712,22 @@
     const snapshotItemValues = [snapshot?.type, snapshot?.category, snapshot?.rarity]
       .filter(Boolean)
       .map((text) => ({ text, source: null }));
+    const structuredStatGroups = getLinkFavoriteStructuredStatGroups(snapshot);
     return [
       ...(snapshotItemValues.length ? [{ label: t("favoriteTooltipItem"), values: snapshotItemValues }] : []),
-      ...(snapshot?.stats?.length ? [{ label: t("favoriteTooltipModifiers"), values: snapshot.stats }] : []),
+      ...(structuredStatGroups.length
+        ? structuredStatGroups
+        : []),
       ...(link.filterGroups || [])
+      .filter((group) => !structuredStatGroups.length || !isLinkFavoriteStatFilterGroup(group))
       .map((group) => {
         const label = String(group?.label || "").trim();
         const statFilters = isLinkFavoriteStatFilterGroup(group);
         const values = (group?.values || [])
           .filter(Boolean)
-          .map((value) => (statFilters ? formatLinkFavoriteStatFilter(value) : getLinkFavoriteTooltipValue(value)));
+          .map((value) =>
+            statFilters ? formatLinkFavoriteStatFilter(value) : formatLinkFavoriteFilterGroupValue(value)
+          );
         return label && values.length ? { label, ...(group.hideLabel ? { hideLabel: true } : {}), values } : null;
       })
       .filter(Boolean)
@@ -679,6 +743,16 @@
           `favorites-panel-link-stat-source favorites-panel-link-stat-source-${stat.source.key}`,
           stat.source.label
         )
+      );
+      line.appendChild(document.createTextNode(" "));
+    }
+    if (stat.disabled) {
+      line.appendChild(createElement("span", "favorites-panel-link-favorite-stat-disabled", t("favoriteTooltipDisabled")));
+      line.appendChild(document.createTextNode(" "));
+    }
+    if (Number.isFinite(Number(stat.weight))) {
+      line.appendChild(
+        createElement("span", "favorites-panel-link-favorite-stat-weight", t("favoriteTooltipWeight", stat.weight))
       );
       line.appendChild(document.createTextNode(" "));
     }
@@ -703,7 +777,7 @@
       const values = createElement("div", "favorites-panel-tooltip-values");
       for (const value of group.values) {
         values.appendChild(
-          value.source
+          value.source || value.disabled || Number.isFinite(Number(value.weight))
             ? renderLinkFavoriteStat(value, "", "favorites-panel-tooltip-stat")
             : createElement(
                 "span",

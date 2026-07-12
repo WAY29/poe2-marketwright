@@ -206,7 +206,14 @@ test("saving a link captures active advanced filter groups", async () => {
     /\n\}\)\(\);\s*$/,
     "\n  window.__testHooks = { getCurrentLinkFavoriteFilterGroups };\n})();"
   );
-  const label = (textContent) => ({ textContent });
+  const label = (textContent, directText = "") => ({
+    textContent,
+    childNodes: directText ? [{ nodeType: 3, nodeValue: directText }] : []
+  });
+  const nestedLabel = (textContent) => ({
+    textContent,
+    childNodes: [{ nodeType: 3, nodeValue: " " }]
+  });
   const select = (textContent) => ({ selectedOptions: [{ textContent }], value: textContent });
   const input = (value, placeholder) => ({
     type: "number",
@@ -222,9 +229,9 @@ test("saving a link captures active advanced filter groups", async () => {
     closest() { return null; },
     getAttribute() { return null; }
   });
-  const field = (name, selects = [], inputs = []) => ({
+  const field = (name, selects = [], inputs = [], labelNode = label(name)) => ({
     matches(selector) { return selector === ".filter, .filter-property"; },
-    querySelector(selector) { return selector === ".filter-title" ? label(name) : null; },
+    querySelector(selector) { return selector === ".filter-title" ? labelNode : null; },
     querySelectorAll(selector) {
       if (selector === ".multiselect") return [];
       if (selector === "select") return selects;
@@ -246,9 +253,41 @@ test("saving a link captures active advanced filter groups", async () => {
   };
   const groups = [
     group("Type Filters", [field("Item Category", [select("Bow")])]),
-    group("Item Requirements", [field("Item Level", [], [input("80", "Min")])]),
-    group("Equipment Filters", [field("Corrupted", [], [checkbox()])]),
-    group("Stat Filters", [field("+# to maximum Life", [], [input("50", "Min")])]),
+    group("Item Requirements", [field("Item Level", [], [input("80", "Min"), input("100", "Max")])]),
+    group("Equipment Filters", [
+      field("Corrupted", [], [checkbox()]),
+      field("閃避 Includes base value, local modifiers, and maximum quality", [], [{
+        type: "number",
+        value: "700",
+        placeholder: "Min",
+        closest() { return null; },
+        getAttribute(name) { return name === "aria-label" ? "Includes base value, local modifiers, and maximum quality" : null; }
+      }, {
+        type: "number",
+        value: "900",
+        placeholder: "Max",
+        closest() { return null; },
+        getAttribute(name) { return name === "aria-label" ? "Includes base value, local modifiers, and maximum quality" : null; }
+      }], label("閃避 Includes base value, local modifiers, and maximum quality", "閃避")),
+      field("Armour", [], [{
+        type: "number",
+        value: "500",
+        placeholder: "Max",
+        closest() { return null; },
+        getAttribute(name) { return name === "aria-label" ? "Includes base value, local modifiers, and maximum quality" : null; }
+      }]),
+      field("Runic Ward Includes base value, local modifiers, and maximum quality", [], [{
+        type: "number",
+        value: "100",
+        placeholder: "Min",
+        closest() { return null; },
+        getAttribute(name) { return name === "aria-label" ? "Includes base value, local modifiers, and maximum quality" : null; }
+      }], label("Runic Ward Includes base value, local modifiers, and maximum quality", "Runic Ward"))
+    ]),
+    group("Stat Filters", [
+      field("+# to maximum Life", [], [input("50", "Min")], nestedLabel("+# to maximum Life")),
+      field("+#% increased Movement Speed", [], [input("21", "Min")], nestedLabel("+#% increased Movement Speed"))
+    ]),
     group("Trade Filters", [field("Indexed", [select("Yes")])])
   ];
   const sandbox = {
@@ -264,7 +303,43 @@ test("saving a link captures active advanced filter groups", async () => {
   };
   vm.runInNewContext(source, sandbox, { filename: "content.js" });
   const result = structuredClone(sandbox.window.__testHooks.getCurrentLinkFavoriteFilterGroups());
-  assert.deepStrictEqual(result, [{"label": "Type Filters", "values": ["Item Category: Bow"]}, {"label": "Item Requirements", "values": ["Item Level: Min 80"]}, {"label": "Equipment Filters", "values": ["Corrupted"]}, {"label": "Stat Filters", "values": ["+# to maximum Life: Min 50"]}]);
+  assert.deepStrictEqual(result, [{"label": "Type Filters", "values": ["Item Category: Bow"]}, {"label": "Item Requirements", "values": ["Item Level: 80 - 100"]}, {"label": "Equipment Filters", "values": ["Corrupted", "閃避: 700 - 900", "Armour: - 500", "Runic Ward: 100 -"]}, {"label": "Stat Filters", "values": ["+# to maximum Life: 50 -", "+#% increased Movement Speed: 21 -"]}]);
+});
+
+test("link snapshots preserve every official stat group and relationship", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { buildLinkFavoriteDisplaySnapshot };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const result = structuredClone(sandbox.window.__testHooks.buildLinkFavoriteDisplaySnapshot({
+    query: {
+      stats: [
+        { type: "and", filters: [{ id: "explicit.stat_life", value: { min: 50 }, disabled: true }] },
+        { type: "or", filters: [{ id: "explicit.stat_fire_resistance", value: { min: 30 } }] },
+        { type: "count", value: { min: 2 }, filters: [{ id: "explicit.stat_cold_resistance", value: { min: 30 } }] },
+        { type: "weight2", value: { min: 120 }, filters: [{ id: "explicit.stat_movement_speed", value: { min: 20, weight: 2 } }] }
+      ]
+    }
+  }));
+  assert.deepStrictEqual(result, {"statGroups": [{"type": "and", "filters": [{"id": "explicit.stat_life", "value": {"min": 50}, "disabled": true}]}, {"type": "or", "filters": [{"id": "explicit.stat_fire_resistance", "value": {"min": 30}}]}, {"type": "count", "value": {"min": 2}, "filters": [{"id": "explicit.stat_cold_resistance", "value": {"min": 30}}]}, {"type": "weighted", "value": {"min": 120}, "filters": [{"id": "explicit.stat_movement_speed", "value": {"min": 20}, "weight": 2}]}], "statGroupsVersion": 3});
+
+  const favoritesSandbox = { console, URL };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), favoritesSandbox, { filename: "favorites.js" });
+  const record = favoritesSandbox.Poe2MarketwrightFavorites.createLinkFavoriteTools().createLinkFavoriteRecord({
+    url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+    displayName: "Weighted search",
+    displaySnapshot: result
+  });
+  assert.equal(record.displaySnapshot.statGroups[3].filters[0].weight, 2);
 });
 
 test("link tooltip groups include every saved filter", async () => {
@@ -297,6 +372,42 @@ test("link tooltip groups include every saved filter", async () => {
   }));
   assert.deepStrictEqual(result, [{"label": "Type Filters", "values": [{"text": "Item Category: Ring", "source": null}]}, {"label": "Other", "values": [{"text": "Fractured: Yes", "source": null}]}, {"label": "Stat Filters", "values": [{"text": "formatted +# to maximum Life", "source": null}, {"text": "formatted +#% Fire Resistance", "source": null}]}]);
   assert.ok((fs.readFileSync("favorites-panel.html", "utf8")).includes("id=\"favorites-panel-tooltip\""));
+});
+
+test("link tooltip renders every structured stat group with its relationship", async () => {
+  let source = fs.readFileSync("favorites-panel.js", "utf8");
+  source = source.replace("  bindUi();\n  bootstrap();", "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getLinkFavoriteTooltipGroups };\n})();"
+  );
+  const sandbox = {
+    window: {},
+    document: { querySelector() { return null; } },
+    location: { search: "" },
+    URLSearchParams,
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
+  const result = structuredClone(sandbox.window.__testHooks.getLinkFavoriteTooltipGroups({
+    localizedSnapshot: {
+      stats: [
+        { text: "+50 to maximum Life", source: null },
+        { text: "+30% to Fire Resistance", source: null },
+        { text: "+30% to Cold Resistance", source: null },
+        { text: "20% increased Movement Speed", source: null }
+      ],
+      statGroups: [
+        { type: "and", filters: [{ text: "+50 to maximum Life", source: null, disabled: true }] },
+        { type: "or", filters: [{ text: "+30% to Fire Resistance", source: null }] },
+        { type: "count", value: { min: 2 }, filters: [{ text: "+30% to Cold Resistance", source: null }] },
+        { type: "weighted", value: { min: 120, max: 200 }, filters: [{ text: "20% increased Movement Speed", source: null, weight: 2 }] },
+        { type: "not", value: { max: 3 }, filters: [{ text: "+20 to maximum Mana", source: null }] }
+      ]
+    },
+    filterGroups: [{ label: "Stat Filters", values: ["legacy filter"] }]
+  }));
+  assert.deepStrictEqual(result, [{"label": "Stat Filters: AND", "values": [{"text": "+50 to maximum Life", "source": null, "disabled": true}]}, {"label": "Stat Filters: OR", "values": [{"text": "+30% to Fire Resistance", "source": null}]}, {"label": "Stat Filters: COUNT (2 -)", "values": [{"text": "+30% to Cold Resistance", "source": null}]}, {"label": "Stat Filters: WEIGHTED SUM (120 - 200)", "values": [{"text": "20% increased Movement Speed", "source": null, "weight": 2}]}, {"label": "Stat Filters: NOT (- 3)", "values": [{"text": "+20 to maximum Mana", "source": null}]}]);
 });
 
 test("link tooltip prefers above the pointer and flips below at the top edge", async () => {
@@ -354,6 +465,65 @@ test("compact link favorite uses the same stat summary and tooltip groups", asyn
     ]
   }));
   assert.deepStrictEqual(result, {"stats": [{"text": "+18% to Item Rarity", "source": {"key": "fractured", "label": "FRACTURED"}}, {"text": "formatted +# to maximum Life", "source": null}], "tooltipGroups": [{"label": "Type Filters", "values": [{"text": "Item Category: Ring", "source": null}]}, {"label": "Stat Filters", "values": [{"text": "+18% to Item Rarity", "source": {"key": "fractured", "label": "FRACTURED"}}, {"text": "formatted +# to maximum Life", "source": null}]}]});
+});
+
+test("compact link tooltip renders structured stat group relationships", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getCompactLinkFavoritePresentation };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const result = structuredClone(sandbox.window.__testHooks.getCompactLinkFavoritePresentation({
+    localizedSnapshot: {
+      stats: [
+        { text: "+50 to maximum Life", source: null },
+        { text: "+30% to Fire Resistance", source: null },
+        { text: "+20 to maximum Mana", source: null, weight: 2 }
+      ],
+      statGroups: [
+        { type: "or", filters: [{ text: "+50 to maximum Life", source: null }] },
+        { type: "count", value: { min: 2, max: 3 }, filters: [{ text: "+30% to Fire Resistance", source: null }] },
+        { type: "weighted", value: { max: 120 }, filters: [{ text: "+20 to maximum Mana", source: null, weight: 2 }] }
+      ]
+    }
+  }));
+  assert.deepStrictEqual(result, {"stats": [{"text": "+50 to maximum Life", "source": null}, {"text": "+30% to Fire Resistance", "source": null}, {"text": "+20 to maximum Mana", "source": null, "weight": 2}], "tooltipGroups": [{"label": "Stat Filters: OR", "values": [{"text": "+50 to maximum Life", "source": null}]}, {"label": "Stat Filters: COUNT (2 - 3)", "values": [{"text": "+30% to Fire Resistance", "source": null}]}, {"label": "Stat Filters: WEIGHTED SUM (- 120)", "values": [{"text": "+20 to maximum Mana", "source": null, "weight": 2}]}]});
+});
+
+test("link favorite presentation localizes saved equipment filter labels", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getLinkFavoritePresentation, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { uiLanguage: "zh_TW", pageLanguage: "zh_TW", pageTranslationEnabled: true };
+  hooks.runtime.tradeLocalization = {
+    strings: {
+      Evasion: { en: "Evasion", zh_CN: "闪避", zh_TW: "閃避" },
+      "Runic Ward": { en: "Runic Ward", zh_CN: "符文结界", zh_TW: "Runic Ward" }
+    }
+  };
+  const result = structuredClone(hooks.getLinkFavoritePresentation({
+    filterGroups: [{ label: "Equipment Filters", values: ["Evasion: 700 -", "Runic Ward: 100 -"] }]
+  }));
+  assert.deepStrictEqual(result, {"filterGroups": [{"label": "Equipment Filters", "values": ["閃避: 700 -", "符文保護: 100 -"]}]});
 });
 
 test("compact item favorite tooltip includes context and every modifier", async () => {

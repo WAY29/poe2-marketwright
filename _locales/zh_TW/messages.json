@@ -405,6 +405,33 @@
   "favoriteTooltipModifiers": {
     "message": "詞綴"
   },
+  "favoriteTooltipStatFilters": {
+    "message": "詞綴篩選"
+  },
+  "favoriteTooltipStatGroupAnd": {
+    "message": "且"
+  },
+  "favoriteTooltipStatGroupOr": {
+    "message": "或"
+  },
+  "favoriteTooltipStatGroupCount": {
+    "message": "計數"
+  },
+  "favoriteTooltipStatGroupWeighted": {
+    "message": "加權總和"
+  },
+  "favoriteTooltipStatGroupNot": {
+    "message": "非"
+  },
+  "favoriteTooltipStatGroupIf": {
+    "message": "若"
+  },
+  "favoriteTooltipWeight": {
+    "message": "權重：$1"
+  },
+  "favoriteTooltipDisabled": {
+    "message": "已停用"
+  },
   "statFilterTitle": {
     "message": "詞綴過濾"
   },

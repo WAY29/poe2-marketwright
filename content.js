@@ -23,7 +23,7 @@
     favoritesPanelOpen: false,
     favoritesPanelTab: "items",
     linkFavoritesEnabled: true,
-    linkFavorites: { version: 1, leagues: {} },
+    linkFavorites: { version: 2, leagues: {} },
     linkFavoritesDrawerOpen: false,
     selection: "auto",
     collapsed: false,
@@ -50,6 +50,7 @@
   const BRIDGE_READY_TYPE = "POE2_MARKETWRIGHT_READY";
   const BRIDGE_STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
   const BRIDGE_SEARCH_SNAPSHOT_TYPE = "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT";
+  const LINK_FAVORITE_STAT_GROUPS_VERSION = 3;
   const TRADE_ROOT_SELECTOR = "#trade";
   const NATIVE_TRADE_CACHE_KEYS = [
     "lscache-trade2items",
@@ -62,6 +63,10 @@
   const LOCALIZED_ALIAS_LOCALES = ["zh_CN", "zh_TW"];
   const SUPPORTED_UI_LANGUAGES = Object.freeze(["en", "zh_CN", "zh_TW"]);
   const SUPPORTED_PAGE_LANGUAGES = Object.freeze(["en", "zh_CN", "zh_TW", "zh_CN_en", "zh_TW_en"]);
+  // Official Trade strings omit a few standalone canonical terms in some locales.
+  const TRADE_TERM_LOCALIZATION_FALLBACKS = Object.freeze({
+    "Runic Ward": { en: "Runic Ward", zh_CN: "符文结界", zh_TW: "符文保護" }
+  });
   const ITEM_SEARCH_ROOT_SELECTOR =
     "#trade .top .search-panel > .search-bar:not(.search-advanced) .search-left .multiselect.search-select";
   const ITEM_SEARCH_INPUT_SELECTOR = `${ITEM_SEARCH_ROOT_SELECTOR} input.multiselect__input`;
@@ -341,6 +346,15 @@
     favoriteTooltipBaseType: "Base type",
     favoriteTooltipCategory: "Category",
     favoriteTooltipModifiers: "Modifiers",
+    favoriteTooltipStatFilters: "Stat Filters",
+    favoriteTooltipStatGroupAnd: "AND",
+    favoriteTooltipStatGroupOr: "OR",
+    favoriteTooltipStatGroupCount: "COUNT",
+    favoriteTooltipStatGroupWeighted: "WEIGHTED SUM",
+    favoriteTooltipStatGroupNot: "NOT",
+    favoriteTooltipStatGroupIf: "IF",
+    favoriteTooltipWeight: "WEIGHT: $1",
+    favoriteTooltipDisabled: "DISABLED",
     statFilterTitle: "Stat filter",
     pobCopyTitle: "PoB Copy Button",
     currencyConversionTitle: "Price Conversion",
@@ -1751,9 +1765,7 @@
     ];
     for (const selector of selectors) {
       const label = field.querySelector(selector);
-      const text = getLinkFavoriteFilterText(
-        label?.getAttribute?.("data-field-label") || label?.textContent || ""
-      );
+      const text = getLinkFavoriteFilterText(getLinkFavoriteFilterFieldLabelText(label));
       if (text) {
         return text;
       }
@@ -1761,8 +1773,23 @@
     return "";
   }
 
+  function getLinkFavoriteFilterFieldLabelText(label) {
+    const explicit = label?.getAttribute?.("data-field-label");
+    if (explicit) {
+      return explicit;
+    }
+    const directText = getLinkFavoriteFilterText(
+      Array.from(label?.childNodes || [])
+        .filter((node) => node?.nodeType === 3)
+        .map((node) => node.nodeValue || "")
+        .join(" ")
+    );
+    return directText || label?.textContent || "";
+  }
+
   function getLinkFavoriteFilterFieldValues(field, fieldLabel) {
     const values = [];
+    const range = { min: "", max: "" };
     const addValue = (value) => {
       const text = getLinkFavoriteFilterText(value);
       if (text && !isIgnorableSelectionText(text) && !values.includes(text)) {
@@ -1799,10 +1826,21 @@
       if (!value) {
         continue;
       }
+      const ariaLabel = getLinkFavoriteFilterText(input.getAttribute("aria-label") || "");
       const qualifier = getLinkFavoriteFilterText(
-        input.getAttribute("aria-label") || input.placeholder || input.name || ""
+        input.placeholder || (ariaLabel.length <= 48 ? ariaLabel : "") || input.name || ""
       );
+      const bound = getLinkFavoriteRangeBound(qualifier);
+      if (bound) {
+        range[bound] = value;
+        continue;
+      }
       addValue(qualifier && qualifier !== fieldLabel ? `${qualifier} ${value}` : value);
+    }
+
+    const formattedRange = formatLinkFavoriteRange(range.min, range.max);
+    if (formattedRange) {
+      addValue(formattedRange);
     }
 
     for (const button of field.querySelectorAll("button.selected, button.active, [role='button'][aria-pressed='true']")) {
@@ -1814,6 +1852,54 @@
 
   function getLinkFavoriteFilterText(value) {
     return String(value || "").replace(/\s+/g, " ").trim();
+  }
+
+  function getLinkFavoriteRangeBound(label) {
+    const normalized = getLinkFavoriteFilterText(label).toLocaleLowerCase();
+    if (/^(?:min(?:imum)?|\u6700\u5c0f(?:\u503c)?)$/.test(normalized)) {
+      return "min";
+    }
+    if (/^(?:max(?:imum)?|\u6700\u5927(?:\u503c)?)$/.test(normalized)) {
+      return "max";
+    }
+    return null;
+  }
+
+  function formatLinkFavoriteRange(minimum, maximum) {
+    const min = getLinkFavoriteFilterText(minimum);
+    const max = getLinkFavoriteFilterText(maximum);
+    return min || max ? `${min} - ${max}`.trim() : "";
+  }
+
+  function getLocalizedLinkFavoriteFilterLabel(value) {
+    const text = getLinkFavoriteFilterText(value);
+    if (!text || !isPageTranslationEnabled()) {
+      return text;
+    }
+    const localized = getLocalizedTradeText(text);
+    if (localized !== text) {
+      return localized;
+    }
+    const fallback = TRADE_TERM_LOCALIZATION_FALLBACKS[text];
+    return fallback ? getLocalizedTradePageText(fallback, text, false) : text;
+  }
+
+  function localizeLinkFavoriteFilterValue(value) {
+    const text = getLinkFavoriteFilterText(value);
+    const separatorIndex = text.search(/[:\uff1a]/);
+    if (separatorIndex < 0) {
+      return getLocalizedLinkFavoriteFilterLabel(text);
+    }
+    const label = text.slice(0, separatorIndex);
+    return `${getLocalizedLinkFavoriteFilterLabel(label)}${text.slice(separatorIndex)}`;
+  }
+
+  function localizeLinkFavoriteFilterGroups(groups) {
+    return (groups || []).map((group) => ({
+      ...group,
+      label: getLocalizedLinkFavoriteFilterLabel(group?.label),
+      values: (group?.values || []).map(localizeLinkFavoriteFilterValue)
+    }));
   }
 
   function getLinkFavoriteDisplayNameFromSelections(itemTexts, categoryTexts) {
@@ -1937,22 +2023,49 @@
     const values = [stat?.value?.min, stat?.value?.max].filter(Number.isFinite).map(String);
     let valueIndex = 0;
     const englishText = englishTemplate.replace(/#/g, () => values[valueIndex++] || values.at(-1) || "#");
-    return formatLocalizedFavoriteModifier({ id: stat?.id, text: englishText, source: String(stat?.id || "").split(".", 1)[0] });
+    return {
+      ...formatLocalizedFavoriteModifier({ id: stat?.id, text: englishText, source: String(stat?.id || "").split(".", 1)[0] }),
+      ...(stat?.disabled === true ? { disabled: true } : {}),
+      ...(Number.isFinite(Number(stat?.weight)) ? { weight: Number(stat.weight) } : {})
+    };
   }
 
   function getLinkFavoritePresentation(link) {
     const snapshot = link?.displaySnapshot;
+    const filterGroups = localizeLinkFavoriteFilterGroups(link?.filterGroups);
     if (!snapshot) {
-      return link;
+      return { ...link, filterGroups };
     }
     const type = getLocalizedDisplayText(getFavoriteItemRecord(snapshot.type), snapshot.type);
+    const statGroups = (snapshot.statGroups || [])
+      .map((group) => {
+        const filters = (group?.filters || []).map(formatLocalizedLinkSnapshotStat).filter((stat) => stat.text);
+        if (!filters.length) {
+          return null;
+        }
+        const rawMin = group?.value?.min;
+        const rawMax = group?.value?.max;
+        const min = rawMin == null || rawMin === "" ? Number.NaN : Number(rawMin);
+        const max = rawMax == null || rawMax === "" ? Number.NaN : Number(rawMax);
+        return {
+          type: String(group?.type || "and"),
+          ...(Number.isFinite(min) || Number.isFinite(max)
+            ? { value: { ...(Number.isFinite(min) ? { min } : {}), ...(Number.isFinite(max) ? { max } : {}) } }
+            : {}),
+          filters
+        };
+      })
+      .filter(Boolean);
+    const stats = statGroups.flatMap((group) => group.filters);
     return {
       ...link,
+      filterGroups,
       localizedSnapshot: {
         ...(type ? { type } : {}),
         ...(snapshot.category ? { category: getLocalizedFavoriteCategory(snapshot.category) } : {}),
         ...(snapshot.rarity ? { rarity: getLocalizedFavoriteRarity(snapshot.rarity) } : {}),
-        stats: (snapshot.stats || []).map(formatLocalizedLinkSnapshotStat).filter((stat) => stat.text)
+        ...(stats.length ? { stats } : {}),
+        ...(statGroups.length ? { statGroups } : {})
       }
     };
   }
@@ -2950,22 +3063,74 @@
     return typeof formatter === "function" ? formatter(value) : { text: String(value || ""), source: null };
   }
 
+  function getCompactLinkFavoriteStatGroupLabel(group) {
+    const type = String(group?.type || "and").trim().toLocaleLowerCase().replace(/[\s-]+/g, "_");
+    const relation = {
+      and: t("favoriteTooltipStatGroupAnd", [], "AND"),
+      or: t("favoriteTooltipStatGroupOr", [], "OR"),
+      count: t("favoriteTooltipStatGroupCount", [], "COUNT"),
+      weighted: t("favoriteTooltipStatGroupWeighted", [], "WEIGHTED SUM"),
+      not: t("favoriteTooltipStatGroupNot", [], "NOT"),
+      if: t("favoriteTooltipStatGroupIf", [], "IF")
+    }[type] || type.toUpperCase().replaceAll("_", " ");
+    const rawMin = group?.value?.min;
+    const rawMax = group?.value?.max;
+    const min = rawMin == null || rawMin === "" ? Number.NaN : Number(rawMin);
+    const max = rawMax == null || rawMax === "" ? Number.NaN : Number(rawMax);
+    const range = formatLinkFavoriteRange(Number.isFinite(min) ? min : "", Number.isFinite(max) ? max : "");
+    return `${t("favoriteTooltipStatFilters", [], "Stat Filters")}: ${relation}${range ? ` (${range})` : ""}`;
+  }
+
+  function formatCompactLinkFavoriteFilterGroupValue(value) {
+    const formatter = getLinkFavoriteTools()?.formatLinkFavoriteFilterRange;
+    return typeof formatter === "function" ? formatter(value) : String(value || "");
+  }
+
+  function getCompactLinkFavoriteStructuredStatGroups(snapshot) {
+    return (snapshot?.statGroups || [])
+      .map((group) => {
+        const values = (group?.filters || [])
+          .filter(Boolean)
+          .map((value) =>
+            value && typeof value === "object" && "text" in value
+              ? {
+                  text: String(value.text || ""),
+                  source: value.source || null,
+                  ...(value.disabled ? { disabled: true } : {}),
+                  ...(Number.isFinite(Number(value.weight)) ? { weight: Number(value.weight) } : {})
+                }
+              : formatCompactLinkFavoriteStatFilter(value)
+          )
+          .filter((value) => value.text);
+        return values.length ? { label: getCompactLinkFavoriteStatGroupLabel(group), values } : null;
+      })
+      .filter(Boolean);
+  }
+
   function getCompactLinkFavoritePresentation(link) {
     const snapshot = link?.localizedSnapshot;
     const snapshotItemValues = [snapshot?.type, snapshot?.category, snapshot?.rarity]
       .filter(Boolean)
       .map((text) => ({ text, source: null }));
     const snapshotStats = snapshot?.stats || [];
+    const structuredStatGroups = getCompactLinkFavoriteStructuredStatGroups(snapshot);
     const tooltipGroups = [
       ...(snapshotItemValues.length ? [{ label: t("favoriteTooltipItem"), values: snapshotItemValues }] : []),
-      ...(snapshotStats.length ? [{ label: t("favoriteTooltipModifiers"), values: snapshotStats }] : []),
+      ...(structuredStatGroups.length
+        ? structuredStatGroups
+        : []),
       ...(link?.filterGroups || [])
+      .filter((group) => !structuredStatGroups.length || !isCompactLinkFavoriteStatFilterGroup(group))
       .map((group) => {
         const label = String(group?.label || "").trim();
         const statFilters = isCompactLinkFavoriteStatFilterGroup(group);
         const values = (group?.values || [])
           .filter(Boolean)
-          .map((value) => (statFilters ? formatCompactLinkFavoriteStatFilter(value) : { text: String(value), source: null }));
+          .map((value) =>
+            statFilters
+              ? formatCompactLinkFavoriteStatFilter(value)
+              : { text: formatCompactLinkFavoriteFilterGroupValue(value), source: null }
+          );
         return label && values.length ? { label, values } : null;
       })
       .filter(Boolean)
@@ -2988,6 +3153,18 @@
       line.appendChild(source);
       line.appendChild(document.createTextNode(" "));
     }
+    if (stat.disabled) {
+      const disabled = document.createElement("span");
+      disabled.className = "poe2-marketwright-link-favorite-stat-disabled";
+      disabled.textContent = t("favoriteTooltipDisabled");
+      line.append(disabled, document.createTextNode(" "));
+    }
+    if (Number.isFinite(Number(stat.weight))) {
+      const weight = document.createElement("span");
+      weight.className = "poe2-marketwright-link-favorite-stat-weight";
+      weight.textContent = t("favoriteTooltipWeight", stat.weight, "WEIGHT: $1");
+      line.append(weight, document.createTextNode(" "));
+    }
     line.appendChild(document.createTextNode(stat.text || ""));
     return line;
   }
@@ -3004,7 +3181,7 @@
       const values = document.createElement("div");
       values.className = "poe2-marketwright-link-favorite-tooltip-values";
       for (const value of group.values) {
-        if (value.source) {
+        if (value.source || value.disabled || Number.isFinite(Number(value.weight))) {
           values.appendChild(renderCompactLinkFavoriteStat(value, "poe2-marketwright-link-favorite-tooltip-stat"));
           continue;
         }
@@ -4419,26 +4596,55 @@
     const type = String(query.type || "").trim();
     const category = String(typeFilters.category?.option || "").trim();
     const rarity = String(typeFilters.rarity?.option || "").trim();
-    const stats = (Array.isArray(query.stats) ? query.stats : [])
-      .flatMap((group) => (Array.isArray(group?.filters) ? group.filters : []))
-      .slice(0, 80)
-      .map((stat) => {
-        const id = String(stat?.id || "").trim();
-        if (!id) {
+    const normalizeStat = (stat) => {
+      const id = String(stat?.id || "").trim();
+      if (!id) {
+        return null;
+      }
+      const min = Number(stat?.value?.min);
+      const max = Number(stat?.value?.max);
+      const weight = Number(stat?.value?.weight);
+      return {
+        id,
+        ...(Number.isFinite(min) || Number.isFinite(max)
+          ? { value: { ...(Number.isFinite(min) ? { min } : {}), ...(Number.isFinite(max) ? { max } : {}) } }
+          : {}),
+        ...(stat?.disabled === true ? { disabled: true } : {}),
+        ...(Number.isFinite(weight) ? { weight } : {})
+      };
+    };
+    const statGroups = (Array.isArray(query.stats) ? query.stats : [])
+      .slice(0, 16)
+      .map((group) => {
+        const filters = (Array.isArray(group?.filters) ? group.filters : [])
+          .slice(0, 16)
+          .map(normalizeStat)
+          .filter(Boolean);
+        if (!filters.length) {
           return null;
         }
-        const min = Number(stat?.value?.min);
-        const max = Number(stat?.value?.max);
+        const rawMin = group?.value?.min;
+        const rawMax = group?.value?.max;
+        const min = rawMin == null || rawMin === "" ? Number.NaN : Number(rawMin);
+        const max = rawMax == null || rawMax === "" ? Number.NaN : Number(rawMax);
+        const rawType = String(group?.type || "and").trim().toLocaleLowerCase().replace(/[\s-]+/g, "_") || "and";
         return {
-          id,
+          type: rawType === "weight2" ? "weighted" : rawType,
           ...(Number.isFinite(min) || Number.isFinite(max)
             ? { value: { ...(Number.isFinite(min) ? { min } : {}), ...(Number.isFinite(max) ? { max } : {}) } }
-            : {})
+            : {}),
+          filters
         };
       })
       .filter(Boolean);
-    return type || category || rarity || stats.length
-      ? { ...(type ? { type } : {}), ...(category ? { category } : {}), ...(rarity ? { rarity } : {}), ...(stats.length ? { stats } : {}) }
+    return type || category || rarity || statGroups.length
+      ? {
+          ...(type ? { type } : {}),
+          ...(category ? { category } : {}),
+          ...(rarity ? { rarity } : {}),
+          ...(statGroups.length ? { statGroups } : {}),
+          ...(statGroups.length ? { statGroupsVersion: LINK_FAVORITE_STAT_GROUPS_VERSION } : {})
+        }
       : null;
   }
 

@@ -730,7 +730,7 @@ test("export link favorites copies compatible json to the clipboard", async () =
   const hooks = sandbox.window.__testHooks;
   hooks.runtime.state = {
     linkFavorites: {
-      version: 1,
+      version: 2,
       leagues: {
         Dawn: {
           folders: [{ id: "folder-1", name: "Bows", createdAt: 1, collapsed: false }],

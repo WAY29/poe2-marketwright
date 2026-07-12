@@ -300,7 +300,7 @@ test("link favorite tools validate and create current trade search records", asy
   assert.deepStrictEqual(result, {"record": {"id": "link-1", "league": "Dawn of the Hunt", "queryId": "query-7", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-7", "displayName": "Warmonger Bow", "folderId": "folder-1", "createdAt": 123, "lastUsedAt": null, "filterGroups": [{"label": "Type Filters", "values": ["Bow", "Rare"]}, {"label": "Stat Filters", "values": ["+# to maximum Life"]}]}, "invalidCode": "invalid_trade_search_url"});
 });
 
-test("link favorite keeps a bounded official query display snapshot", async () => {
+test("link favorite rejects legacy flat display snapshots", async () => {
   const sandbox = { console, URL };
   vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
     filename: "favorites.js"
@@ -319,8 +319,48 @@ test("link favorite keeps a bounded official query display snapshot", async () =
       ]
     }
   });
+  assert.equal(record.displaySnapshot, undefined);
+});
+
+test("link favorite preserves structured stat group relationships in its display snapshot", async () => {
+  const sandbox = { console, URL };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+  const tools = sandbox.Poe2MarketwrightFavorites.createLinkFavoriteTools();
+  const record = tools.createLinkFavoriteRecord({
+    url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-7",
+    displayName: "Grouped search",
+    displaySnapshot: {
+      statGroupsVersion: 3,
+      statGroups: [
+        {
+          type: "or",
+          filters: [{ id: "explicit.stat_life", value: { min: 50 }, disabled: true }]
+        },
+        {
+          type: "count",
+          value: { min: 2 },
+          filters: [
+            { id: "explicit.stat_fire_resistance", value: { min: 30 } },
+            { id: "explicit.stat_cold_resistance", value: { min: 30 } }
+          ]
+        },
+        {
+          type: "weighted",
+          value: { min: 120, max: 200 },
+          filters: [{ id: "explicit.stat_movement_speed", value: { min: 20 }, weight: 2 }]
+        },
+        {
+          type: "and",
+          value: { min: null, max: "" },
+          filters: [{ id: "explicit.stat_energy_shield", value: { min: 50 } }]
+        }
+      ]
+    }
+  });
   const result = structuredClone(record.displaySnapshot);
-  assert.deepStrictEqual(result, {"type": "Rider Bow", "category": "weapon.bow", "rarity": "rare", "stats": [{"id": "explicit.stat_3299347043", "value": {"min": 50, "max": 80}}]});
+  assert.deepStrictEqual(result, {"statGroups": [{"type": "or", "filters": [{"id": "explicit.stat_life", "value": {"min": 50}, "disabled": true}]}, {"type": "count", "value": {"min": 2}, "filters": [{"id": "explicit.stat_fire_resistance", "value": {"min": 30}}, {"id": "explicit.stat_cold_resistance", "value": {"min": 30}}]}, {"type": "weighted", "value": {"min": 120, "max": 200}, "filters": [{"id": "explicit.stat_movement_speed", "value": {"min": 20}, "weight": 2}]}, {"type": "and", "filters": [{"id": "explicit.stat_energy_shield", "value": {"min": 50}}]}], "statGroupsVersion": 3});
 });
 
 test("page bridge forwards trade search request and query id for link snapshots", async () => {
@@ -373,7 +413,23 @@ test("link favorite stat summary removes random prefixes and formats special sou
   assert.deepStrictEqual(result, {"regular": {"text": "攻擊附加40.5至40.5冰冷傷害", "source": null}, "special": {"text": "+18% to Item Rarity", "source": {"key": "fractured", "label": "FRACTURED"}}});
 });
 
-test("link favorite state migrates independently and removes stale folder references", async () => {
+test("link favorite filter ranges use a compact lower-upper format", async () => {
+  const sandbox = { console, URL };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+
+  const tools = sandbox.Poe2MarketwrightFavorites.createLinkFavoriteTools();
+  const result = structuredClone({
+    lowerOnly: tools.formatLinkFavoriteFilterRange("Item Level: Min 11"),
+    upperOnly: tools.formatLinkFavoriteFilterRange("裝備等級：最大 22"),
+    range: tools.formatLinkFavoriteFilterRange("Evasion: Minimum: 700 / Maximum: 900"),
+    unchanged: tools.formatLinkFavoriteFilterRange("Corrupted: Yes")
+  });
+  assert.deepStrictEqual(result, {"lowerOnly": "Item Level: 11 -", "upperOnly": "裝備等級： - 22", "range": "Evasion: 700 - 900", "unchanged": "Corrupted: Yes"});
+});
+
+test("link favorite state ignores pre-current versions", async () => {
   const sandbox = { console, URL };
   vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
     filename: "favorites.js"
@@ -413,7 +469,7 @@ test("link favorite state migrates independently and removes stale folder refere
   });
 
   const result = structuredClone(state);
-  assert.deepStrictEqual(result, {"version": 2, "leagues": {"Dawn": {"folders": [{"id": "folder-1", "name": "Bows", "createdAt": 10, "collapsed": false}, {"id": "folder-2", "name": "Axes", "createdAt": 11, "collapsed": false}], "folderOrder": ["folder-2", "folder-1"], "links": [{"id": "link-1", "league": "Dawn", "queryId": "query-1", "url": "https://pathofexile.com/trade2/search/poe2/Dawn/query-1", "displayName": "Warmonger Bow", "folderId": "folder-1", "createdAt": 20, "lastUsedAt": 30}, {"id": "link-2", "league": "Dawn", "queryId": "query-2", "url": "https://pathofexile.com/trade2/search/poe2/Dawn/query-2", "displayName": "Unfiled", "folderId": null, "createdAt": 21, "lastUsedAt": null}], "rootLinkIds": ["link-2"], "folderLinkIds": {"folder-1": ["link-1"], "folder-2": []}}}});
+  assert.deepStrictEqual(result, {"version": 2, "leagues": {}});
 });
 
 test("imports external link bookmarks into the selected league idempotently", async () => {
@@ -477,7 +533,7 @@ test("exports compatible bookmark json and round trips root bookmarks", async ()
 
   const tools = sandbox.Poe2MarketwrightFavorites.createLinkFavoriteTools();
   const state = tools.normalizeLinkFavoritesState({
-    version: 1,
+    version: 2,
     leagues: {
       Dawn: {
         folders: [

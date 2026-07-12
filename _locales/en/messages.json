@@ -117,6 +117,33 @@
   "favoriteTooltipModifiers": {
     "message": "Modifiers"
   },
+  "favoriteTooltipStatFilters": {
+    "message": "Stat Filters"
+  },
+  "favoriteTooltipStatGroupAnd": {
+    "message": "AND"
+  },
+  "favoriteTooltipStatGroupOr": {
+    "message": "OR"
+  },
+  "favoriteTooltipStatGroupCount": {
+    "message": "COUNT"
+  },
+  "favoriteTooltipStatGroupWeighted": {
+    "message": "WEIGHTED SUM"
+  },
+  "favoriteTooltipStatGroupNot": {
+    "message": "NOT"
+  },
+  "favoriteTooltipStatGroupIf": {
+    "message": "IF"
+  },
+  "favoriteTooltipWeight": {
+    "message": "WEIGHT: $1"
+  },
+  "favoriteTooltipDisabled": {
+    "message": "DISABLED"
+  },
   "statFilterTitle": {
     "message": "Stat filter"
   },

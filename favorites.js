@@ -18,6 +18,7 @@
   const COMBINED_STAT_SOURCES = new Set(["fractured", "desecrated"]);
   const NUMBER_RE = /-?\d+(?:\.\d+)?/g;
   const LINK_FAVORITES_VERSION = 2;
+  const LINK_FAVORITE_STAT_GROUPS_VERSION = 3;
   const TRADE_SEARCH_ORIGINS = new Set(["https://pathofexile.com", "https://www.pathofexile.com"]);
   const RESET_DELAY_MS = 1200;
   const ITEM_DETAILS_WAIT_TIMEOUT_MS = 6000;
@@ -350,8 +351,29 @@
       { key: "implicit", pattern: /^(implicit\b\s*|\u96b1\u6027\s*|\u9690\u6027\s*)/i }
     ];
     const LINK_FAVORITE_RANDOM_PREFIX_RE = /^(?:random attribute|\u96a8\u6a5f\u5c6c\u6027|\u968f\u673a\u5c5e\u6027)\s*/i;
-    const LINK_FAVORITE_MIN_VALUE_RE = /(?:minimum|min|\u6700\u5c0f)\s*[:\uff1a]?\s*(-?\d+(?:\.\d+)?)/i;
-    const LINK_FAVORITE_MAX_VALUE_RE = /(?:maximum|max|\u6700\u5927)\s*[:\uff1a]?\s*(-?\d+(?:\.\d+)?)/i;
+    const LINK_FAVORITE_MIN_VALUE_RE = /(?:minimum|min|\u6700\u5c0f(?:\u503c)?)\s*[:\uff1a]?\s*(-?\d+(?:\.\d+)?)/i;
+    const LINK_FAVORITE_MAX_VALUE_RE = /(?:maximum|max|\u6700\u5927(?:\u503c)?)\s*[:\uff1a]?\s*(-?\d+(?:\.\d+)?)/i;
+
+    const formatLinkFavoriteRange = (minimum, maximum) => {
+      const min = String(minimum ?? "").trim();
+      const max = String(maximum ?? "").trim();
+      return min || max ? `${min} - ${max}`.trim() : "";
+    };
+
+    const formatLinkFavoriteFilterRange = (value) => {
+      const text = String(value || "").replace(/\s+/g, " ").trim();
+      const minimum = text.match(LINK_FAVORITE_MIN_VALUE_RE);
+      const maximum = text.match(LINK_FAVORITE_MAX_VALUE_RE);
+      const thresholdIndex = Math.min(
+        ...[minimum?.index, maximum?.index].filter((index) => Number.isInteger(index))
+      );
+      if (!Number.isFinite(thresholdIndex)) {
+        return text;
+      }
+      const prefix = text.slice(0, thresholdIndex).trim();
+      const range = formatLinkFavoriteRange(minimum?.[1], maximum?.[1]);
+      return prefix ? `${prefix} ${range}` : range;
+    };
 
     const formatLinkFavoriteStatFilter = (value) => {
       let text = String(value || "")
@@ -444,34 +466,79 @@
         return Number.isFinite(number) ? number : null;
       };
       const normalizeText = (value, limit = 160) => String(value || "").trim().slice(0, limit);
+      const normalizeStat = (stat) => {
+        const id = normalizeText(stat?.id);
+        if (!/^(?:pseudo|explicit|implicit|fractured|crafted|enchant|rune|desecrated|sanctum|skill)\.[\w.|-]+$/i.test(id)) {
+          return null;
+        }
+        const min = normalizeValue(stat?.value?.min);
+        const max = normalizeValue(stat?.value?.max);
+        const weight = normalizeValue(stat?.weight);
+        return {
+          id,
+          ...(min != null || max != null
+            ? { value: { ...(min != null ? { min } : {}), ...(max != null ? { max } : {}) } }
+            : {}),
+          ...(stat?.disabled === true ? { disabled: true } : {}),
+          ...(weight != null ? { weight } : {})
+        };
+      };
+      const normalizeStatGroupType = (value) => {
+        const type = normalizeText(value, 32).toLocaleLowerCase().replace(/[\s-]+/g, "_") || "and";
+        if (!/^[a-z][a-z0-9_]*$/.test(type)) {
+          return "and";
+        }
+        return type === "weight2" ? "weighted" : type;
+      };
+      const normalizeRange = (value) => {
+        const min = value?.min == null || value.min === "" ? null : normalizeValue(value.min);
+        const max = value?.max == null || value.max === "" ? null : normalizeValue(value.max);
+        return min != null || max != null
+          ? { ...(min != null ? { min } : {}), ...(max != null ? { max } : {}) }
+          : null;
+      };
       const type = normalizeText(snapshot.type);
       const category = normalizeText(snapshot.category);
       const rarity = normalizeText(snapshot.rarity);
-      const stats = (Array.isArray(snapshot.stats) ? snapshot.stats : [])
-        .slice(0, 80)
-        .map((stat) => {
-          const id = normalizeText(stat?.id);
-          if (!/^(?:pseudo|explicit|implicit|fractured|crafted|enchant|rune|desecrated|sanctum|skill)\.[\w.|-]+$/i.test(id)) {
-            return null;
+      const isStructuredSnapshot = Number(snapshot.statGroupsVersion) === LINK_FAVORITE_STAT_GROUPS_VERSION;
+      if (Array.isArray(snapshot.stats) || (Array.isArray(snapshot.statGroups) && !isStructuredSnapshot)) {
+        return null;
+      }
+      const statGroups = [];
+      let statCount = 0;
+      for (const rawGroup of isStructuredSnapshot && Array.isArray(snapshot.statGroups) ? snapshot.statGroups.slice(0, 16) : []) {
+        if (statCount >= 80 || !Array.isArray(rawGroup?.filters)) {
+          break;
+        }
+        const filters = [];
+        for (const rawStat of rawGroup.filters) {
+          if (statCount >= 80 || filters.length >= 16) {
+            break;
           }
-          const min = normalizeValue(stat?.value?.min);
-          const max = normalizeValue(stat?.value?.max);
-          return {
-            id,
-            ...(min != null || max != null
-              ? { value: { ...(min != null ? { min } : {}), ...(max != null ? { max } : {}) } }
-              : {})
-          };
-        })
-        .filter(Boolean);
-      if (!type && !category && !rarity && !stats.length) {
+          const stat = normalizeStat(rawStat);
+          if (stat) {
+            filters.push(stat);
+            statCount += 1;
+          }
+        }
+        if (filters.length) {
+          const value = normalizeRange(rawGroup.value);
+          statGroups.push({
+            type: normalizeStatGroupType(rawGroup.type),
+            ...(value ? { value } : {}),
+            filters
+          });
+        }
+      }
+      if (!type && !category && !rarity && !statGroups.length) {
         return null;
       }
       return {
         ...(type ? { type } : {}),
         ...(category ? { category } : {}),
         ...(rarity ? { rarity } : {}),
-        ...(stats.length ? { stats } : {})
+        ...(statGroups.length ? { statGroups } : {}),
+        ...(statGroups.length ? { statGroupsVersion: LINK_FAVORITE_STAT_GROUPS_VERSION } : {})
       };
     };
 
@@ -506,41 +573,6 @@
     };
 
     const createEmptyLinkFavoritesState = () => ({ version: LINK_FAVORITES_VERSION, leagues: {} });
-
-    const migrateVersionZeroLinkFavorites = (state) => {
-      const leagues = {};
-      const ensureLeague = (league) => {
-        if (!leagues[league]) {
-          leagues[league] = {
-            folders: [],
-            folderOrder: Array.isArray(state?.folderOrder) ? state.folderOrder.slice() : [],
-            links: [],
-            rootLinkIds: Array.isArray(state?.rootLinkIds) ? state.rootLinkIds.slice() : [],
-            folderLinkIds: state?.folderLinkIds && typeof state.folderLinkIds === "object" ? { ...state.folderLinkIds } : {}
-          };
-        }
-        return leagues[league];
-      };
-
-      for (const folder of Array.isArray(state?.folders) ? state.folders : []) {
-        const league = normalizeName(folder?.league);
-        if (league) {
-          ensureLeague(league).folders.push(folder);
-        }
-      }
-      for (const link of Array.isArray(state?.links) ? state.links : []) {
-        let league = normalizeName(link?.league);
-        if (!league) {
-          try {
-            league = validateTradeSearchUrl(link?.url).league;
-          } catch (error) {
-            continue;
-          }
-        }
-        ensureLeague(league).links.push(link);
-      }
-      return { version: LINK_FAVORITES_VERSION, leagues };
-    };
 
     const normalizeLeagueState = (league, state) => {
       const folders = [];
@@ -640,11 +672,9 @@
 
     const normalizeLinkFavoritesState = (storedState) => {
       const state = storedState && typeof storedState === "object" ? storedState : null;
-      const migrated = state?.version === LINK_FAVORITES_VERSION || (state?.leagues && typeof state.leagues === "object")
-        ? state
-        : migrateVersionZeroLinkFavorites(state || {});
+      const current = state?.version === LINK_FAVORITES_VERSION ? state : createEmptyLinkFavoritesState();
       const leagues = {};
-      for (const [rawLeague, leagueState] of Object.entries(migrated.leagues || {})) {
+      for (const [rawLeague, leagueState] of Object.entries(current.leagues || {})) {
         const league = normalizeName(rawLeague);
         if (!league || !leagueState || typeof leagueState !== "object") {
           continue;
@@ -835,6 +865,7 @@
       createLinkFavoriteId,
       createLinkFavoriteRecord,
       exportExternalLinkFavorites,
+      formatLinkFavoriteFilterRange,
       formatLinkFavoriteStatFilter,
       importExternalLinkFavorites,
       normalizeLinkFavoriteFilterGroups,
