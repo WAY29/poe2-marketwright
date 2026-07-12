@@ -593,6 +593,7 @@
     lastFilterStats: null,
     favoriteLeague: null,
     linkFavoriteLeague: null,
+    linkFavoriteLocationHref: null,
     pobCopy: null,
     favorites: null,
     currencyConversion: null,
@@ -3854,6 +3855,7 @@
   }
 
   function renderLinkFavoritesDrawer() {
+    runtime.linkFavoriteLocationHref = location.href;
     if (!runtime.ui.linkFavoritesList) {
       return;
     }
@@ -4796,8 +4798,12 @@
         renderFavoriteDrawer();
       }
       const linkFavoriteLeague = getCurrentLinkFavoriteLeague();
-      if (linkFavoriteLeague !== runtime.linkFavoriteLeague) {
+      if (
+        linkFavoriteLeague !== runtime.linkFavoriteLeague ||
+        location.href !== runtime.linkFavoriteLocationHref
+      ) {
         renderLinkFavoritesDrawer();
+        publishFavoritesPanelState();
       }
       const signature = getSelectionDomSignature();
       if (signature === runtime.selectionSignature) {

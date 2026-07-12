@@ -1099,6 +1099,72 @@ test("current link favorite remains available when Trade rerenders its filter DO
   assert.deepStrictEqual(result, {"url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1", "league": "Dawn", "queryId": "query-1", "displayName": "Unnamed search"});
 });
 
+test("link favorite state refreshes when a search URL changes within the same league", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { startSelectionPolling, runtime };\n})();"
+  );
+  let poll;
+  const messages = [];
+  const location = {
+    href: "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur",
+    pathname: "/trade2/search/poe2/Runes%20of%20Aldur"
+  };
+  const sandbox = {
+    window: {
+      location,
+      addEventListener() {},
+      clearTimeout() {},
+      setTimeout() { return 1; },
+      setInterval(callback) { poll = callback; return 1; }
+    },
+    document: { querySelector() { return null; }, querySelectorAll() { return []; } },
+    location,
+    console,
+    Element: class {},
+    HTMLInputElement: class {},
+    HTMLTextAreaElement: class {},
+    MutationObserver: class {},
+    chrome: {
+      runtime: {
+        sendMessage(message) {
+          messages.push(message);
+          return Promise.resolve();
+        }
+      }
+    },
+    Poe2MarketwrightFavorites: {
+      createFavoriteTools() {
+        return { getLeagueFromTradeUrl() { return "Runes of Aldur"; } };
+      },
+      createLinkFavoriteTools() {
+        return {
+          validateTradeSearchUrl(url) {
+            if (!/\/search\/poe2\/Runes%20of%20Aldur\/[^/]+$/.test(url)) {
+              throw new Error("query id required");
+            }
+            return { url, league: "Runes of Aldur", queryId: "aywJY5cJ" };
+          }
+        };
+      }
+    }
+  };
+
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.favoritesPanelSessionId = "panel-session";
+  hooks.startSelectionPolling();
+  location.href = "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur/aywJY5cJ";
+  location.pathname = "/trade2/search/poe2/Runes%20of%20Aldur/aywJY5cJ";
+  poll();
+  await Promise.resolve();
+
+  assert.equal(hooks.runtime.linkFavoriteLocationHref, location.href);
+  assert.equal(messages.at(-1).state.canSaveCurrentLink, true);
+});
+
 test("dragging a link to another folder moves it into that folder", async () => {
 
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
