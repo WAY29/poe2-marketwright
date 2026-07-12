@@ -25,6 +25,35 @@
         "https://*.pathofexile.com/trade2/*"
       ],
       "js": [
+        "trade-localization-bridge.js"
+      ],
+      "run_at": "document_start",
+      "world": "MAIN"
+    },
+    {
+      "matches": [
+        "https://pathofexile.com/trade2",
+        "https://pathofexile.com/trade2/*",
+        "https://www.pathofexile.com/trade2",
+        "https://www.pathofexile.com/trade2/*",
+        "https://*.pathofexile.com/trade2",
+        "https://*.pathofexile.com/trade2/*"
+      ],
+      "js": [
+        "trade-localization-bootstrap.js"
+      ],
+      "run_at": "document_start"
+    },
+    {
+      "matches": [
+        "https://pathofexile.com/trade2",
+        "https://pathofexile.com/trade2/*",
+        "https://www.pathofexile.com/trade2",
+        "https://www.pathofexile.com/trade2/*",
+        "https://*.pathofexile.com/trade2",
+        "https://*.pathofexile.com/trade2/*"
+      ],
+      "js": [
         "pob-copy.js",
         "favorites.js",
         "currency-conversion.js",
@@ -43,6 +72,7 @@
         "_locales/zh_CN/messages.json",
         "_locales/zh_TW/messages.json",
         "data/affix-filter-data.json",
+        "data/trade-item-localization.json",
         "favorites-panel.html",
         "favorites-panel.js",
         "favorites-panel.css",

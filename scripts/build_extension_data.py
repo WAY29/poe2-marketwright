@@ -34,7 +34,78 @@ TRADE_STATS_ZH_CN_URL = "https://poe.game.qq.com/api/trade2/data/stats"
 TRADE_STATS_ZH_TW_URL = "https://pathofexile.tw/api/trade2/data/stats"
 TRADE_ITEMS_ZH_CN_URL = "https://poe.game.qq.com/api/trade2/data/items"
 TRADE_ITEMS_ZH_TW_URL = "https://pathofexile.tw/api/trade2/data/items"
+TRADE_STATIC_URL = "https://www.pathofexile.com/api/trade2/data/static"
+TRADE_STATIC_ZH_CN_URL = "https://poe.game.qq.com/api/trade2/data/static"
+TRADE_STATIC_ZH_TW_URL = "https://pathofexile.tw/api/trade2/data/static"
+TRADE_FILTERS_URL = "https://www.pathofexile.com/api/trade2/data/filters"
+TRADE_FILTERS_ZH_CN_URL = "https://poe.game.qq.com/api/trade2/data/filters"
+TRADE_FILTERS_ZH_TW_URL = "https://pathofexile.tw/api/trade2/data/filters"
 POE2DB_ITEM_ROOT_URL = "https://poe2db.tw/us/"
+CLIENT_STRINGS_URL = "https://raw.githubusercontent.com/LocalIdentity/poe2-data/main/data/clientstrings.json"
+CLIENT_STRINGS_ZH_TW_URL = (
+    "https://raw.githubusercontent.com/LocalIdentity/poe2-data/main/"
+    "data/traditional%20chinese/clientstrings.json"
+)
+TRADE_ITEM_LOCALIZATION_PAGE_SLUGS = (
+    "Stackable_Currency",
+    "Augment",
+    "Omen",
+    "Incubators",
+    "Liquid_Emotions",
+    "Essence",
+    "Splinter",
+    "Catalysts",
+    "Map_Fragments",
+    "Inscribed_Ultimatum",
+    "Trial_Coins",
+    "Pinnacle_Keys",
+    "Jewels",
+    "Vault_Keys",
+    "Relics",
+    "Strongbox",
+    "Life_Flasks",
+    "Mana_Flasks",
+    "Charms",
+    "Gem",
+    "Skill_Gems",
+    "Support_Gems",
+    "Meta_Skill_Gem",
+    "Spirit_Gems",
+    "Lineage_Supports",
+    "Cultivated",
+    "Waystones",
+    "Hideout",
+    "Hideout_Doodads",
+    "Quest",
+    "Tablet",
+)
+# Keystone pages provide verified localized titles for passive stat entries the
+# regional Trade APIs still leave in English.
+TRADE_STAT_LOCALIZATION_PAGE_SLUGS = ("Keystone",)
+# These pages expose localized modifier text associated with stable game-data
+# paths. They supplement only Trade stat IDs that both regional APIs leave in
+# English.
+TRADE_STAT_LOCALIZATION_MOD_PAGE_SLUGS = ("Runes", "One_Hand_Axes", "Flails")
+# The page title uses a different but semantically equivalent Taiwanese term.
+# Keep the user-approved Trade spelling after the upstream page identity is
+# verified through its English, simplified, and traditional titles.
+TRADE_STAT_LOCALIZATION_OVERRIDES = {
+    "Dance With Death": {"zh_TW": "和死共舞"},
+}
+TRADE_ITEM_PREFIX_LOCALIZATIONS = {
+    "Runeforged ": {"zh_CN": "符锻", "zh_TW": "符鍛"},
+}
+# The regional Trade APIs leave these labels in English. The page slugs are
+# stable PoE2DB concepts, while the localized title remains source data.
+TRADE_FILTER_LOCALIZATION_PAGE_SLUGS = {
+    "map_magic_monsters": "Monster_Effectiveness",
+    "map_rare_monsters": "Monster_Rarity",
+}
+# The official category option ID is the stable identity. Its PoE2DB page uses
+# a plural English title, so title-text equality is intentionally not used.
+TRADE_CATEGORY_LOCALIZATION_PAGE_SLUGS = {
+    "flask.charm": "Charms",
+}
 TRADE_STAT_WILDCARD_PLACEHOLDERS = {
     "azmeri spirit",
 }
@@ -336,6 +407,17 @@ class PageHtmlArtifacts:
 
 
 @dataclass(frozen=True)
+class Poe2dbStatSourceRecord:
+    page_slug: str
+    item_key: str
+    section: str
+    text: str
+    item_class_key: str
+    keyword_keys: tuple[str, ...]
+    is_bonded_header: bool
+
+
+@dataclass(frozen=True)
 class TradeStatRecord:
     key: str
     pattern: str
@@ -344,6 +426,10 @@ class TradeStatRecord:
 
 class DisplayMetadataCoverageError(ValueError):
     """Raised when build-time localized metadata is too incomplete to ship."""
+
+
+class TradeLocalizationCoverageError(ValueError):
+    """Raised when official regional Trade data cannot be safely aligned."""
 
 
 class Poe2dbPageArtifactsParser(HTMLParser):
@@ -481,9 +567,223 @@ class Poe2dbPageArtifactsParser(HTMLParser):
         self.current_base_item_mod_text = []
 
 
-class Poe2dbItemLinkParser(HTMLParser):
-    def __init__(self) -> None:
+class Poe2dbStatSourceParser(HTMLParser):
+    """Parse localized item modifiers keyed by their stable PoE2DB source path."""
+
+    def __init__(self, page_slug: str) -> None:
         super().__init__()
+        self.page_slug = page_slug
+        self.current_item_key = ""
+        self.capture_depth = 0
+        self.capture_section = ""
+        self.capture_text: list[str] = []
+        self.capture_item_class_key = ""
+        self.capture_keyword_keys: list[str] = []
+        self.records: list[Poe2dbStatSourceRecord] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        attrs_dict = dict(attrs)
+        class_tokens = (attrs_dict.get("class") or "").split()
+        if tag == "a" and "whiteitem" in class_tokens:
+            self.current_item_key = str(attrs_dict.get("href") or attrs_dict.get("data-hover") or "").strip()
+
+        if self.capture_depth > 0:
+            if tag == "br":
+                self.capture_text.append(" ")
+            if tag == "a":
+                keyword = str(attrs_dict.get("data-keyword") or "").strip()
+                if keyword:
+                    self.capture_keyword_keys.append(keyword)
+                if "ItemClasses" in class_tokens:
+                    item_class_key = str(attrs_dict.get("href") or attrs_dict.get("data-hover") or "").strip()
+                    if item_class_key:
+                        self.capture_item_class_key = item_class_key
+            if tag not in HTML_VOID_TAGS:
+                self.capture_depth += 1
+            return
+
+        if tag != "div":
+            return
+        section = next(
+            (candidate for candidate in ("implicitMod", "explicitMod", "bondedMod") if candidate in class_tokens),
+            "",
+        )
+        if not section or not self.current_item_key:
+            return
+        self.capture_depth = 1
+        self.capture_section = section
+        self.capture_text = []
+        self.capture_item_class_key = ""
+        self.capture_keyword_keys = []
+
+    def handle_endtag(self, tag: str) -> None:
+        if self.capture_depth <= 0:
+            return
+        self.capture_depth -= 1
+        if self.capture_depth == 0:
+            self.finish_record()
+
+    def handle_data(self, data: str) -> None:
+        if self.capture_depth > 0:
+            self.capture_text.append(data)
+
+    def finish_record(self) -> None:
+        text = WHITESPACE_RE.sub(" ", "".join(self.capture_text)).strip()
+        keyword_keys = tuple(self.capture_keyword_keys)
+        is_bonded_header = self.capture_section == "bondedMod" and "ShamanOnlyMods" in keyword_keys
+        if text:
+            self.records.append(
+                Poe2dbStatSourceRecord(
+                    page_slug=self.page_slug,
+                    item_key=self.current_item_key,
+                    section=self.capture_section,
+                    text=text,
+                    item_class_key=self.capture_item_class_key,
+                    keyword_keys=keyword_keys,
+                    is_bonded_header=is_bonded_header,
+                )
+            )
+        self.capture_section = ""
+        self.capture_text = []
+        self.capture_item_class_key = ""
+        self.capture_keyword_keys = []
+
+
+def parse_poe2db_stat_source_records(html: str, page_slug: str) -> list[Poe2dbStatSourceRecord]:
+    parser = Poe2dbStatSourceParser(page_slug)
+    parser.feed(html)
+    return list(dict.fromkeys(parser.records))
+
+
+def poe2db_stat_source_identity(record: Poe2dbStatSourceRecord) -> tuple[str, str, str, str, tuple[str, ...]]:
+    return (
+        record.page_slug,
+        record.item_key,
+        record.section,
+        record.item_class_key,
+        record.keyword_keys,
+    )
+
+
+def poe2db_stat_source_structural_identity(record: Poe2dbStatSourceRecord) -> tuple[str, str, str, str]:
+    return (record.page_slug, record.item_key, record.section, record.item_class_key)
+
+
+def strip_poe2db_stat_scope(text: str) -> str:
+    """Drop a page-only item-class prefix without altering the rendered stat."""
+
+    match = re.match(r"^[^:：]{1,100}[:：]\s*(.+)$", str(text or "").strip())
+    return match.group(1).strip() if match else str(text or "").strip()
+
+
+def normalize_poe2db_localized_stat_template(text: str) -> str:
+    """Replace source values with placeholders without collapsing local grammar."""
+
+    value = strip_html(text).replace("−", "-").replace("–", "-").replace("—", "-")
+    value = NUMBER_RE.sub("#", value)
+    return WHITESPACE_RE.sub(" ", value).strip()
+
+
+def poe2db_stat_source_text(record: Poe2dbStatSourceRecord, strip_scope: bool) -> str:
+    if record.is_bonded_header:
+        return ""
+    text = strip_poe2db_stat_scope(record.text) if strip_scope else record.text
+    return f"Bonded: {text}" if record.section == "bondedMod" else text
+
+
+def build_verified_poe2db_stat_mod_localizations(
+    stats: dict[str, dict[str, str]],
+    records_by_locale: dict[str, list[Poe2dbStatSourceRecord]],
+) -> dict[str, dict[str, str]]:
+    """Build localizations only when all locales agree on a stable page record.
+
+    The page's internal item path, modifier section, item class and keyword path
+    identify a modifier across languages. English text is used only to select the
+    official Trade stat; it is never used to derive Chinese text.
+    """
+
+    requested = {
+        canonicalize_match_key(str(record.get("en") or "")): str(record.get("en") or "").strip()
+        for record in stats.values()
+        if record.get("en")
+        and record.get("zh_CN") == record.get("en")
+        and record.get("zh_TW") == record.get("en")
+    }
+    requested.pop("", None)
+    if not requested:
+        return {}
+
+    records_by_identity: dict[str, dict[tuple[str, str, str, str, tuple[str, ...]], list[Poe2dbStatSourceRecord]]] = {}
+    records_by_structure: dict[str, dict[tuple[str, str, str, str], list[Poe2dbStatSourceRecord]]] = {}
+    bonded_headers: dict[str, dict[tuple[str, str], list[Poe2dbStatSourceRecord]]] = {}
+    for locale, records in records_by_locale.items():
+        identity_index: dict[tuple[str, str, str, str, tuple[str, ...]], list[Poe2dbStatSourceRecord]] = {}
+        structure_index: dict[tuple[str, str, str, str], list[Poe2dbStatSourceRecord]] = {}
+        header_index: dict[tuple[str, str], list[Poe2dbStatSourceRecord]] = {}
+        for record in records:
+            if record.is_bonded_header:
+                header_index.setdefault((record.page_slug, record.item_key), []).append(record)
+            else:
+                identity_index.setdefault(poe2db_stat_source_identity(record), []).append(record)
+                structure_index.setdefault(poe2db_stat_source_structural_identity(record), []).append(record)
+        records_by_identity[locale] = identity_index
+        records_by_structure[locale] = structure_index
+        bonded_headers[locale] = header_index
+
+    candidates: dict[str, dict[str, set[str]]] = {}
+    for english_record in records_by_locale.get("us", []):
+        if english_record.is_bonded_header:
+            continue
+        for strip_scope in (False, True):
+            english = poe2db_stat_source_text(english_record, strip_scope)
+            matched_english = requested.get(canonicalize_match_key(english))
+            if not matched_english:
+                continue
+            localized_values: dict[str, str] = {}
+            source_identity = poe2db_stat_source_identity(english_record)
+            for source_locale, target_locale in (("cn", "zh_CN"), ("tw", "zh_TW")):
+                localized_records = records_by_identity.get(source_locale, {}).get(source_identity, [])
+                if not localized_records:
+                    localized_records = records_by_structure.get(source_locale, {}).get(
+                        poe2db_stat_source_structural_identity(english_record),
+                        [],
+                    )
+                if len(localized_records) != 1:
+                    break
+                localized_record = localized_records[0]
+                localized_text = poe2db_stat_source_text(localized_record, strip_scope)
+                if localized_record.section == "bondedMod":
+                    headers = bonded_headers.get(source_locale, {}).get(
+                        (localized_record.page_slug, localized_record.item_key),
+                        [],
+                    )
+                    if len(headers) != 1:
+                        break
+                    content = strip_poe2db_stat_scope(localized_record.text) if strip_scope else localized_record.text
+                    localized_text = f"{headers[0].text}{content}"
+                localized_values[target_locale] = normalize_poe2db_localized_stat_template(localized_text)
+            if len(localized_values) != 2 or any(not value for value in localized_values.values()):
+                continue
+            record = candidates.setdefault(matched_english, {"zh_CN": set(), "zh_TW": set()})
+            for locale, value in localized_values.items():
+                record[locale].add(value)
+
+    return {
+        english: {
+            "zh_CN": next(iter(values["zh_CN"])),
+            "zh_TW": next(iter(values["zh_TW"])),
+        }
+        for english, values in candidates.items()
+        if len(values["zh_CN"]) == 1 and len(values["zh_TW"]) == 1
+        and next(iter(values["zh_CN"])) != english
+        and next(iter(values["zh_TW"])) != english
+    }
+
+
+class Poe2dbItemLinkParser(HTMLParser):
+    def __init__(self, include_passive_skills: bool = False) -> None:
+        super().__init__()
+        self.include_passive_skills = include_passive_skills
         self.items: dict[str, tuple[str, str]] = {}
         self.capture_href: str | None = None
         self.current_text: list[str] = []
@@ -492,7 +792,13 @@ class Poe2dbItemLinkParser(HTMLParser):
         if tag != "a" or self.capture_href is not None:
             return
         attrs_dict = dict(attrs)
-        if "whiteitem" not in (attrs_dict.get("class") or "").split():
+        classes = (attrs_dict.get("class") or "").split()
+        hover_source = str(attrs_dict.get("data-hover") or "")
+        if (
+            "whiteitem" not in classes
+            and "BaseItemTypes" not in hover_source
+            and not (self.include_passive_skills and "PassiveSkills" in classes)
+        ):
             return
         href = str(attrs_dict.get("href") or "").strip()
         if not href or href.startswith(("?", "http://", "https://")):
@@ -656,6 +962,60 @@ def build_trade_stat_text_map(trade_stats_payload: dict[str, Any]) -> dict[str, 
     return text_by_id
 
 
+def build_client_string_localizations(
+    english_payload: list[dict[str, Any]],
+    traditional_payload: list[dict[str, Any]],
+) -> dict[str, dict[str, str]]:
+    """Map client UI copy through stable ClientStrings IDs without guessing duplicates."""
+
+    traditional_by_id = {
+        str(record.get("Id") or "").strip(): str(record.get("Text") or "").strip()
+        for record in traditional_payload
+        if str(record.get("Id") or "").strip() and str(record.get("Text") or "").strip()
+    }
+    candidates: dict[str, set[str]] = {}
+    for record in english_payload:
+        record_id = str(record.get("Id") or "").strip()
+        english = str(record.get("Text") or "").strip()
+        traditional = traditional_by_id.get(record_id, "")
+        if record_id and english and traditional:
+            candidates.setdefault(english, set()).add(traditional)
+
+    return {
+        english: {"en": english, "zh_CN": english, "zh_TW": next(iter(translations))}
+        for english, translations in sorted(candidates.items())
+        if len(translations) == 1
+    }
+
+
+def build_trade_stat_group_records(
+    english_payload: dict[str, Any],
+    simplified_payload: dict[str, Any],
+    traditional_payload: dict[str, Any],
+) -> dict[str, dict[str, str]]:
+    """Align visible Trade stat group labels using the official group IDs."""
+
+    def labels_by_id(payload: dict[str, Any]) -> dict[str, str]:
+        return {
+            group_id: label
+            for group in payload.get("result", [])
+            if (group_id := str(group.get("id") or "").strip())
+            and (label := str(group.get("label") or "").strip())
+        }
+
+    english_labels = labels_by_id(english_payload)
+    simplified_labels = labels_by_id(simplified_payload)
+    traditional_labels = labels_by_id(traditional_payload)
+    return {
+        group_id: {
+            "en": english,
+            "zh_CN": simplified_labels.get(group_id, english),
+            "zh_TW": traditional_labels.get(group_id, english),
+        }
+        for group_id, english in sorted(english_labels.items())
+    }
+
+
 def trade_stat_bare_id(stat_id: str) -> str:
     value = str(stat_id or "").strip()
     return value.split(".", 1)[1] if "." in value else value
@@ -749,8 +1109,11 @@ def parse_poe2db_item_title(html: str) -> str:
     return title.rsplit(" - ", 1)[0].strip() if " - " in title else title
 
 
-def parse_poe2db_item_name_slugs(html: str) -> dict[str, tuple[str, str]]:
-    parser = Poe2dbItemLinkParser()
+def parse_poe2db_item_name_slugs(
+    html: str,
+    include_passive_skills: bool = False,
+) -> dict[str, tuple[str, str]]:
+    parser = Poe2dbItemLinkParser(include_passive_skills=include_passive_skills)
     parser.feed(html)
     return parser.items
 
@@ -785,6 +1148,392 @@ def build_item_display_metadata(
                 f"({matched}/{total})"
             )
     return {"items": items, "coverage": coverage}
+
+
+TRADE_LOCALIZATION_TEXT_FIELDS = ("text", "label", "title", "placeholder", "tip")
+
+
+def collect_static_trade_text_records(payload: dict[str, Any]) -> dict[str, str]:
+    """Collect text from static Trade data using only object keys and stable IDs.
+
+    Some Trade payload arrays contain entries without IDs. Their position is not an
+    identity, so they are intentionally excluded instead of being aligned by index.
+    """
+
+    records: dict[str, str] = {}
+
+    def walk(value: Any, path: tuple[str, ...]) -> None:
+        if isinstance(value, dict):
+            identifier = str(value.get("id") or "").strip()
+            current_path = (*path, f"id={identifier}") if identifier else path
+            for field in TRADE_LOCALIZATION_TEXT_FIELDS:
+                text = value.get(field)
+                if isinstance(text, str) and text.strip():
+                    records["/".join((*current_path, field))] = text.strip()
+            for key, child in value.items():
+                if key in TRADE_LOCALIZATION_TEXT_FIELDS or key == "id":
+                    continue
+                if isinstance(child, dict):
+                    walk(child, (*current_path, key))
+                elif isinstance(child, list):
+                    for entry in child:
+                        if isinstance(entry, dict) and str(entry.get("id") or "").strip():
+                            walk(entry, (*current_path, key))
+
+    walk(payload.get("result"), ("result",))
+    return records
+
+
+def collect_filter_trade_text_records(
+    payload: dict[str, Any],
+) -> tuple[dict[str, str], list[tuple[str, str]]]:
+    """Collect filter copy and category option text keyed by official filter IDs."""
+
+    records: dict[str, str] = {}
+    categories: list[tuple[str, str]] = []
+    for group in payload.get("result", []):
+        group_id = str(group.get("id") or "").strip()
+        if not group_id:
+            continue
+        group_path = f"group={group_id}"
+        title = group.get("title")
+        if isinstance(title, str) and title.strip():
+            records[f"{group_path}/title"] = title.strip()
+        for filter_data in group.get("filters", []):
+            filter_id = str(filter_data.get("id") or "").strip()
+            if not filter_id:
+                continue
+            filter_path = f"{group_path}/filter={filter_id}"
+            for field in ("text", "title", "placeholder", "tip"):
+                text = filter_data.get(field)
+                if isinstance(text, str) and text.strip():
+                    records[f"{filter_path}/{field}"] = text.strip()
+            options = filter_data.get("option", {}).get("options", [])
+            for option in options:
+                option_id = option.get("id")
+                option_text = option.get("text")
+                if not isinstance(option_text, str) or not option_text.strip():
+                    continue
+                option_key = "null" if option_id is None else str(option_id).strip()
+                if not option_key:
+                    continue
+                record_key = f"{filter_path}/option={option_key}/text"
+                records[record_key] = option_text.strip()
+                if group_id == "type_filters" and filter_id == "category":
+                    categories.append((option_key, option_text.strip()))
+    return records, categories
+
+
+def collect_trade_filter_text_by_id(payload: dict[str, Any]) -> dict[str, str]:
+    """Index visible Trade filter labels by their official filter ID."""
+
+    labels: dict[str, str] = {}
+    for group in payload.get("result", []):
+        for filter_data in group.get("filters", []):
+            filter_id = str(filter_data.get("id") or "").strip()
+            text = str(filter_data.get("text") or "").strip()
+            if filter_id and text:
+                labels[filter_id] = text
+    return labels
+
+
+def build_trade_filter_page_localizations(
+    english_filters_payload: dict[str, Any],
+    page_titles: dict[str, dict[str, str]],
+) -> dict[str, dict[str, str]]:
+    """Build extra Trade filter labels only after title identity is verified."""
+
+    english_by_id = collect_trade_filter_text_by_id(english_filters_payload)
+    records: dict[str, dict[str, str]] = {}
+    for filter_id in TRADE_FILTER_LOCALIZATION_PAGE_SLUGS:
+        english = english_by_id.get(filter_id, "")
+        titles = page_titles.get(filter_id) or {}
+        if not english or titles.get("en") != english:
+            continue
+        simplified = str(titles.get("zh_CN") or "").strip()
+        traditional = str(titles.get("zh_TW") or "").strip()
+        if simplified and traditional:
+            records[english] = {
+                "en": english,
+                "zh_CN": simplified,
+                "zh_TW": traditional,
+            }
+    return records
+
+
+def build_trade_category_page_localizations(
+    english_filters_payload: dict[str, Any],
+    page_titles: dict[str, dict[str, str]],
+) -> dict[str, dict[str, str]]:
+    """Build category labels from a stable Trade category ID and verified page titles."""
+
+    english_categories = dict(collect_filter_trade_text_records(english_filters_payload)[1])
+    records: dict[str, dict[str, str]] = {}
+    for category_id in TRADE_CATEGORY_LOCALIZATION_PAGE_SLUGS:
+        english = english_categories.get(category_id, "")
+        titles = page_titles.get(category_id) or {}
+        simplified = str(titles.get("zh_CN") or "").strip()
+        traditional = str(titles.get("zh_TW") or "").strip()
+        if english and simplified and traditional:
+            records[category_id] = {
+                "en": english,
+                "zh_CN": simplified,
+                "zh_TW": traditional,
+            }
+    return records
+
+
+def build_trade_localization_metadata(
+    display_metadata: dict[str, Any],
+    english_static_payload: dict[str, Any],
+    simplified_static_payload: dict[str, Any],
+    traditional_static_payload: dict[str, Any],
+    english_filters_payload: dict[str, Any],
+    simplified_filters_payload: dict[str, Any],
+    traditional_filters_payload: dict[str, Any],
+    supplemental_strings: dict[str, dict[str, str]] | None = None,
+    minimum_coverage: float = 0.95,
+    supplemental_categories: dict[str, dict[str, str]] | None = None,
+) -> dict[str, Any]:
+    """Build the rendered-text and cross-language search bundle for Trade.
+
+    IDs are retained by the official Trade client. The output is keyed by the
+    international English text only after regional strings have been aligned by
+    those IDs, so runtime localization never needs to modify request payloads.
+    """
+
+    candidates: dict[str, dict[str, set[str]]] = {}
+    coverage: dict[str, dict[str, int]] = {
+        "zh_CN": {"matched": 0, "total": 0},
+        "zh_TW": {"matched": 0, "total": 0},
+    }
+
+    def add_record(
+        english: str,
+        simplified: str,
+        traditional: str,
+        prefer_over_english: bool = False,
+    ) -> None:
+        en = str(english or "").strip()
+        if not en:
+            return
+        record = candidates.setdefault(en, {"zh_CN": set(), "zh_TW": set()})
+        for locale, localized in (("zh_CN", simplified), ("zh_TW", traditional)):
+            coverage[locale]["total"] += 1
+            value = str(localized or "").strip()
+            if value:
+                coverage[locale]["matched"] += 1
+                if value == en and record[locale] and record[locale] != {en}:
+                    continue
+                if prefer_over_english and record[locale] == {en}:
+                    record[locale].clear()
+                record[locale].add(value)
+
+    stat_search: list[dict[str, str]] = []
+    for stat_id, record in (display_metadata.get("stats") or {}).items():
+        english = str(record.get("en") or "").strip()
+        simplified = str(record.get("zh_CN") or english).strip()
+        traditional = str(record.get("zh_TW") or english).strip()
+        add_record(english, simplified, traditional)
+        if english:
+            stat_search.append(
+                {"id": str(stat_id), "en": english, "zh_CN": simplified, "zh_TW": traditional}
+            )
+
+    for record in (display_metadata.get("statGroups") or {}).values():
+        add_record(record.get("en", ""), record.get("zh_CN", ""), record.get("zh_TW", ""))
+
+    item_search: list[dict[str, str]] = []
+    for item_name, record in (display_metadata.get("items") or {}).items():
+        english = str(record.get("en") or item_name).strip()
+        simplified = str(record.get("zh_CN") or english).strip()
+        traditional = str(record.get("zh_TW") or english).strip()
+        add_record(english, simplified, traditional)
+        if english:
+            item_search.append(
+                {"id": english, "en": english, "zh_CN": simplified, "zh_TW": traditional}
+            )
+
+    sources = (
+        (
+            collect_static_trade_text_records(english_static_payload),
+            collect_static_trade_text_records(simplified_static_payload),
+            collect_static_trade_text_records(traditional_static_payload),
+        ),
+        (
+            collect_filter_trade_text_records(english_filters_payload)[0],
+            collect_filter_trade_text_records(simplified_filters_payload)[0],
+            collect_filter_trade_text_records(traditional_filters_payload)[0],
+        ),
+    )
+    for english_records, simplified_records, traditional_records in sources:
+        for key, english in english_records.items():
+            add_record(english, simplified_records.get(key, ""), traditional_records.get(key, ""))
+
+    for english, record in (supplemental_strings or {}).items():
+        add_record(
+            english,
+            record.get("zh_CN", ""),
+            record.get("zh_TW", ""),
+            prefer_over_english=True,
+        )
+
+    english_categories = collect_filter_trade_text_records(english_filters_payload)[1]
+    simplified_filter_records, _ = collect_filter_trade_text_records(simplified_filters_payload)
+    traditional_filter_records, _ = collect_filter_trade_text_records(traditional_filters_payload)
+    category_search: list[dict[str, str]] = []
+    for category_id, english in english_categories:
+        key = f"group=type_filters/filter=category/option={category_id}/text"
+        simplified = simplified_filter_records.get(key, "")
+        traditional = traditional_filter_records.get(key, "")
+        supplemental_category = (supplemental_categories or {}).get(category_id) or {}
+        if supplemental_category.get("en") == english:
+            if simplified == english:
+                simplified = supplemental_category.get("zh_CN", "")
+            if traditional == english:
+                traditional = supplemental_category.get("zh_TW", "")
+        if simplified and traditional:
+            category_search.append(
+                {"id": category_id, "en": english, "zh_CN": simplified, "zh_TW": traditional}
+            )
+
+    ratios: dict[str, dict[str, Any]] = {}
+    for locale, values in coverage.items():
+        total = values["total"]
+        matched = values["matched"]
+        ratio = matched / total if total else 1.0
+        ratios[locale] = {"matched": matched, "total": total, "ratio": round(ratio, 6)}
+        if ratio < minimum_coverage:
+            raise TradeLocalizationCoverageError(
+                f"{locale} Trade localization coverage {ratio:.2%} is below the required "
+                f"{minimum_coverage:.2%} ({matched}/{total})"
+            )
+
+    strings: dict[str, dict[str, str]] = {}
+    for english, localized_values in candidates.items():
+        simplified = localized_values["zh_CN"]
+        traditional = localized_values["zh_TW"]
+        # A visible English label may legitimately occur in several API sections.
+        # Ship it only when every stable source agrees on its localized spelling.
+        if len(simplified) != 1 or len(traditional) != 1:
+            continue
+        strings[english] = {
+            "en": english,
+            "zh_CN": next(iter(simplified)),
+            "zh_TW": next(iter(traditional)),
+        }
+
+    def dedupe_search(entries: list[dict[str, str]]) -> list[dict[str, str]]:
+        unique: dict[tuple[str, str], dict[str, str]] = {}
+        for entry in entries:
+            unique.setdefault((entry["id"], entry["en"]), entry)
+        return sorted(unique.values(), key=lambda entry: (entry["en"].lower(), entry["id"]))
+
+    return {
+        "version": 1,
+        "strings": dict(sorted(strings.items())),
+        "clientStrings": display_metadata.get("clientStrings") or {},
+        "search": {
+            "items": dedupe_search(item_search),
+            "stats": dedupe_search(stat_search),
+            "categories": dedupe_search(category_search),
+        },
+        "coverage": ratios,
+    }
+
+
+def build_trade_item_localization_bundle(trade_localization: dict[str, Any]) -> dict[str, Any]:
+    """Emit compact, ID-safe labels for native Trade search data."""
+
+    items: dict[str, dict[str, str]] = {}
+    for record in trade_localization.get("search", {}).get("items", []):
+        english = str(record.get("en") or "").strip()
+        simplified = str(record.get("zh_CN") or english).strip()
+        traditional = str(record.get("zh_TW") or english).strip()
+        if english and (simplified != english or traditional != english):
+            items[english] = {"zh_CN": simplified, "zh_TW": traditional}
+
+    stats: dict[str, dict[str, str]] = {}
+    for record in trade_localization.get("search", {}).get("stats", []):
+        stat_id = str(record.get("id") or "").strip()
+        english = str(record.get("en") or "").strip()
+        simplified = str(record.get("zh_CN") or english).strip()
+        traditional = str(record.get("zh_TW") or english).strip()
+        if stat_id and english and (simplified != english or traditional != english):
+            stats[stat_id] = {"zh_CN": simplified, "zh_TW": traditional}
+
+    strings: dict[str, dict[str, str]] = {}
+    for english, record in (trade_localization.get("strings") or {}).items():
+        key = str(english or "").strip()
+        simplified = str(record.get("zh_CN") or key).strip()
+        traditional = str(record.get("zh_TW") or key).strip()
+        if key and (simplified != key or traditional != key):
+            strings[key] = {"zh_CN": simplified, "zh_TW": traditional}
+
+    return {
+        "version": 5,
+        "items": dict(sorted(items.items())),
+        "stats": dict(sorted(stats.items())),
+        "strings": dict(sorted(strings.items())),
+    }
+
+
+def apply_verified_poe2db_stat_localizations(
+    stats: dict[str, dict[str, str]],
+    verified_english_names: dict[str, str],
+    simplified_names: dict[str, str],
+    traditional_names: dict[str, str],
+    overrides: dict[str, dict[str, str]] | None = None,
+) -> int:
+    """Fill only dual-locale stat gaps from a PoE2DB page verified in all locales."""
+
+    applied = 0
+    for record in stats.values():
+        english = str(record.get("en") or "").strip()
+        if (
+            not english
+            or record.get("zh_CN") != english
+            or record.get("zh_TW") != english
+            or verified_english_names.get(english) != english
+        ):
+            continue
+        simplified = str(simplified_names.get(english) or "").strip()
+        traditional = str(traditional_names.get(english) or "").strip()
+        if not simplified or not traditional:
+            continue
+        override = (overrides or {}).get(english) or {}
+        record["zh_CN"] = str(override.get("zh_CN") or simplified).strip()
+        record["zh_TW"] = str(override.get("zh_TW") or traditional).strip()
+        applied += 1
+    return applied
+
+
+def apply_verified_item_prefix_localizations(
+    items: dict[str, dict[str, str]],
+    prefixes: dict[str, dict[str, str]],
+) -> int:
+    """Compose a localized item prefix only when its base name is verified."""
+
+    applied = 0
+    for record in items.values():
+        english = str(record.get("en") or "").strip()
+        if not english or record.get("zh_CN") != english or record.get("zh_TW") != english:
+            continue
+        for prefix, localized_prefixes in prefixes.items():
+            if not english.startswith(prefix):
+                continue
+            base = items.get(english[len(prefix) :].strip())
+            if not base:
+                continue
+            simplified = str(base.get("zh_CN") or "").strip()
+            traditional = str(base.get("zh_TW") or "").strip()
+            if not simplified or not traditional or simplified == base.get("en") or traditional == base.get("en"):
+                continue
+            record["zh_CN"] = f'{localized_prefixes["zh_CN"]}{simplified}'
+            record["zh_TW"] = f'{localized_prefixes["zh_TW"]}{traditional}'
+            applied += 1
+            break
+    return applied
 
 
 def build_safe_numeric_trade_item_localizations(
@@ -1083,10 +1832,43 @@ async def fetch_trade_items(url: str) -> dict[str, Any]:
         return json.loads(await fetch_text(client, url))
 
 
+async def collect_poe2db_stat_source_records(
+    page_slugs: tuple[str, ...],
+    workers: int,
+) -> dict[str, list[Poe2dbStatSourceRecord]]:
+    """Fetch source pages in each locale without relying on card position."""
+
+    records_by_locale: dict[str, list[Poe2dbStatSourceRecord]] = {locale: [] for locale in ("us", "cn", "tw")}
+    semaphore = asyncio.Semaphore(max(1, workers))
+
+    async with build_async_client(max_connections=max(1, workers)) as client:
+        async def fetch_page(locale: str, page_slug: str) -> tuple[str, list[Poe2dbStatSourceRecord]]:
+            url = f"https://poe2db.tw/{locale}/{page_slug}"
+            try:
+                async with semaphore:
+                    html = await fetch_text(client, url)
+                return locale, parse_poe2db_stat_source_records(html, page_slug)
+            except Exception as error:
+                print(f"[build_extension_data] failed to fetch localized stat source {url}: {error}", file=sys.stderr)
+                return locale, []
+
+        tasks = [
+            fetch_page(locale, page_slug)
+            for page_slug in page_slugs
+            for locale in ("us", "cn", "tw")
+        ]
+        for locale, records in await asyncio.gather(*tasks):
+            records_by_locale[locale].extend(records)
+
+    return records_by_locale
+
+
 async def collect_localized_item_names(
     item_names: list[str],
     page_urls: list[str],
     workers: int,
+    allow_item_page_fallback: bool = True,
+    include_passive_skills: bool = False,
 ) -> tuple[dict[str, str], dict[str, str], dict[str, str]]:
     locales = ("us", "cn", "tw")
     items_by_locale: dict[str, dict[str, tuple[str, str]]] = {locale: {} for locale in locales}
@@ -1108,14 +1890,17 @@ async def collect_localized_item_names(
             url = f"https://poe2db.tw/{locale}/{page_slug}"
             try:
                 html = await fetch_html(url)
-                return locale, parse_poe2db_item_name_slugs(html)
+                return locale, parse_poe2db_item_name_slugs(
+                    html,
+                    include_passive_skills=include_passive_skills,
+                )
             except Exception as error:
                 print(f"[build_extension_data] failed to fetch localized item category {url}: {error}", file=sys.stderr)
                 return locale, {}
 
         tasks = [
-            fetch_page(page_url, locale)
-            for page_url in page_urls
+            fetch_page(f"https://poe2db.tw/us/{page_slug}", locale)
+            for page_slug in sorted({page_slug_from_url(page_url) for page_url in page_urls})
             for locale in locales
         ]
         for locale, items in await asyncio.gather(*tasks):
@@ -1132,10 +1917,13 @@ async def collect_localized_item_names(
         pending: list[tuple[str, str, str]] = []
         for item_name in item_names:
             english_item = items_by_locale["us"].get(normalize_lookup_text(item_name))
-            slug = english_item[1] if english_item and english_item[0] == item_name else poe2db_item_slug(item_name)
-            if english_item and english_item[0] == item_name:
+            slug = ""
+            if english_item and normalize_lookup_text(english_item[0]) == normalize_lookup_text(item_name):
                 english_names[item_name] = item_name
-            elif slug:
+                slug = english_item[1]
+            elif allow_item_page_fallback:
+                slug = poe2db_item_slug(item_name)
+            if slug and item_name not in english_names:
                 pending.append((item_name, slug, "us"))
             localized_name = localized_by_slug["cn"].get(slug, "")
             if localized_name:
@@ -1159,7 +1947,7 @@ async def collect_localized_item_names(
         for item_name, locale, localized_name in await asyncio.gather(
             *(fetch_item(item_name, slug, locale) for item_name, slug, locale in pending)
         ):
-            if locale == "us" and localized_name == item_name:
+            if locale == "us" and normalize_lookup_text(localized_name) == normalize_lookup_text(item_name):
                 english_names[item_name] = item_name
             elif locale == "cn" and localized_name:
                 simplified_names[item_name] = localized_name
@@ -1167,6 +1955,49 @@ async def collect_localized_item_names(
                 traditional_names[item_name] = localized_name
 
     return english_names, simplified_names, traditional_names
+
+
+async def collect_trade_page_titles(
+    page_slugs: dict[str, str],
+    workers: int,
+) -> dict[str, dict[str, str]]:
+    """Fetch upstream concept pages for stable Trade identifiers."""
+
+    locales = {"us": "en", "cn": "zh_CN", "tw": "zh_TW"}
+    titles: dict[str, dict[str, str]] = {
+        identifier: {} for identifier in page_slugs
+    }
+
+    async with build_async_client(max_connections=max(1, workers)) as client:
+        async def fetch_title(
+            identifier: str,
+            page_slug: str,
+            locale: str,
+            output_locale: str,
+        ) -> tuple[str, str, str]:
+            url = f"https://poe2db.tw/{locale}/{page_slug}"
+            try:
+                return identifier, output_locale, parse_poe2db_item_title(await fetch_text(client, url))
+            except Exception as error:
+                print(f"[build_extension_data] failed to fetch Trade concept page {url}: {error}", file=sys.stderr)
+                return identifier, output_locale, ""
+
+        results = await asyncio.gather(
+            *(
+                fetch_title(identifier, page_slug, locale, output_locale)
+                for identifier, page_slug in page_slugs.items()
+                for locale, output_locale in locales.items()
+            )
+        )
+
+    for identifier, locale, title in results:
+        if title:
+            titles[identifier][locale] = title
+    return titles
+
+
+async def collect_trade_filter_page_titles(workers: int) -> dict[str, dict[str, str]]:
+    return await collect_trade_page_titles(TRADE_FILTER_LOCALIZATION_PAGE_SLUGS, workers)
 
 
 def load_page_artifacts(split_dir: Path, trade_stat_index: dict[str, set[str]]) -> list[PageArtifacts]:
@@ -1442,6 +2273,19 @@ def trade_item_lookup_names(entry: dict[str, Any]) -> list[str]:
     )
 
 
+def build_trade_item_display_names(trade_items_payload: dict[str, Any]) -> list[str]:
+    return sorted(
+        {
+            item_name
+            for group in trade_items_payload.get("result", [])
+            for entry in group.get("entries", [])
+            if isinstance(entry, dict)
+            for item_name in trade_item_lookup_names(entry)
+            if item_name
+        }
+    )
+
+
 def build_category_alias_map(
     page_categories: dict[str, Any],
     logical_categories: dict[str, Any],
@@ -1487,6 +2331,11 @@ async def main() -> int:
         default=str(REPO_ROOT / "data/affix-filter-data.json"),
         help="Output file for the extension data bundle.",
     )
+    parser.add_argument(
+        "--trade-item-localization-out",
+        default=str(REPO_ROOT / "data/trade-item-localization.json"),
+        help="Output file for native Trade item-search localization.",
+    )
     parser.add_argument("--workers", type=int, default=8, help="Concurrent page fetches.")
     parser.add_argument(
         "--trade-stats-url",
@@ -1519,6 +2368,46 @@ async def main() -> int:
         help="Official Taiwan trade2 items API URL used only at build time for safe localized item names.",
     )
     parser.add_argument(
+        "--trade-static-url",
+        default=TRADE_STATIC_URL,
+        help="Official international trade2 static API URL used for rendered-text localization.",
+    )
+    parser.add_argument(
+        "--zh-cn-trade-static-url",
+        default=TRADE_STATIC_ZH_CN_URL,
+        help="Official China trade2 static API URL used for rendered-text localization.",
+    )
+    parser.add_argument(
+        "--zh-tw-trade-static-url",
+        default=TRADE_STATIC_ZH_TW_URL,
+        help="Official Taiwan trade2 static API URL used for rendered-text localization.",
+    )
+    parser.add_argument(
+        "--trade-filters-url",
+        default=TRADE_FILTERS_URL,
+        help="Official international trade2 filters API URL used for rendered-text localization.",
+    )
+    parser.add_argument(
+        "--zh-cn-trade-filters-url",
+        default=TRADE_FILTERS_ZH_CN_URL,
+        help="Official China trade2 filters API URL used for rendered-text localization.",
+    )
+    parser.add_argument(
+        "--zh-tw-trade-filters-url",
+        default=TRADE_FILTERS_ZH_TW_URL,
+        help="Official Taiwan trade2 filters API URL used for rendered-text localization.",
+    )
+    parser.add_argument(
+        "--client-strings-url",
+        default=CLIENT_STRINGS_URL,
+        help="Official game client English ClientStrings data used as a Trade UI fallback.",
+    )
+    parser.add_argument(
+        "--zh-tw-client-strings-url",
+        default=CLIENT_STRINGS_ZH_TW_URL,
+        help="Official game client Traditional Chinese ClientStrings data used as a Trade UI fallback.",
+    )
+    parser.add_argument(
         "--minimum-display-coverage",
         type=float,
         default=0.95,
@@ -1546,6 +2435,12 @@ async def main() -> int:
         default=0.95,
         help="Minimum localized coverage for favorite item names.",
     )
+    parser.add_argument(
+        "--minimum-trade-localization-coverage",
+        type=float,
+        default=0.95,
+        help="Minimum regional coverage for stable static/filter Trade UI records.",
+    )
     args = parser.parse_args()
 
     split_dir = Path(args.split_dir)
@@ -1556,11 +2451,27 @@ async def main() -> int:
         traditional_stats_payload,
         simplified_items_payload,
         traditional_items_payload,
+        static_payload,
+        simplified_static_payload,
+        traditional_static_payload,
+        filters_payload,
+        simplified_filters_payload,
+        traditional_filters_payload,
+        client_strings_payload,
+        traditional_client_strings_payload,
     ) = await asyncio.gather(
         fetch_trade_stats(args.zh_cn_trade_stats_url),
         fetch_trade_stats(args.zh_tw_trade_stats_url),
         fetch_trade_items(args.zh_cn_trade_items_url),
         fetch_trade_items(args.zh_tw_trade_items_url),
+        fetch_trade_stats(args.trade_static_url),
+        fetch_trade_stats(args.zh_cn_trade_static_url),
+        fetch_trade_stats(args.zh_tw_trade_static_url),
+        fetch_trade_stats(args.trade_filters_url),
+        fetch_trade_stats(args.zh_cn_trade_filters_url),
+        fetch_trade_stats(args.zh_tw_trade_filters_url),
+        fetch_trade_stats(args.client_strings_url),
+        fetch_trade_stats(args.zh_tw_client_strings_url),
     )
     trade_stat_index = build_trade_stat_index(trade_stats_payload)
     trade_stat_records = build_trade_stat_records(trade_stats_payload)
@@ -1656,17 +2567,62 @@ async def main() -> int:
             for stat_id in page["allowedStatIds"]
         }
     )
-    favorite_stat_ids = {
-        stat_id
-        for stat_id in build_trade_stat_text_map(trade_stats_payload)
-        if stat_id.split(".", 1)[0] in {"explicit", "fractured", "crafted", "desecrated"}
-    }
+    trade_stat_ids = set(build_trade_stat_text_map(trade_stats_payload))
     display_metadata = build_display_metadata(
         trade_stats_payload,
         simplified_stats_payload,
         traditional_stats_payload,
-        favorite_stat_ids,
+        trade_stat_ids,
         args.minimum_display_coverage,
+    )
+    display_metadata["statGroups"] = build_trade_stat_group_records(
+        trade_stats_payload,
+        simplified_stats_payload,
+        traditional_stats_payload,
+    )
+    display_metadata["clientStrings"] = build_client_string_localizations(
+        client_strings_payload,
+        traditional_client_strings_payload,
+    )
+    missing_stat_names = sorted(
+        {
+            str(record.get("en") or "").strip()
+            for record in display_metadata["stats"].values()
+            if record.get("en")
+            and record.get("zh_CN") == record.get("en")
+            and record.get("zh_TW") == record.get("en")
+        }
+    )
+    (
+        verified_keystone_names,
+        keystone_simplified_names,
+        keystone_traditional_names,
+    ) = await collect_localized_item_names(
+        missing_stat_names,
+        [f"{POE2DB_ITEM_ROOT_URL}{page_slug}" for page_slug in TRADE_STAT_LOCALIZATION_PAGE_SLUGS],
+        args.localized_item_workers,
+        allow_item_page_fallback=False,
+        include_passive_skills=True,
+    )
+    display_metadata["poe2dbKeystoneStatCount"] = apply_verified_poe2db_stat_localizations(
+        display_metadata["stats"],
+        verified_keystone_names,
+        keystone_simplified_names,
+        keystone_traditional_names,
+        TRADE_STAT_LOCALIZATION_OVERRIDES,
+    )
+    modifier_localizations = build_verified_poe2db_stat_mod_localizations(
+        display_metadata["stats"],
+        await collect_poe2db_stat_source_records(
+            TRADE_STAT_LOCALIZATION_MOD_PAGE_SLUGS,
+            args.localized_item_workers,
+        ),
+    )
+    display_metadata["poe2dbModifierStatCount"] = apply_verified_poe2db_stat_localizations(
+        display_metadata["stats"],
+        {english: english for english in modifier_localizations},
+        {english: record["zh_CN"] for english, record in modifier_localizations.items()},
+        {english: record["zh_TW"] for english, record in modifier_localizations.items()},
     )
     item_cache_path = Path(args.localized_item_cache)
     cached_item_names: dict[str, dict[str, str]] | None = None
@@ -1710,23 +2666,134 @@ async def main() -> int:
         args.minimum_item_display_coverage,
     )
     display_metadata["items"] = item_display_metadata["items"]
+    display_metadata["poe2dbItemPrefixCount"] = apply_verified_item_prefix_localizations(
+        display_metadata["items"],
+        TRADE_ITEM_PREFIX_LOCALIZATIONS,
+    )
+    trade_item_display_names = build_trade_item_display_names(trade_items_payload)
+    (
+        supplemental_english_item_names,
+        supplemental_simplified_item_names,
+        supplemental_traditional_item_names,
+    ) = await collect_localized_item_names(
+        trade_item_display_names,
+        [f"{POE2DB_ITEM_ROOT_URL}{page_slug}" for page_slug in TRADE_ITEM_LOCALIZATION_PAGE_SLUGS],
+        args.localized_item_workers,
+        allow_item_page_fallback=False,
+    )
+    supplemental_verified_item_names = sorted(
+        set(supplemental_english_item_names)
+        & set(supplemental_simplified_item_names)
+        & set(supplemental_traditional_item_names)
+    )
+    supplemental_item_display_metadata = build_item_display_metadata(
+        supplemental_verified_item_names,
+        supplemental_english_item_names,
+        supplemental_simplified_item_names,
+        supplemental_traditional_item_names,
+    )
+    for item_name, record in supplemental_item_display_metadata["items"].items():
+        display_metadata["items"].setdefault(item_name, record)
     display_metadata["coverage"] = {
         "stats": display_metadata["coverage"],
-        "items": item_display_metadata["coverage"],
+        "items": {
+            **item_display_metadata["coverage"],
+            "supplemental": {
+                "matched": len(supplemental_verified_item_names),
+                "total": len(trade_item_display_names),
+                "ratio": round(
+                    len(supplemental_verified_item_names) / len(trade_item_display_names)
+                    if trade_item_display_names
+                    else 1.0,
+                    6,
+                ),
+            },
+        },
     }
+    trade_filter_page_titles = await collect_trade_filter_page_titles(args.localized_item_workers)
+    trade_filter_page_localizations = build_trade_filter_page_localizations(
+        filters_payload,
+        trade_filter_page_titles,
+    )
+    trade_category_page_titles = await collect_trade_page_titles(
+        TRADE_CATEGORY_LOCALIZATION_PAGE_SLUGS,
+        args.localized_item_workers,
+    )
+    trade_category_page_localizations = build_trade_category_page_localizations(
+        filters_payload,
+        trade_category_page_titles,
+    )
+    supplemental_trade_strings = dict(trade_filter_page_localizations)
+    for record in trade_category_page_localizations.values():
+        supplemental_trade_strings.setdefault(record["en"], record)
+    trade_localization = build_trade_localization_metadata(
+        display_metadata,
+        static_payload,
+        simplified_static_payload,
+        traditional_static_payload,
+        filters_payload,
+        simplified_filters_payload,
+        traditional_filters_payload,
+        supplemental_strings=supplemental_trade_strings,
+        minimum_coverage=args.minimum_trade_localization_coverage,
+        supplemental_categories=trade_category_page_localizations,
+    )
+    display_metadata.pop("clientStrings", None)
 
     output = {
-        "version": 2,
+        "version": 4,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "source": "https://poe2db.tw/us/Modifiers",
         "tradeStatsSource": args.trade_stats_url,
         "displayMetadataSources": {
             "zh_CN": args.zh_cn_trade_stats_url,
             "zh_TW": args.zh_tw_trade_stats_url,
+            "poe2dbKeystones": {
+                locale: f"https://poe2db.tw/{locale}/Keystone"
+                for locale in ("us", "cn", "tw")
+            },
+            "poe2dbModifierPages": {
+                page_slug: {
+                    locale: f"https://poe2db.tw/{locale}/{page_slug}"
+                    for locale in ("us", "cn", "tw")
+                }
+                for page_slug in TRADE_STAT_LOCALIZATION_MOD_PAGE_SLUGS
+            },
         },
         "displayItemMetadataSources": {
             "zh_CN": args.zh_cn_trade_items_url,
             "zh_TW": args.zh_tw_trade_items_url,
+            "poe2db": "https://poe2db.tw/{locale}/Stackable_Currency",
+        },
+        "tradeLocalizationSources": {
+            "clientStrings": {
+                "en": args.client_strings_url,
+                "zh_TW": args.zh_tw_client_strings_url,
+            },
+            "static": {
+                "en": args.trade_static_url,
+                "zh_CN": args.zh_cn_trade_static_url,
+                "zh_TW": args.zh_tw_trade_static_url,
+            },
+            "filters": {
+                "en": args.trade_filters_url,
+                "zh_CN": args.zh_cn_trade_filters_url,
+                "zh_TW": args.zh_tw_trade_filters_url,
+            },
+            "poe2dbFilterPages": {
+                filter_id: {
+                    locale: f"https://poe2db.tw/{locale}/{page_slug}"
+                    for locale in ("us", "cn", "tw")
+                }
+                for filter_id, page_slug in TRADE_FILTER_LOCALIZATION_PAGE_SLUGS.items()
+            },
+            "poe2dbCategoryPages": {
+                category_id: {
+                    locale: f"https://poe2db.tw/{locale}/{page_slug}"
+                    for locale in ("us", "cn", "tw")
+                }
+                for category_id, page_slug in TRADE_CATEGORY_LOCALIZATION_PAGE_SLUGS.items()
+            },
         },
         "tradeItemsSource": args.trade_items_url,
         "pageCategories": page_categories,
@@ -1738,11 +2805,18 @@ async def main() -> int:
         "allPatterns": all_patterns,
         "allStatIds": all_stat_ids,
         "displayMetadata": display_metadata,
+        "tradeLocalization": trade_localization,
     }
 
     out_path = Path(args.out)
     out_path.parent.mkdir(parents=True, exist_ok=True)
     out_path.write_text(json.dumps(output, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    trade_item_localization_path = Path(args.trade_item_localization_out)
+    trade_item_localization_path.parent.mkdir(parents=True, exist_ok=True)
+    trade_item_localization_path.write_text(
+        json.dumps(build_trade_item_localization_bundle(trade_localization), ensure_ascii=False, indent=2) + "\n",
+        encoding="utf-8",
+    )
     return 0
 
 

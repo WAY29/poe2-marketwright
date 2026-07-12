@@ -112,7 +112,11 @@
   }
 
   async function loadMessages(language) {
-    const locale = ["en", "zh_CN", "zh_TW"].includes(language) ? language : "en";
+    const locale = String(language || "").startsWith("zh_CN")
+      ? "zh_CN"
+      : String(language || "").startsWith("zh_TW")
+        ? "zh_TW"
+        : "en";
     if (local.messageLanguage === locale) {
       return;
     }

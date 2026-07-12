@@ -10,9 +10,16 @@ if str(SCRIPT_ROOT) not in sys.path:
 from build_extension_data import (
     DisplayMetadataCoverageError,
     PageArtifacts,
+    TradeLocalizationCoverageError,
     build_safe_numeric_trade_item_localizations,
+    build_trade_filter_page_localizations,
+    build_trade_category_page_localizations,
+    build_trade_item_localization_bundle,
     build_display_metadata,
+    build_client_string_localizations,
+    build_trade_stat_group_records,
     build_item_display_metadata,
+    build_trade_localization_metadata,
     build_trade_stat_records,
     build_trade_stat_universe,
     collect_base_item_mod_stat_artifacts,
@@ -23,6 +30,7 @@ from build_extension_data import (
     build_page_categories,
     build_trade_stat_index,
     canonicalize_stat_text,
+    normalize_poe2db_localized_stat_template,
     load_page_artifacts,
     map_granted_skill_names_to_trade_stats,
     map_affix_text_to_trade_stat_ids,
@@ -30,12 +38,549 @@ from build_extension_data import (
     parse_page_html_artifacts,
     parse_poe2db_item_title,
     parse_poe2db_item_name_slugs,
+    parse_poe2db_stat_source_records,
+    build_verified_poe2db_stat_mod_localizations,
+    apply_verified_poe2db_stat_localizations,
+    apply_verified_item_prefix_localizations,
     poe2db_item_slug,
     split_affix_stat_lines,
 )
 
 
 class TradeStatMappingTests(unittest.TestCase):
+    def test_preserves_localized_numeric_ranges_in_stat_templates(self) -> None:
+        self.assertEqual(
+            normalize_poe2db_localized_stat_template("羁绊：附加 14 - 20 基础物理伤害"),
+            "羁绊：附加 # - # 基础物理伤害",
+        )
+        self.assertEqual(
+            normalize_poe2db_localized_stat_template("命定:附加14至20物理傷害"),
+            "命定:附加#至#物理傷害",
+        )
+
+    def test_builds_verified_modifier_localizations_from_stable_page_records(self) -> None:
+        english_html = (
+            '<a class="whiteitem SoulCore" data-hover="?s=Data%5CRune%5CTalisman" href="Legacy">Legacy</a>'
+            '<div class="bondedMod"><a data-keyword="ShamanOnlyMods">Bonded</a>:</div>'
+            '<div class="bondedMod"><a class="ItemClasses" href="Talismans">Talismans</a>: '
+            'Enemies in your <a data-keyword="Presence">Presence</a> are '
+            '<a data-keyword="Hinder">Hindered</a></div>'
+            '<div class="implicitMod">Unblockable</div>'
+        )
+        simplified_html = (
+            '<a class="whiteitem SoulCore" data-hover="?s=Data%5CRune%5CTalisman" href="Legacy">遗产</a>'
+            '<div class="bondedMod"><a data-keyword="ShamanOnlyMods">羁绊</a>：</div>'
+            '<div class="bondedMod"><a class="ItemClasses" href="Talismans">护符</a>：'
+            '当你在场时，敌人受到<a data-keyword="Hinder">阻滞</a>效果</div>'
+            '<div class="implicitMod">无法格挡</div>'
+        )
+        traditional_html = (
+            '<a class="whiteitem SoulCore" data-hover="?s=Data%5CRune%5CTalisman" href="Legacy">遺產</a>'
+            '<div class="bondedMod"><a data-keyword="ShamanOnlyMods">羈絆</a>：</div>'
+            '<div class="bondedMod"><a class="ItemClasses" href="Talismans">護符</a>：'
+            '你存在中的敵人被<a data-keyword="Hinder">阻礙</a></div>'
+            '<div class="implicitMod">無法格擋</div>'
+        )
+        stats = {
+            "rune.stat_presence": {
+                "en": "Bonded: Enemies in your Presence are Hindered",
+                "zh_CN": "Bonded: Enemies in your Presence are Hindered",
+                "zh_TW": "Bonded: Enemies in your Presence are Hindered",
+            },
+            "implicit.stat_block": {
+                "en": "Unblockable",
+                "zh_CN": "Unblockable",
+                "zh_TW": "Unblockable",
+            },
+        }
+
+        localizations = build_verified_poe2db_stat_mod_localizations(
+            stats,
+            {
+                "us": parse_poe2db_stat_source_records(english_html, "Runes"),
+                "cn": parse_poe2db_stat_source_records(simplified_html, "Runes"),
+                "tw": parse_poe2db_stat_source_records(traditional_html, "Runes"),
+            },
+        )
+
+        self.assertEqual(
+            localizations,
+            {
+                "Bonded: Enemies in your Presence are Hindered": {
+                    "zh_CN": "羁绊：当你在场时，敌人受到阻滞效果",
+                    "zh_TW": "羈絆：你存在中的敵人被阻礙",
+                },
+                "Unblockable": {"zh_CN": "无法格挡", "zh_TW": "無法格擋"},
+            },
+        )
+
+    def test_builds_client_string_localizations_from_stable_ids(self) -> None:
+        localizations = build_client_string_localizations(
+            [
+                {"Id": "HeistRequiresText", "Text": "Requires"},
+                {"Id": "ItemNoteEditorOptionFixed", "Text": "Exact Price"},
+            ],
+            [
+                {"Id": "HeistRequiresText", "Text": "需要"},
+                {"Id": "ItemNoteEditorOptionFixed", "Text": "不二價"},
+            ],
+        )
+
+        self.assertEqual(
+            localizations,
+            {
+                "Exact Price": {"en": "Exact Price", "zh_CN": "Exact Price", "zh_TW": "不二價"},
+                "Requires": {"en": "Requires", "zh_CN": "Requires", "zh_TW": "需要"},
+            },
+        )
+
+    def test_skips_client_string_text_with_ambiguous_translations(self) -> None:
+        localizations = build_client_string_localizations(
+            [
+                {"Id": "a", "Text": "Offline"},
+                {"Id": "b", "Text": "Offline"},
+            ],
+            [
+                {"Id": "a", "Text": "離線"},
+                {"Id": "b", "Text": "不在線上"},
+            ],
+        )
+
+        self.assertEqual(localizations, {})
+
+    def test_builds_stat_group_labels_from_official_group_ids(self) -> None:
+        groups = build_trade_stat_group_records(
+            {"result": [{"id": "pseudo", "label": "Pseudo"}]},
+            {"result": [{"id": "pseudo", "label": "综合"}]},
+            {"result": [{"id": "pseudo", "label": "偽屬性"}]},
+        )
+
+        self.assertEqual(
+            groups,
+            {
+                "pseudo": {
+                    "en": "Pseudo",
+                    "zh_CN": "综合",
+                    "zh_TW": "偽屬性",
+                }
+            },
+        )
+
+    def test_parses_currency_item_links_from_official_base_item_types(self) -> None:
+        html = (
+            '<a class="item_currency StackableCurrency" '
+            'data-hover="?s=Data%5CBaseItemTypes%2FMetadata%2FItems%2FCurrency%2FRune" '
+            'href="Iron_Rune">Iron Rune</a>'
+        )
+
+        self.assertEqual(
+            parse_poe2db_item_name_slugs(html),
+            {"iron rune": ("Iron Rune", "Iron_Rune")},
+        )
+
+    def test_parses_keystone_links_only_when_requested(self) -> None:
+        html = '<a class="PassiveSkills" href="Dance_with_Death">Dance with Death</a>'
+
+        self.assertEqual(parse_poe2db_item_name_slugs(html), {})
+        self.assertEqual(
+            parse_poe2db_item_name_slugs(html, include_passive_skills=True),
+            {"dance with death": ("Dance with Death", "Dance_with_Death")},
+        )
+
+    def test_applies_verified_poe2db_stat_titles_only_to_dual_locale_gaps(self) -> None:
+        stats = {
+            "explicit.keystone": {
+                "en": "Ancestral Bond",
+                "zh_CN": "Ancestral Bond",
+                "zh_TW": "Ancestral Bond",
+            },
+            "explicit.official": {
+                "en": "Existing Translation",
+                "zh_CN": "已有翻译",
+                "zh_TW": "Existing Translation",
+            },
+            "explicit.unverified": {
+                "en": "Unknown Keystone",
+                "zh_CN": "Unknown Keystone",
+                "zh_TW": "Unknown Keystone",
+            },
+            "explicit.dance": {
+                "en": "Dance With Death",
+                "zh_CN": "Dance With Death",
+                "zh_TW": "Dance With Death",
+            },
+        }
+
+        applied = apply_verified_poe2db_stat_localizations(
+            stats,
+            {"Ancestral Bond": "Ancestral Bond", "Dance With Death": "Dance With Death"},
+            {"Ancestral Bond": "先祖魂约", "Dance With Death": "与亡共舞"},
+            {"Ancestral Bond": "先祖魂約", "Dance With Death": "與死共舞"},
+            {"Dance With Death": {"zh_TW": "和死共舞"}},
+        )
+
+        self.assertEqual(applied, 2)
+        self.assertEqual(stats["explicit.keystone"], {
+            "en": "Ancestral Bond",
+            "zh_CN": "先祖魂约",
+            "zh_TW": "先祖魂約",
+        })
+        self.assertEqual(stats["explicit.official"]["zh_CN"], "已有翻译")
+        self.assertEqual(stats["explicit.unverified"]["zh_CN"], "Unknown Keystone")
+        self.assertEqual(stats["explicit.dance"], {
+            "en": "Dance With Death",
+            "zh_CN": "与亡共舞",
+            "zh_TW": "和死共舞",
+        })
+
+    def test_composes_verified_runeforged_item_names_without_overwriting_official_names(self) -> None:
+        items = {
+            "Warden Bow": {"en": "Warden Bow", "zh_CN": "监守弓", "zh_TW": "守護者之弓"},
+            "Runeforged Warden Bow": {
+                "en": "Runeforged Warden Bow",
+                "zh_CN": "Runeforged Warden Bow",
+                "zh_TW": "Runeforged Warden Bow",
+            },
+            "Runeforged Official Bow": {
+                "en": "Runeforged Official Bow",
+                "zh_CN": "官方译名",
+                "zh_TW": "官方譯名",
+            },
+        }
+
+        applied = apply_verified_item_prefix_localizations(
+            items,
+            {"Runeforged ": {"zh_CN": "符锻", "zh_TW": "符鍛"}},
+        )
+
+        self.assertEqual(applied, 1)
+        self.assertEqual(items["Runeforged Warden Bow"], {
+            "en": "Runeforged Warden Bow",
+            "zh_CN": "符锻监守弓",
+            "zh_TW": "符鍛守護者之弓",
+        })
+        self.assertEqual(items["Runeforged Official Bow"]["zh_CN"], "官方译名")
+
+    def test_builds_trade_localization_from_stable_api_identifiers(self) -> None:
+        display_metadata = {
+            "stats": {
+                "explicit.stat_life": {
+                    "en": "+# to maximum Life",
+                    "zh_CN": "+# 生命上限",
+                    "zh_TW": "+# 最大生命",
+                }
+            },
+            "items": {
+                "Rider Bow": {
+                    "en": "Rider Bow",
+                    "zh_CN": "骑射之弓",
+                    "zh_TW": "騎士之弓",
+                }
+            },
+        }
+        english_static = {
+            "result": {
+                "currency": {
+                    "label": "Currency",
+                    "entries": [
+                        {"id": "chaos", "text": "Chaos Orb"},
+                        {"id": "rider", "text": "Rider Bow"},
+                    ],
+                }
+            }
+        }
+        simplified_static = {
+            "result": {
+                "currency": {
+                    "label": "通货",
+                    "entries": [
+                        {"id": "chaos", "text": "混沌石"},
+                        {"id": "rider", "text": "Rider Bow"},
+                    ],
+                }
+            }
+        }
+        traditional_static = {
+            "result": {
+                "currency": {
+                    "label": "通貨",
+                    "entries": [
+                        {"id": "chaos", "text": "混沌石"},
+                        {"id": "rider", "text": "Rider Bow"},
+                    ],
+                }
+            }
+        }
+        english_filters = {
+            "result": [
+                {
+                    "id": "type_filters",
+                    "title": "Type Filters",
+                    "filters": [
+                        {
+                            "id": "category",
+                            "text": "Item Category",
+                            "option": {"options": [{"id": "weapon.bow", "text": "Bow"}]},
+                        }
+                    ],
+                }
+            ]
+        }
+        simplified_filters = {
+            "result": [
+                {
+                    "id": "type_filters",
+                    "title": "类型过滤器",
+                    "filters": [
+                        {
+                            "id": "category",
+                            "text": "物品类型",
+                            "option": {"options": [{"id": "weapon.bow", "text": "弓"}]},
+                        }
+                    ],
+                }
+            ]
+        }
+        traditional_filters = {
+            "result": [
+                {
+                    "id": "type_filters",
+                    "title": "類型過濾器",
+                    "filters": [
+                        {
+                            "id": "category",
+                            "text": "物品類型",
+                            "option": {"options": [{"id": "weapon.bow", "text": "弓"}]},
+                        }
+                    ],
+                }
+            ]
+        }
+
+        metadata = build_trade_localization_metadata(
+            display_metadata,
+            english_static,
+            simplified_static,
+            traditional_static,
+            english_filters,
+            simplified_filters,
+            traditional_filters,
+        )
+
+        self.assertEqual(
+            metadata["strings"]["Item Category"],
+            {"en": "Item Category", "zh_CN": "物品类型", "zh_TW": "物品類型"},
+        )
+        self.assertEqual(
+            metadata["strings"]["Chaos Orb"],
+            {"en": "Chaos Orb", "zh_CN": "混沌石", "zh_TW": "混沌石"},
+        )
+        self.assertEqual(
+            metadata["strings"]["Rider Bow"],
+            {"en": "Rider Bow", "zh_CN": "骑射之弓", "zh_TW": "騎士之弓"},
+        )
+        self.assertEqual(metadata["strings"]["+# to maximum Life"]["zh_CN"], "+# 生命上限")
+        self.assertEqual(
+            metadata["search"]["categories"],
+            [{"id": "weapon.bow", "en": "Bow", "zh_CN": "弓", "zh_TW": "弓"}],
+        )
+
+    def test_builds_native_trade_search_localization_bundle(self) -> None:
+        bundle = build_trade_item_localization_bundle(
+            {
+                "search": {
+                    "items": [
+                        {"en": "Gold Ring", "zh_CN": "金环", "zh_TW": "金環"},
+                        {"en": "English Only", "zh_CN": "English Only", "zh_TW": "English Only"},
+                    ],
+                    "stats": [
+                        {
+                            "id": "explicit.stat_life",
+                            "en": "+# to maximum Life",
+                            "zh_CN": "+# 最大生命",
+                            "zh_TW": "+# 最大生命"
+                        }
+                    ],
+                },
+                "strings": {
+                    "Item Category": {"en": "Item Category", "zh_CN": "物品类型", "zh_TW": "道具分類"},
+                    "English Only": {"en": "English Only", "zh_CN": "English Only", "zh_TW": "English Only"},
+                },
+            }
+        )
+
+        self.assertEqual(
+            bundle,
+            {
+                "version": 5,
+                "items": {
+                    "Gold Ring": {"zh_CN": "金环", "zh_TW": "金環"},
+                },
+                "stats": {
+                    "explicit.stat_life": {"zh_CN": "+# 最大生命", "zh_TW": "+# 最大生命"},
+                },
+                "strings": {
+                    "Item Category": {"zh_CN": "物品类型", "zh_TW": "道具分類"},
+                },
+            },
+        )
+
+    def test_builds_missing_trade_filter_labels_from_verified_poe2db_pages(self) -> None:
+        records = build_trade_filter_page_localizations(
+            {
+                "result": [
+                    {
+                        "id": "map_filters",
+                        "filters": [
+                            {"id": "map_magic_monsters", "text": "Monster Effectiveness"},
+                            {"id": "map_rare_monsters", "text": "Monster Rarity"},
+                        ],
+                    }
+                ]
+            },
+            {
+                "map_magic_monsters": {"en": "Monster Effectiveness", "zh_CN": "怪物效能", "zh_TW": "怪物效用"},
+                "map_rare_monsters": {"en": "Monster Rarity", "zh_CN": "怪物稀有度", "zh_TW": "怪物稀有度"},
+            },
+        )
+
+        self.assertEqual(
+            records,
+            {
+                "Monster Effectiveness": {
+                    "en": "Monster Effectiveness",
+                    "zh_CN": "怪物效能",
+                    "zh_TW": "怪物效用",
+                },
+                "Monster Rarity": {
+                    "en": "Monster Rarity",
+                    "zh_CN": "怪物稀有度",
+                    "zh_TW": "怪物稀有度",
+                },
+            },
+        )
+
+    def test_rejects_filter_page_localization_when_the_english_title_does_not_match(self) -> None:
+        records = build_trade_filter_page_localizations(
+            {
+                "result": [
+                    {
+                        "id": "map_filters",
+                        "filters": [{"id": "map_magic_monsters", "text": "Monster Effectiveness"}],
+                    }
+                ]
+            },
+            {
+                "map_magic_monsters": {"en": "Unexpected title", "zh_CN": "怪物效能", "zh_TW": "怪物效用"},
+            },
+        )
+
+        self.assertEqual(records, {})
+
+    def test_builds_charm_category_from_its_stable_trade_id(self) -> None:
+        records = build_trade_category_page_localizations(
+            {
+                "result": [
+                    {
+                        "id": "type_filters",
+                        "filters": [
+                            {
+                                "id": "category",
+                                "option": {"options": [{"id": "flask.charm", "text": "Charm"}]},
+                            }
+                        ],
+                    }
+                ]
+            },
+            {"flask.charm": {"en": "Charms", "zh_CN": "咒符", "zh_TW": "護符"}},
+        )
+
+        self.assertEqual(
+            records,
+            {"flask.charm": {"en": "Charm", "zh_CN": "咒符", "zh_TW": "護符"}},
+        )
+
+    def test_verified_charm_category_replaces_english_regional_api_fallback(self) -> None:
+        filters = {
+            "result": [
+                {
+                    "id": "type_filters",
+                    "filters": [
+                        {
+                            "id": "category",
+                            "option": {"options": [{"id": "flask.charm", "text": "Charm"}]},
+                        }
+                    ],
+                }
+            ]
+        }
+        metadata = build_trade_localization_metadata(
+            {"stats": {}, "items": {}},
+            {"result": {}},
+            {"result": {}},
+            {"result": {}},
+            filters,
+            filters,
+            filters,
+            supplemental_strings={"Charm": {"en": "Charm", "zh_CN": "咒符", "zh_TW": "護符"}},
+            supplemental_categories={"flask.charm": {"en": "Charm", "zh_CN": "咒符", "zh_TW": "護符"}},
+        )
+
+        self.assertEqual(
+            metadata["search"]["categories"],
+            [{"id": "flask.charm", "en": "Charm", "zh_CN": "咒符", "zh_TW": "護符"}],
+        )
+
+    def test_verified_filter_page_translation_replaces_an_english_api_fallback(self) -> None:
+        filters = {
+            "result": [
+                {
+                    "id": "map_filters",
+                    "filters": [{"id": "map_magic_monsters", "text": "Monster Effectiveness"}],
+                }
+            ]
+        }
+        metadata = build_trade_localization_metadata(
+            {"stats": {}, "items": {}},
+            {"result": {}},
+            {"result": {}},
+            {"result": {}},
+            filters,
+            filters,
+            filters,
+            {
+                "Monster Effectiveness": {
+                    "en": "Monster Effectiveness",
+                    "zh_CN": "怪物效能",
+                    "zh_TW": "怪物效用",
+                }
+            },
+        )
+
+        self.assertEqual(
+            metadata["strings"]["Monster Effectiveness"],
+            {"en": "Monster Effectiveness", "zh_CN": "怪物效能", "zh_TW": "怪物效用"},
+        )
+
+    def test_rejects_trade_localization_when_a_region_is_missing_stable_records(self) -> None:
+        with self.assertRaises(TradeLocalizationCoverageError):
+            build_trade_localization_metadata(
+                {"stats": {}, "items": {}},
+                {"result": {}},
+                {"result": {}},
+                {"result": {}},
+                {
+                    "result": [
+                        {
+                            "id": "type_filters",
+                            "filters": [{"id": "category", "text": "Item Category"}],
+                        }
+                    ]
+                },
+                {"result": []},
+                {"result": []},
+            )
+
     def test_maps_unique_numeric_trade_item_names_without_relying_on_entry_order(self) -> None:
         english = {
             "result": [
@@ -95,6 +640,19 @@ class TradeStatMappingTests(unittest.TestCase):
             {"en": "Fur Plate", "zh_CN": "毛皮胸甲", "zh_TW": "Fur Plate"},
         )
         self.assertEqual(metadata["coverage"]["zh_TW"], {"matched": 1, "total": 2, "ratio": 0.5})
+
+    def test_builds_verified_currency_display_metadata(self) -> None:
+        metadata = build_item_display_metadata(
+            ["Iron Rune"],
+            {"Iron Rune": "Iron Rune"},
+            {"Iron Rune": "钢铁符文"},
+            {"Iron Rune": "鍛鐵符文"},
+        )
+
+        self.assertEqual(
+            metadata["items"]["Iron Rune"],
+            {"en": "Iron Rune", "zh_CN": "钢铁符文", "zh_TW": "鍛鐵符文"},
+        )
 
     def test_extracts_poe2db_item_title(self) -> None:
         self.assertEqual(

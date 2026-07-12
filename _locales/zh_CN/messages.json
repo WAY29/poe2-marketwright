@@ -366,6 +366,12 @@
   "language": {
     "message": "语言"
   },
+  "tradePageLanguage": {
+    "message": "市集页面语言"
+  },
+  "tradePageTranslation": {
+    "message": "市集页面翻译"
+  },
   "languageEnglish": {
     "message": "English"
   },
@@ -374,6 +380,18 @@
   },
   "languageTraditionalChinese": {
     "message": "繁體中文"
+  },
+  "languageSimplifiedChineseBilingual": {
+    "message": "简体中文 (English)"
+  },
+  "languageTraditionalChineseBilingual": {
+    "message": "繁體中文 (English)"
+  },
+  "enableTradePageTranslation": {
+    "message": "开启市集页面翻译"
+  },
+  "disableTradePageTranslation": {
+    "message": "关闭市集页面翻译"
   },
   "favoriteTooltipItem": {
     "message": "物品"

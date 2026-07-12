@@ -11,6 +11,8 @@
   const STORAGE_KEY = "poe2Trade2AffixFilterState";
   const DEFAULT_STATE = {
     uiLanguage: null,
+    pageLanguage: null,
+    pageTranslationEnabled: true,
     filteringEnabled: true,
     pobCopyEnabled: true,
     currencyConversionEnabled: true,
@@ -39,12 +41,46 @@
   const BRIDGE_STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
   const BRIDGE_SEARCH_SNAPSHOT_TYPE = "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT";
   const TRADE_ROOT_SELECTOR = "#trade";
+  const NATIVE_TRADE_CACHE_KEYS = [
+    "lscache-trade2items",
+    "lscache-trade2stats",
+    "lscache-trade2data",
+    "lscache-trade2filters"
+  ];
+  const NATIVE_TRADE_CACHE_MARKER_KEY = "poe2-marketwright:trade-native-search-localization";
+  const LEGACY_NATIVE_ITEM_CACHE_MARKER_KEY = "poe2-marketwright:trade-item-localization";
   const LOCALIZED_ALIAS_LOCALES = ["zh_CN", "zh_TW"];
   const SUPPORTED_UI_LANGUAGES = Object.freeze(["en", "zh_CN", "zh_TW"]);
+  const SUPPORTED_PAGE_LANGUAGES = Object.freeze(["en", "zh_CN", "zh_TW", "zh_CN_en", "zh_TW_en"]);
   const ITEM_SEARCH_ROOT_SELECTOR =
     "#trade .top .search-panel > .search-bar:not(.search-advanced) .search-left .multiselect.search-select";
   const ITEM_SEARCH_INPUT_SELECTOR = `${ITEM_SEARCH_ROOT_SELECTOR} input.multiselect__input`;
   const TYPE_FILTER_GROUP_SELECTOR = "#trade .search-advanced-pane.blue > .filter-group";
+  const TRADE_LOCALIZATION_SELECTOR = [
+    ".search-panel",
+    ".search-advanced-pane",
+    ".filter-group",
+    ".multiselect__tags",
+    ".multiselect__content-wrapper",
+    ".search-results",
+    ".results",
+    ".result",
+    ".item"
+  ].join(",");
+  const TRADE_LOCALIZATION_EXCLUDED_SELECTOR = [
+    "[data-field='account']",
+    "[data-field='whisper']",
+    ".whisper-btn",
+    ".item-note",
+    ".result-note",
+    ".listing-account",
+    ".seller",
+    ".profile"
+  ].join(",");
+  const TRADE_LOCALIZATION_SOURCE_KEY = "__poe2MarketwrightSourceText";
+  const TRADE_LOCALIZATION_RENDER_KEY = "__poe2MarketwrightRenderedText";
+  const TRADE_STAT_SOURCE_HTML_KEY = "__poe2MarketwrightStatSourceHtml";
+  const TRADE_STAT_RENDER_KEY = "__poe2MarketwrightStatRender";
   const FAVORITE_TRADE_CATEGORY_BY_PAGE = Object.freeze({
     Strongbox: "map",
     Relics: "sanctum.relic",
@@ -282,9 +318,15 @@
     statsText: "Available $1 / Keep $2 / Ignore $3",
     generalSettingsTitle: "General",
     language: "Language",
+    tradePageLanguage: "Trade page language",
+    tradePageTranslation: "Trade page translation",
     languageEnglish: "English",
     languageSimplifiedChinese: "Simplified Chinese",
     languageTraditionalChinese: "Traditional Chinese",
+    languageSimplifiedChineseBilingual: "Simplified Chinese (English)",
+    languageTraditionalChineseBilingual: "Traditional Chinese (English)",
+    enableTradePageTranslation: "Enable Trade page translation",
+    disableTradePageTranslation: "Disable Trade page translation",
     favoriteTooltipItem: "Item",
     favoriteTooltipBaseType: "Base type",
     favoriteTooltipCategory: "Category",
@@ -401,6 +443,12 @@
     itemLookupEntries: [],
     categoryLookupEntries: [],
     categoryAliasToSelection: {},
+    tradeLocalization: null,
+    tradeStatTemplates: new Map(),
+    tradeStatsById: new Map(),
+    tradeSearchRecords: { items: [], stats: [], categories: [] },
+    tradeLocalizationObserver: null,
+    tradeLocalizationTimer: null,
     pagePatternCache: new Map(),
     logicalPatternCache: new Map(),
     pageStatIdCache: new Map(),
@@ -463,6 +511,7 @@
     runtime.categoryAliasToSelection = buildExpandedCategoryAliasMap(runtime.data.categoryAliasToSelection || {});
     addLocalizedSelectionAliases(localizedAliasMessages);
     runtime.categoryLookupEntries = Object.keys(runtime.categoryAliasToSelection).sort(compareLookupLengthDesc);
+    initializeTradeLocalization();
     mountPanel();
     bindGlobalListeners();
     scheduleRefresh();
@@ -503,14 +552,37 @@
     return SUPPORTED_UI_LANGUAGES.includes(normalized) ? normalized : "en";
   }
 
+  function resolvePageLanguage(value) {
+    if (SUPPORTED_PAGE_LANGUAGES.includes(value)) {
+      return value;
+    }
+    const browserLanguage = globalThis.chrome?.i18n?.getUILanguage?.() || "";
+    const normalized = String(browserLanguage).replace("-", "_");
+    return SUPPORTED_PAGE_LANGUAGES.includes(normalized) ? normalized : "en";
+  }
+
+  function getMessageLocale(language) {
+    const normalized = String(language || "");
+    if (normalized.startsWith("zh_CN")) {
+      return "zh_CN";
+    }
+    if (normalized.startsWith("zh_TW")) {
+      return "zh_TW";
+    }
+    return "en";
+  }
+
   async function loadUiMessages(language) {
-    const locale = resolveUiLanguage(language);
+    const locale = getMessageLocale(resolveUiLanguage(language));
     try {
-      const response = await fetch(chrome.runtime.getURL(`_locales/${locale}/messages.json`));
-      if (!response.ok) {
-        throw new Error(`Unable to load ${locale} messages: ${response.status}`);
-      }
-      runtime.messages = await response.json();
+      const loadMessages = async (messageLocale) => {
+        const response = await fetch(chrome.runtime.getURL(`_locales/${messageLocale}/messages.json`));
+        if (!response.ok) {
+          throw new Error(`Unable to load ${messageLocale} messages: ${response.status}`);
+        }
+        return response.json();
+      };
+      runtime.messages = await loadMessages(locale);
     } catch (error) {
       runtime.messages = null;
       console.debug(`[PoE2 Marketwright] unable to load ${locale} messages`, error);
@@ -524,6 +596,11 @@
       ...DEFAULT_STATE,
       ...savedState,
       uiLanguage: resolveUiLanguage(savedState.uiLanguage),
+      pageLanguage: resolvePageLanguage(savedState.pageLanguage || savedState.uiLanguage),
+      pageTranslationEnabled:
+        typeof savedState.pageTranslationEnabled === "boolean"
+          ? savedState.pageTranslationEnabled
+          : DEFAULT_STATE.pageTranslationEnabled,
       favoritesEnabled:
         typeof savedState.favoritesEnabled === "boolean"
           ? savedState.favoritesEnabled
@@ -669,6 +746,14 @@
             <span id="poe2-trade2-affix-filter-language-label" class="poe2-trade2-affix-filter-field-label"></span>
             <select id="poe2-trade2-affix-filter-language"></select>
           </label>
+          <label class="poe2-trade2-affix-filter-field">
+            <span id="poe2-trade2-affix-filter-page-language-label" class="poe2-trade2-affix-filter-field-label"></span>
+            <select id="poe2-trade2-affix-filter-page-language"></select>
+          </label>
+          <div class="poe2-trade2-affix-filter-feature-header">
+            <span id="poe2-trade2-affix-filter-page-translation-title" class="poe2-trade2-affix-filter-field-label"></span>
+            <button id="poe2-trade2-affix-filter-page-translation-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
+          </div>
         </section>
         <section class="poe2-trade2-affix-filter-feature poe2-trade2-affix-filter-stat-feature">
           <div class="poe2-trade2-affix-filter-feature-header">
@@ -783,6 +868,10 @@
     runtime.ui.settingsTitle = root.querySelector("#poe2-trade2-affix-filter-settings-title");
     runtime.ui.languageLabel = root.querySelector("#poe2-trade2-affix-filter-language-label");
     runtime.ui.language = root.querySelector("#poe2-trade2-affix-filter-language");
+    runtime.ui.pageLanguageLabel = root.querySelector("#poe2-trade2-affix-filter-page-language-label");
+    runtime.ui.pageLanguage = root.querySelector("#poe2-trade2-affix-filter-page-language");
+    runtime.ui.pageTranslationTitle = root.querySelector("#poe2-trade2-affix-filter-page-translation-title");
+    runtime.ui.pageTranslationEnabled = root.querySelector("#poe2-trade2-affix-filter-page-translation-enabled");
     runtime.ui.statTitle = root.querySelector("#poe2-trade2-affix-filter-stat-title");
     runtime.ui.pobTitle = root.querySelector("#poe2-trade2-affix-filter-pob-title");
     runtime.ui.favoritesTitle = root.querySelector("#poe2-marketwright-favorites-title");
@@ -798,9 +887,11 @@
     updateCurrencyLeague(leagueContext?.league, leagueContext?.searchUrl);
     populateSelectionOptions(runtime.ui.selection);
     populateLanguageOptions(runtime.ui.language);
+    populatePageLanguageOptions(runtime.ui.pageLanguage);
 
     runtime.ui.selection.value = runtime.state.selection;
     runtime.ui.language.value = runtime.state.uiLanguage;
+    runtime.ui.pageLanguage.value = runtime.state.pageLanguage;
     updateToggleButton();
     renderFavoriteDrawer();
     renderLinkFavoritesDrawer();
@@ -977,6 +1068,12 @@
     runtime.ui.language.addEventListener("change", () => {
       runAsync(() => setUiLanguage(runtime.ui.language.value), "change display language");
     });
+    runtime.ui.pageLanguage.addEventListener("change", () => {
+      runAsync(() => setPageLanguage(runtime.ui.pageLanguage.value), "change Trade page language");
+    });
+    runtime.ui.pageTranslationEnabled.addEventListener("click", () => {
+      runAsync(() => setPageTranslationEnabled(!isPageTranslationEnabled()), "toggle Trade page translation");
+    });
   }
 
   function updateStaticUiText() {
@@ -986,6 +1083,8 @@
     runtime.ui.expand.title = t("expandPanel");
     runtime.ui.settingsTitle.textContent = t("generalSettingsTitle");
     runtime.ui.languageLabel.textContent = t("language");
+    runtime.ui.pageLanguageLabel.textContent = t("tradePageLanguage");
+    runtime.ui.pageTranslationTitle.textContent = t("tradePageTranslation");
     runtime.ui.statTitle.textContent = t("statFilterTitle");
     runtime.ui.pobTitle.textContent = t("pobCopyTitle");
     runtime.ui.favoritesTitle.textContent = t("favoritesTitle");
@@ -1036,6 +1135,26 @@
     }
   }
 
+  function populatePageLanguageOptions(select) {
+    if (!select) {
+      return;
+    }
+    select.replaceChildren();
+    const labels = {
+      en: t("languageEnglish"),
+      zh_CN: t("languageSimplifiedChinese"),
+      zh_TW: t("languageTraditionalChinese"),
+      zh_CN_en: t("languageSimplifiedChineseBilingual"),
+      zh_TW_en: t("languageTraditionalChineseBilingual")
+    };
+    for (const language of SUPPORTED_PAGE_LANGUAGES) {
+      const option = document.createElement("option");
+      option.value = language;
+      option.textContent = labels[language];
+      select.appendChild(option);
+    }
+  }
+
   async function setUiLanguage(language) {
     const nextLanguage = resolveUiLanguage(language);
     if (runtime.state.uiLanguage === nextLanguage) {
@@ -1048,6 +1167,57 @@
     await saveState();
   }
 
+  async function setPageLanguage(language) {
+    const nextLanguage = resolvePageLanguage(language);
+    if (runtime.state.pageLanguage === nextLanguage) {
+      runtime.ui.pageLanguage.value = nextLanguage;
+      return;
+    }
+    runtime.state.pageLanguage = nextLanguage;
+    runtime.ui.pageLanguage.value = nextLanguage;
+    clearNativeTradeItemSearchCache();
+    refreshTradeLocalization();
+    await saveState();
+    reloadTradePageForNativeLocalization();
+  }
+
+  async function setPageTranslationEnabled(enabled) {
+    const nextEnabled = Boolean(enabled);
+    if (runtime.state.pageTranslationEnabled === nextEnabled) {
+      return;
+    }
+    runtime.state.pageTranslationEnabled = nextEnabled;
+    clearNativeTradeItemSearchCache();
+    if (nextEnabled) {
+      startTradeLocalizationObserver();
+    }
+    refreshTradeLocalization();
+    if (!nextEnabled) {
+      runtime.tradeLocalizationObserver?.disconnect();
+      runtime.tradeLocalizationObserver = null;
+    }
+    updatePageTranslationToggleButton();
+    await saveState();
+    reloadTradePageForNativeLocalization();
+  }
+
+  function reloadTradePageForNativeLocalization() {
+    window.location.reload();
+  }
+
+  function clearNativeTradeItemSearchCache() {
+    try {
+      for (const cacheKey of NATIVE_TRADE_CACHE_KEYS) {
+        localStorage.removeItem(cacheKey);
+        localStorage.removeItem(`${cacheKey}-cacheexpiration`);
+      }
+      localStorage.removeItem(NATIVE_TRADE_CACHE_MARKER_KEY);
+      localStorage.removeItem(LEGACY_NATIVE_ITEM_CACHE_MARKER_KEY);
+    } catch (error) {
+      console.debug("[PoE2 Marketwright] unable to clear native item cache", error);
+    }
+  }
+
   function refreshLocalizedUi() {
     if (!runtime.ui.root) {
       return;
@@ -1055,6 +1225,8 @@
     updateStaticUiText();
     populateLanguageOptions(runtime.ui.language);
     runtime.ui.language.value = runtime.state.uiLanguage;
+    populatePageLanguageOptions(runtime.ui.pageLanguage);
+    runtime.ui.pageLanguage.value = runtime.state.pageLanguage;
     const selection = runtime.state.selection;
     populateSelectionOptions(runtime.ui.selection);
     runtime.ui.selection.value = selection;
@@ -1687,11 +1859,20 @@
   }
 
   function getLocalizedDisplayText(record, fallback) {
-    const language = runtime.state.uiLanguage;
+    return getLocalizedDisplayTextForLanguage(record, fallback, runtime.state.uiLanguage);
+  }
+
+  function getLocalizedDisplayTextForLanguage(record, fallback, languageValue) {
+    const language = resolvePageLanguage(languageValue);
     if (language === "en") {
       return String(record?.en || fallback || "");
     }
-    return String(record?.[language] || record?.en || fallback || "");
+    const locale = getMessageLocale(language);
+    const localized = String(record?.[locale] || record?.en || fallback || "");
+    const english = String(record?.en || fallback || "");
+    return language.endsWith("_en") && localized && english && localized !== english
+      ? `${localized} (${english})`
+      : localized;
   }
 
   function getFavoriteItemRecord(name) {
@@ -3638,7 +3819,15 @@
       return fallback || "";
     }
     const prefix = selection.kind === "logical" ? "selectionLogical" : "selectionPage";
-    return t(`${prefix}_${toI18nId(selection.id)}`, [], fallback || selection.id);
+    const english = fallback || selection.id;
+    const locale = getMessageLocale(runtime.state.uiLanguage);
+    return getLocalizedDisplayText(
+      {
+        en: english,
+        [locale]: t(`${prefix}_${toI18nId(selection.id)}`, [], english)
+      },
+      english
+    );
   }
 
   function toI18nId(id) {
@@ -3687,6 +3876,318 @@
       id: value.slice(separatorIndex + 1),
       source: "manual"
     };
+  }
+
+  function initializeTradeLocalization() {
+    const localization = runtime.data?.tradeLocalization;
+    if (!localization || typeof localization !== "object") {
+      return;
+    }
+    runtime.tradeLocalization = localization;
+    runtime.tradeSearchRecords = {
+      items: Array.isArray(localization.search?.items) ? localization.search.items : [],
+      stats: Array.isArray(localization.search?.stats) ? localization.search.stats : [],
+      categories: Array.isArray(localization.search?.categories) ? localization.search.categories : []
+    };
+    runtime.tradeStatTemplates = new Map();
+    runtime.tradeStatsById = new Map();
+    for (const record of runtime.tradeSearchRecords.stats) {
+      const statId = String(record?.id || "").trim();
+      if (statId) {
+        runtime.tradeStatsById.set(statId, record);
+      }
+      const key = normalizeStatKey(record?.en || "");
+      if (!key || !record?.en) {
+        continue;
+      }
+      const existing = runtime.tradeStatTemplates.get(key);
+      if (!existing) {
+        runtime.tradeStatTemplates.set(key, record);
+      } else if (
+        existing.zh_CN !== record.zh_CN ||
+        existing.zh_TW !== record.zh_TW ||
+        existing.en !== record.en
+      ) {
+        runtime.tradeStatTemplates.set(key, null);
+      }
+    }
+    if (isPageTranslationEnabled()) {
+      startTradeLocalizationObserver();
+    }
+    refreshTradeLocalization();
+  }
+
+  function startTradeLocalizationObserver() {
+    if (!runtime.tradeLocalizationObserver && document.documentElement) {
+      runtime.tradeLocalizationObserver = new MutationObserver(scheduleTradeLocalizationRefresh);
+      runtime.tradeLocalizationObserver.observe(document.documentElement, {
+        childList: true,
+        subtree: true,
+        characterData: true,
+        attributes: true,
+        attributeFilter: ["placeholder", "title", "aria-label"]
+      });
+    }
+  }
+
+  function scheduleTradeLocalizationRefresh() {
+    if (runtime.tradeLocalizationTimer) {
+      return;
+    }
+    runtime.tradeLocalizationTimer = window.setTimeout(() => {
+      runtime.tradeLocalizationTimer = null;
+      refreshTradeLocalization();
+    }, 50);
+  }
+
+  function refreshTradeLocalization() {
+    if (!runtime.tradeLocalization || !document.querySelector(TRADE_ROOT_SELECTOR)) {
+      return;
+    }
+    const root = document.querySelector(TRADE_ROOT_SELECTOR);
+    for (const element of getTradeLocalizationElements(root)) {
+      localizeTradeElement(element);
+    }
+    for (const element of root.querySelectorAll("[placeholder], [title], [aria-label]")) {
+      if (element.closest(TRADE_LOCALIZATION_SELECTOR)) {
+        localizeTradeAttributes(element);
+      }
+    }
+  }
+
+  function getTradeLocalizationElements(root) {
+    const elements = new Set(root.querySelectorAll(TRADE_LOCALIZATION_SELECTOR));
+    if (root.matches?.(TRADE_LOCALIZATION_SELECTOR)) {
+      elements.add(root);
+    }
+    return elements;
+  }
+
+  function localizeTradeElement(element) {
+    if (isExcludedTradeLocalizationElement(element)) {
+      return;
+    }
+    const visit = (current) => {
+      if (current.nodeType === 3) {
+        let source = current[TRADE_LOCALIZATION_SOURCE_KEY] ?? current.nodeValue ?? "";
+        current[TRADE_LOCALIZATION_SOURCE_KEY] = source;
+        if (
+          current[TRADE_LOCALIZATION_RENDER_KEY] !== undefined &&
+          current.nodeValue !== current[TRADE_LOCALIZATION_RENDER_KEY]
+        ) {
+          source = current.nodeValue ?? "";
+          current[TRADE_LOCALIZATION_SOURCE_KEY] = source;
+        }
+        const localized = getLocalizedTradeText(source, current.parentElement);
+        if (localized !== current.nodeValue) {
+          current.nodeValue = localized;
+        }
+        current[TRADE_LOCALIZATION_RENDER_KEY] = localized;
+        return;
+      }
+      if (current.nodeType !== 1 || isExcludedTradeLocalizationElement(current)) {
+        return;
+      }
+      if (current.matches?.("[data-field^='stat.']")) {
+        localizeTradeStatElement(current);
+        return;
+      }
+      localizeTradeAttributes(current);
+      for (const child of current.childNodes || []) {
+        visit(child);
+      }
+    };
+    visit(element);
+  }
+
+  function localizeTradeStatElement(element) {
+    if (!isPageTranslationEnabled()) {
+      if (element[TRADE_STAT_SOURCE_HTML_KEY] !== undefined) {
+        element.innerHTML = element[TRADE_STAT_SOURCE_HTML_KEY];
+        delete element[TRADE_STAT_SOURCE_HTML_KEY];
+        delete element[TRADE_STAT_RENDER_KEY];
+      }
+      return;
+    }
+
+    const currentText = (element.innerText || element.textContent || "").replace(/\s+/g, " ").trim();
+    if (currentText !== element[TRADE_STAT_RENDER_KEY]) {
+      element[TRADE_LOCALIZATION_SOURCE_KEY] = currentText;
+      element[TRADE_STAT_SOURCE_HTML_KEY] = element.innerHTML;
+    }
+    const source = element[TRADE_LOCALIZATION_SOURCE_KEY] || currentText;
+    const display = getTradeStatDisplay(source, element);
+    if (!display) {
+      return;
+    }
+
+    const isResultStat = Boolean(element.closest(".search-results, .results, .result, .item"));
+    const rendered = getTradeStatRenderText(display, isResultStat);
+    if (element[TRADE_STAT_RENDER_KEY] === rendered) {
+      return;
+    }
+
+    element.replaceChildren();
+    const localized = document.createElement("span");
+    localized.className = "poe2-marketwright-result-stat-localized";
+    localized.textContent = display.primary;
+    element.appendChild(localized);
+    if (display.english) {
+      const original = document.createElement("span");
+      original.className = isResultStat
+        ? "poe2-marketwright-result-stat-original"
+        : "poe2-marketwright-inline-stat-original";
+      original.textContent = isResultStat ? display.english : ` (${display.english})`;
+      element.appendChild(original);
+    }
+    element[TRADE_STAT_RENDER_KEY] = rendered;
+  }
+
+  function getTradeStatRenderText(display, isResultStat) {
+    if (!display?.english) {
+      return String(display?.primary || "");
+    }
+    return isResultStat
+      ? `${display.primary} ${display.english}`
+      : `${display.primary} (${display.english})`;
+  }
+
+  function localizeTradeAttributes(element) {
+    if (isExcludedTradeLocalizationElement(element)) {
+      return;
+    }
+    for (const attribute of ["placeholder", "title", "aria-label"]) {
+      if (!element.hasAttribute?.(attribute)) {
+        continue;
+      }
+      const sourceKey = `${TRADE_LOCALIZATION_SOURCE_KEY}:${attribute}`;
+      const renderKey = `${TRADE_LOCALIZATION_RENDER_KEY}:${attribute}`;
+      let source = element[sourceKey] ?? element.getAttribute(attribute) ?? "";
+      element[sourceKey] = source;
+      if (element[renderKey] !== undefined && element.getAttribute(attribute) !== element[renderKey]) {
+        source = element.getAttribute(attribute) ?? "";
+        element[sourceKey] = source;
+      }
+      const localized = getLocalizedTradeText(source);
+      if (localized !== element.getAttribute(attribute)) {
+        element.setAttribute(attribute, localized);
+      }
+      element[renderKey] = localized;
+    }
+  }
+
+  function isExcludedTradeLocalizationElement(element) {
+    return !(element instanceof Element) ||
+      Boolean(
+        runtime.ui.root?.contains(element) ||
+          // Search controls come from localized native Trade caches. A DOM
+          // pass here would translate while Vue is filtering and corrupt its
+          // display/search state.
+          element.closest(ITEM_SEARCH_ROOT_SELECTOR) ||
+          element.closest("#trade .search-advanced-pane") ||
+          element.closest(TRADE_LOCALIZATION_EXCLUDED_SELECTOR) ||
+          element.closest(".poe2-marketwright, .poe2-trade2-affix-filter")
+      );
+  }
+
+  function getLocalizedTradeText(value, element = null) {
+    const source = String(value || "");
+    if (!isPageTranslationEnabled()) {
+      return source;
+    }
+    const match = source.match(/^(\s*)(.*?)(\s*)$/s);
+    const leading = match?.[1] || "";
+    const text = match?.[2] || "";
+    const trailing = match?.[3] || "";
+    if (!text || !runtime.tradeLocalization) {
+      return source;
+    }
+    const statDisplay = getTradeStatDisplay(text, element);
+    if (statDisplay) {
+      const bilingual = statDisplay.english ? ` (${statDisplay.english})` : "";
+      return `${leading}${statDisplay.primary}${bilingual}${trailing}`;
+    }
+    const exact = runtime.tradeLocalization.strings?.[text] || runtime.tradeLocalization.clientStrings?.[text];
+    if (exact) {
+      return `${leading}${getLocalizedTradePageText(exact, text, false)}${trailing}`;
+    }
+    const item = runtime.tradeSearchRecords.items?.find((record) => record?.en === text);
+    return item
+      ? `${leading}${getLocalizedTradePageText(item, text, false)}${trailing}`
+      : source;
+  }
+
+  function getTradeStatRecordForElement(element) {
+    const statElement = element?.closest?.("[data-field^='stat.']");
+    const field = String(statElement?.getAttribute?.("data-field") || "");
+    if (!field.startsWith("stat.")) {
+      return null;
+    }
+    return runtime.tradeStatsById.get(field.slice("stat.".length)) || null;
+  }
+
+  function getLocalizedTradePageText(record, fallback, bilingual) {
+    const language = resolvePageLanguage(runtime.state.pageLanguage);
+    if (language === "en") {
+      return String(record?.en || fallback || "");
+    }
+    const locale = getMessageLocale(language);
+    const localized = String(record?.[locale] || record?.en || fallback || "");
+    const english = String(record?.en || fallback || "");
+    return bilingual && language.endsWith("_en") && localized && english && localized !== english
+      ? `${localized} (${english})`
+      : localized;
+  }
+
+  function getTradeStatDisplay(text, element = null) {
+    const localized = getLocalizedTradeStatTemplate(text, getTradeStatRecordForElement(element));
+    if (!localized) {
+      return null;
+    }
+    const language = resolvePageLanguage(runtime.state.pageLanguage);
+    if (language === "en") {
+      return { primary: localized.en, english: null };
+    }
+    const locale = getMessageLocale(language);
+    const primary = String(localized[locale] || localized.en || text);
+    const english = String(localized.en || text);
+    return {
+      primary,
+      english: language.endsWith("_en") && primary !== english ? english : null
+    };
+  }
+
+  function getLocalizedTradeStatTemplate(text, record = null) {
+    const template = record || runtime.tradeStatTemplates.get(normalizeStatKey(text));
+    if (!template) {
+      return null;
+    }
+    const values = String(text).match(NUMBER_RE) || [];
+    let index = 0;
+    const format = (language) => {
+      const target = String(template[language] || template.en || "");
+      return target.replace(/#/g, (placeholder, offset) => {
+        const value = values[index++] || placeholder;
+        return target[offset - 1] === "+" ? value.replace(/^\+/, "") : value;
+      });
+    };
+    const language = resolvePageLanguage(runtime.state.pageLanguage);
+    if (language === "en") {
+      return { en: format("en") };
+    }
+    const locale = getMessageLocale(language);
+    index = 0;
+    const localized = format(locale);
+    index = 0;
+    const english = format("en");
+    return {
+      en: english,
+      [locale]: localized
+    };
+  }
+
+  function isPageTranslationEnabled() {
+    return runtime.state.pageTranslationEnabled !== false;
   }
 
   function bindGlobalListeners() {
@@ -4542,6 +5043,7 @@
     updateFavoritesToggleButton();
     updateLinkFavoritesToggleButton();
     updateCurrencyConversionToggleButton();
+    updatePageTranslationToggleButton();
   }
 
   function updatePobCopyToggleButton() {
@@ -4583,6 +5085,20 @@
     runtime.ui.currencyEnabled.setAttribute("aria-pressed", String(enabled));
     runtime.ui.currencyEnabled.title = enabled ? t("disableCurrencyConversion") : t("enableCurrencyConversion");
     runtime.ui.currencyRefresh.disabled = !enabled;
+  }
+
+  function updatePageTranslationToggleButton() {
+    if (!runtime.ui.pageTranslationEnabled) {
+      return;
+    }
+    const enabled = isPageTranslationEnabled();
+    runtime.ui.pageTranslationEnabled.textContent = enabled ? t("toggleOn") : t("toggleOff");
+    runtime.ui.pageTranslationEnabled.setAttribute("aria-pressed", String(enabled));
+    runtime.ui.pageTranslationEnabled.title = enabled
+      ? t("disableTradePageTranslation")
+      : t("enableTradePageTranslation");
+    runtime.ui.pageLanguage.disabled = !enabled;
+    runtime.ui.pageLanguage.setAttribute("aria-disabled", String(!enabled));
   }
 
   function unhideAllFilteredOptions() {

@@ -78,6 +78,12 @@
   "language": {
     "message": "Language"
   },
+  "tradePageLanguage": {
+    "message": "Trade page language"
+  },
+  "tradePageTranslation": {
+    "message": "Trade page translation"
+  },
   "languageEnglish": {
     "message": "English"
   },
@@ -86,6 +92,18 @@
   },
   "languageTraditionalChinese": {
     "message": "Traditional Chinese"
+  },
+  "languageSimplifiedChineseBilingual": {
+    "message": "Simplified Chinese (English)"
+  },
+  "languageTraditionalChineseBilingual": {
+    "message": "Traditional Chinese (English)"
+  },
+  "enableTradePageTranslation": {
+    "message": "Enable Trade page translation"
+  },
+  "disableTradePageTranslation": {
+    "message": "Disable Trade page translation"
   },
   "favoriteTooltipItem": {
     "message": "Item"

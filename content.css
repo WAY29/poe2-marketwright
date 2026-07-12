@@ -1534,6 +1534,18 @@
   color: #efb6ad;
 }
 
+.poe2-marketwright-result-stat-original {
+  display: block;
+  margin-top: 2px;
+  color: #83838d;
+  font-size: 12px;
+  line-height: 1.25;
+}
+
+.poe2-marketwright-inline-stat-original {
+  color: inherit;
+}
+
 @keyframes poe2-marketwright-currency-spin {
   to {
     transform: rotate(360deg);

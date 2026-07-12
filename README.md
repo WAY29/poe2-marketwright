@@ -7,7 +7,9 @@ PoE2 Marketwright is a broader Path of Exile 2 market extension workspace. The c
 ## What it does
 
 - Adds an on-page toggle panel for stat filtering, PoB copy, and C/D price conversion.
-- Provides a global English, Simplified Chinese, or Traditional Chinese display setting for extension controls and saved favorites.
+- Provides an English, Simplified Chinese, or Traditional Chinese display setting for extension controls and saved favorites.
+- Provides a separate Trade page language setting with English, Simplified Chinese, Traditional Chinese, and Chinese-first bilingual modes. It localizes supported native Trade UI and result fields while keeping unknown text in English.
+- Lets item, category, and stat selectors resolve English, Simplified Chinese, and Traditional Chinese aliases to the same native Trade option.
 - Separates stat filtering and PoB Copy Button controls with independent toggles.
 - Auto-detects the current category or item name from the trade2 filters.
 - Filters visible affix suggestion lists using the scraped PoE2DB data.
@@ -48,8 +50,24 @@ uv run --project scripts python scripts/build_extension_data.py --split-dir buil
 
 - `https://poe2db.tw/us/Modifiers`
 - category pages such as `https://poe2db.tw/us/Amulets#ModifiersCalc`
-- official item/stat naming from `https://www.pathofexile.com/api/trade2/data/items` and `https://www.pathofexile.com/api/trade2/data/stats` is compatible with the generated canonical patterns
+- official international, China, and Taiwan Trade data is read at build time from each region's `items`, `stats`, `static`, and `filters` endpoints; stable IDs are used to build the localized display bundle
+- `https://www.pathofexile.com/api/trade2/data/items`
+- `https://www.pathofexile.com/api/trade2/data/stats`
+- `https://www.pathofexile.com/api/trade2/data/static`
+- `https://www.pathofexile.com/api/trade2/data/filters`
+- regional equivalents: `https://poe.game.qq.com/api/trade2/data/*` and `https://pathofexile.tw/api/trade2/data/*`
+- official PoE2DB item category pages, including `https://poe2db.tw/us/Stackable_Currency`, provide slug-verified names for currencies, gems, relics, and other Trade items
+- official game-client fallback UI strings: `https://github.com/LocalIdentity/poe2-data/tree/main/data`
 - E/C/D conversion rates come from `https://api.poe2scout.com/poe2/Leagues/{league}/ReferenceCurrencies`
+
+## Localization coverage
+
+The current generated Trade localization bundle covers:
+
+- item display names: Simplified Chinese `2198/2200` (99.91%), Traditional Chinese `2200/2200` (100%)
+- Trade stat templates: Simplified Chinese `8057/8141` (98.97%), Traditional Chinese `8059/8141` (98.99%)
+
+These counts cover item names and stat templates with a stable denominator. Native Trade UI strings are sourced dynamically from regional Trade APIs and do not have a fixed total.
 
 ## Acknowledgements
 
