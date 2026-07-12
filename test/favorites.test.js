@@ -49,10 +49,10 @@ test("builds a saved query from trade mod hashes", async () => {
   assert.deepStrictEqual(result["favorite"]["category"], "weapon.bow");
   assert.deepStrictEqual(result["favorite"]["itemType"], "Bow");
   assert.equal(result["favorite"]["approximate"], true);
-  assert.deepStrictEqual(result["favorite"]["stats"], [{"id": "explicit.stat_3299347043", "value": {"min": 60, "max": 60}}, {"id": "explicit.stat_709508406", "value": {"min": 38, "max": 38}}, {"id": "desecrated.stat_55876295", "value": {"min": 7, "max": 7}}, {"id": "fractured.stat_3261801346", "value": {"min": 20, "max": 20}}, {"id": "crafted.stat_491899612"}]);
-  assert.deepStrictEqual((result["favorite"]["mods"]).length, 6);
-  assert.deepStrictEqual(result["favorite"]["mods"], [{"id": "explicit.stat_3299347043", "text": "+60 to maximum Life", "source": "explicit"}, {"id": "explicit.stat_709508406", "text": "Adds 12 to 24 Fire Damage", "source": "explicit"}, {"id": "explicit.stat_709508406", "text": "Adds 14 to 26 Fire Damage", "source": "explicit"}, {"id": "desecrated.stat_55876295", "text": "Leeches 7% of Physical Damage as Life", "source": "desecrated"}, {"id": "fractured.stat_3261801346", "text": "+20 to Dexterity", "source": "fractured"}, {"id": "crafted.stat_491899612", "text": "Cannot be Shocked", "source": "crafted"}]);
-  assert.deepStrictEqual(result["payload"], {"query": {"status": {"option": "available"}, "type": "Rider Bow", "stats": [{"type": "and", "filters": [{"id": "explicit.stat_3299347043", "value": {"min": 60, "max": 60}, "disabled": false}, {"id": "explicit.stat_709508406", "value": {"min": 38, "max": 38}, "disabled": false}, {"id": "desecrated.stat_55876295", "value": {"min": 7, "max": 7}, "disabled": false}, {"id": "fractured.stat_3261801346", "value": {"min": 20, "max": 20}, "disabled": false}, {"id": "crafted.stat_491899612", "disabled": false}]}], "filters": {"type_filters": {"filters": {"rarity": {"option": "rare"}, "category": {"option": "weapon.bow"}}}, "misc_filters": {"filters": {"fractured_item": {"option": "true"}, "desecrated": {"option": "true"}}}}}, "sort": {"price": "asc"}});
+  assert.deepStrictEqual(result["favorite"]["stats"], [{"id": "explicit.stat_3299347043", "value": {"min": 60, "max": 60}}, {"id": "explicit.stat_709508406", "value": {"min": 38, "max": 38}}, {"id": "desecrated.stat_55876295", "value": {"min": 7, "max": 7}}, {"id": "fractured.stat_3261801346", "value": {"min": 20, "max": 20}}, {"id": "crafted.stat_491899612"}, {"id": "implicit.stat_0000000001", "value": {"min": 30, "max": 30}}]);
+  assert.deepStrictEqual((result["favorite"]["mods"]).length, 7);
+  assert.deepStrictEqual(result["favorite"]["mods"], [{"id": "explicit.stat_3299347043", "text": "+60 to maximum Life", "source": "explicit"}, {"id": "explicit.stat_709508406", "text": "Adds 12 to 24 Fire Damage", "source": "explicit"}, {"id": "explicit.stat_709508406", "text": "Adds 14 to 26 Fire Damage", "source": "explicit"}, {"id": "desecrated.stat_55876295", "text": "Leeches 7% of Physical Damage as Life", "source": "desecrated"}, {"id": "fractured.stat_3261801346", "text": "+20 to Dexterity", "source": "fractured"}, {"id": "crafted.stat_491899612", "text": "Cannot be Shocked", "source": "crafted"}, {"id": "implicit.stat_0000000001", "text": "+30 to Spirit", "source": "implicit"}]);
+  assert.deepStrictEqual(result["payload"], {"query": {"status": {"option": "available"}, "type": "Rider Bow", "stats": [{"type": "and", "filters": [{"id": "explicit.stat_3299347043", "value": {"min": 60, "max": 60}, "disabled": false}, {"id": "explicit.stat_709508406", "value": {"min": 38, "max": 38}, "disabled": false}, {"id": "desecrated.stat_55876295", "value": {"min": 7, "max": 7}, "disabled": false}, {"id": "fractured.stat_3261801346", "value": {"min": 20, "max": 20}, "disabled": false}, {"id": "crafted.stat_491899612", "disabled": false}, {"id": "implicit.stat_0000000001", "value": {"min": 30, "max": 30}, "disabled": false}]}], "filters": {"type_filters": {"filters": {"rarity": {"option": "rare"}, "category": {"option": "weapon.bow"}}}, "misc_filters": {"filters": {"fractured_item": {"option": "true"}, "desecrated": {"option": "true"}}}}}, "sort": {"price": "asc"}});
 });
 
 test("uses base name and category instead of the random item name", async () => {
@@ -83,6 +83,96 @@ test("uses base name and category instead of the random item name", async () => 
     )
   });
   assert.deepStrictEqual(result, {"baseName": "Fur Plate", "itemType": "Body Armour", "queryName": null, "queryType": "Fur Plate", "category": "armour.chest", "league": "HC Dawn"});
+});
+
+test("preserves implicit and special-source stats in saved favorite searches", async () => {
+  const sandbox = { console };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+
+  const tools = sandbox.Poe2MarketwrightFavorites.createFavoriteTools();
+  const favorite = tools.createFavoriteRecord({
+    rarity: "Rare",
+    name: "Dawn Veil",
+    typeLine: "Rider Bow",
+    implicitMods: [{ description: "+30 to Spirit", hash: "stat.implicit.stat_3917489142" }],
+    enchantMods: [{ description: "+20 to Dexterity", hash: "stat.enchant.stat_3261801346" }],
+    runeMods: [{ description: "15% increased Armour, Evasion and Energy Shield", hash: "stat.rune.stat_3523867985" }],
+    explicitMods: [
+      { description: "25% chance to Avoid Resolve loss from Enemy Hits", hash: "stat.sanctum.stat_2878762585" },
+      { description: "Grants Skill: Level 12 Mana Drain", hash: "stat.skill.mana_drain" }
+    ]
+  }, "Runes of Aldur", {
+    baseName: "Rider Bow",
+    category: "weapon.bow",
+    itemType: "Bow"
+  }, 123);
+  const payload = tools.createTradeSearchPayload(favorite);
+  const result = structuredClone({ stats: favorite.stats, mods: favorite.mods, payload });
+
+  assert.deepStrictEqual(result.stats, [{"id": "implicit.stat_3917489142", "value": {"min": 30, "max": 30}}, {"id": "enchant.stat_3261801346", "value": {"min": 20, "max": 20}}, {"id": "rune.stat_3523867985", "value": {"min": 15, "max": 15}}, {"id": "sanctum.stat_2878762585", "value": {"min": 25, "max": 25}}, {"id": "skill.mana_drain", "value": {"min": 12, "max": 12}}]);
+  assert.deepStrictEqual(result.mods, [{"id": "implicit.stat_3917489142", "text": "+30 to Spirit", "source": "implicit"}, {"id": "enchant.stat_3261801346", "text": "+20 to Dexterity", "source": "enchant"}, {"id": "rune.stat_3523867985", "text": "15% increased Armour, Evasion and Energy Shield", "source": "rune"}, {"id": "sanctum.stat_2878762585", "text": "25% chance to Avoid Resolve loss from Enemy Hits", "source": "sanctum"}, {"id": "skill.mana_drain", "text": "Grants Skill: Level 12 Mana Drain", "source": "skill"}]);
+  assert.deepStrictEqual(result.payload, {"query": {"status": {"option": "available"}, "type": "Rider Bow", "stats": [{"type": "and", "filters": [{"id": "implicit.stat_3917489142", "value": {"min": 30, "max": 30}, "disabled": false}, {"id": "enchant.stat_3261801346", "value": {"min": 20, "max": 20}, "disabled": false}, {"id": "rune.stat_3523867985", "value": {"min": 15, "max": 15}, "disabled": false}, {"id": "sanctum.stat_2878762585", "value": {"min": 25, "max": 25}, "disabled": false}, {"id": "skill.mana_drain", "value": {"min": 12, "max": 12}, "disabled": false}]}], "filters": {"type_filters": {"filters": {"rarity": {"option": "rare"}, "category": {"option": "weapon.bow"}}}}}, "sort": {"price": "asc"}});
+});
+
+test("reads rune stats from official extended hashes", async () => {
+  const sandbox = { console };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+
+  const tools = sandbox.Poe2MarketwrightFavorites.createFavoriteTools();
+  const favorite = tools.createFavoriteRecord({
+    rarity: "Magic",
+    typeLine: "Ornate Greaves of the Kiln",
+    runeMods: [
+      "18% increased [Armour|Armour], [Evasion|Evasion] and [EnergyShield|Energy Shield]",
+      "[ShamanOnlyMods|Bonded]: +20 to maximum Life",
+      "[ShamanOnlyMods|Bonded]: +20 to maximum Mana"
+    ],
+    explicitMods: [{ description: "20% increased Armour, Evasion and Energy Shield", hash: "stat.explicit.stat_3523867985" }],
+    extended: {
+      hashes: {
+        rune: [
+          ["rune.stat_3523867985", null],
+          ["rune.stat_2280525771", null],
+          ["rune.stat_2926029365", null]
+        ]
+      }
+    }
+  }, "Runes of Aldur", {
+    baseName: "Ornate Greaves",
+    category: "armour.boots",
+    itemType: "Boots"
+  }, 123);
+  const payload = tools.createTradeSearchPayload(favorite);
+  const result = structuredClone({ mods: favorite.mods, stats: favorite.stats, filters: payload.query.stats[0].filters });
+
+  assert.deepStrictEqual(result, {"mods": [{"id": "rune.stat_3523867985", "text": "18% increased Armour, Evasion and Energy Shield", "source": "rune"}, {"id": "rune.stat_2280525771", "text": "Bonded: +20 to maximum Life", "source": "rune"}, {"id": "rune.stat_2926029365", "text": "Bonded: +20 to maximum Mana", "source": "rune"}, {"id": "explicit.stat_3523867985", "text": "20% increased Armour, Evasion and Energy Shield", "source": "explicit"}], "stats": [{"id": "rune.stat_3523867985", "value": {"min": 18, "max": 18}}, {"id": "rune.stat_2280525771", "value": {"min": 20, "max": 20}}, {"id": "rune.stat_2926029365", "value": {"min": 20, "max": 20}}, {"id": "explicit.stat_3523867985", "value": {"min": 20, "max": 20}}], "filters": [{"id": "rune.stat_3523867985", "value": {"min": 18, "max": 18}, "disabled": false}, {"id": "rune.stat_2280525771", "value": {"min": 20, "max": 20}, "disabled": false}, {"id": "rune.stat_2926029365", "value": {"min": 20, "max": 20}, "disabled": false}, {"id": "explicit.stat_3523867985", "value": {"min": 20, "max": 20}, "disabled": false}]});
+});
+
+test("reads granted skills from official extended hashes", async () => {
+  const sandbox = { console };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+
+  const tools = sandbox.Poe2MarketwrightFavorites.createFavoriteTools();
+  const favorite = tools.createFavoriteRecord({
+    rarity: "Rare",
+    typeLine: "Shrine Sceptre",
+    grantedSkills: [{ name: "Grants Skill", values: [["Level 14 Purity of Fire", 25]] }],
+    extended: { hashes: { skill: [["skill.purity_of_fire", null]] } }
+  }, "Runes of Aldur", {
+    baseName: "Shrine Sceptre",
+    category: "weapon.sceptre",
+    itemType: "Sceptre"
+  }, 123);
+  const payload = tools.createTradeSearchPayload(favorite);
+  const result = structuredClone({ mods: favorite.mods, stats: favorite.stats, filters: payload.query.stats[0].filters });
+
+  assert.deepStrictEqual(result, {"mods": [{"id": "skill.purity_of_fire", "text": "Grants Skill: Level 14 Purity of Fire", "source": "skill"}], "stats": [{"id": "skill.purity_of_fire", "value": {"min": 14, "max": 14}}], "filters": [{"id": "skill.purity_of_fire", "value": {"min": 14, "max": 14}, "disabled": false}]});
 });
 
 test("combines special source values into normal stat without affix count pseudos", async () => {

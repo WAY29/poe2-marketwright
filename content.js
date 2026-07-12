@@ -33,7 +33,17 @@
   const ROOT_ID = "poe2-trade2-affix-filter-root";
   const COLLAPSED_PANEL_SIZE = 36;
   const HIDDEN_CLASS = "poe2-trade2-affix-filter-hidden";
-  const FAVORITE_SPECIAL_MODIFIER_SOURCES = new Set(["crafted", "desecrated", "fractured", "enchant", "augment", "implicit"]);
+  const FAVORITE_SPECIAL_MODIFIER_SOURCES = new Set([
+    "crafted",
+    "desecrated",
+    "enchant",
+    "fractured",
+    "implicit",
+    "rune",
+    "sanctum",
+    "skill",
+    "augment"
+  ]);
   const BRIDGE_SCRIPT_ID = "poe2-marketwright-page-bridge";
   const BRIDGE_SOURCE = "poe2-marketwright";
   const BRIDGE_UPDATE_TYPE = "POE2_MARKETWRIGHT_UPDATE";
@@ -2019,9 +2029,12 @@
 
   function getCompactFavoriteModifierPresentation(modifier) {
     const sourceKey = String(modifier?.source || "").trim().toLowerCase();
+    const displaySourceKey = sourceKey === "rune" ? "augment" : sourceKey;
     return {
       text: String(modifier?.text || ""),
-      source: FAVORITE_SPECIAL_MODIFIER_SOURCES.has(sourceKey) ? { key: sourceKey, label: sourceKey.toUpperCase() } : null
+      source: FAVORITE_SPECIAL_MODIFIER_SOURCES.has(sourceKey)
+        ? { key: displaySourceKey, label: displaySourceKey.toUpperCase() }
+        : null
     };
   }
 

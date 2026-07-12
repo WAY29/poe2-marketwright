@@ -384,6 +384,52 @@ test("compact item favorite tooltip includes context and every modifier", async 
   assert.deepStrictEqual(result, {"stats": [{"text": "+60 to maximum Life", "source": null}, {"text": "40% increased Physical Damage", "source": {"key": "desecrated", "label": "DESECRATED"}}], "tooltipGroups": [{"label": "Item", "hideLabel": true, "values": [{"text": "Storm Ward", "source": null, "heading": true}, {"text": "Base type: Rider Bow", "source": null}, {"text": "Category: Bow", "source": null}, {"text": "Rarity: RARE", "source": null}]}, {"label": "Modifiers", "values": [{"text": "+60 to maximum Life", "source": null}, {"text": "40% increased Physical Damage", "source": {"key": "desecrated", "label": "DESECRATED"}}]}]});
 });
 
+test("item favorite views label rune sanctum and skill modifiers", async () => {
+  const compactBootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let compactSource = fs.readFileSync("content.js", "utf8").replace(compactBootstrapCall, "");
+  compactSource = compactSource.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getCompactFavoritePresentation };\n})();"
+  );
+  const compactSandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console
+  };
+  vm.runInNewContext(compactSource, compactSandbox, { filename: "content.js" });
+
+  let fullSource = fs.readFileSync("favorites-panel.js", "utf8");
+  fullSource = fullSource.replace("  bindUi();\n  bootstrap();", "");
+  fullSource = fullSource.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getFavoriteTooltipLink };\n})();"
+  );
+  const fullSandbox = {
+    window: {},
+    document: { querySelector() { return null; } },
+    location: { search: "" },
+    URLSearchParams,
+    console
+  };
+  vm.runInNewContext(fullSource, fullSandbox, { filename: "favorites-panel.js" });
+
+  const favorite = {
+    mods: [
+      { text: "15% increased Armour", source: "rune" },
+      { text: "25% chance to Avoid Resolve loss", source: "sanctum" },
+      { text: "Grants Skill: Level 12 Mana Drain", source: "skill" }
+    ]
+  };
+  const compact = structuredClone(compactSandbox.window.__testHooks.getCompactFavoritePresentation(favorite).stats);
+  const fullPresentation = fullSandbox.window.__testHooks.getFavoriteTooltipLink(favorite);
+  const full = structuredClone(fullPresentation.filterGroups.find((group) => group.label === "Modifiers").values);
+
+  const expected = [{"text": "15% increased Armour", "source": {"key": "augment", "label": "AUGMENT"}}, {"text": "25% chance to Avoid Resolve loss", "source": {"key": "sanctum", "label": "SANCTUM"}}, {"text": "Grants Skill: Level 12 Mana Drain", "source": {"key": "skill", "label": "SKILL"}}];
+  assert.deepStrictEqual(compact, expected);
+  assert.deepStrictEqual(full, expected);
+});
+
 test("full view restores search focus and selection after filter render", async () => {
   let source = fs.readFileSync("favorites-panel.js", "utf8");
   source = source.replace("  bindUi();\n  bootstrap();", "");

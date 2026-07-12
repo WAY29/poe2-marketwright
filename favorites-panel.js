@@ -64,7 +64,17 @@
   const LINK_FAVORITE_TOOLTIP_SHOW_DELAY = 420;
   const LINK_FAVORITE_TOOLTIP_HIDE_DELAY = 180;
   const LINK_FAVORITE_TOOLTIP_DISMISS_DELAY = 100;
-  const FAVORITE_SPECIAL_MODIFIER_SOURCES = new Set(["crafted", "desecrated", "fractured", "enchant", "augment", "implicit"]);
+  const FAVORITE_SPECIAL_MODIFIER_SOURCES = new Set([
+    "crafted",
+    "desecrated",
+    "enchant",
+    "fractured",
+    "implicit",
+    "rune",
+    "sanctum",
+    "skill",
+    "augment"
+  ]);
   const FAVORITES_PANEL_DRAG_TYPE = "application/x-poe2-marketwright-favorite-drag";
 
   const ui = {
@@ -249,9 +259,12 @@
 
   function getFavoriteModifierPresentation(modifier) {
     const sourceKey = String(modifier?.source || "").trim().toLowerCase();
+    const displaySourceKey = sourceKey === "rune" ? "augment" : sourceKey;
     return {
       text: String(modifier?.text || ""),
-      source: FAVORITE_SPECIAL_MODIFIER_SOURCES.has(sourceKey) ? { key: sourceKey, label: sourceKey.toUpperCase() } : null
+      source: FAVORITE_SPECIAL_MODIFIER_SOURCES.has(sourceKey)
+        ? { key: displaySourceKey, label: displaySourceKey.toUpperCase() }
+        : null
     };
   }
 

@@ -358,6 +358,10 @@ h1 {
   background: #4a4747;
 }
 
+.favorites-panel-link-stat-source-skill {
+  background: #6b3b92;
+}
+
 .favorites-panel-link-stat-source-implicit {
   background: #827c11;
 }

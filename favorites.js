@@ -4,7 +4,18 @@
   const PROCESSED_ATTR = "data-poe2-marketwright-favorite";
   const MESSAGE_SOURCE = "poe2-marketwright-favorites";
   const ENGLISH_ORIGINS = new Set(["https://pathofexile.com", "https://www.pathofexile.com"]);
-  const SOURCE_SETS = ["explicitMods", "fracturedMods", "craftedMods", "desecratedMods"];
+  const SUPPORTED_STAT_SOURCES = new Set([
+    "explicit",
+    "implicit",
+    "fractured",
+    "crafted",
+    "enchant",
+    "rune",
+    "desecrated",
+    "sanctum",
+    "skill"
+  ]);
+  const COMBINED_STAT_SOURCES = new Set(["fractured", "desecrated"]);
   const NUMBER_RE = /-?\d+(?:\.\d+)?/g;
   const LINK_FAVORITES_VERSION = 2;
   const TRADE_SEARCH_ORIGINS = new Set(["https://pathofexile.com", "https://www.pathofexile.com"]);
@@ -18,6 +29,44 @@
     removed: "Removed",
     error: "Unable to save"
   };
+
+  function getExtendedModifierHash(item, sourceKey, index) {
+    const source = String(sourceKey || "").replace(/Mods$/, "").toLowerCase();
+    const hashes = item?.extended?.hashes?.[source];
+    if (!Array.isArray(hashes)) {
+      return null;
+    }
+    const indexedHash = hashes.find((entry) => Array.isArray(entry?.[1]) && entry[1].includes(index))?.[0];
+    return indexedHash || hashes[index]?.[0] || null;
+  }
+
+  function getItemModifiers(item) {
+    const modifiers = [];
+    for (const [sourceKey, sourceMods] of Object.entries(item || {})) {
+      if (!sourceKey.endsWith("Mods") || !Array.isArray(sourceMods)) {
+        continue;
+      }
+      sourceMods.forEach((modifier, index) => {
+        modifiers.push({
+          hash: modifier?.hash || getExtendedModifierHash(item, sourceKey, index),
+          description: typeof modifier === "string" ? modifier : modifier?.description
+        });
+      });
+    }
+    if (!Array.isArray(item?.skillMods)) {
+      (Array.isArray(item?.grantedSkills) ? item.grantedSkills : []).forEach((skill, index) => {
+        const values = (Array.isArray(skill?.values) ? skill.values : [])
+          .map((value) => Array.isArray(value) ? value[0] : value)
+          .map((value) => String(value || "").trim())
+          .filter(Boolean);
+        modifiers.push({
+          hash: getExtendedModifierHash(item, "skillMods", index),
+          description: [String(skill?.name || "").trim(), ...values].filter(Boolean).join(": ")
+        });
+      });
+    }
+    return modifiers;
+  }
 
   function createFavoriteTools() {
     const createFavoriteError = (code, message, details = {}) => {
@@ -39,9 +88,13 @@
     };
 
     const getStatId = (hash) => {
-      const value = String(hash || "").trim();
-      const match = value.match(/^stat\.(explicit|fractured|crafted|desecrated)\.(.+)$/i);
-      return match ? `${match[1].toLowerCase()}.${match[2]}` : null;
+      const parts = String(hash || "").trim().split(".");
+      if (parts[0]?.toLowerCase() === "stat") {
+        parts.shift();
+      }
+      const source = parts.shift()?.toLowerCase();
+      const statId = parts.join(".");
+      return source && statId && SUPPORTED_STAT_SOURCES.has(source) ? `${source}.${statId}` : null;
     };
 
     const getStatValue = (description) => {
@@ -87,48 +140,41 @@
       const mods = [];
       let approximate = false;
 
-      for (const sourceKey of SOURCE_SETS) {
-        const sourceMods = item?.[sourceKey];
-        if (!Array.isArray(sourceMods)) {
+      for (const mod of getItemModifiers(item)) {
+        const id = getStatId(mod?.hash);
+        if (!id) {
           continue;
         }
-        for (const mod of sourceMods) {
-          const id = getStatId(mod?.hash);
-          if (!id) {
-            // The trade API mixes other special-source modifiers into explicitMods. They are outside this feature's scope.
-            continue;
-          }
-          const text = stripTradeMarkup(mod?.description);
-          if (!text) {
-            throw createFavoriteError(
-              "missing_modifier_text",
-              "Favorite contains a supported modifier without display text",
-              { id, hash: mod?.hash || null }
-            );
-          }
-
-          const next = getStatValue(text);
-          const separatorIndex = id.indexOf(".");
-          const source = id.slice(0, separatorIndex);
-          const baseStatId = id.slice(separatorIndex + 1);
-          mods.push({ id, text, source });
-          if (source !== "explicit" && next.value != null) {
-            const total = specialStatTotals.get(baseStatId) || 0;
-            specialStatTotals.set(baseStatId, normalizeNumber(total + next.value));
-          }
-          const current = groupedStats.get(id);
-          if (!current) {
-            groupedStats.set(id, { id, value: next.value });
-            approximate ||= next.approximate;
-            continue;
-          }
-
-          if (current.value != null && next.value != null) {
-            current.value = normalizeNumber(current.value + next.value);
-            approximate = true;
-          }
-          // A repeated presence-only stat is already fully represented by one condition.
+        const text = stripTradeMarkup(mod?.description);
+        if (!text) {
+          throw createFavoriteError(
+            "missing_modifier_text",
+            "Favorite contains a supported modifier without display text",
+            { id, hash: mod?.hash || null }
+          );
         }
+
+        const next = getStatValue(text);
+        const separatorIndex = id.indexOf(".");
+        const source = id.slice(0, separatorIndex);
+        const baseStatId = id.slice(separatorIndex + 1);
+        mods.push({ id, text, source });
+        if (COMBINED_STAT_SOURCES.has(source) && next.value != null) {
+          const total = specialStatTotals.get(baseStatId) || 0;
+          specialStatTotals.set(baseStatId, normalizeNumber(total + next.value));
+        }
+        const current = groupedStats.get(id);
+        if (!current) {
+          groupedStats.set(id, { id, value: next.value });
+          approximate ||= next.approximate;
+          continue;
+        }
+
+        if (current.value != null && next.value != null) {
+          current.value = normalizeNumber(current.value + next.value);
+          approximate = true;
+        }
+        // A repeated presence-only stat is already fully represented by one condition.
       }
 
       // Trade's ordinary stat filter matches the total that includes source-specific variants.
@@ -142,7 +188,7 @@
       if (!groupedStats.size) {
         throw createFavoriteError(
           "no_supported_modifiers",
-          "Favorite requires at least one explicit, fractured, crafted, or desecrated trade modifier"
+          "Favorite requires at least one supported trade modifier"
         );
       }
 
@@ -820,9 +866,14 @@
         return null;
       }
       const modifiers = {};
-      for (const sourceKey of SOURCE_SETS) {
-        const sourceMods = Array.isArray(item[sourceKey]) ? item[sourceKey] : [];
-        modifiers[sourceKey] = sourceMods.map((mod) => mod?.hash || null);
+      for (const [sourceKey, sourceMods] of Object.entries(item)) {
+        if (!sourceKey.endsWith("Mods") || !Array.isArray(sourceMods)) {
+          continue;
+        }
+        modifiers[sourceKey] = sourceMods.map((mod, index) => mod?.hash || getExtendedModifierHash(item, sourceKey, index));
+      }
+      if (!Array.isArray(item.skillMods) && Array.isArray(item.grantedSkills)) {
+        modifiers.grantedSkills = item.grantedSkills.map((_, index) => getExtendedModifierHash(item, "skillMods", index));
       }
       return {
         rarity: item.rarity || null,
