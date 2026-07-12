@@ -438,7 +438,6 @@ test("Trade filter terminology overrides translate headings and help copy", () =
     equipment: hooks.getLocalizedTradeText("Equipment Filters"),
     stat: hooks.getLocalizedTradeText("Stat Filters"),
     weighted: hooks.getLocalizedTradeText("WEIGHTED SUM"),
-    weightedV2: hooks.getLocalizedTradeText("WEIGHTED SUM V2"),
     runicWard: hooks.getLocalizedTradeText("Runic Ward"),
     equipmentTip: hooks.getLocalizedTradeText("Includes base value, local modifiers, and maximum quality"),
     rarityTip: hooks.getLocalizedTradeText("Increased Item Rarity"),
@@ -453,7 +452,6 @@ test("Trade filter terminology overrides translate headings and help copy", () =
     equipment: "裝備篩選器",
     stat: "屬性篩選器",
     weighted: "加權總和",
-    weightedV2: "加權總和 V2",
     runicWard: "符文保護",
     equipmentTip: "包含基礎數值、本地詞綴與最高品質",
     rarityTip: "增加物品稀有度",
@@ -603,16 +601,6 @@ test("Trade tooltip copy is localized outside the Trade application root", () =>
       this.childNodes = children;
     }
 
-    get textContent() {
-      return this.childNodes
-        .map((child) => child.nodeType === 3 ? child.nodeValue : child.textContent)
-        .join("");
-    }
-
-    set textContent(value) {
-      this.childNodes = [{ nodeType: 3, nodeValue: value }];
-    }
-
     closest() {
       return null;
     }
@@ -635,23 +623,10 @@ test("Trade tooltip copy is localized outside the Trade application root", () =>
     nodeType: 3,
     nodeValue: "Count each stat that meets the `min` and `max` (if provided, otherwise existence) requirements.\nUse the group's `min` and `max` to filter items based on the count of matching stats."
   };
-  const splitWeightedTooltip = new FakeElement([
-    {
-      nodeType: 3,
-      nodeValue: "Each stat value that meets the `min` and `max` (if provided, otherwise existence) requirements will be multiplied by the "
-    },
-    new FakeElement([
-      {
-        nodeType: 3,
-        nodeValue: "`weight` before being summed together.\nUse the group's `min` and `max` to filter items based on the total summed value."
-      }
-    ])
-  ]);
   const body = new FakeElement([
     new FakeElement([tooltipText]),
     new FakeElement([andTooltipText]),
-    new FakeElement([countTooltipText]),
-    splitWeightedTooltip
+    new FakeElement([countTooltipText])
   ]);
   const sandbox = {
     Element: FakeElement,
@@ -674,10 +649,6 @@ test("Trade tooltip copy is localized outside the Trade application root", () =>
   assert.equal(
     countTooltipText.nodeValue,
     "計算每項符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性。\n使用此群組的 `min` 與 `max`，依匹配屬性數量篩選物品。"
-  );
-  assert.equal(
-    splitWeightedTooltip.textContent,
-    "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
   );
 });
 

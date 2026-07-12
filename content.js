@@ -4239,40 +4239,11 @@
       ) {
         return;
       }
-      if (current !== document.body && localizeTradeTooltipCompositeElement(current)) {
-        return;
-      }
       for (const child of current.childNodes || []) {
         visit(child);
       }
     };
     visit(document.body);
-  }
-
-  function localizeTradeTooltipCompositeElement(element) {
-    const children = element.childNodes || [];
-    if (children.length < 2) {
-      return false;
-    }
-    let source = element[TRADE_LOCALIZATION_SOURCE_KEY] ?? element.textContent ?? "";
-    element[TRADE_LOCALIZATION_SOURCE_KEY] = source;
-    if (
-      element[TRADE_LOCALIZATION_RENDER_KEY] !== undefined &&
-      element.textContent !== element[TRADE_LOCALIZATION_RENDER_KEY]
-    ) {
-      source = element.textContent ?? "";
-      element[TRADE_LOCALIZATION_SOURCE_KEY] = source;
-    }
-    if (!isTradeTooltipCopy(source)) {
-      return false;
-    }
-    const localized = getLocalizedTradeText(source);
-    if (localized === source) {
-      return false;
-    }
-    element.textContent = localized;
-    element[TRADE_LOCALIZATION_RENDER_KEY] = localized;
-    return true;
   }
 
   function isTradeTooltipCopy(value) {
@@ -4442,21 +4413,7 @@
   }
 
   function getTradeTermLocalizationOverride(value) {
-    const normalized = normalizeLookupText(value);
-    const exact = TRADE_TERM_LOCALIZATION_OVERRIDES[normalized];
-    if (exact) {
-      return exact;
-    }
-    const weightedSumVersion = normalized.match(/^weighted sum (v\d+)$/);
-    if (!weightedSumVersion) {
-      return null;
-    }
-    const version = weightedSumVersion[1].toUpperCase();
-    return {
-      en: `WEIGHTED SUM ${version}`,
-      zh_CN: `加权总和 ${version}`,
-      zh_TW: `加權總和 ${version}`
-    };
+    return TRADE_TERM_LOCALIZATION_OVERRIDES[normalizeLookupText(value)] || null;
   }
 
   function getTradeStatRecordForElement(element) {
