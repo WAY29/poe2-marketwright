@@ -72,6 +72,11 @@
     miscellaneous: { en: "Miscellaneous", zh_CN: "其他", zh_TW: "其他" },
     "stat filters": { en: "Stat Filters", zh_CN: "属性筛选器", zh_TW: "屬性篩選器" },
     "weighted sum": { en: "WEIGHTED SUM", zh_CN: "加权总和", zh_TW: "加權總和" },
+    "crucible passive tree path": {
+      en: "Crucible Passive Tree Path",
+      zh_CN: "熔炉被动技能树路径",
+      zh_TW: "熔爐被動技能樹路徑"
+    },
     "runic ward": { en: "Runic Ward", zh_CN: "符文结界", zh_TW: "符文保護" },
     "includes base value, local modifiers, and maximum quality": {
       en: "Includes base value, local modifiers, and maximum quality",
@@ -103,6 +108,11 @@
       en: "Count each stat that meets the `min` and `max` (if provided, otherwise existence) requirements. Use the group's `min` and `max` to filter items based on the count of matching stats.",
       zh_CN: "计算每项符合 `min` 与 `max`（若未设置，则检查是否存在）条件的属性。\n使用该组的 `min` 与 `max`，按匹配属性数量筛选物品。",
       zh_TW: "計算每項符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性。\n使用此群組的 `min` 與 `max`，依匹配屬性數量篩選物品。"
+    },
+    "filter by the mods that you want to be able to allocate at once. use a lower `min` value for partial matches.": {
+      en: "Filter by the mods that you want to be able to allocate at once. Use a lower `min` value for partial matches.",
+      zh_CN: "筛选你希望能同时配置的词缀。\n使用较低的 `min` 值以匹配部分结果。",
+      zh_TW: "篩選你希望能同時配置的詞綴。\n使用較低的 `min` 值以配對部分結果。"
     }
   });
   const ITEM_SEARCH_ROOT_SELECTOR =
@@ -125,11 +135,13 @@
     ".search-advanced-pane .filter-group-title",
     ".search-advanced-pane .filter-title"
   ].join(",");
+  const TRADE_FILTER_TIP_SELECTOR = ".search-advanced-pane .filter-tip > p";
   const TRADE_TOOLTIP_COPY_PREFIXES = Object.freeze([
     "check each stat meets",
     "each stat value that meets",
     "match items that meet",
     "count each stat",
+    "filter by the mods",
     "includes base value",
     "increased item rarity"
   ]);
@@ -4192,7 +4204,7 @@
         localizeTradeAttributes(element);
       }
     }
-    localizeTradeTooltipCopy();
+    localizeTradeFilterTipCopy(root);
   }
 
   function getTradeLocalizationElements(root) {
@@ -4207,43 +4219,57 @@
     return new Set(root.querySelectorAll(TRADE_ADVANCED_FILTER_COPY_SELECTOR));
   }
 
-  function localizeTradeTooltipCopy() {
-    if (!document.body) {
-      return;
-    }
-    const visit = (current) => {
-      if (current.nodeType === 3) {
-        let source = current[TRADE_LOCALIZATION_SOURCE_KEY] ?? current.nodeValue ?? "";
-        current[TRADE_LOCALIZATION_SOURCE_KEY] = source;
-        if (
-          current[TRADE_LOCALIZATION_RENDER_KEY] !== undefined &&
-          current.nodeValue !== current[TRADE_LOCALIZATION_RENDER_KEY]
-        ) {
-          source = current.nodeValue ?? "";
-          current[TRADE_LOCALIZATION_SOURCE_KEY] = source;
-        }
-        if (!isTradeTooltipCopy(source)) {
-          return;
-        }
-        const localized = getLocalizedTradeText(source);
-        if (localized !== current.nodeValue) {
-          current.nodeValue = localized;
-        }
-        current[TRADE_LOCALIZATION_RENDER_KEY] = localized;
-        return;
-      }
+  function localizeTradeFilterTipCopy(root) {
+    for (const element of root.querySelectorAll?.(TRADE_FILTER_TIP_SELECTOR) || []) {
+      let source = element[TRADE_LOCALIZATION_SOURCE_KEY] ?? getTradeFilterTipText(element);
+      element[TRADE_LOCALIZATION_SOURCE_KEY] = source;
+      const current = getTradeFilterTipText(element);
       if (
-        current.nodeType !== 1 ||
-        runtime.ui.root?.contains(current) ||
-        current.closest?.(".poe2-marketwright, .poe2-trade2-affix-filter")
+        element[TRADE_LOCALIZATION_RENDER_KEY] !== undefined &&
+        current !== element[TRADE_LOCALIZATION_RENDER_KEY]
       ) {
-        return;
+        source = current;
+        element[TRADE_LOCALIZATION_SOURCE_KEY] = source;
       }
-      for (const child of current.childNodes || []) {
-        visit(child);
+      if (!isTradeTooltipCopy(source)) {
+        continue;
       }
+      const localized = !isPageTranslationEnabled() || resolvePageLanguage(runtime.state.pageLanguage) === "en"
+        ? source
+        : getLocalizedTradeText(source);
+      if (localized !== current) {
+        replaceTradeFilterTipText(element, localized);
+      }
+      element[TRADE_LOCALIZATION_RENDER_KEY] = localized;
+    }
+  }
+
+  function getTradeFilterTipText(element) {
+    const read = (node) => {
+      if (node?.nodeType === 3) {
+        return node.nodeValue || "";
+      }
+      if (node?.nodeType !== 1) {
+        return "";
+      }
+      if (String(node.nodeName || "").toUpperCase() === "BR") {
+        return "\n";
+      }
+      return Array.from(node.childNodes || [], read).join("");
     };
-    visit(document.body);
+    return read(element);
+  }
+
+  function replaceTradeFilterTipText(element, value) {
+    const lines = String(value).split("\n");
+    const nodes = [];
+    for (let index = 0; index < lines.length; index += 1) {
+      if (index > 0) {
+        nodes.push(document.createElement("br"));
+      }
+      nodes.push(document.createTextNode(lines[index]));
+    }
+    element.replaceChildren(...nodes);
   }
 
   function isTradeTooltipCopy(value) {
@@ -4413,7 +4439,21 @@
   }
 
   function getTradeTermLocalizationOverride(value) {
-    return TRADE_TERM_LOCALIZATION_OVERRIDES[normalizeLookupText(value)] || null;
+    const normalized = normalizeLookupText(value);
+    const exact = TRADE_TERM_LOCALIZATION_OVERRIDES[normalized];
+    if (exact) {
+      return exact;
+    }
+    const weightedSumVersion = normalized.match(/^weighted sum (v\d+)$/);
+    if (!weightedSumVersion) {
+      return null;
+    }
+    const version = weightedSumVersion[1].toUpperCase();
+    return {
+      en: `WEIGHTED SUM ${version}`,
+      zh_CN: `加权总和 ${version}`,
+      zh_TW: `加權總和 ${version}`
+    };
   }
 
   function getTradeStatRecordForElement(element) {

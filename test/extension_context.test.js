@@ -438,6 +438,7 @@ test("Trade filter terminology overrides translate headings and help copy", () =
     equipment: hooks.getLocalizedTradeText("Equipment Filters"),
     stat: hooks.getLocalizedTradeText("Stat Filters"),
     weighted: hooks.getLocalizedTradeText("WEIGHTED SUM"),
+    weightedV2: hooks.getLocalizedTradeText("WEIGHTED SUM V2"),
     runicWard: hooks.getLocalizedTradeText("Runic Ward"),
     equipmentTip: hooks.getLocalizedTradeText("Includes base value, local modifiers, and maximum quality"),
     rarityTip: hooks.getLocalizedTradeText("Increased Item Rarity"),
@@ -452,6 +453,7 @@ test("Trade filter terminology overrides translate headings and help copy", () =
     equipment: "裝備篩選器",
     stat: "屬性篩選器",
     weighted: "加權總和",
+    weightedV2: "加權總和 V2",
     runicWard: "符文保護",
     equipmentTip: "包含基礎數值、本地詞綴與最高品質",
     rarityTip: "增加物品稀有度",
@@ -594,44 +596,58 @@ test("advanced Trade filter labels can be localized without touching search cont
   assert.equal(label.nodeValue, "加權總和");
 });
 
-test("Trade tooltip copy is localized outside the Trade application root", () => {
+test("Trade filter tips preserve line breaks while translating complete help copy", () => {
   class FakeElement {
-    constructor(children = []) {
+    constructor(children = [], nodeName = "DIV") {
       this.nodeType = 1;
+      this.childNodes = children;
+      this.nodeName = nodeName;
+    }
+
+    get textContent() {
+      return this.childNodes
+        .map((child) => child.nodeType === 3 ? child.nodeValue : child.textContent)
+        .join("");
+    }
+
+    replaceChildren(...children) {
       this.childNodes = children;
     }
 
-    closest() {
-      return null;
+    querySelectorAll() {
+      return this.tips || [];
     }
   }
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
   source = source.replace(
     /\n\}\)\(\);\s*$/,
-    "\n  window.__testHooks = { localizeTradeTooltipCopy, runtime };\n})();"
+    "\n  window.__testHooks = { getTradeFilterTipText, localizeTradeFilterTipCopy, runtime };\n})();"
   );
-  const tooltipText = {
-    nodeType: 3,
-    nodeValue: "Check each stat meets the `min` and `max` (if provided, otherwise existence) requirements before multiplying the stat value by the `weight` and finally summing them together.\nUse the group's `min` and `max` to filter items based on the total summed value."
-  };
-  const andTooltipText = {
-    nodeType: 3,
-    nodeValue: "Match items that meet each stat's `min` and `max` requirements if the stat is present."
-  };
-  const countTooltipText = {
-    nodeType: 3,
-    nodeValue: "Count each stat that meets the `min` and `max` (if provided, otherwise existence) requirements.\nUse the group's `min` and `max` to filter items based on the count of matching stats."
-  };
-  const body = new FakeElement([
-    new FakeElement([tooltipText]),
-    new FakeElement([andTooltipText]),
-    new FakeElement([countTooltipText])
-  ]);
+  const weightedTip = new FakeElement([
+    { nodeType: 3, nodeValue: "Check each stat meets the `min` and `max` (if provided, otherwise existence) requirements before multiplying the stat value by the `weight` and finally summing them together." },
+    new FakeElement([], "BR"),
+    { nodeType: 3, nodeValue: "Use the group's `min` and `max` to filter items based on the total summed value." }
+  ], "P");
+  const weightedV2Tip = new FakeElement([
+    { nodeType: 3, nodeValue: "Each stat value that meets the `min` and `max` (if provided, otherwise existence) requirements will be multiplied by the `weight` before being summed together." },
+    new FakeElement([], "BR"),
+    { nodeType: 3, nodeValue: "Use the group's `min` and `max` to filter items based on the total summed value." }
+  ], "P");
+  const crucibleTip = new FakeElement([
+    { nodeType: 3, nodeValue: "Filter by the mods that you want to be able to allocate at once." },
+    new FakeElement([], "BR"),
+    { nodeType: 3, nodeValue: "Use a lower `min` value for partial matches." }
+  ], "P");
+  const root = new FakeElement();
+  root.tips = [weightedTip, weightedV2Tip, crucibleTip];
   const sandbox = {
     Element: FakeElement,
     window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
-    document: { body },
+    document: {
+      createElement(nodeName) { return new FakeElement([], nodeName.toUpperCase()); },
+      createTextNode(nodeValue) { return { nodeType: 3, nodeValue }; }
+    },
     location: { pathname: "/trade2" },
     console,
     chrome: {}
@@ -640,16 +656,30 @@ test("Trade tooltip copy is localized outside the Trade application root", () =>
   const hooks = sandbox.window.__testHooks;
   hooks.runtime.state = { pageLanguage: "zh_TW" };
   hooks.runtime.tradeLocalization = { strings: {} };
-  hooks.localizeTradeTooltipCopy();
+  hooks.localizeTradeFilterTipCopy(root);
   assert.equal(
-    tooltipText.nodeValue,
+    hooks.getTradeFilterTipText(weightedTip),
     "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
   );
-  assert.equal(andTooltipText.nodeValue, "若該屬性存在，則配對符合每項屬性 `min` 與 `max` 要求的物品。");
   assert.equal(
-    countTooltipText.nodeValue,
-    "計算每項符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性。\n使用此群組的 `min` 與 `max`，依匹配屬性數量篩選物品。"
+    hooks.getTradeFilterTipText(weightedV2Tip),
+    "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
   );
+  assert.equal(
+    hooks.getTradeFilterTipText(crucibleTip),
+    "篩選你希望能同時配置的詞綴。\n使用較低的 `min` 值以配對部分結果。"
+  );
+  assert.equal(weightedTip.childNodes[1].nodeName, "BR");
+  assert.equal(weightedV2Tip.childNodes[1].nodeName, "BR");
+  assert.equal(crucibleTip.childNodes[1].nodeName, "BR");
+
+  hooks.runtime.state.pageLanguage = "en";
+  hooks.localizeTradeFilterTipCopy(root);
+  assert.equal(
+    hooks.getTradeFilterTipText(weightedV2Tip),
+    "Each stat value that meets the `min` and `max` (if provided, otherwise existence) requirements will be multiplied by the `weight` before being summed together.\nUse the group's `min` and `max` to filter items based on the total summed value."
+  );
+  assert.equal(weightedV2Tip.childNodes[1].nodeName, "BR");
 });
 
 test("favorite presentation uses the global language without overwriting custom names", async () => {
