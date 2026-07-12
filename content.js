@@ -25,6 +25,9 @@
     linkFavoritesEnabled: true,
     linkFavorites: { version: 2, leagues: {} },
     linkFavoritesDrawerOpen: false,
+    sidebarPosition: "left",
+    idleTransparencyEnabled: true,
+    idleTransparency: 50,
     selection: "auto",
     collapsed: false,
     panelPosition: null,
@@ -397,6 +400,13 @@
     language: "Language",
     tradePageLanguage: "Trade page language",
     tradePageTranslation: "Trade page translation",
+    sidebarPosition: "Sidebar position",
+    sidebarPositionLeft: "Left",
+    sidebarPositionRight: "Right",
+    idleTransparency: "Idle transparency",
+    idleTransparencyOpacity: "Idle opacity: $1%",
+    enableIdleTransparency: "Enable idle transparency",
+    disableIdleTransparency: "Disable idle transparency",
     languageEnglish: "English",
     languageSimplifiedChinese: "Simplified Chinese",
     languageTraditionalChinese: "Traditional Chinese",
@@ -710,6 +720,14 @@
         typeof savedState.linkFavoritesDrawerOpen === "boolean"
           ? savedState.linkFavoritesDrawerOpen
           : DEFAULT_STATE.linkFavoritesDrawerOpen,
+      sidebarPosition: savedState.sidebarPosition === "right" ? "right" : DEFAULT_STATE.sidebarPosition,
+      idleTransparencyEnabled:
+        typeof savedState.idleTransparencyEnabled === "boolean"
+          ? savedState.idleTransparencyEnabled
+          : DEFAULT_STATE.idleTransparencyEnabled,
+      idleTransparency: normalizeIdleTransparency(savedState.idleTransparency),
+      panelPosition: normalizePanelPosition(savedState.panelPosition),
+      collapsedPosition: normalizePanelPosition(savedState.collapsedPosition),
       filteringEnabled:
         typeof savedState.filteringEnabled === "boolean"
           ? savedState.filteringEnabled
@@ -717,6 +735,17 @@
             ? savedState.enabled
             : DEFAULT_STATE.filteringEnabled
     };
+  }
+
+  function normalizeIdleTransparency(value) {
+    const opacity = Number(value);
+    return Number.isInteger(opacity) && opacity >= 20 && opacity <= 90 && opacity % 10 === 0
+      ? opacity
+      : DEFAULT_STATE.idleTransparency;
+  }
+
+  function normalizePanelPosition(position) {
+    return Number.isFinite(position?.top) ? { top: position.top } : null;
   }
 
   async function saveState() {
@@ -839,6 +868,18 @@
             <span id="poe2-trade2-affix-filter-page-translation-title" class="poe2-trade2-affix-filter-field-label"></span>
             <button id="poe2-trade2-affix-filter-page-translation-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
           </div>
+          <label class="poe2-trade2-affix-filter-field">
+            <span id="poe2-trade2-affix-filter-sidebar-position-label" class="poe2-trade2-affix-filter-field-label"></span>
+            <select id="poe2-trade2-affix-filter-sidebar-position"></select>
+          </label>
+          <div class="poe2-trade2-affix-filter-feature-header">
+            <span id="poe2-trade2-affix-filter-idle-transparency-title" class="poe2-trade2-affix-filter-field-label"></span>
+            <button id="poe2-trade2-affix-filter-idle-transparency-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
+          </div>
+          <label class="poe2-trade2-affix-filter-field">
+            <span id="poe2-trade2-affix-filter-idle-transparency-opacity-label" class="poe2-trade2-affix-filter-field-label"></span>
+            <input id="poe2-trade2-affix-filter-idle-transparency-opacity" type="range" min="20" max="90" step="10">
+          </label>
         </section>
         <section class="poe2-trade2-affix-filter-feature poe2-trade2-affix-filter-stat-feature">
           <div class="poe2-trade2-affix-filter-feature-header">
@@ -957,6 +998,12 @@
     runtime.ui.pageLanguage = root.querySelector("#poe2-trade2-affix-filter-page-language");
     runtime.ui.pageTranslationTitle = root.querySelector("#poe2-trade2-affix-filter-page-translation-title");
     runtime.ui.pageTranslationEnabled = root.querySelector("#poe2-trade2-affix-filter-page-translation-enabled");
+    runtime.ui.sidebarPositionLabel = root.querySelector("#poe2-trade2-affix-filter-sidebar-position-label");
+    runtime.ui.sidebarPosition = root.querySelector("#poe2-trade2-affix-filter-sidebar-position");
+    runtime.ui.idleTransparencyTitle = root.querySelector("#poe2-trade2-affix-filter-idle-transparency-title");
+    runtime.ui.idleTransparencyEnabled = root.querySelector("#poe2-trade2-affix-filter-idle-transparency-enabled");
+    runtime.ui.idleTransparencyOpacityLabel = root.querySelector("#poe2-trade2-affix-filter-idle-transparency-opacity-label");
+    runtime.ui.idleTransparencyOpacity = root.querySelector("#poe2-trade2-affix-filter-idle-transparency-opacity");
     runtime.ui.statTitle = root.querySelector("#poe2-trade2-affix-filter-stat-title");
     runtime.ui.pobTitle = root.querySelector("#poe2-trade2-affix-filter-pob-title");
     runtime.ui.favoritesTitle = root.querySelector("#poe2-marketwright-favorites-title");
@@ -973,19 +1020,24 @@
     populateSelectionOptions(runtime.ui.selection);
     populateLanguageOptions(runtime.ui.language);
     populatePageLanguageOptions(runtime.ui.pageLanguage);
+    populateSidebarPositionOptions(runtime.ui.sidebarPosition);
 
     runtime.ui.selection.value = runtime.state.selection;
     runtime.ui.language.value = runtime.state.uiLanguage;
     runtime.ui.pageLanguage.value = runtime.state.pageLanguage;
+    runtime.ui.sidebarPosition.value = getSidebarPosition();
+    runtime.ui.idleTransparencyOpacity.value = String(runtime.state.idleTransparency);
     updateToggleButton();
     renderFavoriteDrawer();
     renderLinkFavoritesDrawer();
     applyFavoritesDrawerState();
     applyLinkFavoritesDrawerState();
     applyPanelCollapsed();
+    applySidebarPosition();
     applyPanelPosition();
     applyFavoritesView();
     bindPanelDrag();
+    bindIdleTransparency();
     void registerFavoritesPanelSession();
 
     runtime.ui.collapse.addEventListener("click", () => {
@@ -1159,6 +1211,18 @@
     runtime.ui.pageTranslationEnabled.addEventListener("click", () => {
       runAsync(() => setPageTranslationEnabled(!isPageTranslationEnabled()), "toggle Trade page translation");
     });
+    runtime.ui.sidebarPosition.addEventListener("change", () => {
+      runAsync(() => setSidebarPosition(runtime.ui.sidebarPosition.value), "change sidebar position");
+    });
+    runtime.ui.idleTransparencyEnabled.addEventListener("click", () => {
+      runAsync(() => setIdleTransparencyEnabled(!isIdleTransparencyEnabled()), "toggle idle transparency");
+    });
+    runtime.ui.idleTransparencyOpacity.addEventListener("input", () => {
+      setIdleTransparency(runtime.ui.idleTransparencyOpacity.value);
+    });
+    runtime.ui.idleTransparencyOpacity.addEventListener("change", () => {
+      runAsync(() => saveState(), "change idle transparency");
+    });
   }
 
   function updateStaticUiText() {
@@ -1170,6 +1234,8 @@
     runtime.ui.languageLabel.textContent = t("language");
     runtime.ui.pageLanguageLabel.textContent = t("tradePageLanguage");
     runtime.ui.pageTranslationTitle.textContent = t("tradePageTranslation");
+    runtime.ui.sidebarPositionLabel.textContent = t("sidebarPosition");
+    runtime.ui.idleTransparencyTitle.textContent = t("idleTransparency");
     runtime.ui.statTitle.textContent = t("statFilterTitle");
     runtime.ui.pobTitle.textContent = t("pobCopyTitle");
     runtime.ui.favoritesTitle.textContent = t("favoritesTitle");
@@ -1240,6 +1306,22 @@
     }
   }
 
+  function populateSidebarPositionOptions(select) {
+    if (!select) {
+      return;
+    }
+    select.replaceChildren();
+    for (const [value, label] of [
+      ["left", t("sidebarPositionLeft")],
+      ["right", t("sidebarPositionRight")]
+    ]) {
+      const option = document.createElement("option");
+      option.value = value;
+      option.textContent = label;
+      select.appendChild(option);
+    }
+  }
+
   async function setUiLanguage(language) {
     const nextLanguage = resolveUiLanguage(language);
     if (runtime.state.uiLanguage === nextLanguage) {
@@ -1286,6 +1368,38 @@
     reloadTradePageForNativeLocalization();
   }
 
+  function getSidebarPosition() {
+    return runtime.state.sidebarPosition === "right" ? "right" : "left";
+  }
+
+  async function setSidebarPosition(position) {
+    const nextPosition = position === "right" ? "right" : "left";
+    runtime.state.sidebarPosition = nextPosition;
+    if (runtime.ui.sidebarPosition) {
+      runtime.ui.sidebarPosition.value = nextPosition;
+    }
+    applySidebarPosition();
+    applyPanelPosition();
+    await saveState();
+  }
+
+  function isIdleTransparencyEnabled() {
+    return runtime.state.idleTransparencyEnabled !== false;
+  }
+
+  async function setIdleTransparencyEnabled(enabled) {
+    runtime.state.idleTransparencyEnabled = Boolean(enabled);
+    updateIdleTransparencyControls();
+    applyIdleTransparency();
+    await saveState();
+  }
+
+  function setIdleTransparency(value) {
+    runtime.state.idleTransparency = normalizeIdleTransparency(value);
+    updateIdleTransparencyControls();
+    applyIdleTransparency();
+  }
+
   function reloadTradePageForNativeLocalization() {
     window.location.reload();
   }
@@ -1312,6 +1426,8 @@
     runtime.ui.language.value = runtime.state.uiLanguage;
     populatePageLanguageOptions(runtime.ui.pageLanguage);
     runtime.ui.pageLanguage.value = runtime.state.pageLanguage;
+    populateSidebarPositionOptions(runtime.ui.sidebarPosition);
+    runtime.ui.sidebarPosition.value = getSidebarPosition();
     const selection = runtime.state.selection;
     populateSelectionOptions(runtime.ui.selection);
     runtime.ui.selection.value = selection;
@@ -1513,10 +1629,73 @@
       frame.hidden = !visible;
       frame.setAttribute("aria-hidden", String(!visible));
     }
+    if (!visible) {
+      runtime.favoritesPanelHovered = false;
+      updateIdleTransparencyState();
+    }
     runtime.ui?.root?.classList?.toggle("poe2-marketwright-favorites-full-view-open", visible);
     applyFavoritesDrawerState();
     applyLinkFavoritesDrawerState();
     updateFavoritesViewModeButton();
+  }
+
+  function applySidebarPosition() {
+    const right = getSidebarPosition() === "right";
+    runtime.ui?.root?.classList?.toggle("poe2-marketwright-sidebar-right", right);
+    runtime.ui?.favoritesPanelFrame?.classList?.toggle("poe2-marketwright-sidebar-right", right);
+  }
+
+  function bindIdleTransparency() {
+    const root = runtime.ui?.root;
+    if (!root) {
+      return;
+    }
+    root.addEventListener("pointerenter", () => setSidebarHovered(true));
+    root.addEventListener("pointerleave", () => setSidebarHovered(false));
+    window.addEventListener("message", (event) => {
+      if (
+        event.source !== runtime.ui?.favoritesPanelFrame?.contentWindow ||
+        event.data?.type !== "poe2-marketwright-favorites-panel-hover"
+      ) {
+        return;
+      }
+      setFavoritesPanelHovered(event.data.hovered === true);
+    });
+    applyIdleTransparency();
+  }
+
+  function setSidebarHovered(hovered) {
+    runtime.sidebarHovered = Boolean(hovered);
+    updateIdleTransparencyState();
+  }
+
+  function setFavoritesPanelHovered(hovered) {
+    runtime.favoritesPanelHovered = Boolean(hovered);
+    updateIdleTransparencyState();
+  }
+
+  function updateIdleTransparencyState() {
+    window.clearTimeout?.(runtime.idleTransparencyTimer);
+    if (runtime.sidebarHovered || runtime.favoritesPanelHovered || !isIdleTransparencyEnabled()) {
+      applyIdleTransparency();
+      return;
+    }
+    if (!window.setTimeout) {
+      applyIdleTransparency();
+      return;
+    }
+    runtime.idleTransparencyTimer = window.setTimeout(applyIdleTransparency, 200);
+  }
+
+  function applyIdleTransparency() {
+    const idle = Boolean(
+      isIdleTransparencyEnabled() && !runtime.sidebarHovered && !runtime.favoritesPanelHovered
+    );
+    const opacity = String(normalizeIdleTransparency(runtime.state.idleTransparency) / 100);
+    for (const element of [runtime.ui?.root, runtime.ui?.favoritesPanelFrame]) {
+      element?.classList?.toggle("poe2-marketwright-idle", idle);
+      element?.style?.setProperty("--poe2-marketwright-idle-opacity", opacity);
+    }
   }
 
   async function setFavoritesViewMode(mode) {
@@ -3837,44 +4016,22 @@
       return;
     }
 
-    let expandAnchor = null;
     if (collapsed) {
       const panelRect = runtime.ui.root?.getBoundingClientRect();
       if (panelRect && panelRect.width > 0 && panelRect.height > 0) {
-        runtime.state.panelPosition = clampPanelPosition(panelRect.left, panelRect.top);
+        runtime.state.panelPosition = { top: clampPanelTop(panelRect.top) };
       }
       const rect = runtime.ui.collapse?.getBoundingClientRect();
       if (rect && rect.width > 0 && rect.height > 0) {
-        runtime.state.collapsedPosition = {
-          left: rect.left + (rect.width - COLLAPSED_PANEL_SIZE) / 2,
-          top: rect.top + (rect.height - COLLAPSED_PANEL_SIZE) / 2
-        };
+        runtime.state.collapsedPosition = { top: clampPanelTop(rect.top + (rect.height - COLLAPSED_PANEL_SIZE) / 2) };
       }
     } else {
-      const rect = runtime.ui.expand?.getBoundingClientRect();
-      if (rect && rect.width > 0 && rect.height > 0) {
-        expandAnchor = {
-          left: rect.left + rect.width / 2,
-          top: rect.top + rect.height / 2
-        };
-      }
       runtime.state.collapsedPosition = null;
     }
 
     runtime.state.collapsed = collapsed;
     applyPanelCollapsed();
     applyPanelPosition();
-    if (expandAnchor) {
-      const panelRect = runtime.ui.root?.getBoundingClientRect();
-      const toggleRect = runtime.ui.collapse?.getBoundingClientRect();
-      if (panelRect && toggleRect && toggleRect.width > 0 && toggleRect.height > 0) {
-        runtime.state.panelPosition = clampPanelPosition(
-          panelRect.left + expandAnchor.left - (toggleRect.left + toggleRect.width / 2),
-          panelRect.top + expandAnchor.top - (toggleRect.top + toggleRect.height / 2)
-        );
-        applyPanelPosition();
-      }
-    }
     await saveState();
   }
 
@@ -3888,38 +4045,12 @@
   }
 
   function applyPanelPosition() {
-    if (runtime.state.collapsed) {
-      const position = runtime.state.collapsedPosition;
-      if (
-        position &&
-        Number.isFinite(position.left) &&
-        Number.isFinite(position.top)
-      ) {
-        const clamped = clampPanelPosition(position.left, position.top);
-        runtime.ui.root.style.left = `${clamped.left}px`;
-        runtime.ui.root.style.top = `${clamped.top}px`;
-        runtime.ui.root.style.right = "auto";
-        return;
-      }
-
-      runtime.ui.root.style.left = "";
-      runtime.ui.root.style.top = "";
-      runtime.ui.root.style.right = "";
-      return;
-    }
-
-    const position = runtime.state.panelPosition;
-    if (!position || !Number.isFinite(position.left) || !Number.isFinite(position.top)) {
-      runtime.ui.root.style.left = "";
-      runtime.ui.root.style.top = "";
-      runtime.ui.root.style.right = "";
-      return;
-    }
-
-    const clamped = clampPanelPosition(position.left, position.top);
-    runtime.ui.root.style.left = `${clamped.left}px`;
-    runtime.ui.root.style.top = `${clamped.top}px`;
-    runtime.ui.root.style.right = "auto";
+    const position = runtime.state.collapsed ? runtime.state.collapsedPosition : runtime.state.panelPosition;
+    runtime.ui.root.style.left = "";
+    runtime.ui.root.style.right = "";
+    runtime.ui.root.style.top = position && Number.isFinite(position.top)
+      ? `${clampPanelTop(position.top)}px`
+      : "";
   }
 
   function bindPanelDrag() {
@@ -3940,7 +4071,6 @@
       const rect = runtime.ui.root.getBoundingClientRect();
       dragState = {
         pointerId: event.pointerId,
-        offsetX: event.clientX - rect.left,
         offsetY: event.clientY - rect.top,
         startX: event.clientX,
         startY: event.clientY,
@@ -3962,10 +4092,7 @@
       if (Math.hypot(event.clientX - dragState.startX, event.clientY - dragState.startY) > 3) {
         dragState.moved = true;
       }
-      const position = clampPanelPosition(event.clientX - dragState.offsetX, event.clientY - dragState.offsetY);
-      runtime.ui.root.style.left = `${position.left}px`;
-      runtime.ui.root.style.top = `${position.top}px`;
-      runtime.ui.root.style.right = "auto";
+      runtime.ui.root.style.top = `${clampPanelTop(event.clientY - dragState.offsetY)}px`;
       event.preventDefault();
     };
 
@@ -3981,9 +4108,9 @@
       const wasMoved = dragState.moved;
       const rect = runtime.ui.root.getBoundingClientRect();
       if (wasCollapsedHandle && wasMoved) {
-        runtime.state.collapsedPosition = clampPanelPosition(rect.left, rect.top);
+        runtime.state.collapsedPosition = { top: clampPanelTop(rect.top) };
       } else if (!wasCollapsedHandle) {
-        runtime.state.panelPosition = clampPanelPosition(rect.left, rect.top);
+        runtime.state.panelPosition = { top: clampPanelTop(rect.top) };
       }
       if (wasCollapsedHandle && wasMoved) {
         runtime.ui.suppressExpandClick = true;
@@ -4014,31 +4141,19 @@
       }
       const rect = runtime.ui.root.getBoundingClientRect();
       if (runtime.state.collapsed) {
-        runtime.state.collapsedPosition = clampPanelPosition(rect.left, rect.top);
+        runtime.state.collapsedPosition = { top: clampPanelTop(rect.top) };
       } else {
-        runtime.state.panelPosition = clampPanelPosition(rect.left, rect.top);
+        runtime.state.panelPosition = { top: clampPanelTop(rect.top) };
       }
       applyPanelPosition();
     });
   }
 
-  function clampPanelPosition(left, top) {
+  function clampPanelTop(top) {
     const margin = 8;
     const rect = runtime.ui.root.getBoundingClientRect();
-    const width = rect.width || (runtime.state.collapsed ? COLLAPSED_PANEL_SIZE : 238);
     const height = rect.height || (runtime.state.collapsed ? COLLAPSED_PANEL_SIZE : 188);
-    const drawer = runtime.state.favoritesDrawerOpen
-      ? runtime.ui.favoritesDrawer
-      : runtime.state.linkFavoritesDrawerOpen
-        ? runtime.ui.linkFavoritesDrawer
-        : null;
-    const drawerWidth = !runtime.state.collapsed && drawer ? (drawer.getBoundingClientRect().width || 340) + 6 : 0;
-    const maxLeft = Math.max(margin, window.innerWidth - width - margin);
-    const minLeft = Math.min(margin + drawerWidth, maxLeft);
-    return {
-      left: Math.max(minLeft, Math.min(left, maxLeft)),
-      top: Math.max(margin, Math.min(top, window.innerHeight - height - margin))
-    };
+    return Math.max(margin, Math.min(top, window.innerHeight - height - margin));
   }
 
   function populateSelectionOptions(select) {
@@ -5411,6 +5526,7 @@
     updateLinkFavoritesToggleButton();
     updateCurrencyConversionToggleButton();
     updatePageTranslationToggleButton();
+    updateIdleTransparencyControls();
   }
 
   function updatePobCopyToggleButton() {
@@ -5466,6 +5582,23 @@
       : t("enableTradePageTranslation");
     runtime.ui.pageLanguage.disabled = !enabled;
     runtime.ui.pageLanguage.setAttribute("aria-disabled", String(!enabled));
+  }
+
+  function updateIdleTransparencyControls() {
+    if (!runtime.ui.idleTransparencyEnabled) {
+      return;
+    }
+    const enabled = isIdleTransparencyEnabled();
+    const opacity = normalizeIdleTransparency(runtime.state.idleTransparency);
+    runtime.ui.idleTransparencyEnabled.textContent = enabled ? t("toggleOn") : t("toggleOff");
+    runtime.ui.idleTransparencyEnabled.setAttribute("aria-pressed", String(enabled));
+    runtime.ui.idleTransparencyEnabled.title = enabled
+      ? t("disableIdleTransparency")
+      : t("enableIdleTransparency");
+    runtime.ui.idleTransparencyOpacityLabel.textContent = t("idleTransparencyOpacity", opacity);
+    runtime.ui.idleTransparencyOpacity.value = String(opacity);
+    runtime.ui.idleTransparencyOpacity.disabled = !enabled;
+    runtime.ui.idleTransparencyOpacity.setAttribute("aria-disabled", String(!enabled));
   }
 
   function unhideAllFilteredOptions() {

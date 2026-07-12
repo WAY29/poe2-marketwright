@@ -1268,12 +1268,19 @@
   }
 
   function bindUi() {
+    const notifyParentHover = (hovered) => {
+      if (window.parent !== window) {
+        window.parent.postMessage({ type: "poe2-marketwright-favorites-panel-hover", hovered }, "*");
+      }
+    };
     ui.itemsTab.addEventListener("click", () => run("select-tab", { tab: "items" }));
     ui.linksTab.addEventListener("click", () => run("select-tab", { tab: "links" }));
     ui.compact.addEventListener("click", () => run("set-view-mode", { mode: "compact" }));
     ui.close.addEventListener("click", () => run("close-panel"));
     ui.tooltip?.addEventListener("pointerenter", clearLinkFavoriteTooltipHideTimer);
     ui.tooltip?.addEventListener("pointerleave", scheduleLinkFavoriteTooltipHide);
+    document.documentElement.addEventListener("pointerenter", () => notifyParentHover(true));
+    document.documentElement.addEventListener("pointerleave", () => notifyParentHover(false));
     window.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
         hideLinkFavoriteTooltip();

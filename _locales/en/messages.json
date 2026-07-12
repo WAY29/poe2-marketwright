@@ -84,6 +84,27 @@
   "tradePageTranslation": {
     "message": "Trade page translation"
   },
+  "sidebarPosition": {
+    "message": "Sidebar position"
+  },
+  "sidebarPositionLeft": {
+    "message": "Left"
+  },
+  "sidebarPositionRight": {
+    "message": "Right"
+  },
+  "idleTransparency": {
+    "message": "Idle transparency"
+  },
+  "idleTransparencyOpacity": {
+    "message": "Idle opacity: $1%"
+  },
+  "enableIdleTransparency": {
+    "message": "Enable idle transparency"
+  },
+  "disableIdleTransparency": {
+    "message": "Disable idle transparency"
+  },
   "languageEnglish": {
     "message": "English"
   },

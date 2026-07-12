@@ -64,6 +64,113 @@ test("full view defaults to compact and migrates the open item drawer", async ()
   assert.deepStrictEqual(result, {"defaultsToCompact": true, "fullPanelOpen": true, "fullPanelTab": "items", "drawersClosed": true, "compactDrawerRestored": true, "compactPanelClosed": true, "fullModeButtonsSynced": true});
 });
 
+test("sidebar settings default to a left dock with 50 percent idle transparency", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { loadState };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {
+      storage: {
+        local: {
+          get: async () => ({
+            poe2Trade2AffixFilterState: {
+              sidebarPosition: "center",
+              idleTransparency: 55,
+              panelPosition: { left: 640, top: 120 },
+              collapsedPosition: { left: 640, top: 180 }
+            }
+          })
+        }
+      }
+    }
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const state = await sandbox.window.__testHooks.loadState();
+  const result = structuredClone({
+    sidebarPosition: state.sidebarPosition,
+    idleTransparencyEnabled: state.idleTransparencyEnabled,
+    idleTransparency: state.idleTransparency,
+    panelPosition: state.panelPosition,
+    collapsedPosition: state.collapsedPosition
+  });
+  assert.deepStrictEqual(result, {
+    sidebarPosition: "left",
+    idleTransparencyEnabled: true,
+    idleTransparency: 50,
+    panelPosition: { top: 120 },
+    collapsedPosition: { top: 180 }
+  });
+});
+
+test("sidebar setting mirrors the full view and applies idle opacity only to sidebar surfaces", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { setSidebarPosition, applyIdleTransparency, runtime };\n})();"
+  );
+  const classList = () => {
+    const values = new Set();
+    return {
+      toggle(name, enabled) { if (enabled) values.add(name); else values.delete(name); },
+      has(name) { return values.has(name); }
+    };
+  };
+  const style = () => ({
+    values: {},
+    setProperty(name, value) { this.values[name] = value; }
+  });
+  const root = { classList: classList(), style: style() };
+  const frame = { classList: classList(), style: style() };
+  const sidebarPosition = { value: "left" };
+  const sandbox = {
+    window: { addEventListener() {}, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: { storage: { local: { set: async () => {} } } }
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = {
+    collapsed: false,
+    panelPosition: null,
+    sidebarPosition: "left",
+    idleTransparencyEnabled: true,
+    idleTransparency: 50
+  };
+  hooks.runtime.ui = { root, favoritesPanelFrame: frame, sidebarPosition };
+  await hooks.setSidebarPosition("right");
+  hooks.applyIdleTransparency();
+  const result = structuredClone({
+    sidebarPosition: hooks.runtime.state.sidebarPosition,
+    selectValue: sidebarPosition.value,
+    rootDockedRight: root.classList.has("poe2-marketwright-sidebar-right"),
+    frameDockedRight: frame.classList.has("poe2-marketwright-sidebar-right"),
+    rootIdle: root.classList.has("poe2-marketwright-idle"),
+    frameIdle: frame.classList.has("poe2-marketwright-idle"),
+    rootOpacity: root.style.values["--poe2-marketwright-idle-opacity"],
+    frameOpacity: frame.style.values["--poe2-marketwright-idle-opacity"]
+  });
+  assert.deepStrictEqual(result, {
+    sidebarPosition: "right",
+    selectValue: "right",
+    rootDockedRight: true,
+    frameDockedRight: true,
+    rootIdle: true,
+    frameIdle: true,
+    rootOpacity: "0.5",
+    frameOpacity: "0.5"
+  });
+});
+
 test("background relays panel requests only to the registered trade tab", async () => {
   let messageListener;
   const tabMessages = [];

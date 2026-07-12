@@ -764,7 +764,7 @@ test("currency panel displays the detected league", async () => {
   assert.deepStrictEqual(result, {"textContent": "League: HC Runes of Aldur", "title": "https://www.pathofexile.com/trade2/search/HC%20Runes%20of%20Aldur/query-1", "dataset": {"state": "ready"}});
 });
 
-test("collapsed panel keeps toggle anchor and restores saved position", async () => {
+test("collapsed panel preserves vertical position while ignoring legacy horizontal coordinates", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
   source = source.replace(
@@ -791,8 +791,8 @@ test("collapsed panel keeps toggle anchor and restores saved position", async ()
   hooks.runtime.ui.root = root;
   hooks.runtime.state = {
     collapsed: true,
-    panelPosition: { left: 240, top: 180 },
-    collapsedPosition: { left: 500, top: 300 }
+    panelPosition: { top: 180 },
+    collapsedPosition: { top: 300 }
   };
   hooks.applyPanelPosition();
   const collapsedStyle = { ...root.style };
@@ -801,10 +801,10 @@ test("collapsed panel keeps toggle anchor and restores saved position", async ()
   hooks.applyPanelPosition();
 
   const result = structuredClone({ collapsedStyle, expandedStyle: root.style });
-  assert.deepStrictEqual(result, {"collapsedStyle": {"left": "500px", "top": "300px", "right": "auto"}, "expandedStyle": {"left": "240px", "top": "180px", "right": "auto"}});
+  assert.deepStrictEqual(result, {"collapsedStyle": {"left": "", "top": "300px", "right": ""}, "expandedStyle": {"left": "", "top": "180px", "right": ""}});
 });
 
-test("expanding from the collapsed mark keeps the toggle at the mark position", async () => {
+test("expanding from the collapsed mark keeps the saved vertical position", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
   source = source.replace(
@@ -860,13 +860,13 @@ test("expanding from the collapsed mark keeps the toggle at the mark position", 
   hooks.runtime.ui = { root, collapse, expand };
   hooks.runtime.state = {
     collapsed: true,
-    panelPosition: { left: 600, top: 200 },
-    collapsedPosition: { left: 600, top: 200 }
+    panelPosition: { top: 200 },
+    collapsedPosition: { top: 200 }
   };
 
   await hooks.setPanelCollapsed(false);
   const result = structuredClone({ panelPosition: hooks.runtime.state.panelPosition, style: root.style });
-  assert.deepStrictEqual(result, {"panelPosition": {"left": 407, "top": 200}, "style": {"left": "407px", "top": "200px", "right": "auto"}});
+  assert.deepStrictEqual(result, {"panelPosition": {"top": 200}, "style": {"left": "", "top": "200px", "right": ""}});
 });
 
 test("export link favorites copies compatible json to the clipboard", async () => {

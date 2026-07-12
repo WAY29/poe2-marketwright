@@ -1,19 +1,26 @@
 #poe2-trade2-affix-filter-root {
   position: fixed;
   top: 14px;
-  right: 14px;
+  right: auto;
+  left: 14px;
   z-index: 2147483647;
   width: 238px;
   font: 11px/1.35 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  transition: opacity 160ms ease;
+}
+
+#poe2-trade2-affix-filter-root.poe2-marketwright-sidebar-right {
+  right: 14px;
+  left: auto;
 }
 
 #poe2-marketwright-favorites-panel-frame {
   position: fixed !important;
   z-index: 2147483647 !important;
   top: 0 !important;
-  right: 0 !important;
+  right: auto !important;
   bottom: auto !important;
-  left: auto !important;
+  left: 0 !important;
   display: block !important;
   width: min(360px, 30vw) !important;
   min-width: 0 !important;
@@ -25,6 +32,13 @@
   padding: 0 !important;
   border: 0 !important;
   background: #130e09 !important;
+  box-shadow: 10px 0 28px rgba(0, 0, 0, 0.58) !important;
+  transition: opacity 160ms ease;
+}
+
+#poe2-marketwright-favorites-panel-frame.poe2-marketwright-sidebar-right {
+  right: 0 !important;
+  left: auto !important;
   box-shadow: -10px 0 28px rgba(0, 0, 0, 0.58) !important;
 }
 
@@ -33,20 +47,41 @@
 }
 
 #poe2-trade2-affix-filter-root.poe2-marketwright-favorites-full-view-open {
-  left: auto !important;
+  right: auto !important;
+  left: calc(min(360px, 30vw) + 14px) !important;
+}
+
+#poe2-trade2-affix-filter-root.poe2-marketwright-sidebar-right.poe2-marketwright-favorites-full-view-open {
   right: calc(min(360px, 30vw) + 14px) !important;
+  left: auto !important;
 }
 
 #poe2-trade2-affix-filter-root.poe2-trade2-affix-filter-collapsed {
-  left: auto;
+  left: 14px;
   top: 14px;
-  right: 14px;
+  right: auto;
   width: 36px;
   height: 36px;
 }
 
+#poe2-trade2-affix-filter-root.poe2-trade2-affix-filter-collapsed.poe2-marketwright-sidebar-right {
+  right: 14px;
+  left: auto;
+}
+
 #poe2-trade2-affix-filter-root.poe2-trade2-affix-filter-collapsed.poe2-marketwright-favorites-full-view-open {
+  right: auto !important;
+  left: calc(min(360px, 30vw) + 14px) !important;
+}
+
+#poe2-trade2-affix-filter-root.poe2-trade2-affix-filter-collapsed.poe2-marketwright-sidebar-right.poe2-marketwright-favorites-full-view-open {
   right: calc(min(360px, 30vw) + 14px) !important;
+  left: auto !important;
+}
+
+#poe2-trade2-affix-filter-root.poe2-marketwright-idle,
+#poe2-marketwright-favorites-panel-frame.poe2-marketwright-idle {
+  opacity: var(--poe2-marketwright-idle-opacity, 0.5);
 }
 
 #poe2-trade2-affix-filter-root * {
@@ -108,7 +143,8 @@
   display: none;
   position: absolute;
   top: 0;
-  right: calc(100% + 6px);
+  right: auto;
+  left: calc(100% + 6px);
   width: min(340px, calc(100vw - 52px));
   max-height: min(70vh, 540px);
   overflow: hidden;
@@ -120,6 +156,12 @@
   box-shadow:
     inset 0 1px 0 rgba(255, 245, 220, 0.05),
     0 8px 22px rgba(0, 0, 0, 0.44);
+}
+
+#poe2-trade2-affix-filter-root.poe2-marketwright-sidebar-right .poe2-marketwright-favorites-drawer,
+#poe2-trade2-affix-filter-root.poe2-marketwright-sidebar-right .poe2-marketwright-link-favorites-drawer {
+  right: calc(100% + 6px);
+  left: auto;
 }
 
 #poe2-trade2-affix-filter-root.poe2-marketwright-favorites-open .poe2-marketwright-favorites-drawer {
@@ -345,7 +387,8 @@
   display: none;
   position: absolute;
   top: 0;
-  right: calc(100% + 6px);
+  right: auto;
+  left: calc(100% + 6px);
   width: min(340px, calc(100vw - 52px));
   max-height: min(70vh, 540px);
   overflow: hidden;
@@ -1377,6 +1420,34 @@
   transition:
     border-color 160ms ease,
     filter 160ms ease;
+}
+
+.poe2-trade2-affix-filter-field input[type="range"] {
+  width: 100%;
+  margin: 0;
+  accent-color: #c79b52;
+  cursor: pointer;
+}
+
+.poe2-trade2-affix-filter-field input[type="range"]:disabled {
+  cursor: default;
+  opacity: 0.52;
+}
+
+@media (max-width: 600px) {
+  #poe2-trade2-affix-filter-root:not(.poe2-marketwright-sidebar-right) .poe2-marketwright-favorites-drawer,
+  #poe2-trade2-affix-filter-root:not(.poe2-marketwright-sidebar-right) .poe2-marketwright-link-favorites-drawer {
+    right: auto;
+    left: 0;
+    width: min(340px, calc(100vw - 16px));
+  }
+
+  #poe2-trade2-affix-filter-root.poe2-marketwright-sidebar-right .poe2-marketwright-favorites-drawer,
+  #poe2-trade2-affix-filter-root.poe2-marketwright-sidebar-right .poe2-marketwright-link-favorites-drawer {
+    right: 0;
+    left: auto;
+    width: min(340px, calc(100vw - 16px));
+  }
 }
 
 .poe2-trade2-affix-filter-field select:focus {

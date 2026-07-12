@@ -372,6 +372,27 @@
   "tradePageTranslation": {
     "message": "市集頁面翻譯"
   },
+  "sidebarPosition": {
+    "message": "側邊欄位置"
+  },
+  "sidebarPositionLeft": {
+    "message": "左側"
+  },
+  "sidebarPositionRight": {
+    "message": "右側"
+  },
+  "idleTransparency": {
+    "message": "閒置透明"
+  },
+  "idleTransparencyOpacity": {
+    "message": "閒置透明度：$1%"
+  },
+  "enableIdleTransparency": {
+    "message": "開啟閒置透明"
+  },
+  "disableIdleTransparency": {
+    "message": "關閉閒置透明"
+  },
   "languageEnglish": {
     "message": "English"
   },
