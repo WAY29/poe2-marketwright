@@ -411,6 +411,55 @@ test("trade localization preserves numeric stat values and English fallback", ()
   });
 });
 
+test("Trade filter terminology overrides translate headings and help copy", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getLocalizedTradeText, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageLanguage: "zh_TW" };
+  hooks.runtime.tradeLocalization = {
+    strings: {
+      "Type Filters": { en: "Type Filters", zh_CN: "类型过滤器", zh_TW: "類別過濾" }
+    }
+  };
+  const traditional = structuredClone({
+    heading: hooks.getLocalizedTradeText("TYPE FILTERS"),
+    equipment: hooks.getLocalizedTradeText("Equipment Filters"),
+    stat: hooks.getLocalizedTradeText("Stat Filters"),
+    weighted: hooks.getLocalizedTradeText("WEIGHTED SUM"),
+    runicWard: hooks.getLocalizedTradeText("Runic Ward"),
+    equipmentTip: hooks.getLocalizedTradeText("Includes base value, local modifiers, and maximum quality"),
+    rarityTip: hooks.getLocalizedTradeText("Increased Item Rarity"),
+    weightedTip: hooks.getLocalizedTradeText(
+      "Each stat value that meets the `min` and `max` (if provided, otherwise existence) requirements will be multiplied by the `weight` before being summed together.\nUse the group's `min` and `max` to filter items based on the total summed value."
+    )
+  });
+  hooks.runtime.state = { pageLanguage: "zh_CN" };
+  const simplified = hooks.getLocalizedTradeText("WEIGHTED SUM");
+  assert.deepStrictEqual(traditional, {
+    heading: "類別篩選器",
+    equipment: "裝備篩選器",
+    stat: "屬性篩選器",
+    weighted: "加權總和",
+    runicWard: "符文保護",
+    equipmentTip: "包含基礎數值、本地詞綴與最高品質",
+    rarityTip: "增加物品稀有度",
+    weightedTip: "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
+  });
+  assert.equal(simplified, "加权总和");
+});
+
 test("trade localization queries semantic descendants relative to the trade root", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
@@ -497,6 +546,93 @@ test("trade localization reaches nested native labels but leaves excluded conten
     label: "Item Category",
     reusable: "Rider Bow"
   });
+});
+
+test("advanced Trade filter labels can be localized without touching search controls", () => {
+  class FakeElement {
+    constructor(children = [], advanced = false) {
+      this.nodeType = 1;
+      this.childNodes = children;
+      this.advanced = advanced;
+    }
+
+    hasAttribute() {
+      return false;
+    }
+
+    closest(selector) {
+      return this.advanced && selector === "#trade .search-advanced-pane" ? this : null;
+    }
+
+    matches() {
+      return false;
+    }
+  }
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { localizeTradeElement, runtime };\n})();"
+  );
+  const sandbox = {
+    Element: FakeElement,
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageLanguage: "zh_TW" };
+  hooks.runtime.tradeLocalization = { strings: {} };
+  const label = { nodeType: 3, nodeValue: "WEIGHTED SUM" };
+  const advancedLabel = new FakeElement([label], true);
+  hooks.localizeTradeElement(advancedLabel);
+  assert.equal(label.nodeValue, "WEIGHTED SUM");
+  hooks.localizeTradeElement(advancedLabel, { allowAdvancedFilterCopy: true });
+  assert.equal(label.nodeValue, "加權總和");
+});
+
+test("Trade tooltip copy is localized outside the Trade application root", () => {
+  class FakeElement {
+    constructor(children = []) {
+      this.nodeType = 1;
+      this.childNodes = children;
+    }
+
+    closest() {
+      return null;
+    }
+  }
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { localizeTradeTooltipCopy, runtime };\n})();"
+  );
+  const tooltipText = {
+    nodeType: 3,
+    nodeValue: "Check each stat meets the `min` and `max` (if provided, otherwise existence) requirements before multiplying the stat value by the `weight` and finally summing them together.\nUse the group's `min` and `max` to filter items based on the total summed value."
+  };
+  const body = new FakeElement([new FakeElement([tooltipText])]);
+  const sandbox = {
+    Element: FakeElement,
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: { body },
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageLanguage: "zh_TW" };
+  hooks.runtime.tradeLocalization = { strings: {} };
+  hooks.localizeTradeTooltipCopy();
+  assert.equal(
+    tooltipText.nodeValue,
+    "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
+  );
 });
 
 test("favorite presentation uses the global language without overwriting custom names", async () => {

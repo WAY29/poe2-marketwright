@@ -523,7 +523,7 @@ test("link favorite presentation localizes saved equipment filter labels", async
   const result = structuredClone(hooks.getLinkFavoritePresentation({
     filterGroups: [{ label: "Equipment Filters", values: ["Evasion: 700 -", "Runic Ward: 100 -"] }]
   }));
-  assert.deepStrictEqual(result, {"filterGroups": [{"label": "Equipment Filters", "values": ["閃避: 700 -", "符文保護: 100 -"]}]});
+  assert.deepStrictEqual(result, {"filterGroups": [{"label": "裝備篩選器", "values": ["閃避: 700 -", "符文保護: 100 -"]}]});
 });
 
 test("compact item favorite tooltip includes context and every modifier", async () => {

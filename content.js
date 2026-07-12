@@ -63,9 +63,37 @@
   const LOCALIZED_ALIAS_LOCALES = ["zh_CN", "zh_TW"];
   const SUPPORTED_UI_LANGUAGES = Object.freeze(["en", "zh_CN", "zh_TW"]);
   const SUPPORTED_PAGE_LANGUAGES = Object.freeze(["en", "zh_CN", "zh_TW", "zh_CN_en", "zh_TW_en"]);
-  // Official Trade strings omit a few standalone canonical terms in some locales.
-  const TRADE_TERM_LOCALIZATION_FALLBACKS = Object.freeze({
-    "Runic Ward": { en: "Runic Ward", zh_CN: "符文结界", zh_TW: "符文保護" }
+  // Keep Trade filter terminology consistent when official data has a missing or legacy translation.
+  const TRADE_TERM_LOCALIZATION_OVERRIDES = Object.freeze({
+    "type filters": { en: "Type Filters", zh_CN: "类型筛选器", zh_TW: "類別篩選器" },
+    "equipment filters": { en: "Equipment Filters", zh_CN: "装备筛选器", zh_TW: "裝備篩選器" },
+    requirements: { en: "Requirements", zh_CN: "物品需求", zh_TW: "物品需求" },
+    "endgame filters": { en: "Endgame Filters", zh_CN: "终局筛选器", zh_TW: "終局篩選器" },
+    miscellaneous: { en: "Miscellaneous", zh_CN: "其他", zh_TW: "其他" },
+    "stat filters": { en: "Stat Filters", zh_CN: "属性筛选器", zh_TW: "屬性篩選器" },
+    "weighted sum": { en: "WEIGHTED SUM", zh_CN: "加权总和", zh_TW: "加權總和" },
+    "runic ward": { en: "Runic Ward", zh_CN: "符文结界", zh_TW: "符文保護" },
+    "includes base value, local modifiers, and maximum quality": {
+      en: "Includes base value, local modifiers, and maximum quality",
+      zh_CN: "包含基础数值、本地词缀与最高品质",
+      zh_TW: "包含基礎數值、本地詞綴與最高品質"
+    },
+    "includes base value and local modifiers": {
+      en: "Includes base value and local modifiers",
+      zh_CN: "包含基础数值与本地词缀",
+      zh_TW: "包含基礎數值與本地詞綴"
+    },
+    "increased item rarity": { en: "Increased Item Rarity", zh_CN: "提高物品稀有度", zh_TW: "增加物品稀有度" },
+    "check each stat meets the `min` and `max` (if provided, otherwise existence) requirements before multiplying the stat value by the `weight` and finally summing them together. use the group's `min` and `max` to filter items based on the total summed value.": {
+      en: "Check each stat meets the `min` and `max` (if provided, otherwise existence) requirements before multiplying the stat value by the `weight` and finally summing them together. Use the group's `min` and `max` to filter items based on the total summed value.",
+      zh_CN: "每项满足 `min` 与 `max`（若未设置，则检查是否存在）条件的属性数值，都会先乘以权重再求和。\n使用该组的 `min` 与 `max`，按加权总和筛选物品。",
+      zh_TW: "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
+    },
+    "each stat value that meets the `min` and `max` (if provided, otherwise existence) requirements will be multiplied by the `weight` before being summed together. use the group's `min` and `max` to filter items based on the total summed value.": {
+      en: "Each stat value that meets the `min` and `max` (if provided, otherwise existence) requirements will be multiplied by the `weight` before being summed together. Use the group's `min` and `max` to filter items based on the total summed value.",
+      zh_CN: "每项满足 `min` 与 `max`（若未设置，则检查是否存在）条件的属性数值，都会先乘以权重再求和。\n使用该组的 `min` 与 `max`，按加权总和筛选物品。",
+      zh_TW: "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
+    }
   });
   const ITEM_SEARCH_ROOT_SELECTOR =
     "#trade .top .search-panel > .search-bar:not(.search-advanced) .search-left .multiselect.search-select";
@@ -82,6 +110,17 @@
     ".result",
     ".item"
   ].join(",");
+  const TRADE_ADVANCED_FILTER_COPY_SELECTOR = [
+    ".search-advanced-pane .filter-group-header",
+    ".search-advanced-pane .filter-group-title",
+    ".search-advanced-pane .filter-title"
+  ].join(",");
+  const TRADE_TOOLTIP_COPY_PREFIXES = Object.freeze([
+    "check each stat meets",
+    "each stat value that meets",
+    "includes base value",
+    "increased item rarity"
+  ]);
   const TRADE_LOCALIZATION_EXCLUDED_SELECTOR = [
     "[data-field='account']",
     "[data-field='whisper']",
@@ -1880,8 +1919,7 @@
     if (localized !== text) {
       return localized;
     }
-    const fallback = TRADE_TERM_LOCALIZATION_FALLBACKS[text];
-    return fallback ? getLocalizedTradePageText(fallback, text, false) : text;
+    return text;
   }
 
   function localizeLinkFavoriteFilterValue(value) {
@@ -4131,6 +4169,9 @@
       return;
     }
     const root = document.querySelector(TRADE_ROOT_SELECTOR);
+    for (const element of getTradeAdvancedFilterCopyElements(root)) {
+      localizeTradeElement(element, { allowAdvancedFilterCopy: true });
+    }
     for (const element of getTradeLocalizationElements(root)) {
       localizeTradeElement(element);
     }
@@ -4139,6 +4180,7 @@
         localizeTradeAttributes(element);
       }
     }
+    localizeTradeTooltipCopy();
   }
 
   function getTradeLocalizationElements(root) {
@@ -4149,8 +4191,56 @@
     return elements;
   }
 
-  function localizeTradeElement(element) {
-    if (isExcludedTradeLocalizationElement(element)) {
+  function getTradeAdvancedFilterCopyElements(root) {
+    return new Set(root.querySelectorAll(TRADE_ADVANCED_FILTER_COPY_SELECTOR));
+  }
+
+  function localizeTradeTooltipCopy() {
+    if (!document.body) {
+      return;
+    }
+    const visit = (current) => {
+      if (current.nodeType === 3) {
+        let source = current[TRADE_LOCALIZATION_SOURCE_KEY] ?? current.nodeValue ?? "";
+        current[TRADE_LOCALIZATION_SOURCE_KEY] = source;
+        if (
+          current[TRADE_LOCALIZATION_RENDER_KEY] !== undefined &&
+          current.nodeValue !== current[TRADE_LOCALIZATION_RENDER_KEY]
+        ) {
+          source = current.nodeValue ?? "";
+          current[TRADE_LOCALIZATION_SOURCE_KEY] = source;
+        }
+        if (!isTradeTooltipCopy(source)) {
+          return;
+        }
+        const localized = getLocalizedTradeText(source);
+        if (localized !== current.nodeValue) {
+          current.nodeValue = localized;
+        }
+        current[TRADE_LOCALIZATION_RENDER_KEY] = localized;
+        return;
+      }
+      if (
+        current.nodeType !== 1 ||
+        runtime.ui.root?.contains(current) ||
+        current.closest?.(".poe2-marketwright, .poe2-trade2-affix-filter")
+      ) {
+        return;
+      }
+      for (const child of current.childNodes || []) {
+        visit(child);
+      }
+    };
+    visit(document.body);
+  }
+
+  function isTradeTooltipCopy(value) {
+    const normalized = normalizeLookupText(value);
+    return TRADE_TOOLTIP_COPY_PREFIXES.some((prefix) => normalized.startsWith(prefix));
+  }
+
+  function localizeTradeElement(element, options = {}) {
+    if (isExcludedTradeLocalizationElement(element, options)) {
       return;
     }
     const visit = (current) => {
@@ -4171,14 +4261,14 @@
         current[TRADE_LOCALIZATION_RENDER_KEY] = localized;
         return;
       }
-      if (current.nodeType !== 1 || isExcludedTradeLocalizationElement(current)) {
+      if (current.nodeType !== 1 || isExcludedTradeLocalizationElement(current, options)) {
         return;
       }
       if (current.matches?.("[data-field^='stat.']")) {
         localizeTradeStatElement(current);
         return;
       }
-      localizeTradeAttributes(current);
+      localizeTradeAttributes(current, options);
       for (const child of current.childNodes || []) {
         visit(child);
       }
@@ -4238,8 +4328,8 @@
       : `${display.primary} (${display.english})`;
   }
 
-  function localizeTradeAttributes(element) {
-    if (isExcludedTradeLocalizationElement(element)) {
+  function localizeTradeAttributes(element, options = {}) {
+    if (isExcludedTradeLocalizationElement(element, options)) {
       return;
     }
     for (const attribute of ["placeholder", "title", "aria-label"]) {
@@ -4262,7 +4352,7 @@
     }
   }
 
-  function isExcludedTradeLocalizationElement(element) {
+  function isExcludedTradeLocalizationElement(element, { allowAdvancedFilterCopy = false } = {}) {
     return !(element instanceof Element) ||
       Boolean(
         runtime.ui.root?.contains(element) ||
@@ -4270,7 +4360,7 @@
           // pass here would translate while Vue is filtering and corrupt its
           // display/search state.
           element.closest(ITEM_SEARCH_ROOT_SELECTOR) ||
-          element.closest("#trade .search-advanced-pane") ||
+          (!allowAdvancedFilterCopy && element.closest("#trade .search-advanced-pane")) ||
           element.closest(TRADE_LOCALIZATION_EXCLUDED_SELECTOR) ||
           element.closest(".poe2-marketwright, .poe2-trade2-affix-filter")
       );
@@ -4285,7 +4375,14 @@
     const leading = match?.[1] || "";
     const text = match?.[2] || "";
     const trailing = match?.[3] || "";
-    if (!text || !runtime.tradeLocalization) {
+    if (!text) {
+      return source;
+    }
+    const override = getTradeTermLocalizationOverride(text);
+    if (override) {
+      return `${leading}${getLocalizedTradePageText(override, text, false)}${trailing}`;
+    }
+    if (!runtime.tradeLocalization) {
       return source;
     }
     const statDisplay = getTradeStatDisplay(text, element);
@@ -4301,6 +4398,10 @@
     return item
       ? `${leading}${getLocalizedTradePageText(item, text, false)}${trailing}`
       : source;
+  }
+
+  function getTradeTermLocalizationOverride(value) {
+    return TRADE_TERM_LOCALIZATION_OVERRIDES[normalizeLookupText(value)] || null;
   }
 
   function getTradeStatRecordForElement(element) {
