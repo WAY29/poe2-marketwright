@@ -559,7 +559,7 @@ test("compact link favorite uses the same stat summary and tooltip groups", asyn
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
   source = source.replace(
     /\n\}\)\(\);\s*$/,
-    "\n  window.__testHooks = { getCompactLinkFavoritePresentation };\n})();"
+    "\n  window.__testHooks = { getCompactLinkFavoritePresentation, runtime };\n})();"
   );
   const sandbox = {
     window: { addEventListener() {} },
@@ -579,13 +579,82 @@ test("compact link favorite uses the same stat summary and tooltip groups", asyn
     console
   };
   vm.runInNewContext(source, sandbox, { filename: "content.js" });
-  const result = structuredClone(sandbox.window.__testHooks.getCompactLinkFavoritePresentation({
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.messages = {
+    favoriteModifierSourceFractured: { message: "破裂" }
+  };
+  const result = structuredClone(hooks.getCompactLinkFavoritePresentation({
     filterGroups: [
       { label: "Type Filters", values: ["Item Category: Ring"] },
       { label: "Stat Filters", values: ["FRACTURED +#% to Item Rarity", "+# to maximum Life"] }
     ]
   }));
-  assert.deepStrictEqual(result, {"stats": [{"text": "+18% to Item Rarity", "source": {"key": "fractured", "label": "FRACTURED"}}, {"text": "formatted +# to maximum Life", "source": null}], "tooltipGroups": [{"label": "Type Filters", "values": [{"text": "Item Category: Ring", "source": null}]}, {"label": "Stat Filters", "values": [{"text": "+18% to Item Rarity", "source": {"key": "fractured", "label": "FRACTURED"}}, {"text": "formatted +# to maximum Life", "source": null}]}]});
+  assert.deepStrictEqual(result, {"stats": [{"text": "+18% to Item Rarity", "source": {"key": "fractured", "label": "破裂"}}, {"text": "formatted +# to maximum Life", "source": null}], "tooltipGroups": [{"label": "Type Filters", "values": [{"text": "Item Category: Ring", "source": null}]}, {"label": "Stat Filters", "values": [{"text": "+18% to Item Rarity", "source": {"key": "fractured", "label": "破裂"}}, {"text": "formatted +# to maximum Life", "source": null}]}]});
+});
+
+test("structured link snapshots retain localized special modifier sources", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getLinkFavoritePresentation, getCompactLinkFavoritePresentation, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.messages = {
+    favoriteModifierSourceDesecrated: { message: "亵渎" }
+  };
+  const link = hooks.getLinkFavoritePresentation({
+    displaySnapshot: {
+      statGroupsVersion: 3,
+      statGroups: [{ type: "and", filters: [{ id: "desecrated.stat_cold_resistance", value: { min: 2 } }] }]
+    }
+  });
+  const result = structuredClone(hooks.getCompactLinkFavoritePresentation(link).stats.map((stat) => stat.source));
+  assert.deepStrictEqual(result, [{ key: "desecrated", label: "亵渎" }]);
+});
+
+test("full link favorite localizes special sources from legacy filter text", () => {
+  let source = fs.readFileSync("favorites-panel.js", "utf8");
+  source = source.replace("  bindUi();\n  bootstrap();", "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getLinkFavoriteTooltipGroups, local };\n})();"
+  );
+  const sandbox = {
+    window: {},
+    document: { querySelector() { return null; } },
+    location: { search: "" },
+    URLSearchParams,
+    Poe2MarketwrightFavorites: {
+      createLinkFavoriteTools() {
+        return {
+          formatLinkFavoriteStatFilter() {
+            return { text: "+18% to Item Rarity", source: { key: "fractured", label: "FRACTURED" } };
+          }
+        };
+      }
+    },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.local.messages = {
+    favoriteModifierSourceFractured: { message: "破裂" }
+  };
+  const result = structuredClone(hooks.getLinkFavoriteTooltipGroups({
+    filterGroups: [{ label: "Stat Filters", values: ["FRACTURED +#% to Item Rarity"] }]
+  }));
+  assert.deepStrictEqual(result, [{
+    label: "Stat Filters",
+    values: [{ text: "+18% to Item Rarity", source: { key: "fractured", label: "破裂" } }]
+  }]);
 });
 
 test("compact link tooltip renders structured stat group relationships", async () => {
@@ -681,7 +750,7 @@ test("item favorite views label rune sanctum and skill modifiers", async () => {
   let compactSource = fs.readFileSync("content.js", "utf8").replace(compactBootstrapCall, "");
   compactSource = compactSource.replace(
     /\n\}\)\(\);\s*$/,
-    "\n  window.__testHooks = { getCompactFavoritePresentation };\n})();"
+    "\n  window.__testHooks = { getCompactFavoritePresentation, runtime };\n})();"
   );
   const compactSandbox = {
     window: { addEventListener() {} },
@@ -695,7 +764,7 @@ test("item favorite views label rune sanctum and skill modifiers", async () => {
   fullSource = fullSource.replace("  bindUi();\n  bootstrap();", "");
   fullSource = fullSource.replace(
     /\n\}\)\(\);\s*$/,
-    "\n  window.__testHooks = { getFavoriteTooltipLink };\n})();"
+    "\n  window.__testHooks = { getFavoriteTooltipLink, local };\n})();"
   );
   const fullSandbox = {
     window: {},
@@ -705,6 +774,17 @@ test("item favorite views label rune sanctum and skill modifiers", async () => {
     console
   };
   vm.runInNewContext(fullSource, fullSandbox, { filename: "favorites-panel.js" });
+
+  compactSandbox.window.__testHooks.runtime.messages = {
+    favoriteModifierSourceAugment: { message: "增幅" },
+    favoriteModifierSourceSanctum: { message: "圣域" },
+    favoriteModifierSourceSkill: { message: "技能" }
+  };
+  fullSandbox.window.__testHooks.local.messages = {
+    favoriteModifierSourceAugment: { message: "增幅" },
+    favoriteModifierSourceSanctum: { message: "圣域" },
+    favoriteModifierSourceSkill: { message: "技能" }
+  };
 
   const favorite = {
     mods: [
@@ -717,7 +797,7 @@ test("item favorite views label rune sanctum and skill modifiers", async () => {
   const fullPresentation = fullSandbox.window.__testHooks.getFavoriteTooltipLink(favorite);
   const full = structuredClone(fullPresentation.filterGroups.find((group) => group.label === "Modifiers").values);
 
-  const expected = [{"text": "15% increased Armour", "source": {"key": "augment", "label": "AUGMENT"}}, {"text": "25% chance to Avoid Resolve loss", "source": {"key": "sanctum", "label": "SANCTUM"}}, {"text": "Grants Skill: Level 12 Mana Drain", "source": {"key": "skill", "label": "SKILL"}}];
+  const expected = [{"text": "15% increased Armour", "source": {"key": "augment", "label": "增幅"}}, {"text": "25% chance to Avoid Resolve loss", "source": {"key": "sanctum", "label": "圣域"}}, {"text": "Grants Skill: Level 12 Mana Drain", "source": {"key": "skill", "label": "技能"}}];
   assert.deepStrictEqual(compact, expected);
   assert.deepStrictEqual(full, expected);
 });

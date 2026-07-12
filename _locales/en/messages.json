@@ -165,6 +165,30 @@
   "favoriteTooltipDisabled": {
     "message": "DISABLED"
   },
+  "favoriteModifierSourceCrafted": {
+    "message": "CRAFTED"
+  },
+  "favoriteModifierSourceDesecrated": {
+    "message": "DESECRATED"
+  },
+  "favoriteModifierSourceFractured": {
+    "message": "FRACTURED"
+  },
+  "favoriteModifierSourceEnchant": {
+    "message": "ENCHANT"
+  },
+  "favoriteModifierSourceAugment": {
+    "message": "AUGMENT"
+  },
+  "favoriteModifierSourceImplicit": {
+    "message": "IMPLICIT"
+  },
+  "favoriteModifierSourceSanctum": {
+    "message": "SANCTUM"
+  },
+  "favoriteModifierSourceSkill": {
+    "message": "SKILL"
+  },
   "statFilterTitle": {
     "message": "Stat filter"
   },

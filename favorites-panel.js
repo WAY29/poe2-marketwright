@@ -28,6 +28,14 @@
     favoriteTooltipStatGroupIf: "IF",
     favoriteTooltipWeight: "WEIGHT: $1",
     favoriteTooltipDisabled: "DISABLED",
+    favoriteModifierSourceCrafted: "CRAFTED",
+    favoriteModifierSourceDesecrated: "DESECRATED",
+    favoriteModifierSourceFractured: "FRACTURED",
+    favoriteModifierSourceEnchant: "ENCHANT",
+    favoriteModifierSourceAugment: "AUGMENT",
+    favoriteModifierSourceImplicit: "IMPLICIT",
+    favoriteModifierSourceSanctum: "SANCTUM",
+    favoriteModifierSourceSkill: "SKILL",
     renameFavorite: "Rename favorite",
     deleteFavorite: "Delete favorite",
     undoFavoriteDelete: "Undo",
@@ -84,6 +92,16 @@
     "skill",
     "augment"
   ]);
+  const FAVORITE_SPECIAL_MODIFIER_SOURCE_MESSAGE_KEYS = Object.freeze({
+    crafted: "favoriteModifierSourceCrafted",
+    desecrated: "favoriteModifierSourceDesecrated",
+    fractured: "favoriteModifierSourceFractured",
+    enchant: "favoriteModifierSourceEnchant",
+    augment: "favoriteModifierSourceAugment",
+    implicit: "favoriteModifierSourceImplicit",
+    sanctum: "favoriteModifierSourceSanctum",
+    skill: "favoriteModifierSourceSkill"
+  });
   const FAVORITES_PANEL_DRAG_TYPE = "application/x-poe2-marketwright-favorite-drag";
 
   const ui = {
@@ -267,14 +285,19 @@
   }
 
   function getFavoriteModifierPresentation(modifier) {
-    const sourceKey = String(modifier?.source || "").trim().toLowerCase();
-    const displaySourceKey = sourceKey === "rune" ? "augment" : sourceKey;
     return {
       text: String(modifier?.text || ""),
-      source: FAVORITE_SPECIAL_MODIFIER_SOURCES.has(sourceKey)
-        ? { key: displaySourceKey, label: displaySourceKey.toUpperCase() }
-        : null
+      source: getLocalizedFavoriteModifierSource(modifier?.source)
     };
+  }
+
+  function getLocalizedFavoriteModifierSource(source) {
+    const sourceKey = String(source?.key || source || "").trim().toLowerCase();
+    const displaySourceKey = sourceKey === "rune" ? "augment" : sourceKey;
+    const messageKey = FAVORITE_SPECIAL_MODIFIER_SOURCE_MESSAGE_KEYS[displaySourceKey];
+    return FAVORITE_SPECIAL_MODIFIER_SOURCES.has(sourceKey) && messageKey
+      ? { key: displaySourceKey, label: t(messageKey) }
+      : null;
   }
 
   function getFavoriteTooltipLink(favorite) {
@@ -644,14 +667,15 @@
     if (typeof formatter !== "function") {
       return { text: String(value || ""), source: null };
     }
-    return formatter(value);
+    const formatted = formatter(value);
+    return { ...formatted, source: getLocalizedFavoriteModifierSource(formatted.source) };
   }
 
   function getLinkFavoriteTooltipValue(value) {
     if (value && typeof value === "object" && "text" in value) {
       return {
         text: String(value.text || ""),
-        source: value.source || null,
+        source: getLocalizedFavoriteModifierSource(value.source),
         ...(value.heading ? { heading: true } : {}),
         ...(value.disabled ? { disabled: true } : {}),
         ...(Number.isFinite(Number(value.weight)) ? { weight: Number(value.weight) } : {})

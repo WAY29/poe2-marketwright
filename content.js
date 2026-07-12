@@ -47,6 +47,16 @@
     "skill",
     "augment"
   ]);
+  const FAVORITE_SPECIAL_MODIFIER_SOURCE_MESSAGE_KEYS = Object.freeze({
+    crafted: "favoriteModifierSourceCrafted",
+    desecrated: "favoriteModifierSourceDesecrated",
+    fractured: "favoriteModifierSourceFractured",
+    enchant: "favoriteModifierSourceEnchant",
+    augment: "favoriteModifierSourceAugment",
+    implicit: "favoriteModifierSourceImplicit",
+    sanctum: "favoriteModifierSourceSanctum",
+    skill: "favoriteModifierSourceSkill"
+  });
   const BRIDGE_SOURCE = "poe2-marketwright";
   const BRIDGE_UPDATE_TYPE = "POE2_MARKETWRIGHT_UPDATE";
   const BRIDGE_READY_TYPE = "POE2_MARKETWRIGHT_READY";
@@ -427,6 +437,14 @@
     favoriteTooltipStatGroupIf: "IF",
     favoriteTooltipWeight: "WEIGHT: $1",
     favoriteTooltipDisabled: "DISABLED",
+    favoriteModifierSourceCrafted: "CRAFTED",
+    favoriteModifierSourceDesecrated: "DESECRATED",
+    favoriteModifierSourceFractured: "FRACTURED",
+    favoriteModifierSourceEnchant: "ENCHANT",
+    favoriteModifierSourceAugment: "AUGMENT",
+    favoriteModifierSourceImplicit: "IMPLICIT",
+    favoriteModifierSourceSanctum: "SANCTUM",
+    favoriteModifierSourceSkill: "SKILL",
     statFilterTitle: "Stat filter",
     pobCopyTitle: "PoB Copy Button",
     currencyConversionTitle: "Price Conversion",
@@ -2277,6 +2295,7 @@
     const englishText = englishTemplate.replace(/#/g, () => values[valueIndex++] || values.at(-1) || "#");
     return {
       ...formatLocalizedFavoriteModifier({ id: stat?.id, text: englishText, source: String(stat?.id || "").split(".", 1)[0] }),
+      source: getLocalizedFavoriteModifierSource(String(stat?.id || "").split(".", 1)[0]),
       ...(stat?.disabled === true ? { disabled: true } : {}),
       ...(Number.isFinite(Number(stat?.weight)) ? { weight: Number(stat.weight) } : {})
     };
@@ -2393,14 +2412,19 @@
   }
 
   function getCompactFavoriteModifierPresentation(modifier) {
-    const sourceKey = String(modifier?.source || "").trim().toLowerCase();
-    const displaySourceKey = sourceKey === "rune" ? "augment" : sourceKey;
     return {
       text: String(modifier?.text || ""),
-      source: FAVORITE_SPECIAL_MODIFIER_SOURCES.has(sourceKey)
-        ? { key: displaySourceKey, label: displaySourceKey.toUpperCase() }
-        : null
+      source: getLocalizedFavoriteModifierSource(modifier?.source)
     };
+  }
+
+  function getLocalizedFavoriteModifierSource(source) {
+    const sourceKey = String(source?.key || source || "").trim().toLowerCase();
+    const displaySourceKey = sourceKey === "rune" ? "augment" : sourceKey;
+    const messageKey = FAVORITE_SPECIAL_MODIFIER_SOURCE_MESSAGE_KEYS[displaySourceKey];
+    return FAVORITE_SPECIAL_MODIFIER_SOURCES.has(sourceKey) && messageKey
+      ? { key: displaySourceKey, label: t(messageKey) }
+      : null;
   }
 
   function getFavoriteTooltipItemValues(favorite) {
@@ -3312,7 +3336,8 @@
 
   function formatCompactLinkFavoriteStatFilter(value) {
     const formatter = getLinkFavoriteTools()?.formatLinkFavoriteStatFilter;
-    return typeof formatter === "function" ? formatter(value) : { text: String(value || ""), source: null };
+    const formatted = typeof formatter === "function" ? formatter(value) : { text: String(value || ""), source: null };
+    return { ...formatted, source: getLocalizedFavoriteModifierSource(formatted.source) };
   }
 
   function getCompactLinkFavoriteStatGroupLabel(group) {
@@ -3347,7 +3372,7 @@
             value && typeof value === "object" && "text" in value
               ? {
                   text: String(value.text || ""),
-                  source: value.source || null,
+                  source: getLocalizedFavoriteModifierSource(value.source),
                   ...(value.disabled ? { disabled: true } : {}),
                   ...(Number.isFinite(Number(value.weight)) ? { weight: Number(value.weight) } : {})
                 }
@@ -3364,7 +3389,10 @@
     const snapshotItemValues = [snapshot?.type, snapshot?.category, snapshot?.rarity]
       .filter(Boolean)
       .map((text) => ({ text, source: null }));
-    const snapshotStats = snapshot?.stats || [];
+    const snapshotStats = (snapshot?.stats || []).map((stat) => ({
+      ...stat,
+      source: getLocalizedFavoriteModifierSource(stat?.source)
+    }));
     const structuredStatGroups = getCompactLinkFavoriteStructuredStatGroups(snapshot);
     const tooltipGroups = [
       ...(snapshotItemValues.length ? [{ label: t("favoriteTooltipItem"), values: snapshotItemValues }] : []),

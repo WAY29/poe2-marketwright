@@ -453,6 +453,30 @@
   "favoriteTooltipDisabled": {
     "message": "已停用"
   },
+  "favoriteModifierSourceCrafted": {
+    "message": "工藝"
+  },
+  "favoriteModifierSourceDesecrated": {
+    "message": "褻瀆"
+  },
+  "favoriteModifierSourceFractured": {
+    "message": "破裂"
+  },
+  "favoriteModifierSourceEnchant": {
+    "message": "附魔"
+  },
+  "favoriteModifierSourceAugment": {
+    "message": "增幅"
+  },
+  "favoriteModifierSourceImplicit": {
+    "message": "隱性"
+  },
+  "favoriteModifierSourceSanctum": {
+    "message": "聖域"
+  },
+  "favoriteModifierSourceSkill": {
+    "message": "技能"
+  },
   "statFilterTitle": {
     "message": "詞綴過濾"
   },
