@@ -1840,10 +1840,6 @@
     const selection = lookupItemNameSelection(normalizeLookupText(baseName));
     const category = selection?.kind === "page" ? FAVORITE_TRADE_CATEGORY_BY_PAGE[selection.id] : null;
     if (!baseName || !category) {
-      console.warn("[PoE2 Marketwright] unable to classify favorite item", {
-        baseName: baseName || null,
-        selection: selection || null
-      });
       return null;
     }
     return {

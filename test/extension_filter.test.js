@@ -614,6 +614,46 @@ test("content classifies favorite by base name and trade category", async () => 
   assert.deepStrictEqual(result, {"baseName": "Warmonger Bow", "category": "weapon.bow", "itemType": "Bow", "selection": {"kind": "page", "id": "Bows"}});
 });
 
+test("content ignores unsupported favorite items without logging on repeated refreshes", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getFavoriteItemClassification, runtime };\n})();"
+  );
+
+  const warnings = [];
+  const window = {
+    addEventListener() {},
+    clearTimeout() {},
+    setTimeout() { return 1; }
+  };
+  const sandbox = {
+    window,
+    document: {},
+    location: { pathname: "/trade2" },
+    console: { warn(...args) { warnings.push(args); } },
+    Element: class {},
+    HTMLInputElement: class {},
+    HTMLTextAreaElement: class {},
+    MutationObserver: class {},
+    chrome: {}
+  };
+
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = window.__testHooks;
+  hooks.runtime.data = { itemNameToPage: {}, itemNameToSelection: {} };
+
+  const unsupportedCurrency = { typeLine: "Aldur's Saga" };
+  const result = structuredClone([
+    hooks.getFavoriteItemClassification(unsupportedCurrency),
+    hooks.getFavoriteItemClassification(unsupportedCurrency)
+  ]);
+
+  assert.deepStrictEqual(result, [null, null]);
+  assert.deepStrictEqual(warnings, []);
+});
+
 test("current link favorite uses selected base name for its default name", async () => {
 
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
