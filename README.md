@@ -15,8 +15,18 @@ PoE2 Marketwright is a broader Path of Exile 2 market extension workspace. The c
 - Auto-detects the current category or item name from the trade2 filters.
 - Filters visible affix suggestion lists using the scraped PoE2DB data.
 - Allows manual override when auto-detection is not enough.
+- Adds a blue Tier selector beside supported stat filters. The active item category limits its choices; otherwise compatible categories are labelled in the list.
 - Adds a PoB Create Custom copy button to trade result rows.
 - Adds `E`, `C`, and `D` conversion controls for fixed Exalted, Chaos, and Divine Orb prices. Rates are fetched from Poe2Scout for the active trade league; the panel refresh button forces a live update.
+
+## Tier selection
+
+Enable **Tier selection** from the extension panel. A supported stat filter shows a blue `T` button to the left of its text; choose a Tier from the menu.
+
+- **Minimum** is the default mode. It updates only `MIN`, preserving any value already entered in `MAX`. Each Tier uses the next lower Tier's maximum average roll plus `0.1`, so the selected Tier cannot roll as that lower Tier. The lowest Tier leaves `MIN` empty.
+- **Exact** updates both `MIN` and `MAX` to the selected Tier's average roll range.
+
+Tier mappings are generated from verified PoE2DB modifier ranges and matched with official Trade stat IDs. Stats without an unambiguous mapping do not show the selector.
 
 ## Install
 
