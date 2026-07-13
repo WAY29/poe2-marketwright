@@ -92,7 +92,8 @@
         "favorites-panel.js",
         "favorites-panel.css",
         "page-bridge.js",
-        "images/currency/*.png"
+        "images/currency/*.png",
+        "images/ui/*.png"
       ],
       "matches": [
         "https://pathofexile.com/*",

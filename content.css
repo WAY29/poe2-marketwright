@@ -1,3 +1,59 @@
+/* Shared dark ARPG tokens — charcoal / rust / aged gold / ivory; error red only.
+   :root covers page-injected result-row controls (tier / PoB / currency). */
+:root,
+#poe2-trade2-affix-filter-root,
+#poe2-marketwright-favorites-panel-frame {
+  --mw-bg: #0c0a08;
+  --mw-bg-panel: #12100c;
+  --mw-bg-raised: #1a1510;
+  --mw-bg-input: #14110d;
+  --mw-bg-row: rgba(20, 15, 10, 0.88);
+  --mw-bg-hover: rgba(141, 98, 42, 0.16);
+  --mw-border: rgba(133, 97, 51, 0.9);
+  --mw-border-soft: rgba(105, 78, 43, 0.72);
+  --mw-border-input: #5c4529;
+  --mw-border-strong: #8d6735;
+  --mw-gold: #d0a45c;
+  --mw-gold-soft: #c7a96d;
+  --mw-gold-bright: #f3d681;
+  --mw-text: #ead7aa;
+  --mw-text-body: #d9c79e;
+  --mw-text-muted: #aa936a;
+  --mw-text-dim: #8f7b58;
+  --mw-text-title: #efd9a9;
+  --mw-btn: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  --mw-btn-active: linear-gradient(180deg, #4a381d 0%, #1c1309 100%);
+  --mw-btn-selected: #3d2e1a;
+  --mw-toggle-on: linear-gradient(180deg, #d6ae65 0%, #9a6830 100%);
+  --mw-toggle-on-text: #1d150c;
+  --mw-error: #b76a6a;
+  --mw-error-text: #efb6ad;
+  --mw-focus: rgba(211, 166, 83, 0.86);
+  --mw-shadow: 0 8px 22px rgba(0, 0, 0, 0.5);
+  /* micro emboss only — no figurative bas-relief */
+  --mw-inset: inset 0 1px 0 rgba(255, 245, 220, 0.1),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.35);
+  --mw-emboss: inset 0 1px 0 rgba(255, 240, 200, 0.14),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.42);
+  --mw-recess: inset 0 1px 2px rgba(0, 0, 0, 0.55),
+    inset 0 -1px 0 rgba(255, 240, 200, 0.04);
+  --mw-scroll-track: #120e0a;
+  --mw-scroll-thumb: #6e5230;
+  --mw-scroll-thumb-hover: #a07a3f;
+  --mw-font-ui: 11px/1.35 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  --mw-font-title: 700 11px/1.2 Georgia, "Times New Roman", serif;
+  /* local UI textures (no text / no business chrome in assets) */
+  --mw-tex-panel: url("images/ui/panel-fill.png");
+  --mw-tex-metal: url("images/ui/metal-fill.png");
+  --mw-tex-brass: url("images/ui/brass-fill.png");
+  --mw-tex-btn: url("images/ui/btn-face.png");
+  --mw-tex-btn-on: url("images/ui/btn-selected.png");
+  --mw-tex-input: url("images/ui/input-recess.png");
+  --mw-tex-frame: url("images/ui/frame-border.png");
+  --mw-tex-radio-off: url("images/ui/radio-off.png");
+  --mw-tex-radio-on: url("images/ui/radio-on.png");
+}
+
 #poe2-trade2-affix-filter-root {
   position: fixed;
   top: 14px;
@@ -5,8 +61,57 @@
   left: 14px;
   z-index: 2147483647;
   width: 238px;
-  font: 11px/1.35 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+  font: var(--mw-font-ui);
+  scrollbar-width: thin;
+  scrollbar-color: var(--mw-scroll-thumb) var(--mw-scroll-track);
   transition: opacity 160ms ease;
+}
+
+/* dark ARPG scrollbars — only inside extension chrome */
+#poe2-trade2-affix-filter-root *,
+#poe2-marketwright-favorites-panel-frame * {
+  scrollbar-width: thin;
+  scrollbar-color: var(--mw-scroll-thumb) var(--mw-scroll-track);
+}
+
+#poe2-trade2-affix-filter-root ::-webkit-scrollbar,
+#poe2-marketwright-favorites-panel-frame ::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+#poe2-trade2-affix-filter-root ::-webkit-scrollbar-track,
+#poe2-marketwright-favorites-panel-frame ::-webkit-scrollbar-track {
+  background:
+    linear-gradient(90deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.15)),
+    var(--mw-scroll-track);
+  border-left: 1px solid rgba(90, 66, 36, 0.55);
+  box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.55);
+}
+
+#poe2-trade2-affix-filter-root ::-webkit-scrollbar-thumb,
+#poe2-marketwright-favorites-panel-frame ::-webkit-scrollbar-thumb {
+  background:
+    linear-gradient(180deg, rgba(210, 170, 95, 0.35), rgba(0, 0, 0, 0.25)),
+    var(--mw-scroll-thumb);
+  border: 1px solid rgba(176, 132, 64, 0.7);
+  border-radius: 2px;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 236, 190, 0.22),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.4);
+}
+
+#poe2-trade2-affix-filter-root ::-webkit-scrollbar-thumb:hover,
+#poe2-marketwright-favorites-panel-frame ::-webkit-scrollbar-thumb:hover {
+  background:
+    linear-gradient(180deg, rgba(230, 190, 110, 0.4), rgba(0, 0, 0, 0.2)),
+    var(--mw-scroll-thumb-hover);
+  border-color: var(--mw-gold);
+}
+
+#poe2-trade2-affix-filter-root ::-webkit-scrollbar-corner,
+#poe2-marketwright-favorites-panel-frame ::-webkit-scrollbar-corner {
+  background: var(--mw-scroll-track);
 }
 
 #poe2-trade2-affix-filter-root.poe2-marketwright-sidebar-right {
@@ -31,7 +136,7 @@
   margin: 0 !important;
   padding: 0 !important;
   border: 0 !important;
-  background: #130e09 !important;
+  background: var(--mw-bg) !important;
   box-shadow: 10px 0 28px rgba(0, 0, 0, 0.58) !important;
   transition: opacity 160ms ease;
 }
@@ -91,15 +196,21 @@
 .poe2-trade2-affix-filter-panel {
   display: grid;
   gap: 6px;
-  padding: 7px;
-  color: #d9c79e;
-  background:
-    linear-gradient(180deg, rgba(39, 30, 21, 0.98) 0%, rgba(17, 13, 9, 0.98) 100%);
-  border: 1px solid rgba(105, 78, 43, 0.92);
-  border-radius: 5px;
+  padding: 10px 9px 9px;
+  color: var(--mw-text-body);
+  background-color: var(--mw-bg);
+  background-image:
+    linear-gradient(180deg, rgba(12, 10, 8, 0.55) 0%, rgba(8, 6, 5, 0.72) 100%),
+    var(--mw-tex-panel);
+  background-size: auto, 256px 256px;
+  background-repeat: no-repeat, repeat;
+  border: 8px solid transparent;
+  border-radius: 0;
+  border-image: var(--mw-tex-frame) 24 fill;
+  border-image-repeat: stretch;
   box-shadow:
-    inset 0 1px 0 rgba(255, 245, 220, 0.05),
-    0 8px 22px rgba(0, 0, 0, 0.44);
+    var(--mw-emboss),
+    var(--mw-shadow);
   transition:
     border-color 160ms ease,
     box-shadow 160ms ease;
@@ -118,7 +229,10 @@
   border: 1px solid rgba(136, 104, 57, 0.96);
   border-radius: 3px;
   color: #d9c79e;
-  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  background-color: #100c08;
+  background-image: var(--mw-tex-btn);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   cursor: pointer;
 }
 
@@ -148,14 +262,20 @@
   width: min(340px, calc(100vw - 52px));
   max-height: min(70vh, 540px);
   overflow: hidden;
-  color: #d9c79e;
-  background:
-    linear-gradient(180deg, rgba(39, 30, 21, 0.98) 0%, rgba(17, 13, 9, 0.98) 100%);
-  border: 1px solid rgba(105, 78, 43, 0.92);
-  border-radius: 5px;
+  color: var(--mw-text-body);
+  background-color: var(--mw-bg);
+  background-image:
+    linear-gradient(180deg, rgba(12, 10, 8, 0.55) 0%, rgba(8, 6, 5, 0.72) 100%),
+    var(--mw-tex-panel);
+  background-size: auto, 256px 256px;
+  background-repeat: no-repeat, repeat;
+  border: 8px solid transparent;
+  border-radius: 0;
+  border-image: var(--mw-tex-frame) 24 fill;
+  border-image-repeat: stretch;
   box-shadow:
-    inset 0 1px 0 rgba(255, 245, 220, 0.05),
-    0 8px 22px rgba(0, 0, 0, 0.44);
+    var(--mw-emboss),
+    var(--mw-shadow);
 }
 
 #poe2-trade2-affix-filter-root.poe2-marketwright-sidebar-right .poe2-marketwright-favorites-drawer,
@@ -178,7 +298,11 @@
   gap: 6px;
   padding: 8px;
   border-bottom: 1px solid rgba(105, 78, 43, 0.72);
-  background: rgba(12, 10, 8, 0.5);
+  background-color: rgba(12, 10, 8, 0.72);
+  background-image:
+    linear-gradient(180deg, rgba(20, 14, 9, 0.55), rgba(12, 10, 8, 0.82)),
+    var(--mw-tex-metal);
+  background-size: auto, 128px 128px;
 }
 
 .poe2-marketwright-favorites-header-row {
@@ -216,7 +340,10 @@
   border: 1px solid rgba(136, 104, 57, 0.96);
   border-radius: 3px;
   color: #ead7aa;
-  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  background-color: #100c08;
+  background-image: var(--mw-tex-btn);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   box-shadow:
     inset 0 1px 0 rgba(255, 238, 188, 0.16),
     0 1px 0 rgba(0, 0, 0, 0.45);
@@ -247,10 +374,13 @@
   border: 1px solid #5c4529;
   border-radius: 3px;
   color: #ead7aa;
-  background: linear-gradient(180deg, rgba(45, 34, 24, 0.98) 0%, rgba(20, 15, 10, 0.98) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 242, 214, 0.05),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+  background-color: #14110d;
+  background-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.5)),
+    var(--mw-tex-input);
+  background-size: auto, 128px 128px;
+  background-repeat: no-repeat, repeat;
+  box-shadow: var(--mw-recess);
   font: 11px/1.2 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -260,9 +390,15 @@
   border-color: #b27f38;
 }
 
-.poe2-marketwright-favorites-list {
+.poe2-marketwright-favorites-list,
+.poe2-marketwright-link-favorites-list {
   min-height: 72px;
   overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.poe2-marketwright-link-favorites-list {
+  padding: 0 6px 6px;
 }
 
 .poe2-marketwright-favorite-row {
@@ -337,7 +473,10 @@
   border: 1px solid rgba(122, 88, 47, 0.92);
   border-radius: 3px;
   color: #d9c79e;
-  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  background-color: #100c08;
+  background-image: var(--mw-tex-btn);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   cursor: pointer;
 }
 
@@ -392,14 +531,20 @@
   width: min(340px, calc(100vw - 52px));
   max-height: min(70vh, 540px);
   overflow: hidden;
-  color: #d9c79e;
-  background:
-    linear-gradient(180deg, rgba(39, 30, 21, 0.98) 0%, rgba(17, 13, 9, 0.98) 100%);
-  border: 1px solid rgba(105, 78, 43, 0.92);
-  border-radius: 5px;
+  color: var(--mw-text-body);
+  background-color: var(--mw-bg);
+  background-image:
+    linear-gradient(180deg, rgba(12, 10, 8, 0.55) 0%, rgba(8, 6, 5, 0.72) 100%),
+    var(--mw-tex-panel);
+  background-size: auto, 256px 256px;
+  background-repeat: no-repeat, repeat;
+  border: 8px solid transparent;
+  border-radius: 0;
+  border-image: var(--mw-tex-frame) 24 fill;
+  border-image-repeat: stretch;
   box-shadow:
-    inset 0 1px 0 rgba(255, 245, 220, 0.05),
-    0 8px 22px rgba(0, 0, 0, 0.44);
+    var(--mw-emboss),
+    var(--mw-shadow);
 }
 
 #poe2-trade2-affix-filter-root.poe2-marketwright-link-favorites-open .poe2-marketwright-link-favorites-drawer {
@@ -414,7 +559,11 @@
 .poe2-marketwright-link-favorites-header {
   padding: 8px;
   border-bottom: 1px solid rgba(105, 78, 43, 0.72);
-  background: rgba(12, 10, 8, 0.5);
+  background-color: rgba(12, 10, 8, 0.72);
+  background-image:
+    linear-gradient(180deg, rgba(20, 14, 9, 0.55), rgba(12, 10, 8, 0.82)),
+    var(--mw-tex-metal);
+  background-size: auto, 128px 128px;
 }
 
 .poe2-marketwright-link-favorites-header-row {
@@ -453,7 +602,10 @@
   border: 1px solid rgba(136, 104, 57, 0.96);
   border-radius: 3px;
   color: #ead7aa;
-  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  background-color: #100c08;
+  background-image: var(--mw-tex-btn);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   box-shadow:
     inset 0 1px 0 rgba(255, 238, 188, 0.16),
     0 1px 0 rgba(0, 0, 0, 0.45);
@@ -485,12 +637,6 @@
   opacity: 0.56;
 }
 
-.poe2-marketwright-link-favorites-list {
-  min-height: 72px;
-  overflow-y: auto;
-  padding: 0 6px 6px;
-}
-
 .poe2-marketwright-link-favorite-import {
   display: grid;
   gap: 7px;
@@ -504,10 +650,15 @@
   max-height: 300px;
   padding: 7px;
   resize: vertical;
-  border: 1px solid #5c4529;
+  border: 1px solid #8d6735;
   border-radius: 3px;
-  color: #ead7aa;
-  background: rgba(15, 11, 8, 0.92);
+  color: #f0dfb0;
+  background-color: #14110d;
+  background-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.55)),
+    var(--mw-tex-input);
+  background-size: auto, 128px 128px;
+  background-repeat: no-repeat, repeat;
   box-shadow: inset 0 1px 0 rgba(255, 242, 214, 0.05);
   font: 11px/1.45 "SFMono-Regular", Consolas, "Liberation Mono", monospace;
 }
@@ -529,7 +680,10 @@
   border: 1px solid rgba(136, 104, 57, 0.96);
   border-radius: 3px;
   color: #ead7aa;
-  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  background-color: #100c08;
+  background-image: var(--mw-tex-btn);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   cursor: pointer;
   font: 700 10px/1.2 Georgia, "Times New Roman", serif;
 }
@@ -608,7 +762,11 @@
   min-height: 30px;
   gap: 3px;
   padding: 4px 5px;
-  background: rgba(64, 44, 23, 0.82);
+  background-color: rgba(40, 28, 16, 0.9);
+  background-image:
+    linear-gradient(180deg, rgba(80, 54, 28, 0.55), rgba(30, 20, 12, 0.82)),
+    var(--mw-tex-metal);
+  background-size: auto, 128px 128px;
   box-shadow: inset 2px 0 0 rgba(191, 139, 65, 0.72);
 }
 
@@ -626,13 +784,21 @@
   display: grid;
   margin-left: 16px;
   border-left: 1px solid rgba(163, 116, 53, 0.7);
-  background: rgba(45, 30, 16, 0.42);
+  background-color: rgba(20, 14, 9, 0.55);
+  background-image:
+    linear-gradient(180deg, rgba(20, 14, 9, 0.4), rgba(12, 10, 8, 0.55)),
+    var(--mw-tex-metal);
+  background-size: auto, 128px 128px;
 }
 
 .poe2-marketwright-link-favorite-row {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   border-bottom: 1px solid rgba(105, 78, 43, 0.42);
+  background-image:
+    linear-gradient(180deg, rgba(18, 14, 10, 0.45), rgba(12, 10, 8, 0.65)),
+    var(--mw-tex-metal);
+  background-size: auto, 128px 128px;
 }
 
 .poe2-marketwright-link-favorite-row > .poe2-marketwright-link-favorite-drag-handle {
@@ -641,13 +807,20 @@
 }
 
 .poe2-marketwright-link-favorite-root > .poe2-marketwright-link-favorite-row {
-  background: rgba(20, 14, 9, 0.74);
+  background-color: rgba(20, 14, 9, 0.74);
+  background-image:
+    linear-gradient(180deg, rgba(24, 17, 11, 0.55), rgba(14, 10, 7, 0.78)),
+    var(--mw-tex-metal);
+  background-size: auto, 128px 128px;
 }
 
 .poe2-marketwright-link-favorite-row:hover,
 .poe2-marketwright-link-favorite-row:focus-within,
 .poe2-marketwright-link-favorite-group-header:hover {
-  background: rgba(153, 108, 50, 0.13);
+  background-image:
+    linear-gradient(180deg, rgba(153, 108, 50, 0.22), rgba(40, 28, 16, 0.45)),
+    var(--mw-tex-metal);
+  background-size: auto, 128px 128px;
 }
 
 .poe2-marketwright-link-favorite-launch {
@@ -853,7 +1026,10 @@
   border: 1px solid rgba(122, 88, 47, 0.92);
   border-radius: 3px;
   color: #d9c79e;
-  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  background-color: #100c08;
+  background-image: var(--mw-tex-btn);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   cursor: pointer;
 }
 
@@ -910,12 +1086,30 @@
 }
 
 .poe2-marketwright-link-favorite-move-select {
+  appearance: none;
   width: 116px;
-  height: 21px;
-  border: 1px solid #5c4529;
+  height: 22px;
+  padding: 0 18px 0 6px;
+  border: 1px solid #8d6735;
   border-radius: 3px;
-  color: #ead7aa;
-  background: #1b140d;
+  color: #f0dfb0;
+  background-color: #14110d;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #d0a45c 50%),
+    linear-gradient(135deg, #d0a45c 50%, transparent 50%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.5)),
+    var(--mw-tex-btn);
+  background-position:
+    calc(100% - 9px) calc(50% - 1px),
+    calc(100% - 5px) calc(50% - 1px),
+    0 0,
+    0 0;
+  background-size:
+    4px 4px,
+    4px 4px,
+    auto,
+    100% 100%;
+  background-repeat: no-repeat;
   font: 10px/1.2 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
 }
 
@@ -931,10 +1125,15 @@
   width: 100%;
   height: 25px;
   padding: 3px 7px;
-  border: 1px solid #5c4529;
+  border: 1px solid #8d6735;
   border-radius: 3px;
-  color: #ead7aa;
-  background: linear-gradient(180deg, rgba(45, 34, 24, 0.98) 0%, rgba(20, 15, 10, 0.98) 100%);
+  color: #f0dfb0;
+  background-color: #14110d;
+  background-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+    var(--mw-tex-input);
+  background-size: auto, 128px 128px;
+  background-repeat: no-repeat, repeat;
   box-shadow:
     inset 0 1px 0 rgba(255, 242, 214, 0.05),
     inset 0 -1px 0 rgba(0, 0, 0, 0.28);
@@ -987,7 +1186,10 @@
   border: 1px solid rgba(176, 132, 65, 0.92);
   border-radius: 3px;
   color: #ead7aa;
-  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  background-color: #100c08;
+  background-image: var(--mw-tex-btn);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   cursor: pointer;
   font: 700 10px/1.2 Georgia, "Times New Roman", serif;
 }
@@ -1037,7 +1239,10 @@
   border: 1px solid rgba(136, 104, 57, 0.96);
   border-radius: 3px;
   color: #ead7aa;
-  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  background-color: #100c08;
+  background-image: var(--mw-tex-btn);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   cursor: pointer;
   font: 700 10px/1.2 Georgia, "Times New Roman", serif;
 }
@@ -1064,9 +1269,12 @@
   padding: 0;
   border: 1px solid rgba(136, 104, 57, 0.96);
   color: #f3d681;
-  background:
+  background-color: #100c08;
+  background-image:
     radial-gradient(circle at 50% 30%, rgba(201, 147, 72, 0.18) 0%, rgba(201, 147, 72, 0) 44%),
-    linear-gradient(180deg, #332716 0%, #100c08 100%);
+    var(--mw-tex-btn);
+  background-size: auto, 100% 100%;
+  background-repeat: no-repeat;
   box-shadow:
     inset 0 1px 0 rgba(255, 238, 188, 0.16),
     0 1px 0 rgba(0, 0, 0, 0.5);
@@ -1166,9 +1374,14 @@
 
 .poe2-trade2-affix-filter-feature {
   padding: 7px;
-  border: 1px solid rgba(105, 78, 43, 0.92);
+  border: 1px solid var(--mw-border);
   border-radius: 3px;
-  background: rgba(12, 10, 8, 0.62);
+  background-color: rgba(10, 8, 6, 0.72);
+  background-image:
+    linear-gradient(180deg, rgba(8, 6, 5, 0.35), rgba(8, 6, 5, 0.55)),
+    var(--mw-tex-metal);
+  background-size: auto, 128px 128px;
+  background-repeat: no-repeat, repeat;
   box-shadow:
     inset 0 1px 0 rgba(255, 245, 220, 0.04),
     inset 0 -1px 0 rgba(0, 0, 0, 0.24);
@@ -1319,30 +1532,40 @@
 
 .poe2-trade2-affix-filter-toggle {
   flex: 0 0 auto;
-  min-width: 32px;
-  height: 19px;
-  padding: 0 6px;
+  min-width: 34px;
+  height: 20px;
+  padding: 0 7px;
   border: 1px solid rgba(135, 100, 52, 0.96);
   border-radius: 3px;
-  color: #1d150c;
-  background:
-    linear-gradient(180deg, #d6ae65 0%, #9a6830 100%);
+  color: #1a1208;
+  background-color: #c2944c;
+  background-image:
+    linear-gradient(180deg, rgba(255, 236, 190, 0.88), rgba(196, 140, 55, 0.92)),
+    var(--mw-tex-btn-on);
+  background-size: auto, 100% 100%;
+  background-repeat: no-repeat;
   box-shadow:
-    inset 0 1px 0 rgba(255, 244, 210, 0.28),
+    inset 0 1px 0 rgba(255, 244, 210, 0.45),
     0 1px 0 rgba(0, 0, 0, 0.45);
   cursor: pointer;
   font-size: 10px;
   font-weight: 700;
-  line-height: 17px;
+  line-height: 18px;
+  text-shadow: 0 1px 0 rgba(255, 240, 200, 0.4);
   transition:
     border-color 160ms ease,
     filter 160ms ease;
 }
 
 .poe2-trade2-affix-filter-toggle[aria-pressed="false"] {
-  color: #baa276;
-  background:
-    linear-gradient(180deg, rgba(49, 39, 28, 0.98) 0%, rgba(23, 18, 13, 0.98) 100%);
+  color: #ead7aa;
+  background-color: #100c08;
+  background-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.15), rgba(0, 0, 0, 0.4)),
+    var(--mw-tex-btn);
+  background-size: auto, 100% 100%;
+  background-repeat: no-repeat;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.85);
 }
 
 .poe2-trade2-affix-filter-currency-refresh {
@@ -1356,7 +1579,10 @@
   border: 1px solid rgba(136, 104, 57, 0.96);
   border-radius: 3px;
   color: #ead7aa;
-  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  background-color: #100c08;
+  background-image: var(--mw-tex-btn);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   box-shadow:
     inset 0 1px 0 rgba(255, 238, 188, 0.16),
     0 1px 0 rgba(0, 0, 0, 0.45);
@@ -1396,27 +1622,41 @@
 .poe2-trade2-affix-filter-field-label {
   display: block;
   margin-bottom: 4px;
-  color: #ad9880;
-  font-size: 10px;
-  line-height: 1.1;
+  color: #d8c08a;
+  font: 700 10px/1.2 Georgia, "Times New Roman", serif;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.7);
 }
 
 .poe2-trade2-affix-filter-field select {
+  appearance: none;
   width: 100%;
-  height: 26px;
-  padding: 3px 7px;
-  border: 1px solid #5c4529;
+  height: 28px;
+  padding: 3px 24px 3px 8px;
+  border: 1px solid #8d6735;
   border-radius: 3px;
-  color: #ead7aa;
-  background-color: #20150d;
-  background:
-    linear-gradient(180deg, rgba(45, 34, 24, 0.98) 0%, rgba(20, 15, 10, 0.98) 100%);
-  box-shadow:
-    inset 0 1px 0 rgba(255, 242, 214, 0.05),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+  color: #f0dfb0;
+  background-color: #14110d;
+  background-image:
+    linear-gradient(45deg, transparent 50%, #d0a45c 50%),
+    linear-gradient(135deg, #d0a45c 50%, transparent 50%),
+    linear-gradient(180deg, rgba(0, 0, 0, 0.28), rgba(0, 0, 0, 0.5)),
+    var(--mw-tex-btn);
+  background-position:
+    calc(100% - 11px) calc(50% - 2px),
+    calc(100% - 7px) calc(50% - 2px),
+    0 0,
+    0 0;
+  background-size:
+    4px 4px,
+    4px 4px,
+    auto,
+    100% 100%;
+  background-repeat: no-repeat;
+  box-shadow: var(--mw-recess);
   color-scheme: dark;
   cursor: pointer;
-  font-size: 11px;
+  font: 700 11px/1.2 Georgia, "Times New Roman", serif;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.75);
   transition:
     border-color 160ms ease,
     filter 160ms ease;
@@ -1470,18 +1710,29 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   overflow: hidden;
-  border: 1px solid #5c4529;
+  border: 1px solid #8d6735;
   border-radius: 3px;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0.35);
 }
 
 .poe2-marketwright-segmented-option {
-  height: 26px;
-  padding: 3px 7px;
+  min-width: 0;
+  height: 28px;
+  padding: 0 6px;
+  overflow: hidden;
   border: 0;
-  color: #ad9880;
-  background: linear-gradient(180deg, rgba(45, 34, 24, 0.98) 0%, rgba(20, 15, 10, 0.98) 100%);
+  color: #e8d4a4;
+  background-color: #16110c;
+  background-image:
+    linear-gradient(180deg, rgba(40, 30, 18, 0.55), rgba(10, 8, 6, 0.82)),
+    var(--mw-tex-btn);
+  background-size: auto, 100% 100%;
+  background-repeat: no-repeat;
   cursor: pointer;
-  font: 700 11px/1.2 Georgia, "Times New Roman", serif;
+  font: 700 11px/28px Georgia, "Times New Roman", serif;
+  text-overflow: ellipsis;
+  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.85);
+  white-space: nowrap;
 }
 
 .poe2-marketwright-segmented-option + .poe2-marketwright-segmented-option {
@@ -1490,21 +1741,33 @@
 
 .poe2-marketwright-segmented-option:hover:not(:disabled),
 .poe2-marketwright-segmented-option:focus-visible {
-  color: #ead7aa;
-  background: rgba(74, 48, 24, 0.72);
+  color: #f8e7b8;
+  background-image:
+    linear-gradient(180deg, rgba(90, 62, 28, 0.45), rgba(20, 14, 8, 0.7)),
+    var(--mw-tex-btn);
   outline: none;
 }
 
 .poe2-marketwright-segmented-option-active {
-  color: #1d150c;
-  background: linear-gradient(180deg, #d6ae65 0%, #9a6830 100%);
-  box-shadow: inset 0 1px 0 rgba(255, 244, 210, 0.28);
+  color: #1a1208;
+  background-color: #c2944c;
+  background-image:
+    linear-gradient(180deg, rgba(255, 236, 190, 0.88), rgba(196, 140, 55, 0.92)),
+    var(--mw-tex-btn-on);
+  background-size: auto, 100% 100%;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 248, 220, 0.55),
+    inset 0 -1px 0 rgba(70, 42, 12, 0.35);
+  text-shadow: 0 1px 0 rgba(255, 240, 200, 0.45);
 }
 
 .poe2-marketwright-segmented-option-active:hover:not(:disabled),
 .poe2-marketwright-segmented-option-active:focus-visible {
-  color: #1d150c;
-  background: linear-gradient(180deg, #e1bd76 0%, #aa7739 100%);
+  color: #1a1208;
+  background-image:
+    linear-gradient(180deg, rgba(255, 244, 210, 0.95), rgba(214, 158, 70, 0.95)),
+    var(--mw-tex-btn-on);
+  filter: none;
 }
 
 .poe2-marketwright-segmented-option:disabled {
@@ -1536,8 +1799,11 @@
   padding: 0;
   border: 1px solid rgba(122, 88, 47, 0.92);
   border-radius: 2px;
-  color: #ead7aa;
-  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  color: var(--mw-text);
+  background-color: #100c08;
+  background-image: var(--mw-tex-btn);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   box-shadow:
     inset 0 1px 0 rgba(255, 238, 188, 0.16),
     0 1px 0 rgba(0, 0, 0, 0.42);
@@ -1617,8 +1883,11 @@
   padding: 0;
   border: 1px solid rgba(136, 104, 57, 0.96);
   border-radius: 2px;
-  color: #f3d681;
-  background: linear-gradient(180deg, #332716 0%, #100c08 100%);
+  color: var(--mw-gold-bright);
+  background-color: #100c08;
+  background-image: var(--mw-tex-btn);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
   box-shadow:
     inset 0 1px 0 rgba(255, 238, 188, 0.16),
     0 1px 0 rgba(0, 0, 0, 0.5);
@@ -1629,9 +1898,12 @@
 
 .poe2-marketwright-currency-conversion-button:hover,
 .poe2-marketwright-currency-conversion-button[aria-pressed="true"] {
-  border-color: #d0a45c;
+  border-color: var(--mw-gold);
   color: #fff0bc;
-  background: linear-gradient(180deg, #4a381d 0%, #1c1309 100%);
+  background-image:
+    linear-gradient(180deg, rgba(255, 236, 180, 0.12), rgba(0, 0, 0, 0.2)),
+    var(--mw-tex-btn-on);
+  background-size: auto, 100% 100%;
 }
 
 .poe2-marketwright-currency-conversion-button:focus-visible {
@@ -1678,7 +1950,7 @@
 .poe2-marketwright-result-stat-original {
   display: block;
   margin-top: 2px;
-  color: #83838d;
+  color: #8f7b58;
   font-size: 12px;
   line-height: 1.25;
 }
@@ -1700,25 +1972,33 @@
   width: 26px;
   height: 26px;
   padding: 0;
-  border: 1px solid #4e7fa9;
+  border: 1px solid rgba(136, 104, 57, 0.96);
   border-radius: 2px;
-  color: #d9ebfa;
-  background: #182b3d;
-  box-shadow: inset 0 1px 0 rgba(209, 232, 249, 0.12);
+  color: #ead7aa;
+  background-color: #100c08;
+  background-image: var(--mw-tex-btn);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 238, 188, 0.14),
+    0 1px 0 rgba(0, 0, 0, 0.45);
   cursor: pointer;
   font: 700 12px Georgia, "Times New Roman", serif;
 }
 
 .poe2-marketwright-tier-trigger:hover,
 .poe2-marketwright-tier-control-open .poe2-marketwright-tier-trigger {
-  border-color: #86b8df;
-  color: #f1f8ff;
-  background: #234664;
+  border-color: #d0a45c;
+  color: #f3d681;
+  background-image:
+    linear-gradient(180deg, rgba(255, 236, 180, 0.12), rgba(0, 0, 0, 0.2)),
+    var(--mw-tex-btn-on);
+  background-size: auto, 100% 100%;
 }
 
 .poe2-marketwright-tier-trigger:focus-visible,
 .poe2-marketwright-tier-select:focus-visible {
-  outline: 1px solid #9bc9ec;
+  outline: 1px solid rgba(211, 166, 83, 0.86);
   outline-offset: 1px;
 }
 
@@ -1730,12 +2010,20 @@
   display: none;
   width: 260px;
   max-width: calc(100vw - 16px);
-  padding: 3px;
-  border: 1px solid #4e7fa9;
-  border-radius: 2px;
-  color: #d9ebfa;
-  background: #132231;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.56);
+  padding: 6px;
+  border: 8px solid transparent;
+  border-radius: 0;
+  border-image: var(--mw-tex-frame) 24 fill;
+  color: #ead7aa;
+  background-color: #0c0a08;
+  background-image:
+    linear-gradient(180deg, rgba(12, 10, 8, 0.55), rgba(8, 6, 5, 0.72)),
+    var(--mw-tex-panel);
+  background-size: auto, 256px 256px;
+  background-repeat: no-repeat, repeat;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 245, 220, 0.05),
+    0 8px 20px rgba(0, 0, 0, 0.56);
   color-scheme: dark;
   font: 600 13px Georgia, "Times New Roman", serif;
 }
@@ -1745,8 +2033,14 @@
 }
 
 .poe2-marketwright-tier-select option {
-  color: #d9ebfa;
-  background: #132231;
+  color: #ead7aa;
+  background: #12100c;
+}
+
+.poe2-marketwright-tier-select option:checked,
+.poe2-marketwright-tier-select option:hover {
+  color: #f3d681;
+  background: #3d2e1a;
 }
 
 @keyframes poe2-marketwright-currency-spin {

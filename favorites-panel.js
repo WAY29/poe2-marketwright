@@ -1330,6 +1330,23 @@
     }
   }
 
+  if (globalThis.chrome?.runtime?.getURL) {
+    const textures = {
+      "--mw-tex-panel": "images/ui/panel-fill.png",
+      "--mw-tex-metal": "images/ui/metal-fill.png",
+      "--mw-tex-brass": "images/ui/brass-fill.png",
+      "--mw-tex-btn": "images/ui/btn-face.png",
+      "--mw-tex-btn-on": "images/ui/btn-selected.png",
+      "--mw-tex-input": "images/ui/input-recess.png",
+      "--mw-tex-frame": "images/ui/frame-border.png",
+      "--mw-tex-radio-off": "images/ui/radio-off.png",
+      "--mw-tex-radio-on": "images/ui/radio-on.png"
+    };
+    for (const [name, path] of Object.entries(textures)) {
+      document.documentElement.style.setProperty(name, `url("${chrome.runtime.getURL(path)}")`);
+    }
+  }
+
   bindUi();
   bootstrap();
 })();
