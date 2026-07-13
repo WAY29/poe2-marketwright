@@ -5078,6 +5078,13 @@
     const categorySelection = inferCategorySelectionFromTypeFilterDom();
     const itemSelection = inferItemSelectionFromSearchBoxDom();
 
+    return chooseActiveSelection(itemSelection, categorySelection);
+  }
+
+  function chooseActiveSelection(itemSelection, categorySelection) {
+    if (itemSelection?.uniqueItemType) {
+      return itemSelection;
+    }
     if (itemSelection && categorySelection && selectionIncludesPage(categorySelection, itemSelection.id)) {
       return itemSelection;
     }
@@ -5297,8 +5304,7 @@
     const itemSelection = lookupItemNameSelection(segment);
     if (itemSelection) {
       return {
-        kind: itemSelection.kind,
-        id: itemSelection.id,
+        ...itemSelection,
         source: "item",
         match: segment
       };
@@ -5361,8 +5367,7 @@
           continue;
         }
         return {
-          kind: itemSelection.kind,
-          id: itemSelection.id,
+          ...itemSelection,
           source: "item",
           match: itemName
         };
@@ -5390,18 +5395,23 @@
   function lookupItemNameSelection(itemName) {
     const override = runtime.data.itemNameToSelection?.[itemName];
     if (override?.kind && override?.id) {
-      return override;
+      return addUniqueItemType(override, itemName);
     }
 
     const itemSlug = runtime.data.itemNameToPage?.[itemName];
     if (itemSlug) {
-      return {
+      return addUniqueItemType({
         kind: "page",
         id: itemSlug
-      };
+      }, itemName);
     }
 
     return null;
+  }
+
+  function addUniqueItemType(selection, itemName) {
+    const uniqueItemType = runtime.data.uniqueItemTypeByName?.[itemName];
+    return uniqueItemType ? { ...selection, uniqueItemType } : selection;
   }
 
   function isContainedLookupMatch(text, lookup) {
@@ -5522,7 +5532,7 @@
           new Set((record ? record.allowedPatterns : []).map(normalizeStatKey).filter(Boolean))
         );
       }
-      return runtime.pagePatternCache.get(selection.id);
+      return mergeUniqueItemTypeArtifacts(selection, runtime.pagePatternCache.get(selection.id), "allowedPatterns");
     }
 
     if (selection.kind === "logical") {
@@ -5533,7 +5543,7 @@
           new Set((record ? record.allowedPatterns : []).map(normalizeStatKey).filter(Boolean))
         );
       }
-      return runtime.logicalPatternCache.get(selection.id);
+      return mergeUniqueItemTypeArtifacts(selection, runtime.logicalPatternCache.get(selection.id), "allowedPatterns");
     }
 
     return null;
@@ -5549,7 +5559,7 @@
         const record = runtime.data.pageCategories[selection.id];
         runtime.pageStatIdCache.set(selection.id, new Set(record ? record.allowedStatIds || [] : []));
       }
-      return runtime.pageStatIdCache.get(selection.id);
+      return mergeUniqueItemTypeArtifacts(selection, runtime.pageStatIdCache.get(selection.id), "allowedStatIds");
     }
 
     if (selection.kind === "logical") {
@@ -5557,10 +5567,21 @@
         const record = runtime.data.logicalCategories[selection.id];
         runtime.logicalStatIdCache.set(selection.id, new Set(record ? record.allowedStatIds || [] : []));
       }
-      return runtime.logicalStatIdCache.get(selection.id);
+      return mergeUniqueItemTypeArtifacts(selection, runtime.logicalStatIdCache.get(selection.id), "allowedStatIds");
     }
 
     return null;
+  }
+
+  function mergeUniqueItemTypeArtifacts(selection, allowedValues, field) {
+    const values = runtime.data.uniqueItemTypeArtifacts?.[selection?.uniqueItemType]?.[field];
+    if (!Array.isArray(values) || !values.length) {
+      return allowedValues;
+    }
+    const normalizedValues = field === "allowedPatterns"
+      ? values.map(normalizeStatKey).filter(Boolean)
+      : values.map(String).filter(Boolean);
+    return new Set([...allowedValues, ...normalizedValues]);
   }
 
   function updatePanel(selection, allowedPatterns) {

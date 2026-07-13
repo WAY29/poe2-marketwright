@@ -906,6 +906,117 @@ test("content auto detect overrides special map items", async () => {
   assert.deepStrictEqual(result["expeditionTablet"], {"kind": "page", "id": "Expedition_Tablet", "source": "item", "match": "探险碑牌"});
 });
 
+test("content adds the selected unique base type stat union", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getAllowedPatterns, getAllowedStatIds, inferSelectionFromTexts, runtime };\n})();"
+  );
+  const window = { addEventListener() {} };
+  const sandbox = {
+    window,
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    Element: class {},
+    HTMLInputElement: class {},
+    HTMLTextAreaElement: class {},
+    MutationObserver: class {},
+    chrome: {}
+  };
+
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+
+  const hooks = window.__testHooks;
+  hooks.runtime.state = { filteringEnabled: true };
+  hooks.runtime.data = {
+    itemNameToSelection: {
+      "從無到有 鑽石": { kind: "page", id: "Ruby" }
+    },
+    uniqueItemTypeByName: {
+      "從無到有 鑽石": "diamond"
+    },
+    uniqueItemTypeArtifacts: {
+      diamond: {
+        allowedPatterns: ["Other Diamond Modifier"],
+        allowedStatIds: ["explicit.stat_other_diamond"]
+      }
+    },
+    itemNameToPage: {},
+    pageCategories: {
+      Ruby: {
+        allowedPatterns: ["Passives in Radius can be Allocated without being connected to your tree"],
+        allowedStatIds: ["explicit.stat_radius_passives"]
+      }
+    },
+    logicalCategories: {}
+  };
+  hooks.runtime.itemLookupEntries = ["從無到有 鑽石"];
+  hooks.runtime.categoryAliasToSelection = {
+    鑽石: { kind: "page", id: "Diamond" }
+  };
+  hooks.runtime.categoryLookupEntries = ["鑽石"];
+
+  const selection = hooks.inferSelectionFromTexts(new Set(["從無到有 鑽石"]), {
+    allowItems: true,
+    allowCategories: false
+  });
+  const result = structuredClone({
+    selection,
+    patterns: Array.from(hooks.getAllowedPatterns(selection)).sort(),
+    statIds: Array.from(hooks.getAllowedStatIds(selection)).sort()
+  });
+  assert.deepStrictEqual(result, {
+    selection: {
+      kind: "page",
+      id: "Ruby",
+      uniqueItemType: "diamond",
+      source: "item",
+      match: "從無到有 鑽石"
+    },
+    patterns: [
+      "other diamond modifier",
+      "passives in radius can be allocated without being connected to your tree"
+    ],
+    statIds: ["explicit.stat_other_diamond", "explicit.stat_radius_passives"]
+  });
+});
+
+test("content prioritizes a selected unique over a conflicting category", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { chooseActiveSelection, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    Element: class {},
+    HTMLInputElement: class {},
+    HTMLTextAreaElement: class {},
+    MutationObserver: class {},
+    chrome: {}
+  };
+
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+
+  const hooks = sandbox.window.__testHooks;
+  const unique = { kind: "page", id: "Diamond", uniqueItemType: "diamond" };
+  const category = { kind: "page", id: "Ruby" };
+  const ordinary = { kind: "page", id: "Diamond" };
+  assert.deepStrictEqual(structuredClone({
+    unique: hooks.chooseActiveSelection(unique, category),
+    ordinary: hooks.chooseActiveSelection(ordinary, category)
+  }), {
+    unique,
+    ordinary: category
+  });
+});
+
 test("content classifies favorite by base name and trade category", async () => {
 
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;

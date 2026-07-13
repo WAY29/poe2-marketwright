@@ -1,17 +1,60 @@
 import unittest
 import sys
 from pathlib import Path
+from unittest.mock import patch
 
 SCRIPT_ROOT = Path(__file__).resolve().parents[1]
 if str(SCRIPT_ROOT) not in sys.path:
     sys.path.insert(0, str(SCRIPT_ROOT))
 
 from poe2_scraper import (
+    DEFAULT_HEADERS,
+    build_async_client,
     filter_modifier_links,
     discover_modifier_links,
     extract_modsview_payload,
+    fetch_text,
     flatten_affixes,
 )
+
+
+class BrowserClientTests(unittest.IsolatedAsyncioTestCase):
+    @patch("poe2_scraper.AsyncSession")
+    def test_builds_a_chrome_impersonating_client(self, async_session: object) -> None:
+        build_async_client(4)
+
+        async_session.assert_called_once_with(
+            headers=DEFAULT_HEADERS,
+            impersonate="chrome",
+            max_clients=4,
+        )
+
+    async def test_reads_and_checks_curl_cffi_response(self) -> None:
+        class Response:
+            text = "<html>ok</html>"
+
+            def __init__(self) -> None:
+                self.checked = False
+
+            def raise_for_status(self) -> None:
+                self.checked = True
+
+        class Client:
+            def __init__(self, response: Response) -> None:
+                self.response = response
+
+            async def get(self, url: str, allow_redirects: bool, timeout: int) -> Response:
+                self.url = url
+                self.allow_redirects = allow_redirects
+                self.timeout = timeout
+                return self.response
+
+        response = Response()
+        client = Client(response)
+        self.assertEqual(await fetch_text(client, "https://poe2db.tw/us/From_Nothing"), "<html>ok</html>")
+        self.assertTrue(response.checked)
+        self.assertTrue(client.allow_redirects)
+        self.assertEqual(client.timeout, 30)
 
 
 class ExtractModsViewPayloadTests(unittest.TestCase):

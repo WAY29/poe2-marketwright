@@ -68,7 +68,6 @@ uv run --project scripts python scripts/build_extension_data.py --split-dir buil
 - `https://www.pathofexile.com/api/trade2/data/filters`
 - regional equivalents: `https://poe.game.qq.com/api/trade2/data/*` and `https://pathofexile.tw/api/trade2/data/*`
 - official PoE2DB item category pages, including `https://poe2db.tw/us/Stackable_Currency`, provide slug-verified names for currencies, gems, relics, and other Trade items
-- official game-client fallback UI strings: `https://github.com/LocalIdentity/poe2-data/tree/main/data`
 - E/C/D conversion rates come from `https://api.poe2scout.com/poe2/Leagues/{league}/ReferenceCurrencies`
 
 ## Localization coverage

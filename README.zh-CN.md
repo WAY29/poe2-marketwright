@@ -67,7 +67,6 @@ uv run --project scripts python scripts/build_extension_data.py --split-dir buil
   - `https://www.pathofexile.com/api/trade2/data/filters`
   - 对应中文来源：`https://poe.game.qq.com/api/trade2/data/*` 与 `https://pathofexile.tw/api/trade2/data/*`
 - PoE2DB 的公开物品分类页（包括 `https://poe2db.tw/us/Stackable_Currency`）按相同 slug 验证通货、宝石、遗物等 Trade 物品名称。
-- 官方游戏客户端导出的界面兜底文本：`https://github.com/LocalIdentity/poe2-data/tree/main/data`
 - E/C/D 报价换算：`https://api.poe2scout.com/poe2/Leagues/{赛季}/ReferenceCurrencies`
 
 ## 汉化覆盖率

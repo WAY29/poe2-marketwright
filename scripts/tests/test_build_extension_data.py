@@ -1,7 +1,9 @@
+import asyncio
 import unittest
 import sys
 from tempfile import TemporaryDirectory
 from pathlib import Path
+from unittest.mock import patch
 
 SCRIPT_ROOT = Path(__file__).resolve().parents[1]
 if str(SCRIPT_ROOT) not in sys.path:
@@ -15,15 +17,19 @@ from build_extension_data import (
     build_trade_filter_page_localizations,
     build_trade_category_page_localizations,
     build_trade_item_localization_bundle,
+    build_verified_unique_trade_item_localizations,
     build_display_metadata,
-    build_client_string_localizations,
     build_trade_stat_group_records,
     build_item_display_metadata,
     build_trade_localization_metadata,
     build_trade_stat_records,
     build_trade_stat_universe,
+    collect_poe2db_unique_item_pages,
+    collect_unique_item_stat_artifacts,
     collect_base_item_mod_stat_artifacts,
     build_unique_item_names_by_page,
+    build_unique_item_type_artifacts,
+    add_verified_unique_item_localized_selection_aliases,
     build_trade_skill_stat_index,
     build_item_name_map,
     build_item_name_selection_map,
@@ -35,22 +41,204 @@ from build_extension_data import (
     extract_rollable_minimums,
     normalize_poe2db_localized_stat_template,
     load_page_artifacts,
+    load_unique_item_page_cache,
     map_granted_skill_names_to_trade_stats,
     map_affix_text_to_trade_stat_ids,
     map_trade_stat_texts_to_trade_stat_ids,
     parse_page_html_artifacts,
     parse_poe2db_item_title,
+    parse_poe2db_unique_item_fields,
     parse_poe2db_item_name_slugs,
     parse_poe2db_stat_source_records,
     build_verified_poe2db_stat_mod_localizations,
     apply_verified_poe2db_stat_localizations,
     apply_verified_item_prefix_localizations,
     poe2db_item_slug,
+    split_into_batches,
     split_affix_stat_lines,
+    write_unique_item_page_cache,
 )
 
 
 class TradeStatMappingTests(unittest.TestCase):
+    @patch("build_extension_data.build_async_client")
+    def test_reuses_cached_unique_item_pages_without_requests(self, build_async_client: object) -> None:
+        class Client:
+            async def __aenter__(self) -> "Client":
+                return self
+
+            async def __aexit__(self, *args: object) -> None:
+                return None
+
+            async def get(self, *args: object, **kwargs: object) -> None:
+                raise AssertionError("cached pages must not be fetched")
+
+        build_async_client.return_value = Client()
+        cache = {
+            "version": 1,
+            "pages": {
+                "From_Nothing": {
+                    "us": {
+                        "name": "From Nothing",
+                        "type": "Diamond",
+                        "itemModTexts": [],
+                        "itemModTextsVersion": 2,
+                    },
+                    "cn": {"name": "无根之源", "type": "宝钻"},
+                    "tw": {"name": "從無到有", "type": "鑽石"},
+                }
+            },
+        }
+        payload = {
+            "result": [
+                {
+                    "entries": [
+                        {
+                            "type": "Diamond",
+                            "text": "From Nothing Diamond",
+                            "name": "From Nothing",
+                            "flags": {"unique": True},
+                        }
+                    ]
+                }
+            ]
+        }
+
+        pages = asyncio.run(collect_poe2db_unique_item_pages(payload, 1, cache=cache))
+        patterns, stat_ids = asyncio.run(
+            collect_unique_item_stat_artifacts({"Jewels": ["From Nothing"]}, {}, [], 1, cache=cache)
+        )
+
+        self.assertEqual(pages["From_Nothing"]["cn"]["name"], "无根之源")
+        self.assertEqual(patterns, {"Jewels": []})
+        self.assertEqual(stat_ids, {"Jewels": []})
+
+    def test_persists_verified_unique_item_page_cache(self) -> None:
+        with TemporaryDirectory() as directory:
+            cache_path = Path(directory) / "unique-item-pages.json"
+            cache = load_unique_item_page_cache(cache_path)
+            self.assertEqual(cache, {"version": 1, "pages": {}})
+
+            cache["pages"]["From_Nothing"] = {
+                "us": {
+                    "name": "From Nothing",
+                    "type": "Diamond",
+                    "itemModTexts": [],
+                    "itemModTextsVersion": 2,
+                },
+                "cn": {"name": "无根之源", "type": "宝钻"},
+                "tw": {"name": "從無到有", "type": "鑽石"},
+            }
+            write_unique_item_page_cache(cache_path, cache)
+
+            self.assertEqual(load_unique_item_page_cache(cache_path), cache)
+
+    def test_splits_poe2db_fetches_into_bounded_batches(self) -> None:
+        self.assertEqual(split_into_batches(["a", "b", "c", "d", "e"], 2), [["a", "b"], ["c", "d"], ["e"]])
+        with self.assertRaises(ValueError):
+            split_into_batches(["a"], 0)
+
+    def test_builds_unique_item_localizations_from_verified_page_identity(self) -> None:
+        payload = {
+            "result": [
+                {
+                    "entries": [
+                        {
+                            "type": "Diamond",
+                            "text": "From Nothing Diamond",
+                            "name": "From Nothing",
+                            "flags": {"unique": True},
+                        },
+                        {
+                            "type": "Runemastered Diamond",
+                            "text": "From Nothing Runemastered Diamond",
+                            "name": "From Nothing",
+                            "flags": {"unique": True},
+                        },
+                        {
+                            "type": "Emerald",
+                            "text": "Grand Spectrum Emerald",
+                            "name": "Grand Spectrum",
+                            "flags": {"unique": True},
+                        },
+                        {
+                            "type": "Ring",
+                            "text": "Unknown Ring",
+                            "name": "Unknown",
+                            "flags": {"unique": True},
+                        },
+                    ]
+                }
+            ]
+        }
+        pages = {
+            "From_Nothing": {
+                "us": {"name": "From Nothing", "type": "Diamond"},
+                "cn": {"name": "无根之源", "type": "宝钻"},
+                "tw": {"name": "從無到有", "type": "鑽石"},
+            },
+            "Grand_Spectrum": {
+                "us": {"name": "Grand Spectrum", "type": "Ruby"},
+                "cn": {"name": "聚光之石", "type": "红玉"},
+                "tw": {"name": "巨光譜", "type": "紅寶石"},
+            },
+        }
+        item_type_localizations = {
+            "Diamond": {"en": "Diamond", "zh_CN": "宝钻", "zh_TW": "鑽石"},
+            "Runemastered Diamond": {
+                "en": "Runemastered Diamond",
+                "zh_CN": "符文师匠宝钻",
+                "zh_TW": "符煉鑽石",
+            },
+            "Emerald": {"en": "Emerald", "zh_CN": "翡翠", "zh_TW": "綠寶石"},
+        }
+
+        items, report = build_verified_unique_trade_item_localizations(payload, pages, item_type_localizations)
+
+        self.assertEqual(
+            items,
+            {
+                "From Nothing Diamond": {"zh_CN": "无根之源 宝钻", "zh_TW": "從無到有 鑽石"},
+                "From Nothing Runemastered Diamond": {
+                    "zh_CN": "无根之源 符文师匠宝钻",
+                    "zh_TW": "從無到有 符煉鑽石",
+                },
+                "Grand Spectrum Emerald": {"zh_CN": "聚光之石 翡翠", "zh_TW": "巨光譜 綠寶石"},
+            },
+        )
+        self.assertEqual(report["coverage"]["zh_CN"], {"mapped": 3, "total": 4, "ratio": 0.75})
+        self.assertEqual(report["rejections"]["zh_CN"]["missing_page"], ["Unknown Ring"])
+        self.assertEqual(report["unmappedEnglishNames"]["zh_TW"], ["Unknown Ring"])
+
+    def test_adds_verified_localized_unique_aliases_to_selection_and_type_lookups(self) -> None:
+        item_name_to_selection = {
+            "from nothing diamond": {"kind": "page", "id": "Diamond"},
+        }
+        unique_item_type_by_name = {"from nothing diamond": "diamond"}
+
+        add_verified_unique_item_localized_selection_aliases(
+            item_name_to_selection,
+            unique_item_type_by_name,
+            {
+                "From Nothing Diamond": {
+                    "zh_CN": "无根之源 宝钻",
+                    "zh_TW": "從無到有 鑽石",
+                }
+            },
+        )
+
+        for localized_name in ("无根之源 宝钻", "從無到有 鑽石"):
+            self.assertEqual(item_name_to_selection[localized_name], {"kind": "page", "id": "Diamond"})
+            self.assertEqual(unique_item_type_by_name[localized_name], "diamond")
+
+    def test_parses_unique_item_name_and_base_type_from_poe2db_page(self) -> None:
+        self.assertEqual(
+            parse_poe2db_unique_item_fields(
+                '<span class="lc">From Nothing</span><span class="lc">Diamond</span>'
+            ),
+            {"name": "From Nothing", "type": "Diamond"},
+        )
+
     def test_ignores_fixed_numbers_when_extracting_rollable_minimums(self) -> None:
         self.assertEqual(
             extract_rollable_minimums(
@@ -341,40 +529,6 @@ class TradeStatMappingTests(unittest.TestCase):
             },
         )
 
-    def test_builds_client_string_localizations_from_stable_ids(self) -> None:
-        localizations = build_client_string_localizations(
-            [
-                {"Id": "HeistRequiresText", "Text": "Requires"},
-                {"Id": "ItemNoteEditorOptionFixed", "Text": "Exact Price"},
-            ],
-            [
-                {"Id": "HeistRequiresText", "Text": "需要"},
-                {"Id": "ItemNoteEditorOptionFixed", "Text": "不二價"},
-            ],
-        )
-
-        self.assertEqual(
-            localizations,
-            {
-                "Exact Price": {"en": "Exact Price", "zh_CN": "Exact Price", "zh_TW": "不二價"},
-                "Requires": {"en": "Requires", "zh_CN": "Requires", "zh_TW": "需要"},
-            },
-        )
-
-    def test_skips_client_string_text_with_ambiguous_translations(self) -> None:
-        localizations = build_client_string_localizations(
-            [
-                {"Id": "a", "Text": "Offline"},
-                {"Id": "b", "Text": "Offline"},
-            ],
-            [
-                {"Id": "a", "Text": "離線"},
-                {"Id": "b", "Text": "不在線上"},
-            ],
-        )
-
-        self.assertEqual(localizations, {})
-
     def test_builds_stat_group_labels_from_official_group_ids(self) -> None:
         groups = build_trade_stat_group_records(
             {"result": [{"id": "pseudo", "label": "Pseudo"}]},
@@ -611,6 +765,7 @@ class TradeStatMappingTests(unittest.TestCase):
             metadata["search"]["categories"],
             [{"id": "weapon.bow", "en": "Bow", "zh_CN": "弓", "zh_TW": "弓"}],
         )
+        self.assertNotIn("clientStrings", metadata)
 
     def test_builds_native_trade_search_localization_bundle(self) -> None:
         bundle = build_trade_item_localization_bundle(
@@ -618,6 +773,7 @@ class TradeStatMappingTests(unittest.TestCase):
                 "search": {
                     "items": [
                         {"en": "Gold Ring", "zh_CN": "金环", "zh_TW": "金環"},
+                        {"en": "From Nothing Diamond", "zh_CN": "无根之源 宝钻", "zh_TW": "從無到有 鑽石"},
                         {"en": "English Only", "zh_CN": "English Only", "zh_TW": "English Only"},
                     ],
                     "stats": [
@@ -639,8 +795,9 @@ class TradeStatMappingTests(unittest.TestCase):
         self.assertEqual(
             bundle,
             {
-                "version": 5,
+                "version": 6,
                 "items": {
+                    "From Nothing Diamond": {"zh_CN": "无根之源 宝钻", "zh_TW": "從無到有 鑽石"},
                     "Gold Ring": {"zh_CN": "金环", "zh_TW": "金環"},
                 },
                 "stats": {
@@ -1164,6 +1321,49 @@ class TradeStatMappingTests(unittest.TestCase):
             {"kind": "logical", "id": "Maps"},
         )
 
+    def test_prefers_page_labels_and_rejects_ambiguous_page_item_names(self) -> None:
+        page_categories = build_page_categories(
+            [
+                PageArtifacts(
+                    page_slug="Ruby",
+                    page_group=None,
+                    page_url="https://poe2db.tw/us/Ruby",
+                    baseitem_name="Ruby",
+                    allowed_patterns=[],
+                    allowed_stat_ids=[],
+                    item_names=[],
+                ),
+                PageArtifacts(
+                    page_slug="Diamond",
+                    page_group=None,
+                    page_url="https://poe2db.tw/us/Diamond",
+                    baseitem_name="Diamond",
+                    allowed_patterns=[],
+                    allowed_stat_ids=[],
+                    item_names=[],
+                ),
+            ],
+            {"Ruby": ["Diamond", "Shared Jewel"], "Diamond": ["Diamond", "Shared Jewel"]},
+        )
+        selections = build_item_name_selection_map(
+            {
+                "result": [
+                    {
+                        "id": "jewel",
+                        "entries": [
+                            {"type": "Diamond", "text": "From Nothing Diamond"},
+                            {"type": "Shared Jewel"},
+                        ],
+                    }
+                ]
+            },
+            page_categories,
+        )
+
+        self.assertEqual(selections["diamond"], {"kind": "page", "id": "Diamond"})
+        self.assertEqual(selections["from nothing diamond"], {"kind": "page", "id": "Diamond"})
+        self.assertEqual(selections["shared jewel"], {"kind": "logical", "id": "Jewels"})
+
     def test_loads_charm_specific_trade_stat_aliases(self) -> None:
         trade_stat_index = build_trade_stat_index(
             {
@@ -1404,6 +1604,214 @@ class TradeStatMappingTests(unittest.TestCase):
             ["explicit.stat_spirit_boar", "explicit.stat_spirit_serpent"],
         )
 
+    def test_maps_verified_poe2db_unique_item_stat_template_to_trade_stat(self) -> None:
+        trade_stats_payload = {
+            "result": [
+                {
+                    "id": "explicit",
+                    "entries": [
+                        {
+                            "id": "explicit.stat_radius_passives",
+                            "text": "Passives in Radius can be Allocated without being connected to your tree",
+                        }
+                    ],
+                }
+            ]
+        }
+
+        patterns, stat_ids = map_trade_stat_texts_to_trade_stat_ids(
+            [
+                "Passives in Radius of Passive Skill can be Allocated without being connected to your tree",
+                "Passives in Radius of Passive Skills can be Allocated without being connected to your tree",
+            ],
+            build_trade_stat_index(trade_stats_payload),
+            build_trade_stat_records(trade_stats_payload),
+        )
+
+        self.assertEqual(
+            patterns,
+            ["Passives in Radius can be Allocated without being connected to your tree"],
+        )
+        self.assertEqual(stat_ids, ["explicit.stat_radius_passives"])
+
+    def test_expands_passive_skill_placeholder_to_official_keystone_variants(self) -> None:
+        trade_stats_payload = {
+            "result": [
+                {
+                    "id": "explicit",
+                    "entries": [
+                        {
+                            "id": "explicit.stat_radius_passives",
+                            "text": "Passives in Radius can be Allocated without being connected to your tree",
+                        },
+                        {
+                            "id": "explicit.stat_2422708892|64601",
+                            "text": "Passives in Radius of Hollow Palm Technique can be Allocated\nwithout being connected to your tree",
+                        },
+                        {
+                            "id": "explicit.stat_2422708892|18684",
+                            "text": "Passives in Radius of Avatar of Fire can be Allocated\nwithout being connected to your tree",
+                        },
+                    ],
+                }
+            ]
+        }
+
+        _, stat_ids = map_trade_stat_texts_to_trade_stat_ids(
+            ["Passives in Radius of Passive Skill can be Allocated without being connected to your tree"],
+            build_trade_stat_index(trade_stats_payload),
+            build_trade_stat_records(trade_stats_payload),
+        )
+
+        self.assertEqual(
+            stat_ids,
+            [
+                "explicit.stat_2422708892|18684",
+                "explicit.stat_2422708892|64601",
+                "explicit.stat_radius_passives",
+            ],
+        )
+
+    def test_expands_allocates_passive_skill_placeholder_to_official_variants(self) -> None:
+        trade_stats_payload = {
+            "result": [
+                {
+                    "id": "explicit",
+                    "entries": [
+                        {"id": "explicit.allocates|1", "text": "Allocates Hollow Palm Technique"},
+                        {"id": "explicit.allocates|2", "text": "Allocates Giant's Blood"},
+                        {"id": "explicit.other", "text": "Allocates # Sinister Jewel sockets"},
+                    ],
+                }
+            ]
+        }
+
+        _, stat_ids = map_trade_stat_texts_to_trade_stat_ids(
+            ["Allocates Passive Skill"],
+            build_trade_stat_index(trade_stats_payload),
+            build_trade_stat_records(trade_stats_payload),
+        )
+
+        self.assertEqual(stat_ids, ["explicit.allocates|1", "explicit.allocates|2"])
+
+    def test_expands_random_keystone_passive_skill_to_verified_keystones(self) -> None:
+        trade_stats_payload = {
+            "result": [
+                {
+                    "id": "explicit",
+                    "entries": [
+                        {"id": "explicit.keystone|1", "text": "Hollow Palm Technique"},
+                        {"id": "explicit.keystone|2", "text": "Giant's Blood"},
+                        {"id": "explicit.other", "text": "Unrelated Passive"},
+                    ],
+                }
+            ]
+        }
+
+        _, stat_ids = map_trade_stat_texts_to_trade_stat_ids(
+            ["Random 1 Keystone Passive Skill [1,33]"],
+            build_trade_stat_index(trade_stats_payload),
+            build_trade_stat_records(trade_stats_payload),
+            verified_keystone_names={"Hollow Palm Technique", "Giant's Blood"},
+        )
+
+        self.assertEqual(stat_ids, ["explicit.keystone|1", "explicit.keystone|2"])
+
+    def test_groups_verified_unique_stats_by_trade_base_type(self) -> None:
+        trade_stats_payload = {
+            "result": [
+                {
+                    "id": "explicit",
+                    "entries": [
+                        {
+                            "id": "explicit.stat_radius_passives",
+                            "text": "Passives in Radius can be Allocated without being connected to your tree",
+                        },
+                        {
+                            "id": "explicit.stat_other_diamond",
+                            "text": "Other Diamond Modifier",
+                        },
+                    ],
+                }
+            ]
+        }
+        cache = {
+            "version": 1,
+            "pages": {
+                "From_Nothing": {
+                    "us": {
+                        "itemModTextsVersion": 2,
+                        "itemModTexts": [
+                            "Passives in Radius of Passive Skills can be Allocated without being connected to your tree"
+                        ],
+                    }
+                },
+                "Other_Diamond": {
+                    "us": {
+                        "itemModTextsVersion": 2,
+                        "itemModTexts": ["Other Diamond Modifier"],
+                    }
+                },
+            },
+        }
+        aliases, artifacts = build_unique_item_type_artifacts(
+            {
+                "result": [
+                    {
+                        "entries": [
+                            {
+                                "name": "From Nothing",
+                                "type": "Diamond",
+                                "text": "From Nothing Diamond",
+                                "flags": {"unique": True},
+                            },
+                            {
+                                "name": "Other Diamond",
+                                "type": "Diamond",
+                                "text": "Other Diamond Diamond",
+                                "flags": {"unique": True},
+                            },
+                        ]
+                    }
+                ]
+            },
+            cache,
+            build_trade_stat_index(trade_stats_payload),
+            build_trade_stat_records(trade_stats_payload),
+        )
+
+        self.assertEqual(aliases["from nothing diamond"], "diamond")
+        self.assertEqual(
+            artifacts["diamond"]["allowedStatIds"],
+            ["explicit.stat_other_diamond", "explicit.stat_radius_passives"],
+        )
+
+    def test_adds_verified_localized_unique_names_to_selection_and_type_indexes(self) -> None:
+        selections = {
+            "from nothing diamond": {"kind": "page", "id": "Ruby"},
+            "existing source": {"kind": "page", "id": "Ruby"},
+            "现有本地名": {"kind": "page", "id": "Diamond"},
+        }
+        types = {
+            "from nothing diamond": "diamond",
+            "existing source": "diamond",
+            "现有本地名": "other",
+        }
+
+        add_verified_unique_item_localized_selection_aliases(
+            selections,
+            types,
+            {
+                "From Nothing Diamond": {"zh_CN": "无根之源 宝钻", "zh_TW": "從無到有 鑽石"},
+                "Existing Source": {"zh_TW": "现有本地名"},
+            },
+        )
+
+        self.assertEqual(selections["從無到有 鑽石".lower()], {"kind": "page", "id": "Ruby"})
+        self.assertEqual(types["從無到有 鑽石".lower()], "diamond")
+        self.assertEqual(selections["现有本地名"], {"kind": "page", "id": "Diamond"})
+        self.assertEqual(types["现有本地名"], "other")
+
     def test_does_not_wildcard_untrusted_bracket_text(self) -> None:
         trade_stats_payload = {
             "result": [
@@ -1581,6 +1989,16 @@ class TradeStatMappingTests(unittest.TestCase):
                 "Used when you become Frozen",
                 "Energy Shield Recharge starts on use",
             ],
+        )
+
+    def test_preserves_word_boundaries_across_unique_item_mod_line_breaks(self) -> None:
+        artifacts = parse_page_html_artifacts(
+            '<div class="explicitMod">Passives in Radius can be Allocated<br>without being connected to your tree</div>'
+        )
+
+        self.assertEqual(
+            artifacts.item_mod_texts,
+            ["Passives in Radius can be Allocated without being connected to your tree"],
         )
 
     def test_adds_poe2db_granted_skills_to_page_categories(self) -> None:

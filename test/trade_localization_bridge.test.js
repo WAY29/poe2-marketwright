@@ -29,6 +29,8 @@ test("native item bridge renders bilingual labels without changing English item 
         entries: [
           { type: "Gold Ring" },
           { type: "Gold Ring", text: "Andvarius Gold Ring", flags: { unique: true } },
+          { type: "Diamond", text: "From Nothing Diamond", flags: { unique: true } },
+          { type: "Unknown Ring", text: "Unknown Ring", flags: { unique: true } },
           { type: "Unknown Ring" }
         ]
       }
@@ -37,12 +39,18 @@ test("native item bridge renders bilingual labels without changing English item 
   const localized = sandbox.window.__testHooks.localizeTradeItemsPayload(payload, {
     enabled: true,
     locale: "zh_TW",
-    items: { "Gold Ring": { zh_CN: "金环", zh_TW: "金環" } }
+    items: {
+      "Gold Ring": { zh_CN: "金环", zh_TW: "金環" },
+      "From Nothing Diamond": { zh_CN: "无根之源 宝钻", zh_TW: "從無到有 鑽石" }
+    }
   });
   const disabled = sandbox.window.__testHooks.localizeTradeItemsPayload(payload, {
     enabled: false,
     locale: "zh_TW",
-    items: { "Gold Ring": { zh_CN: "金环", zh_TW: "金環" } }
+    items: {
+      "Gold Ring": { zh_CN: "金环", zh_TW: "金環" },
+      "From Nothing Diamond": { zh_CN: "无根之源 宝钻", zh_TW: "從無到有 鑽石" }
+    }
   });
 
   assert.deepStrictEqual(structuredClone(localized), {
@@ -52,6 +60,8 @@ test("native item bridge renders bilingual labels without changing English item 
         entries: [
           { type: "Gold Ring", text: "金環 (Gold Ring)" },
           { type: "Gold Ring", text: "Andvarius Gold Ring", flags: { unique: true } },
+          { type: "Diamond", text: "從無到有 鑽石 (From Nothing Diamond)", flags: { unique: true } },
+          { type: "Unknown Ring", text: "Unknown Ring", flags: { unique: true } },
           { type: "Unknown Ring" }
         ]
       }

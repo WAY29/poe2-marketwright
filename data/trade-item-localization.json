@@ -1,6 +1,14 @@
 {
-  "version": 5,
+  "version": 6,
   "items": {
+    "Ab Aeterno Grand Cuisses": {
+      "zh_CN": "无始之时 恢弘腿甲",
+      "zh_TW": "源於永恆 宏偉腿甲"
+    },
+    "Ab Aeterno Runemastered Grand Cuisses": {
+      "zh_CN": "无始之时 符文师匠恢弘腿甲",
+      "zh_TW": "源於永恆 符煉宏偉腿甲"
+    },
     "Aberrant Sledge": {
       "zh_CN": "畸变巨锤",
       "zh_TW": "怪異攻城錘"
@@ -53,6 +61,10 @@
       "zh_CN": "信徒之衣",
       "zh_TW": "信徒之衣"
     },
+    "Adonia's Ego Siphoning Wand": {
+      "zh_CN": "阿多尼娅的自我 虹吸法杖",
+      "zh_TW": "艾多尼亞的自負 虹吸法杖"
+    },
     "Adorned Wraps": {
       "zh_CN": "华饰裹手",
       "zh_TW": "裝飾裹手"
@@ -60,6 +72,18 @@
     "Aegis Quarterstaff": {
       "zh_CN": "神盾节杖",
       "zh_TW": "神禦細杖"
+    },
+    "Aerisvane's Wings Burnished Gauntlets": {
+      "zh_CN": "艾瑞斯维恩之翼 冷芒手甲",
+      "zh_TW": "艾瑞斯凡恩之翼 拋光護手"
+    },
+    "Aerisvane's Wings Runemastered Burnished Gauntlets": {
+      "zh_CN": "艾瑞斯维恩之翼 符文师匠冷芒手甲",
+      "zh_TW": "艾瑞斯凡恩之翼 符煉拋光護手"
+    },
+    "Against the Darkness Time-Lost Diamond": {
+      "zh_CN": "抗衡黑暗 失落的宝钻",
+      "zh_TW": "力抗黑暗 時迭鑽石"
     },
     "Aged Cuffs": {
       "zh_CN": "风霜袖带",
@@ -89,6 +113,14 @@
       "zh_CN": "奥杜尔之传说",
       "zh_TW": "阿德爾的傳奇"
     },
+    "Alkem Eira Blazon Crest Shield": {
+      "zh_CN": "神谕 饰印纹章盾",
+      "zh_TW": "神諭 家徽紋章盾"
+    },
+    "Alkem Eira Runemastered Blazon Crest Shield": {
+      "zh_CN": "神谕 符文师匠饰印纹章盾",
+      "zh_TW": "神諭 符煉家徽紋章盾"
+    },
     "Alloy Crossbow": {
       "zh_CN": "合金战弩",
       "zh_TW": "合金十字弓"
@@ -96,6 +128,14 @@
     "Alpha Talisman": {
       "zh_CN": "首领魔符",
       "zh_TW": "統領魔符"
+    },
+    "Alpha's Howl Armoured Cap": {
+      "zh_CN": "极地之眼 覆甲帽",
+      "zh_TW": "極地之嗥 裝甲便帽"
+    },
+    "Alpha's Howl Runemastered Armoured Cap": {
+      "zh_CN": "极地之眼 符文师匠覆甲帽",
+      "zh_TW": "極地之嗥 符煉裝甲便帽"
     },
     "Altar Robe": {
       "zh_CN": "祭坛长袍",
@@ -120,6 +160,14 @@
     "Amethyst Ring": {
       "zh_CN": "紫晶戒指",
       "zh_TW": "紫晶戒指"
+    },
+    "Amor Mandragora Changeling Talisman": {
+      "zh_CN": "爱神曼陀罗 易形魔符",
+      "zh_TW": "阿莫爾．曼德拉戈拉 變形魔符"
+    },
+    "Amor Mandragora Runeforged Changeling Talisman": {
+      "zh_CN": "爱神曼陀罗 符文易形魔符",
+      "zh_TW": "阿莫爾．曼德拉戈拉 符鍛變形魔符"
     },
     "Amphora Relic": {
       "zh_CN": "土罐遗物",
@@ -297,6 +345,10 @@
       "zh_CN": "远古面甲",
       "zh_TW": "遠古護面盔"
     },
+    "Andvarius Gold Ring": {
+      "zh_CN": "贪欲之记 金光戒指",
+      "zh_TW": "貪慾之記 金光戒指"
+    },
     "Antidote Charm": {
       "zh_CN": "抗毒咒符",
       "zh_TW": "解毒護符"
@@ -309,9 +361,29 @@
       "zh_CN": "铁砧巨锤",
       "zh_TW": "鐵砧重錘"
     },
+    "Apep's Supremacy Runemastered Voodoo Focus": {
+      "zh_CN": "艾普的霸权 符文师匠巫毒法器",
+      "zh_TW": "艾普霸權 符煉巫毒法器"
+    },
+    "Apep's Supremacy Voodoo Focus": {
+      "zh_CN": "艾普的霸权 巫毒法器",
+      "zh_TW": "艾普霸權 巫毒法器"
+    },
     "Apostle Leggings": {
       "zh_CN": "使徒护腿",
       "zh_TW": "使徒護腿"
+    },
+    "Apron of Emiran Hermit Garb": {
+      "zh_CN": "艾米兰的兜裙 隐士束衣",
+      "zh_TW": "埃米蘭之裙 隱士裝束"
+    },
+    "Apron of Emiran Runemastered Hermit Garb": {
+      "zh_CN": "艾米兰的兜裙 符文师匠隐士束衣",
+      "zh_TW": "埃米蘭之裙 符煉隱士裝束"
+    },
+    "Arakaali's Gift Antidote Charm": {
+      "zh_CN": "阿拉卡力的礼物 抗毒咒符",
+      "zh_TW": "艾爾卡莉的贈禮 解毒護符"
     },
     "Arcane Dirk": {
       "zh_CN": "秘术短匕",
@@ -369,6 +441,14 @@
       "zh_CN": "轰击弓",
       "zh_TW": "砲火弓"
     },
+    "Arvil's Wheel Hardwood Targe": {
+      "zh_CN": "阿维尔之轮 硬木圆盾",
+      "zh_TW": "阿瓦爾之輪 硬木圓盾"
+    },
+    "Arvil's Wheel Runemastered Hardwood Targe": {
+      "zh_CN": "阿维尔之轮 符文师匠硬木圆盾",
+      "zh_TW": "阿瓦爾之輪 符煉硬木圓盾"
+    },
     "Ascetic Garb": {
       "zh_CN": "苦修束衣",
       "zh_TW": "苦行者裝束"
@@ -381,9 +461,29 @@
       "zh_CN": "枯灰长杖",
       "zh_TW": "灰燼長杖"
     },
+    "Ashrend Pathfinder Coat": {
+      "zh_CN": "拂烬 寻路者外套",
+      "zh_TW": "拂燼 追獵者外套"
+    },
+    "Ashrend Runemastered Pathfinder Coat": {
+      "zh_CN": "拂烬 符文师匠寻路者外套",
+      "zh_TW": "拂燼 符煉追獵者外套"
+    },
+    "Asphyxia's Wrath Broadhead Quiver": {
+      "zh_CN": "冰灵之吼 宽矢箭袋",
+      "zh_TW": "冰靈之吼 寬頭箭袋"
+    },
+    "Assailum Closed Helm": {
+      "zh_CN": "千里狙敌 封闭之盔",
+      "zh_TW": "刺殺 緊閉之盔"
+    },
     "Assassin Garb": {
       "zh_CN": "暗影束衣",
       "zh_TW": "刺客裝束"
+    },
+    "Astramentis Stellar Amulet": {
+      "zh_CN": "均衡之符 星辉项链",
+      "zh_TW": "均衡之符 恆星項鍊"
     },
     "Astrid's Creativity": {
       "zh_CN": "阿斯特丽德的创造",
@@ -393,9 +493,65 @@
       "zh_CN": "阿特莫瓦的退却灵核",
       "zh_TW": "艾特瑪哈的撤退靈魂核心"
     },
+    "Atsak's Sight Runemastered Veiled Mask": {
+      "zh_CN": "阿萨克的凝视 符文师匠蒙纱之面",
+      "zh_TW": "阿札克之瞳 符煉隱匿之面"
+    },
+    "Atsak's Sight Veiled Mask": {
+      "zh_CN": "阿萨克的凝视 蒙纱之面",
+      "zh_TW": "阿札克之瞳 隱匿之面"
+    },
     "Attuned Wand": {
       "zh_CN": "调谐法杖",
       "zh_TW": "調和法杖"
+    },
+    "Atziri's Acuity Moulded Mitts": {
+      "zh_CN": "阿兹里的捷思 铸锻护手",
+      "zh_TW": "阿茲里的捷思 鑄模長手套"
+    },
+    "Atziri's Acuity Runemastered Moulded Mitts": {
+      "zh_CN": "阿兹里的捷思 符文师匠铸锻护手",
+      "zh_TW": "阿茲里的捷思 符煉鑄模長手套"
+    },
+    "Atziri's Contempt Pronged Spear": {
+      "zh_CN": "阿兹里的蔑视 叉尖战矛",
+      "zh_TW": "阿茲里的輕視 尖叉長矛"
+    },
+    "Atziri's Disdain Gold Circlet": {
+      "zh_CN": "阿兹里的蔑视 烁金头冠",
+      "zh_TW": "阿茲里的蔑視 黃金頭環"
+    },
+    "Atziri's Disdain Runemastered Gold Circlet": {
+      "zh_CN": "阿兹里的蔑视 符文师匠烁金头冠",
+      "zh_TW": "阿茲里的蔑視 符煉黃金頭環"
+    },
+    "Atziri's Rule Reflecting Staff": {
+      "zh_CN": "阿兹里的统治 反射长杖",
+      "zh_TW": "阿茲里的統御 映像長杖"
+    },
+    "Atziri's Splendour Runemastered Sacrificial Regalia": {
+      "zh_CN": "阿兹里的威权 符文师匠献祭盛装",
+      "zh_TW": "阿茲里的威權 符煉獻祭法衣"
+    },
+    "Atziri's Splendour Sacrificial Regalia": {
+      "zh_CN": "阿兹里的威权 献祭盛装",
+      "zh_TW": "阿茲里的威權 獻祭法衣"
+    },
+    "Atziri's Step Cinched Boots": {
+      "zh_CN": "阿兹里的金履 束带长靴",
+      "zh_TW": "阿茲里的金履 繫帶長靴"
+    },
+    "Atziri's Step Runemastered Cinched Boots": {
+      "zh_CN": "阿兹里的金履 符文师匠束带长靴",
+      "zh_TW": "阿茲里的金履 符煉繫帶長靴"
+    },
+    "Aurseize Layered Gauntlets": {
+      "zh_CN": "富贵之运 垫层护手",
+      "zh_TW": "富貴之運 層板護手"
+    },
+    "Aurseize Runemastered Layered Gauntlets": {
+      "zh_CN": "富贵之运 符文师匠垫层护手",
+      "zh_TW": "富貴之運 符煉層板護手"
     },
     "Austere Garb": {
       "zh_CN": "简朴束衣",
@@ -489,6 +645,10 @@
       "zh_CN": "战镐",
       "zh_TW": "戰鬥鎬"
     },
+    "Beacon of Azis Solar Amulet": {
+      "zh_CN": "阿吉斯的道标 日曜项链",
+      "zh_TW": "阿基斯的信標 日耀項鍊"
+    },
     "Beaded Circlet": {
       "zh_CN": "珠饰头冠",
       "zh_TW": "串珠頭環"
@@ -505,21 +665,109 @@
       "zh_CN": "熊皮斗篷",
       "zh_TW": "熊皮披肩"
     },
+    "Beetlebite Runemastered Velour Shoes": {
+      "zh_CN": "甲虫之口 符文师匠鹅绒便鞋",
+      "zh_TW": "甲蟲噬咬 符煉絲絨輕鞋"
+    },
+    "Beetlebite Velour Shoes": {
+      "zh_CN": "甲虫之口 鹅绒便鞋",
+      "zh_TW": "甲蟲噬咬 絲絨輕鞋"
+    },
+    "Beira's Anguish Dousing Charm": {
+      "zh_CN": "贝拉的苦楚 浸润咒符",
+      "zh_TW": "貝伊拉的悲痛 滅火護符"
+    },
+    "Belly of the Beast Explorer Armour": {
+      "zh_CN": "兽腹 探索者护甲",
+      "zh_TW": "巨獸之腹 探索者護甲"
+    },
+    "Belly of the Beast Runemastered Explorer Armour": {
+      "zh_CN": "兽腹 符文师匠探索者护甲",
+      "zh_TW": "巨獸之腹 符煉探索者護甲"
+    },
+    "Berek's Grip Two-Stone Ring": {
+      "zh_CN": "贝雷克的冰与雷之曲 双玉戒指",
+      "zh_TW": "貝雷克的冰與雷之曲 雙玉戒指"
+    },
+    "Berek's Pass Two-Stone Ring": {
+      "zh_CN": "贝雷克的冰与火之歌 双玉戒指",
+      "zh_TW": "貝雷克的冰與火之歌 雙玉戒指"
+    },
+    "Berek's Respite Two-Stone Ring": {
+      "zh_CN": "贝雷克的火与雷之乐 双玉戒指",
+      "zh_TW": "貝雷克的火與雷之樂 雙玉戒指"
+    },
     "Betrayal of Aldur": {
       "zh_CN": "奥杜尔之背叛",
       "zh_TW": "阿德爾的背叛"
+    },
+    "Beyond Reach Visceral Quiver": {
+      "zh_CN": "望而不及 贯心箭袋",
+      "zh_TW": "無法到達 內臟箭袋"
+    },
+    "Bijouborne Double Belt": {
+      "zh_CN": "珠宝承载者 双重腰带",
+      "zh_TW": "寶石之源 雙層腰帶"
     },
     "Biostatic Ring": {
       "zh_CN": "生息戒指",
       "zh_TW": "恆生之戒"
     },
+    "Birth of Fury Runemastered Stone Greaves": {
+      "zh_CN": "怒火降生 符文师匠坚石胫甲",
+      "zh_TW": "憤怒的誕生 符煉岩石脛甲"
+    },
+    "Birth of Fury Stone Greaves": {
+      "zh_CN": "怒火降生 坚石胫甲",
+      "zh_TW": "憤怒的誕生 岩石脛甲"
+    },
+    "Birthright Buckle Wide Belt": {
+      "zh_CN": "天赋扣带 宽大腰带",
+      "zh_TW": "天生權利扣環 寬大腰帶"
+    },
+    "Bitterbloom Feathered Robe": {
+      "zh_CN": "苦涩之花 羽饰长袍",
+      "zh_TW": "苦心花 羽毛長袍"
+    },
+    "Bitterbloom Runemastered Feathered Robe": {
+      "zh_CN": "苦涩之花 符文师匠羽饰长袍",
+      "zh_TW": "苦心花 符煉羽毛長袍"
+    },
     "Black Scythe Artifact": {
       "zh_CN": "黑镰神器",
       "zh_TW": "黑暗血鐮文物"
     },
+    "Black Sun Crest Runemastered Wrapped Greathelm": {
+      "zh_CN": "黑阳之冠 符文师匠裹布巨盔",
+      "zh_TW": "黑陽之冠 符煉纏繞巨盔"
+    },
+    "Black Sun Crest Wrapped Greathelm": {
+      "zh_CN": "黑阳之冠 裹布巨盔",
+      "zh_TW": "黑陽之冠 纏繞巨盔"
+    },
+    "Blackbraid Fur Plate": {
+      "zh_CN": "黑髻 覆皮之铠",
+      "zh_TW": "黑辮 毛皮鎧甲"
+    },
+    "Blackbraid Runeforged Fur Plate": {
+      "zh_CN": "黑髻 符文覆皮之铠",
+      "zh_TW": "黑辮 符鍛毛皮鎧甲"
+    },
     "Blackfire Crossbow": {
       "zh_CN": "黯焰战弩",
       "zh_TW": "黑火十字弓"
+    },
+    "Blackflame Amethyst Ring": {
+      "zh_CN": "黑焰 紫晶戒指",
+      "zh_TW": "黯炎 紫晶戒指"
+    },
+    "Blackgleam Fire Quiver": {
+      "zh_CN": "黑炎之芒 火灵箭袋",
+      "zh_TW": "黑炎之芒 火焰箭袋"
+    },
+    "Blackheart Iron Ring": {
+      "zh_CN": "幽暗之语 锻铁戒指",
+      "zh_TW": "幽暗之語 鍛鐵戒指"
     },
     "Blacksmith Maul": {
       "zh_CN": "锻造巨锤",
@@ -565,9 +813,37 @@
       "zh_CN": "刺骨战弩",
       "zh_TW": "無情十字弓"
     },
+    "Blessed Bonds Linen Wraps": {
+      "zh_CN": "蒙福的羁绊 亚麻裹手",
+      "zh_TW": "祝福之絆 麻布裹手"
+    },
     "Blessed Claymore": {
       "zh_CN": "蒙福大剑",
       "zh_TW": "祝福大劍"
+    },
+    "Blistering Bond Ruby Ring": {
+      "zh_CN": "沸腾桎梏 红玉戒指",
+      "zh_TW": "極熱護環 紅玉戒指"
+    },
+    "Blood Price Fierce Greathelm": {
+      "zh_CN": "血债 刚烈巨盔",
+      "zh_TW": "血償 兇猛巨盔"
+    },
+    "Blood Price Runemastered Fierce Greathelm": {
+      "zh_CN": "血债 符文师匠刚烈巨盔",
+      "zh_TW": "血償 符煉兇猛巨盔"
+    },
+    "Blood of the Warrior Gargantuan Life Flask": {
+      "zh_CN": "战士之血 恢弘生命药剂",
+      "zh_TW": "戰士之血 巨大生命藥劑"
+    },
+    "Bloodbarrier Iron Buckler": {
+      "zh_CN": "血垒障壁 锻铁轻盾",
+      "zh_TW": "鮮血屏障 鍛鐵輕盾"
+    },
+    "Bloodbarrier Runemastered Iron Buckler": {
+      "zh_CN": "血垒障壁 符文师匠锻铁轻盾",
+      "zh_TW": "鮮血屏障 符煉鍛鐵輕盾"
     },
     "Bloodletting Dagger": {
       "zh_CN": "放血匕首",
@@ -576,6 +852,18 @@
     "Bloodstone Amulet": {
       "zh_CN": "血岩项链",
       "zh_TW": "血石項鍊"
+    },
+    "Blueflame Bracers Goldcast Cuffs": {
+      "zh_CN": "蓝焰护腕 金索袖带",
+      "zh_TW": "藍焰護腕 金鑄腕帶"
+    },
+    "Blueflame Bracers Runemastered Goldcast Cuffs": {
+      "zh_CN": "蓝焰护腕 符文师匠金索袖带",
+      "zh_TW": "藍焰護腕 符煉金鑄腕帶"
+    },
+    "Bluetongue Shortsword": {
+      "zh_CN": "幽蓝毒舌 短剑",
+      "zh_TW": "藍舌 短劍"
     },
     "Blunt Quiver": {
       "zh_CN": "钝矢箭袋",
@@ -613,6 +901,14 @@
       "zh_CN": "钙石法杖",
       "zh_TW": "骸骨法杖"
     },
+    "Bones of Ullr Lattice Sandals": {
+      "zh_CN": "灵骸之履 硬框鞋履",
+      "zh_TW": "烏勒爾之骨 格子便鞋"
+    },
+    "Bones of Ullr Runemastered Lattice Sandals": {
+      "zh_CN": "灵骸之履 符文师匠硬框鞋履",
+      "zh_TW": "烏勒爾之骨 符煉格子便鞋"
+    },
     "Bound Boots": {
       "zh_CN": "缚革长靴",
       "zh_TW": "綑綁長靴"
@@ -645,6 +941,26 @@
       "zh_CN": "编织袖带",
       "zh_TW": "編織腕帶"
     },
+    "Brain Rattler Runeforged Studded Greatclub": {
+      "zh_CN": "脑乱者 符文镶钉巨棍",
+      "zh_TW": "腦亂者 符鍛鑲釘巨棍棒"
+    },
+    "Brain Rattler Runemastered Studded Greatclub": {
+      "zh_CN": "脑乱者 符文师匠镶钉巨棍",
+      "zh_TW": "腦亂者 符煉鑲釘巨棍棒"
+    },
+    "Brain Rattler Studded Greatclub": {
+      "zh_CN": "脑乱者 镶钉巨棍",
+      "zh_TW": "腦亂者 鑲釘巨棍棒"
+    },
+    "Bramblejack Runemastered Rusted Cuirass": {
+      "zh_CN": "刺棘宝甲 符文师匠锈蚀胸甲",
+      "zh_TW": "刺棘寶甲 符煉生鏽胸甲"
+    },
+    "Bramblejack Rusted Cuirass": {
+      "zh_CN": "刺棘宝甲 锈蚀胸甲",
+      "zh_TW": "刺棘寶甲 生鏽胸甲"
+    },
     "Branched Spear": {
       "zh_CN": "分叉战矛",
       "zh_TW": "分支長矛"
@@ -673,6 +989,18 @@
       "zh_CN": "奥杜尔之呼吸",
       "zh_TW": "阿德爾的吐息"
     },
+    "Breath of the Mountains Sapphire Charm": {
+      "zh_CN": "群山之息 蓝玉咒符",
+      "zh_TW": "山地之息 藍玉護符"
+    },
+    "Briarpatch Laced Boots": {
+      "zh_CN": "荆皮护靴 花边靴",
+      "zh_TW": "薔薇眼罩 飾帶長靴"
+    },
+    "Briarpatch Runemastered Laced Boots": {
+      "zh_CN": "荆皮护靴 符文师匠花边靴",
+      "zh_TW": "薔薇眼罩 符煉飾帶長靴"
+    },
     "Brigand Mace": {
       "zh_CN": "强盗之锤",
       "zh_TW": "強盜之錘"
@@ -684,6 +1012,22 @@
     "Brimmed Helm": {
       "zh_CN": "宽沿之盔",
       "zh_TW": "邊緣之盔"
+    },
+    "Briskwrap Rhoahide Coat": {
+      "zh_CN": "荒途 恐喙鸟皮外套",
+      "zh_TW": "荒途 恐喙鳥皮外套"
+    },
+    "Briskwrap Runemastered Rhoahide Coat": {
+      "zh_CN": "荒途 符文师匠恐喙鸟皮外套",
+      "zh_TW": "荒途 符煉恐喙鳥皮外套"
+    },
+    "Bristleboar Leather Vest": {
+      "zh_CN": "棘体猪肤 皮革背心",
+      "zh_TW": "鬃豬 皮革背心"
+    },
+    "Bristleboar Runemastered Leather Vest": {
+      "zh_CN": "棘体猪肤 符文师匠皮革背心",
+      "zh_TW": "鬃豬 符煉皮革背心"
     },
     "Broad Greatsword": {
       "zh_CN": "阔刃巨剑",
@@ -709,6 +1053,34 @@
       "zh_CN": "青铜胫甲",
       "zh_TW": "青銅脛甲"
     },
+    "Bronzebeard Horned Crown": {
+      "zh_CN": "青铜须髯 犄角王冠",
+      "zh_TW": "銅鬚 犄角之冠"
+    },
+    "Bronzebeard Runemastered Horned Crown": {
+      "zh_CN": "青铜须髯 符文师匠犄角王冠",
+      "zh_TW": "銅鬚 符煉犄角之冠"
+    },
+    "Brutus' Lead Sprinkler Morning Star": {
+      "zh_CN": "布鲁特斯的刑具 流星锤",
+      "zh_TW": "布魯特斯的刑具 晨星"
+    },
+    "Brutus' Lead Sprinkler Runeforged Morning Star": {
+      "zh_CN": "布鲁特斯的刑具 符文流星锤",
+      "zh_TW": "布魯特斯的刑具 符鍛晨星"
+    },
+    "Brynhand's Mark Runeforged Wooden Club": {
+      "zh_CN": "布琳翰德印记 符文木棒",
+      "zh_TW": "布林漢的印記 符鍛木製棍棒"
+    },
+    "Brynhand's Mark Runemastered Wooden Club": {
+      "zh_CN": "布琳翰德印记 符文师匠木棒",
+      "zh_TW": "布林漢的印記 符煉木製棍棒"
+    },
+    "Brynhand's Mark Wooden Club": {
+      "zh_CN": "布琳翰德印记 木棒",
+      "zh_TW": "布林漢的印記 木製棍棒"
+    },
     "Buckled Wraps": {
       "zh_CN": "扣带裹手",
       "zh_TW": "帶扣裹手"
@@ -725,6 +1097,22 @@
       "zh_CN": "冷芒手甲",
       "zh_TW": "拋光護手"
     },
+    "Bursting Decay Unset Ring": {
+      "zh_CN": "腐朽迸发 潜能之戒",
+      "zh_TW": "爆發腐蝕 潛能之戒"
+    },
+    "Bushwhack Lizardscale Boots": {
+      "zh_CN": "踏林长靴 蜥鳞靴",
+      "zh_TW": "突襲 蜥蜴鱗長靴"
+    },
+    "Bushwhack Runemastered Lizardscale Boots": {
+      "zh_CN": "踏林长靴 符文师匠蜥鳞靴",
+      "zh_TW": "突襲 符煉蜥蜴鱗長靴"
+    },
+    "Byrnabas Wide Belt": {
+      "zh_CN": "伯纳巴斯 宽大腰带",
+      "zh_TW": "布萊納巴斯 寬大腰帶"
+    },
     "Cabalist Helm": {
       "zh_CN": "秘法家头盔",
       "zh_TW": "秘術師之盔"
@@ -733,9 +1121,25 @@
       "zh_CN": "卡迪甘的顿悟",
       "zh_TW": "卡迪根的頓悟"
     },
+    "Cadiro's Gambit Primed Quiver": {
+      "zh_CN": "卡迪罗的赌局 精工箭袋",
+      "zh_TW": "卡迪羅的詭計 灌注箭袋"
+    },
     "Calescent Hammer": {
       "zh_CN": "升温之锤",
       "zh_TW": "升溫之錘"
+    },
+    "Calgyra's Arc Ornate Buckler": {
+      "zh_CN": "凯尔格拉的弧光 华丽轻盾",
+      "zh_TW": "凱爾捷拉之弧 華麗輕盾"
+    },
+    "Calgyra's Arc Runemastered Ornate Buckler": {
+      "zh_CN": "凯尔格拉的弧光 符文师匠华丽轻盾",
+      "zh_TW": "凱爾捷拉之弧 符煉華麗輕盾"
+    },
+    "Call of the Brotherhood Topaz Ring": {
+      "zh_CN": "意志呼唤 黄玉戒指",
+      "zh_TW": "意志呼喚 黃玉戒指"
     },
     "Call of the Shadows": {
       "zh_CN": "暗影呼唤",
@@ -744,6 +1148,14 @@
     "Cambric Wraps": {
       "zh_CN": "细麻布裹手",
       "zh_TW": "棉布裹手"
+    },
+    "Candlemaker Runemastered Sombre Gloves": {
+      "zh_CN": "塑烛者 符文师匠肃穆手套",
+      "zh_TW": "製燭者 符煉暗淡手套"
+    },
+    "Candlemaker Sombre Gloves": {
+      "zh_CN": "塑烛者 肃穆手套",
+      "zh_TW": "製燭者 暗淡手套"
     },
     "Cannonade Crossbow": {
       "zh_CN": "轰鸣战弩",
@@ -756,6 +1168,18 @@
     "Carapace Catalyst": {
       "zh_CN": "甲壳催化剂",
       "zh_TW": "甲殼催化劑"
+    },
+    "Carnage Heart Amber Amulet": {
+      "zh_CN": "屠戮之心 琥珀项链",
+      "zh_TW": "屠戮之心 琥珀護身符"
+    },
+    "Carrion Call Engraved Focus": {
+      "zh_CN": "不洁召唤 铭刻法器",
+      "zh_TW": "腐肉呼喚 紋刻法器"
+    },
+    "Carrion Call Runemastered Engraved Focus": {
+      "zh_CN": "不洁召唤 符文师匠铭刻法器",
+      "zh_TW": "腐肉呼喚 符煉紋刻法器"
     },
     "Carved Cunning": {
       "zh_CN": "雕琢诡诈",
@@ -793,6 +1217,10 @@
       "zh_CN": "灵猫雕像",
       "zh_TW": "靈貓魔偶"
     },
+    "Cat O' Nine Tails Utility Belt": {
+      "zh_CN": "九尾灵猫 万用腰带",
+      "zh_TW": "九尾貓 實用腰帶"
+    },
     "Cavalry Boots": {
       "zh_CN": "骑兵长靴",
       "zh_TW": "騎兵長靴"
@@ -828,6 +1256,14 @@
     "Chain Vestments": {
       "zh_CN": "链甲长衣",
       "zh_TW": "鎖鏈法衣"
+    },
+    "Chainsting Hunting Spear": {
+      "zh_CN": "缚链之针 狩猎长矛",
+      "zh_TW": "鏈鎖之刺 狩獵長矛"
+    },
+    "Chainsting Runeforged Hunting Spear": {
+      "zh_CN": "缚链之针 符文狩猎长矛",
+      "zh_TW": "鏈鎖之刺 符鍛狩獵長矛"
     },
     "Champion Cuirass": {
       "zh_CN": "冠军胸甲",
@@ -865,6 +1301,14 @@
       "zh_CN": "夏乌拉催化剂",
       "zh_TW": "夏烏拉的催化劑"
     },
+    "Chernobog's Pillar Blacksteel Tower Shield": {
+      "zh_CN": "五芒屏障 黑钢塔盾",
+      "zh_TW": "五芒屏障 黑鋼塔盾"
+    },
+    "Chernobog's Pillar Runemastered Blacksteel Tower Shield": {
+      "zh_CN": "五芒屏障 符文师匠黑钢塔盾",
+      "zh_TW": "五芒屏障 符煉黑鋼塔盾"
+    },
     "Chieftain Cuirass": {
       "zh_CN": "酋长胸甲",
       "zh_TW": "酋長胸甲"
@@ -880,6 +1324,18 @@
     "Chiseled Targe": {
       "zh_CN": "镌凿圆盾",
       "zh_TW": "鑿刻圓盾"
+    },
+    "Chober Chaber Leaden Greathammer": {
+      "zh_CN": "忠诚之锤 灌铅大锤",
+      "zh_TW": "忠誠之錘 麻木巨錘"
+    },
+    "Chober Chaber Runeforged Leaden Greathammer": {
+      "zh_CN": "忠诚之锤 符文灌铅大锤",
+      "zh_TW": "忠誠之錘 符鍛麻木巨錘"
+    },
+    "Choir of the Storm Jade Amulet": {
+      "zh_CN": "暴风之语 翠玉项链",
+      "zh_TW": "暴風之語 翠玉護身符"
     },
     "Cholotl's Soul Core of War": {
       "zh_CN": "查罗特的战争灵核",
@@ -905,9 +1361,29 @@
       "zh_CN": "奇塔夸雷特的圣典",
       "zh_TW": "希特克拉多的假說"
     },
+    "Clear Skies Delirium Tablet": {
+      "zh_CN": "万里晴空 惊悸迷雾石板",
+      "zh_TW": "蒼空 譫妄碑牌"
+    },
     "Cleric Vestments": {
       "zh_CN": "圣徒长衣",
       "zh_TW": "教士法衣"
+    },
+    "Cloak of Defiance Havoc Raiment": {
+      "zh_CN": "卫道之袍 劫难之衣",
+      "zh_TW": "衛道之袍 禍害之衣"
+    },
+    "Cloak of Defiance Runemastered Havoc Raiment": {
+      "zh_CN": "卫道之袍 符文师匠劫难之衣",
+      "zh_TW": "衛道之袍 符煉禍害之衣"
+    },
+    "Cloak of Flame Runemastered Silk Robe": {
+      "zh_CN": "烈炎之袍 符文师匠丝质之袍",
+      "zh_TW": "烈炎之袍 符煉絲質之袍"
+    },
+    "Cloak of Flame Silk Robe": {
+      "zh_CN": "烈炎之袍 丝质之袍",
+      "zh_TW": "烈炎之袍 絲質之袍"
     },
     "Cloaked Mail": {
       "zh_CN": "披风锁甲",
@@ -917,6 +1393,14 @@
       "zh_CN": "封闭之盔",
       "zh_TW": "緊閉之盔"
     },
+    "Coat of Red Chain Mail": {
+      "zh_CN": "赤红外套 环锁甲",
+      "zh_TW": "腥紅外衣 鎖鍊鎖甲"
+    },
+    "Coat of Red Runemastered Chain Mail": {
+      "zh_CN": "赤红外套 符文师匠环锁甲",
+      "zh_TW": "腥紅外衣 符煉鎖鍊鎖甲"
+    },
     "Coffer Relic": {
       "zh_CN": "匣柜遗物",
       "zh_TW": "寶箱聖物"
@@ -924,6 +1408,10 @@
     "Coiled Buckler": {
       "zh_CN": "盘曲轻盾",
       "zh_TW": "盤繞輕盾"
+    },
+    "Collapsing Horizon Wyrm Quarterstaff": {
+      "zh_CN": "崩塌视界 腾龙节杖",
+      "zh_TW": "崩塌的地平線 蠕蟲細杖"
     },
     "Colossal Life Flask": {
       "zh_CN": "高阶生命药剂",
@@ -969,6 +1457,14 @@
       "zh_CN": "霸王战铠",
       "zh_TW": "征服者鎧甲"
     },
+    "Constricting Command Runemastered Viper Cap": {
+      "zh_CN": "收缩指令 符文师匠毒蝰帽",
+      "zh_TW": "限制之令 符煉毒蛇便帽"
+    },
+    "Constricting Command Viper Cap": {
+      "zh_CN": "收缩指令 毒蝰帽",
+      "zh_TW": "限制之令 毒蛇便帽"
+    },
     "Construct Crossbow": {
       "zh_CN": "构造战弩",
       "zh_TW": "絕命十字弓"
@@ -977,13 +1473,41 @@
       "zh_CN": "施工锤",
       "zh_TW": "建造錘"
     },
+    "Controlled Metamorphosis Diamond": {
+      "zh_CN": "可控变形 宝钻",
+      "zh_TW": "受控的蛻變 鑽石"
+    },
     "Core Destabiliser": {
       "zh_CN": "核心失稳装置",
       "zh_TW": "核心擾亂器"
     },
+    "Cornathaum Heavy Crown": {
+      "zh_CN": "锋锥之帽 沉重王冠",
+      "zh_TW": "科那索姆 沉重之冠"
+    },
+    "Cornathaum Runemastered Heavy Crown": {
+      "zh_CN": "锋锥之帽 符文师匠沉重王冠",
+      "zh_TW": "科那索姆 符煉沉重之冠"
+    },
     "Corona Amulet": {
       "zh_CN": "日冕项链",
       "zh_TW": "日冕護身符"
+    },
+    "Corona of the Red Sun Runemastered Warrior Greathelm": {
+      "zh_CN": "赤红艳阳之冠 符文师匠战士巨盔",
+      "zh_TW": "紅日之冕 符煉戰士巨盔"
+    },
+    "Corona of the Red Sun Warrior Greathelm": {
+      "zh_CN": "赤红艳阳之冠 战士巨盔",
+      "zh_TW": "紅日之冕 戰士巨盔"
+    },
+    "Corpsewade Iron Greaves": {
+      "zh_CN": "涉灵 铁锻胫甲",
+      "zh_TW": "屍骨之靴 鐵鍛脛甲"
+    },
+    "Corpsewade Runemastered Iron Greaves": {
+      "zh_CN": "涉灵 符文师匠铁锻胫甲",
+      "zh_TW": "屍骨之靴 符煉鐵鍛脛甲"
     },
     "Corroded Greathelm": {
       "zh_CN": "腐蚀巨盔",
@@ -1009,6 +1533,14 @@
       "zh_CN": "灵鸦斗篷",
       "zh_TW": "烏鴉披肩"
     },
+    "Cospri's Will Assassin Garb": {
+      "zh_CN": "卡斯普里意志 暗影束衣",
+      "zh_TW": "卡斯普里意志 刺客裝束"
+    },
+    "Cospri's Will Runemastered Assassin Garb": {
+      "zh_CN": "卡斯普里意志 符文师匠暗影束衣",
+      "zh_TW": "卡斯普里意志 符煉刺客裝束"
+    },
     "Countess Seske's Rune of Archery": {
       "zh_CN": "塞丝克伯爵夫人的箭术符文",
       "zh_TW": "伯爵夫人瑟絲可的箭術符文"
@@ -1021,6 +1553,14 @@
       "zh_CN": "交际花曼南的残酷符文",
       "zh_TW": "花魁蔓南的殘酷符文"
     },
+    "Couture of Crimson Gilded Vestments": {
+      "zh_CN": "赤红礼装 鎏金长衣",
+      "zh_TW": "緋紅訂製服 鍍金法衣"
+    },
+    "Couture of Crimson Runemastered Gilded Vestments": {
+      "zh_CN": "赤红礼装 符文师匠鎏金长衣",
+      "zh_TW": "緋紅訂製服 符煉鍍金法衣"
+    },
     "Covered Sabatons": {
       "zh_CN": "掩护战靴",
       "zh_TW": "遮蓋鎧靴"
@@ -1029,6 +1569,10 @@
       "zh_CN": "匿踪兜帽",
       "zh_TW": "隱蔽兜帽"
     },
+    "Coward's Legacy Mail Belt": {
+      "zh_CN": "懦夫之遗 环锁腰带",
+      "zh_TW": "懦夫的遺產 鎖甲腰帶"
+    },
     "Cowardly Fate": {
       "zh_CN": "懦弱的命运",
       "zh_TW": "怯懦之運"
@@ -1036,6 +1580,10 @@
     "Cowled Helm": {
       "zh_CN": "掩面之盔",
       "zh_TW": "斗篷之盔"
+    },
+    "Cracklecreep Ruby Ring": {
+      "zh_CN": "爆裂蔓延 红玉戒指",
+      "zh_TW": "裂紋怪客 紅玉戒指"
     },
     "Crackling Flux": {
       "zh_CN": "雷霆溶剂",
@@ -1065,6 +1613,14 @@
       "zh_CN": "新月圆盾",
       "zh_TW": "新月圓盾"
     },
+    "Crest of Ardura Jingling Crest Shield": {
+      "zh_CN": "阿杜拉荣徽 铃鸣纹章盾",
+      "zh_TW": "阿杜拉之冠 響聲紋章盾"
+    },
+    "Crest of Ardura Runemastered Jingling Crest Shield": {
+      "zh_CN": "阿杜拉荣徽 符文师匠铃鸣纹章盾",
+      "zh_TW": "阿杜拉之冠 符煉響聲紋章盾"
+    },
     "Crimson Amulet": {
       "zh_CN": "赤红项链",
       "zh_TW": "赤紅項鍊"
@@ -1081,6 +1637,38 @@
       "zh_CN": "冠首之锤",
       "zh_TW": "皇冠之錘"
     },
+    "Crown of Eyes Runemastered Vermeil Circlet": {
+      "zh_CN": "邪眼之冠 符文师匠朱砂头冠",
+      "zh_TW": "邪眼之冠 符煉鍍金頭環"
+    },
+    "Crown of Eyes Vermeil Circlet": {
+      "zh_CN": "邪眼之冠 朱砂头冠",
+      "zh_TW": "邪眼之冠 鍍金頭環"
+    },
+    "Crown of Thorns Runemastered Twig Circlet": {
+      "zh_CN": "刺棘之冠 符文师匠细枝头冠",
+      "zh_TW": "刺棘之冠 符煉嫩枝頭環"
+    },
+    "Crown of Thorns Twig Circlet": {
+      "zh_CN": "刺棘之冠 细枝头冠",
+      "zh_TW": "刺棘之冠 嫩枝頭環"
+    },
+    "Crown of the Pale King Cultist Crown": {
+      "zh_CN": "殒皇之冠 密教头冠",
+      "zh_TW": "殞皇之冠 教徒之冠"
+    },
+    "Crown of the Pale King Runemastered Cultist Crown": {
+      "zh_CN": "殒皇之冠 符文师匠密教头冠",
+      "zh_TW": "殞皇之冠 符煉教徒之冠"
+    },
+    "Crown of the Victor Iron Crown": {
+      "zh_CN": "胜者桂冠 铁锻王冠",
+      "zh_TW": "勝者之冠 鍛鐵之冠"
+    },
+    "Crown of the Victor Runemastered Iron Crown": {
+      "zh_CN": "胜者桂冠 符文师匠铁锻王冠",
+      "zh_TW": "勝者之冠 符煉鍛鐵之冠"
+    },
     "Crucible Tower Shield": {
       "zh_CN": "熔铸塔盾",
       "zh_TW": "磨煉塔盾"
@@ -1088,6 +1676,10 @@
     "Crude Bow": {
       "zh_CN": "粗制弓",
       "zh_TW": "粗製弓"
+    },
+    "Cruel Hegemony Overseer Tablet": {
+      "zh_CN": "残酷霸权 霸主石板",
+      "zh_TW": "殘暴霸權 總督碑牌"
     },
     "Cruel Talisman": {
       "zh_CN": "残酷魔符",
@@ -1145,6 +1737,10 @@
       "zh_CN": "密会塔盾",
       "zh_TW": "教徒塔盾"
     },
+    "Cursecarver Acrid Wand": {
+      "zh_CN": "刻咒 刻薄法杖",
+      "zh_TW": "咒刻者 刺鼻法杖"
+    },
     "Cursespeaker's Robe": {
       "zh_CN": "诅咒术士长袍",
       "zh_TW": "詛咒語者長袍"
@@ -1157,6 +1753,14 @@
       "zh_CN": "飓风合金",
       "zh_TW": "氣旋合金"
     },
+    "Daevata's Wind Runeforged War Spear": {
+      "zh_CN": "戴瓦塔的幻风 符文历战长矛",
+      "zh_TW": "德瓦塔之風 符鍛戰爭長矛"
+    },
+    "Daevata's Wind War Spear": {
+      "zh_CN": "戴瓦塔的幻风 历战长矛",
+      "zh_TW": "德瓦塔之風 戰爭長矛"
+    },
     "Daggerfoot Shoes": {
       "zh_CN": "捷足便鞋",
       "zh_TW": "捷足輕鞋"
@@ -1165,6 +1769,18 @@
       "zh_CN": "黑暗之锋",
       "zh_TW": "黑暗之刃"
     },
+    "Darkness Enthroned Fine Belt": {
+      "zh_CN": "夜临 精致腰带",
+      "zh_TW": "夜惡降臨 精良腰帶"
+    },
+    "Darkray Vectors Braced Sabatons": {
+      "zh_CN": "暗雷 加固战靴",
+      "zh_TW": "暗雷 加固鎧靴"
+    },
+    "Darkray Vectors Runemastered Braced Sabatons": {
+      "zh_CN": "暗雷 符文师匠加固战靴",
+      "zh_TW": "暗雷 符煉加固鎧靴"
+    },
     "Dastard Armour": {
       "zh_CN": "懦夫护甲",
       "zh_TW": "惡徒護甲"
@@ -1172,6 +1788,10 @@
     "Deadly Fate": {
       "zh_CN": "危难的命运",
       "zh_TW": "致命之運"
+    },
+    "Death Articulated Ornate Gauntlets": {
+      "zh_CN": "死神铰链 华贵护手",
+      "zh_TW": "死亡之聲 華麗護手"
     },
     "Death Mail": {
       "zh_CN": "死亡锁甲",
@@ -1185,13 +1805,77 @@
       "zh_CN": "死神之面",
       "zh_TW": "死亡之面"
     },
+    "Death Rush Emerald Ring": {
+      "zh_CN": "亡者呼唤 翡翠戒指",
+      "zh_TW": "亡者呼喚 綠寶石戒指"
+    },
+    "Death's Harp Dualstring Bow": {
+      "zh_CN": "冥使之琴 双弦弓",
+      "zh_TW": "冥使之琴 雙弦弓"
+    },
+    "Death's Harp Runeforged Dualstring Bow": {
+      "zh_CN": "冥使之琴 符文双弦弓",
+      "zh_TW": "冥使之琴 符鍛雙弦弓"
+    },
+    "Deathblow Doubled Gauntlets": {
+      "zh_CN": "死神的袭击 合钢手甲",
+      "zh_TW": "致命一擊 雙層護手"
+    },
+    "Deathblow Runemastered Doubled Gauntlets": {
+      "zh_CN": "死神的袭击 符文师匠合钢手甲",
+      "zh_TW": "致命一擊 符煉雙層護手"
+    },
+    "Deathrattle Runemastered Twig Focus": {
+      "zh_CN": "逝亡呢喃 符文师匠枝条法器",
+      "zh_TW": "死亡之聲 符煉枝條法器"
+    },
+    "Deathrattle Twig Focus": {
+      "zh_CN": "逝亡呢喃 枝条法器",
+      "zh_TW": "死亡之聲 枝條法器"
+    },
     "Decorated Helm": {
       "zh_CN": "华饰之盔",
       "zh_TW": "裝飾之盔"
     },
+    "Decree of Acuity Ancient Visor": {
+      "zh_CN": "敏锐法令 远古面甲",
+      "zh_TW": "敏銳敕令 遠古護面盔"
+    },
+    "Decree of Acuity Runemastered Ancient Visor": {
+      "zh_CN": "敏锐法令 符文师匠远古面甲",
+      "zh_TW": "敏銳敕令 符煉遠古護面盔"
+    },
+    "Decree of Flight Ancient Leggings": {
+      "zh_CN": "飞行法令 远古护腿",
+      "zh_TW": "翔天敕令 遠古護腿"
+    },
+    "Decree of Flight Runemastered Ancient Leggings": {
+      "zh_CN": "飞行法令 符文师匠远古护腿",
+      "zh_TW": "翔天敕令 符煉遠古護腿"
+    },
+    "Decree of Loyalty Ancient Mail": {
+      "zh_CN": "忠诚法令 远古链甲",
+      "zh_TW": "忠誠敕令 遠古鎖甲"
+    },
+    "Decree of Loyalty Runemastered Ancient Mail": {
+      "zh_CN": "忠诚法令 符文师匠远古链甲",
+      "zh_TW": "忠誠敕令 符煉遠古鎖甲"
+    },
     "Deerstalker Hood": {
       "zh_CN": "猎踪兜帽",
       "zh_TW": "獵鹿者之兜"
+    },
+    "Defiance of Destiny Jade Amulet": {
+      "zh_CN": "命运之抗争 翠玉项链",
+      "zh_TW": "拒絕命運 翠玉護身符"
+    },
+    "Deidbell Elite Greathelm": {
+      "zh_CN": "丧钟 精锐巨盔",
+      "zh_TW": "喪鐘 菁英巨盔"
+    },
+    "Deidbell Runemastered Elite Greathelm": {
+      "zh_CN": "丧钟 符文师匠精锐巨盔",
+      "zh_TW": "喪鐘 符煉菁英巨盔"
     },
     "Dekharan Crest Shield": {
       "zh_CN": "德卡拉纹章盾",
@@ -1200,6 +1884,18 @@
     "Delirium Tablet": {
       "zh_CN": "惊悸迷雾石板",
       "zh_TW": "譫妄碑牌"
+    },
+    "Demigod's Virtue Golden Visage": {
+      "zh_CN": "升华之美德 金色面具",
+      "zh_TW": "半神的美德 黃金面紗"
+    },
+    "Demon Stitcher Intricate Gloves": {
+      "zh_CN": "恶魔缝补者 精致手套",
+      "zh_TW": "縫魔 精妙手套"
+    },
+    "Demon Stitcher Runemastered Intricate Gloves": {
+      "zh_CN": "恶魔缝补者 符文师匠精致手套",
+      "zh_TW": "縫魔 符煉精妙手套"
     },
     "Descry Crest Shield": {
       "zh_CN": "圣印纹章盾",
@@ -1249,6 +1945,14 @@
       "zh_CN": "稀释的液化愤怒",
       "zh_TW": "稀釋的液態憤怒"
     },
+    "Dionadair Runemastered Splintered Tower Shield": {
+      "zh_CN": "御身守卫 符文师匠朽木塔盾",
+      "zh_TW": "捍衛者 符煉朽木塔盾"
+    },
+    "Dionadair Splintered Tower Shield": {
+      "zh_CN": "御身守卫 朽木塔盾",
+      "zh_TW": "捍衛者 朽木塔盾"
+    },
     "Disintegrating Maul": {
       "zh_CN": "破军巨锤",
       "zh_TW": "崩解重錘"
@@ -1269,13 +1973,61 @@
       "zh_CN": "巨灵巴雅",
       "zh_TW": "巨靈之幣"
     },
+    "Doedre's Damning Lazuli Ring": {
+      "zh_CN": "德瑞的魔具 青金戒指",
+      "zh_TW": "德瑞的魔具 青金石戒指"
+    },
+    "Doedre's Tenure Runemastered Stitched Gloves": {
+      "zh_CN": "德瑞的精神手套 符文师匠缝合手套",
+      "zh_TW": "德瑞的精神手套 符煉縫合手套"
+    },
+    "Doedre's Tenure Stitched Gloves": {
+      "zh_CN": "德瑞的精神手套 缝合手套",
+      "zh_TW": "德瑞的精神手套 縫合手套"
+    },
     "Domed Helm": {
       "zh_CN": "圆顶头盔",
       "zh_TW": "圓頂之盔"
     },
+    "Doomfletch Composite Bow": {
+      "zh_CN": "灭世 复合弓",
+      "zh_TW": "滅世 合成弓"
+    },
+    "Doomfletch Runeforged Composite Bow": {
+      "zh_CN": "灭世 符文复合弓",
+      "zh_TW": "滅世 符鍛合成弓"
+    },
+    "Doomgate Braced Tower Shield": {
+      "zh_CN": "毁灭雄关 加固塔盾",
+      "zh_TW": "末日之門 加固塔盾"
+    },
+    "Doomgate Runemastered Braced Tower Shield": {
+      "zh_CN": "毁灭雄关 符文师匠加固塔盾",
+      "zh_TW": "末日之門 符煉加固塔盾"
+    },
+    "Doryani's Prototype Runemastered Scale Mail": {
+      "zh_CN": "多里亚尼的试作甲 符文师匠嵌鳞锁甲",
+      "zh_TW": "多里亞尼之型 符煉鱗片鎖甲"
+    },
+    "Doryani's Prototype Scale Mail": {
+      "zh_CN": "多里亚尼的试作甲 嵌鳞锁甲",
+      "zh_TW": "多里亞尼之型 鱗片鎖甲"
+    },
     "Double Belt": {
       "zh_CN": "双重腰带",
       "zh_TW": "雙層腰帶"
+    },
+    "Double Vision Dyad Crossbow": {
+      "zh_CN": "双生视界 双联战弩",
+      "zh_TW": "雙重視界 雙生十字弓"
+    },
+    "Double Vision Runeforged Dyad Crossbow": {
+      "zh_CN": "双生视界 符文双联战弩",
+      "zh_TW": "雙重視界 符鍛雙生十字弓"
+    },
+    "Double Vision Runemastered Dyad Crossbow": {
+      "zh_CN": "双生视界 符文师匠双联战弩",
+      "zh_TW": "雙重視界 符煉雙生十字弓"
     },
     "Doubled Gauntlets": {
       "zh_CN": "合钢手甲",
@@ -1297,9 +2049,25 @@
       "zh_CN": "恐惧手斧",
       "zh_TW": "驚懼符文"
     },
+    "Dreadfist Bolstered Mitts": {
+      "zh_CN": "恐惧之拳 增固护手",
+      "zh_TW": "驚懼之拳 加固長手套"
+    },
+    "Dreadfist Runemastered Bolstered Mitts": {
+      "zh_CN": "恐惧之拳 符文师匠增固护手",
+      "zh_TW": "驚懼之拳 符煉加固長手套"
+    },
+    "Dream Fragments Sapphire Ring": {
+      "zh_CN": "梦语之痕 蓝玉戒指",
+      "zh_TW": "夢語之痕 藍玉戒指"
+    },
     "Dreaming Quarterstaff": {
       "zh_CN": "梦境节杖",
       "zh_TW": "夢境細杖"
+    },
+    "Drillneck Penetrating Quiver": {
+      "zh_CN": "穿心 穿射箭袋",
+      "zh_TW": "穿心 穿透箭袋"
     },
     "Druidic Circlet": {
       "zh_CN": "德鲁伊头冠",
@@ -1312,6 +2080,14 @@
     "Druidic Focus": {
       "zh_CN": "德鲁伊法器",
       "zh_TW": "德魯伊法器"
+    },
+    "Duality Runemastered Warding Quarterstaff": {
+      "zh_CN": "二元一体 符文师匠守护节杖",
+      "zh_TW": "二元性 符煉庇護細杖"
+    },
+    "Duality Warding Quarterstaff": {
+      "zh_CN": "二元一体 守护节杖",
+      "zh_TW": "二元性 庇護細杖"
     },
     "Dualstring Bow": {
       "zh_CN": "双弦弓",
@@ -1329,6 +2105,14 @@
       "zh_CN": "沙丘行者鞋履",
       "zh_TW": "沙丘行者便鞋"
     },
+    "Dunkelhalt Leather Buckler": {
+      "zh_CN": "黑暗止步 皮制轻盾",
+      "zh_TW": "唐克哈特 皮革輕盾"
+    },
+    "Dunkelhalt Runemastered Leather Buckler": {
+      "zh_CN": "黑暗止步 符文师匠皮制轻盾",
+      "zh_TW": "唐克哈特 符煉皮革輕盾"
+    },
     "Dusk Amulet": {
       "zh_CN": "暮色项链",
       "zh_TW": "幽暗項鍊"
@@ -1337,17 +2121,49 @@
       "zh_CN": "暮色戒指",
       "zh_TW": "幽暗戒指"
     },
+    "Dusk Vigil Ashen Staff": {
+      "zh_CN": "暮色守望 枯灰长杖",
+      "zh_TW": "暗暮守夜 灰燼長杖"
+    },
+    "Dustbloom Runemastered Studded Vest": {
+      "zh_CN": "尘绽 符文师匠嵌饰背心",
+      "zh_TW": "塵土之花 符煉鑲釘背心"
+    },
+    "Dustbloom Studded Vest": {
+      "zh_CN": "尘绽 嵌饰背心",
+      "zh_TW": "塵土之花 鑲釘背心"
+    },
     "Dyad Crossbow": {
       "zh_CN": "双联战弩",
       "zh_TW": "雙生十字弓"
+    },
+    "Earthbound Voltaic Staff": {
+      "zh_CN": "地缚杖 雷霆长杖",
+      "zh_TW": "地縛者 電流長杖"
     },
     "Edged Buckler": {
       "zh_CN": "锋缘轻盾",
       "zh_TW": "刃緣輕盾"
     },
+    "Edyrn's Tusks Iron Cuirass": {
+      "zh_CN": "艾丁的獠牙 铁锻胸甲",
+      "zh_TW": "埃狄恩的曲牙 鍛鐵胸甲"
+    },
+    "Edyrn's Tusks Runemastered Iron Cuirass": {
+      "zh_CN": "艾丁的獠牙 符文师匠铁锻胸甲",
+      "zh_TW": "埃狄恩的曲牙 符煉鍛鐵胸甲"
+    },
     "Effigial Tower Shield": {
       "zh_CN": "塑像塔盾",
       "zh_TW": "靈像塔盾"
+    },
+    "Effigy of Cruelty Antler Focus": {
+      "zh_CN": "残酷雕塑 鹿角法器",
+      "zh_TW": "殘酷塑像 靈鹿法器"
+    },
+    "Effigy of Cruelty Runemastered Antler Focus": {
+      "zh_CN": "残酷雕塑 符文师匠鹿角法器",
+      "zh_TW": "殘酷塑像 符煉靈鹿法器"
     },
     "Elegant Crossbow": {
       "zh_CN": "典雅战弩",
@@ -1384,6 +2200,14 @@
     "Elementalist Robe": {
       "zh_CN": "元素使长袍",
       "zh_TW": "元素使長袍"
+    },
+    "Elevore Hunter Hood": {
+      "zh_CN": "艾尔弗雷 猎者兜帽",
+      "zh_TW": "愛勒弗 獵者之兜"
+    },
+    "Elevore Runemastered Hunter Hood": {
+      "zh_CN": "艾尔弗雷 符文师匠猎者兜帽",
+      "zh_TW": "愛勒弗 符煉獵者之兜"
     },
     "Elite Greathelm": {
       "zh_CN": "精锐巨盔",
@@ -1433,6 +2257,26 @@
       "zh_CN": "新生活力",
       "zh_TW": "活力湧現"
     },
+    "Empire's Grasp Runemastered Titan Mitts": {
+      "zh_CN": "帝国之掌 符文师匠泰坦护手",
+      "zh_TW": "帝國之掌 符煉泰坦長手套"
+    },
+    "Empire's Grasp Titan Mitts": {
+      "zh_CN": "帝国之掌 泰坦护手",
+      "zh_TW": "帝國之掌 泰坦長手套"
+    },
+    "Enezun's Charge Volatile Wand": {
+      "zh_CN": "恩纳尊的职责 易变法杖",
+      "zh_TW": "艾尼尊的衝鋒 失衡法杖"
+    },
+    "Enfolding Dawn Pilgrim Vestments": {
+      "zh_CN": "遍洒晨辉 朝圣者长衣",
+      "zh_TW": "晨曦之擁 朝聖者法衣"
+    },
+    "Enfolding Dawn Runemastered Pilgrim Vestments": {
+      "zh_CN": "遍洒晨辉 符文师匠朝圣者长衣",
+      "zh_TW": "晨曦之擁 符煉朝聖者法衣"
+    },
     "Engraved Bracers": {
       "zh_CN": "雕饰护腕",
       "zh_TW": "紋刻護腕"
@@ -1461,9 +2305,21 @@
       "zh_CN": "启迪长袍",
       "zh_TW": "啟蒙長袍"
     },
+    "Erian's Cobble Guarded Helm": {
+      "zh_CN": "阿里安的拼凑 守护之盔",
+      "zh_TW": "埃里安的鵝卵石 警惕之盔"
+    },
+    "Erian's Cobble Runemastered Guarded Helm": {
+      "zh_CN": "阿里安的拼凑 符文师匠守护之盔",
+      "zh_TW": "埃里安的鵝卵石 符煉警惕之盔"
+    },
     "Esh's Catalyst": {
       "zh_CN": "艾许催化剂",
       "zh_TW": "艾許的催化劑"
+    },
+    "Eshtera's Path Ring": {
+      "zh_CN": "埃斯特拉的道路 戒指",
+      "zh_TW": "艾許特拉之路 戒指"
     },
     "Essence of Abrasion": {
       "zh_CN": "磨蚀精华",
@@ -1565,6 +2421,14 @@
       "zh_CN": "心灵精华",
       "zh_TW": "心智精髓"
     },
+    "Essentia Sanguis Furtive Wraps": {
+      "zh_CN": "精华收割器 鬼祟裹手",
+      "zh_TW": "精華收割器 隱秘裹手"
+    },
+    "Essentia Sanguis Runemastered Furtive Wraps": {
+      "zh_CN": "精华收割器 符文师匠鬼祟裹手",
+      "zh_TW": "精華收割器 符煉隱秘裹手"
+    },
     "Estazunti's Soul Core of Convalescence": {
       "zh_CN": "埃斯塔祖提的康复灵核",
       "zh_TW": "艾斯祖太的康復靈魂核心"
@@ -1572,6 +2436,18 @@
     "Evangelist Garb": {
       "zh_CN": "传道士束衣",
       "zh_TW": "傳道者裝束"
+    },
+    "Eventide Petals Runemastered Veridical Chain": {
+      "zh_CN": "黄昏花瓣 符文师匠真相之链",
+      "zh_TW": "暮色瓣落 符煉幻象鎖鏈"
+    },
+    "Eventide Petals Veridical Chain": {
+      "zh_CN": "黄昏花瓣 真相之链",
+      "zh_TW": "暮色瓣落 幻象鎖鏈"
+    },
+    "Evergrasping Ring Pearl Ring": {
+      "zh_CN": "永恒紧缩之戒 珠玉戒指",
+      "zh_TW": "永恆之握戒指 珍珠戒指"
     },
     "Exalted Orb": {
       "zh_CN": "崇高石",
@@ -1617,13 +2493,45 @@
       "zh_CN": "长柄战斧",
       "zh_TW": "加長砍斧"
     },
+    "Eye of Chayula Gold Amulet": {
+      "zh_CN": "寻宝者的心眼 帝金项链",
+      "zh_TW": "夏烏拉之眼 帝金護身符"
+    },
+    "Eyes of the Runefather Runemastered Venerable Defender": {
+      "zh_CN": "符父之眼 符文师匠庄严护卫",
+      "zh_TW": "符文之父的視界 符煉古老護衛盾"
+    },
+    "Eyes of the Runefather Venerable Defender": {
+      "zh_CN": "符父之眼 庄严护卫",
+      "zh_TW": "符文之父的視界 古老護衛盾"
+    },
+    "Ezomyte Peak Runemastered Soldier Greathelm": {
+      "zh_CN": "艾兹麦的荣光 符文师匠兵卒巨盔",
+      "zh_TW": "艾茲麥的榮光 符煉士兵巨盔"
+    },
+    "Ezomyte Peak Soldier Greathelm": {
+      "zh_CN": "艾兹麦的荣光 兵卒巨盔",
+      "zh_TW": "艾茲麥的榮光 士兵巨盔"
+    },
     "Face Mask": {
       "zh_CN": "覆颜面具",
       "zh_TW": "護臉之面"
     },
+    "Facebreaker Runemastered Stocky Mitts": {
+      "zh_CN": "毁面者 符文师匠敦实护手",
+      "zh_TW": "毀面者 符煉結實長手套"
+    },
+    "Facebreaker Stocky Mitts": {
+      "zh_CN": "毁面者 敦实护手",
+      "zh_TW": "毀面者 結實長手套"
+    },
     "Faded Crisis Fragment": {
       "zh_CN": "褪色危机碎片",
       "zh_TW": "褪色危機碎片"
+    },
+    "Fairgraves' Curse Artillery Bow": {
+      "zh_CN": "费尔的诅咒 轰击弓",
+      "zh_TW": "費爾的詛咒 砲火弓"
     },
     "Faithful Leggings": {
       "zh_CN": "信仰护腿",
@@ -1668,6 +2576,14 @@
     "Farrul's Rune of the Hunt": {
       "zh_CN": "法瑞尔的狩猎符文",
       "zh_TW": "費爾羅的狩獵符文"
+    },
+    "Feathered Fortress Crescent Targe": {
+      "zh_CN": "乱羽金城 新月圆盾",
+      "zh_TW": "羽毛堡壘 新月圓盾"
+    },
+    "Feathered Fortress Runemastered Crescent Targe": {
+      "zh_CN": "乱羽金城 符文师匠新月圆盾",
+      "zh_TW": "羽毛堡壘 符煉新月圓盾"
     },
     "Feathered Mitts": {
       "zh_CN": "羽饰护手",
@@ -1733,9 +2649,17 @@
       "zh_CN": "火灵箭袋",
       "zh_TW": "火焰箭袋"
     },
+    "Fireflower Solar Amulet": {
+      "zh_CN": "烈火繁花 日曜项链",
+      "zh_TW": "火焰之花 日耀項鍊"
+    },
     "Firm Bracers": {
       "zh_CN": "牢固护腕",
       "zh_TW": "穩固護腕"
+    },
+    "Fixation of Yix Stellar Amulet": {
+      "zh_CN": "伊克斯的专注 星辉项链",
+      "zh_TW": "伊克斯的依戀 恆星項鍊"
     },
     "Flanged Greatblade": {
       "zh_CN": "焰刃巨剑",
@@ -1761,6 +2685,10 @@
       "zh_CN": "血肉催化剂",
       "zh_TW": "血肉催化劑"
     },
+    "Flesh Crucible Diamond": {
+      "zh_CN": "血肉玄炉 宝钻",
+      "zh_TW": "血肉坩堝 鑽石"
+    },
     "Flexed Crossbow": {
       "zh_CN": "弯曲战弩",
       "zh_TW": "屈曲十字弓"
@@ -1773,6 +2701,18 @@
       "zh_CN": "飞行战矛",
       "zh_TW": "翱翔長矛"
     },
+    "Font of Power Omen Sceptre": {
+      "zh_CN": "力量的源泉 预兆权杖",
+      "zh_TW": "力量水晶塔 徵兆權杖"
+    },
+    "For Utopia Stone Charm": {
+      "zh_CN": "为了乌托邦 磐石咒符",
+      "zh_TW": "為了烏托邦 岩石護符"
+    },
+    "Forbidden Gaze Chain Tiara": {
+      "zh_CN": "荆棘凝视 锁链冠冕",
+      "zh_TW": "禁忌凝視 鎖鍊頭冠"
+    },
     "Forest Crown": {
       "zh_CN": "森林王冠",
       "zh_TW": "森林之冠"
@@ -1781,6 +2721,18 @@
       "zh_CN": "锻炉巨锤",
       "zh_TW": "鍛造重錘"
     },
+    "Forgotten By Time Expedition Tablet": {
+      "zh_CN": "时光的埋没 先祖秘藏石板",
+      "zh_TW": "時間之遺 探險碑牌"
+    },
+    "Forgotten Warden Primal Markings": {
+      "zh_CN": "遗忘守卫 原始印记",
+      "zh_TW": "遺忘看守 野性標記"
+    },
+    "Forgotten Warden Runemastered Primal Markings": {
+      "zh_CN": "遗忘守卫 符文师匠原始印记",
+      "zh_TW": "遺忘看守 符煉野性標記"
+    },
     "Forked Spear": {
       "zh_CN": "分叉长矛",
       "zh_TW": "叉狀長矛"
@@ -1788,6 +2740,10 @@
     "Forking Belt": {
       "zh_CN": "分叉腰带",
       "zh_TW": "歧路腰帶"
+    },
+    "Forsaken Bangle Amethyst Charm": {
+      "zh_CN": "遗弃手镯 紫晶咒符",
+      "zh_TW": "遺落的手鐲 紫晶護符"
     },
     "Fortified Hammer": {
       "zh_CN": "强固之锤",
@@ -1805,6 +2761,14 @@
       "zh_CN": "狐狸雕像",
       "zh_TW": "狐狸魔偶"
     },
+    "Foxshade Quilted Vest": {
+      "zh_CN": "狐毛铠 菱纹背心",
+      "zh_TW": "狐毛鎧 襯墊背心"
+    },
+    "Foxshade Runemastered Quilted Vest": {
+      "zh_CN": "狐毛铠 符文师匠菱纹背心",
+      "zh_TW": "狐毛鎧 符煉襯墊背心"
+    },
     "Fracturing Orb": {
       "zh_CN": "破溃宝珠",
       "zh_TW": "破裂石"
@@ -1817,9 +2781,25 @@
       "zh_CN": "劫掠者之帽",
       "zh_TW": "劫掠者便帽"
     },
+    "Freedom of Faith Ritual Tablet": {
+      "zh_CN": "信念的自由 驱灵仪式石板",
+      "zh_TW": "信仰的自由 祭祀碑牌"
+    },
     "Frenzied Talisman": {
       "zh_CN": "狂怒魔符",
       "zh_TW": "狂亂魔符"
+    },
+    "From Nothing Diamond": {
+      "zh_CN": "无根之源 宝钻",
+      "zh_TW": "從無到有 鑽石"
+    },
+    "Frostbreath Runeforged Slim Mace": {
+      "zh_CN": "霜息 符文细柄钉锤",
+      "zh_TW": "霜息 符鍛纖細之錘"
+    },
+    "Frostbreath Slim Mace": {
+      "zh_CN": "霜息 细柄钉锤",
+      "zh_TW": "霜息 纖細之錘"
     },
     "Full Plate": {
       "zh_CN": "连身铠甲",
@@ -1849,9 +2829,21 @@
       "zh_CN": "狂怒魔符",
       "zh_TW": "怒火魔符"
     },
+    "Fury of the King Ashbark Talisman": {
+      "zh_CN": "君王之怒 灰烬树皮魔符",
+      "zh_TW": "帝王之怒 燼木魔符"
+    },
     "Galvanic Wand": {
       "zh_CN": "电流法杖",
       "zh_TW": "電能法杖"
+    },
+    "Gamblesprint Embossed Boots": {
+      "zh_CN": "博运步伐 浮雕靴",
+      "zh_TW": "豪賭 浮雕長靴"
+    },
+    "Gamblesprint Runemastered Embossed Boots": {
+      "zh_CN": "博运步伐 符文师匠浮雕靴",
+      "zh_TW": "豪賭 符煉浮雕長靴"
     },
     "Gargantuan Life Flask": {
       "zh_CN": "恢弘生命药剂",
@@ -1885,6 +2877,26 @@
       "zh_CN": "双灵战弩",
       "zh_TW": "雙子十字弓"
     },
+    "Geofri's Sanctuary Revered Vestments": {
+      "zh_CN": "吉尔菲的圣殿 崇礼长衣",
+      "zh_TW": "吉爾菲的聖殿 尊敬法衣"
+    },
+    "Ghostmarch Runemastered Threaded Shoes": {
+      "zh_CN": "鬼行 符文师匠线缝便鞋",
+      "zh_TW": "鬼行 符煉縫紉輕鞋"
+    },
+    "Ghostmarch Threaded Shoes": {
+      "zh_CN": "鬼行 线缝便鞋",
+      "zh_TW": "鬼行 縫紉輕鞋"
+    },
+    "Ghostwrithe Runemastered Tattered Robe": {
+      "zh_CN": "代笔人 符文师匠破烂长袍",
+      "zh_TW": "鬧鬼 符煉殘破長袍"
+    },
+    "Ghostwrithe Tattered Robe": {
+      "zh_CN": "代笔人 破烂长袍",
+      "zh_TW": "鬧鬼 殘破長袍"
+    },
     "Giant Life Flask": {
       "zh_CN": "巨型生命药剂",
       "zh_TW": "巨型生命藥劑"
@@ -1896,6 +2908,10 @@
     "Giant Maul": {
       "zh_CN": "伟岸巨锤",
       "zh_TW": "巨型重錘"
+    },
+    "Gifts from Above Prismatic Ring": {
+      "zh_CN": "神赐 三相戒指",
+      "zh_TW": "神賜 三相戒指"
     },
     "Gilded Vestments": {
       "zh_CN": "鎏金长衣",
@@ -1925,6 +2941,14 @@
       "zh_CN": "闪亮袖带",
       "zh_TW": "輝光腕帶"
     },
+    "Glimpse of Chaos Runemastered Tribal Mask": {
+      "zh_CN": "混沌一瞥 符文师匠部族之面",
+      "zh_TW": "混沌一瞥 符煉部落之面"
+    },
+    "Glimpse of Chaos Tribal Mask": {
+      "zh_CN": "混沌一瞥 部族之面",
+      "zh_TW": "混沌一瞥 部落之面"
+    },
     "Gloam Amulet": {
       "zh_CN": "薄暮项链",
       "zh_TW": "黃昏項鍊"
@@ -1933,9 +2957,29 @@
       "zh_CN": "薄暮戒指",
       "zh_TW": "黃昏戒指"
     },
+    "Gloamgown Elementalist Robe": {
+      "zh_CN": "薄暮罩袍 元素使长袍",
+      "zh_TW": "暮光長袍 元素使長袍"
+    },
+    "Gloamgown Runemastered Elementalist Robe": {
+      "zh_CN": "薄暮罩袍 符文师匠元素使长袍",
+      "zh_TW": "暮光長袍 符煉元素使長袍"
+    },
+    "Gloomform Runemastered Waxed Jacket": {
+      "zh_CN": "幽邃之躯 符文师匠防水外衣",
+      "zh_TW": "幽暗之衣 符煉打蠟外衣"
+    },
+    "Gloomform Waxed Jacket": {
+      "zh_CN": "幽邃之躯 防水外衣",
+      "zh_TW": "幽暗之衣 打蠟外衣"
+    },
     "Glowering Crest Shield": {
       "zh_CN": "怒视纹章盾",
       "zh_TW": "怒視紋章盾"
+    },
+    "Glowswarm Lazuli Ring": {
+      "zh_CN": "微光虫 青金戒指",
+      "zh_TW": "發光蟲群 青金石戒指"
     },
     "Gnawed Collarbone": {
       "zh_CN": "啃噬锁骨",
@@ -1985,6 +3029,14 @@
       "zh_CN": "金色面具",
       "zh_TW": "黃金面紗"
     },
+    "Goldrim Felt Cap": {
+      "zh_CN": "金缕帽 毛毡帽",
+      "zh_TW": "金縷帽 毛氈便帽"
+    },
+    "Goldrim Runemastered Felt Cap": {
+      "zh_CN": "金缕帽 符文师匠毛毡帽",
+      "zh_TW": "金縷帽 符煉毛氈便帽"
+    },
     "Goldwork Sabatons": {
       "zh_CN": "金工战靴",
       "zh_TW": "金刺繡鎧靴"
@@ -1992,6 +3044,10 @@
     "Goldworked Tower Shield": {
       "zh_CN": "金工塔盾",
       "zh_TW": "黃金塔盾"
+    },
+    "Goregirdle Plate Belt": {
+      "zh_CN": "残血束腰 嵌板腰带",
+      "zh_TW": "血肉束腰 板甲腰帶"
     },
     "Gothic Quarterstaff": {
       "zh_CN": "哥特节杖",
@@ -2025,6 +3081,18 @@
       "zh_CN": "宏伟战矛",
       "zh_TW": "宏偉長矛"
     },
+    "Grand Spectrum Emerald": {
+      "zh_CN": "聚光之石 翡翠",
+      "zh_TW": "巨光譜 綠寶石"
+    },
+    "Grand Spectrum Ruby": {
+      "zh_CN": "聚光之石 红玉",
+      "zh_TW": "巨光譜 紅寶石"
+    },
+    "Grand Spectrum Sapphire": {
+      "zh_CN": "聚光之石 蓝玉",
+      "zh_TW": "巨光譜 藍寶石"
+    },
     "Grand Visage": {
       "zh_CN": "恢弘面罩",
       "zh_TW": "宏偉面紗"
@@ -2036,6 +3104,14 @@
     "Grasping Ring": {
       "zh_CN": "贪婪戒指",
       "zh_TW": "抓取之戒"
+    },
+    "Gravebind Rope Cuffs": {
+      "zh_CN": "坟场之链 绳索袖带",
+      "zh_TW": "幽墓束縛 繩索腕帶"
+    },
+    "Gravebind Runemastered Rope Cuffs": {
+      "zh_CN": "坟场之链 符文师匠绳索袖带",
+      "zh_TW": "幽墓束縛 符煉繩索腕帶"
     },
     "Great Flail": {
       "zh_CN": "巨型连枷",
@@ -2225,6 +3301,22 @@
       "zh_CN": "高级结界符文",
       "zh_TW": "高階保護符文"
     },
+    "Greed's Embrace Runemastered Vaal Cuirass": {
+      "zh_CN": "贪婪之拥 符文师匠瓦尔胸甲",
+      "zh_TW": "貪婪之擁 符煉瓦爾胸甲"
+    },
+    "Greed's Embrace Vaal Cuirass": {
+      "zh_CN": "贪婪之拥 瓦尔胸甲",
+      "zh_TW": "貪婪之擁 瓦爾胸甲"
+    },
+    "Greymake Brimmed Helm": {
+      "zh_CN": "苍髯皓首 宽沿之盔",
+      "zh_TW": "灰製 邊緣之盔"
+    },
+    "Greymake Runemastered Brimmed Helm": {
+      "zh_CN": "苍髯皓首 符文师匠宽沿之盔",
+      "zh_TW": "灰製 符煉邊緣之盔"
+    },
     "Grim Gloves": {
       "zh_CN": "冷酷手套",
       "zh_TW": "冷酷手套"
@@ -2232,6 +3324,18 @@
     "Grinning Mask": {
       "zh_CN": "狞笑面罩",
       "zh_TW": "獰笑之面"
+    },
+    "Grip of Kulemak Abyssal Signet": {
+      "zh_CN": "库勒马克之握 深渊印戒",
+      "zh_TW": "骷髏馬克的掌握 深淵之記"
+    },
+    "Grip of Winter Firm Bracers": {
+      "zh_CN": "凛冬之握 牢固护腕",
+      "zh_TW": "凜冬之握 穩固護腕"
+    },
+    "Grip of Winter Runemastered Firm Bracers": {
+      "zh_CN": "凛冬之握 符文师匠牢固护腕",
+      "zh_TW": "凜冬之握 符煉穩固護腕"
     },
     "Grounding Charm": {
       "zh_CN": "根基咒符",
@@ -2265,6 +3369,18 @@
       "zh_CN": "瓜铁雷兹的圣典",
       "zh_TW": "瓜特利斯的假說"
     },
+    "Guiding Palm of the Eye Shrine Sceptre": {
+      "zh_CN": "眼目之指引之掌 圣地权杖",
+      "zh_TW": "引導之掌：眼 神殿權杖"
+    },
+    "Guiding Palm of the Heart Shrine Sceptre": {
+      "zh_CN": "心脏之指引之掌 圣地权杖",
+      "zh_TW": "引導之掌：心 神殿權杖"
+    },
+    "Guiding Palm of the Mind Shrine Sceptre": {
+      "zh_CN": "意念之指引之掌 圣地权杖",
+      "zh_TW": "引導之掌：靈 神殿權杖"
+    },
     "Gutspike Buckler": {
       "zh_CN": "肠刺轻盾",
       "zh_TW": "挑腸輕盾"
@@ -2277,6 +3393,14 @@
       "zh_CN": "神圣法器",
       "zh_TW": "聖潔法器"
     },
+    "Hand of Wisdom and Action Runemastered Spiral Wraps": {
+      "zh_CN": "智行之手 符文师匠螺旋裹手",
+      "zh_TW": "智行之手 符煉盤繞裹手"
+    },
+    "Hand of Wisdom and Action Spiral Wraps": {
+      "zh_CN": "智行之手 螺旋裹手",
+      "zh_TW": "智行之手 盤繞裹手"
+    },
     "Hardwood Spear": {
       "zh_CN": "硬木长矛",
       "zh_TW": "硬木長矛"
@@ -2284,6 +3408,14 @@
     "Hardwood Targe": {
       "zh_CN": "硬木圆盾",
       "zh_TW": "硬木圓盾"
+    },
+    "Hateforge Moulded Mitts": {
+      "zh_CN": "仇恨熔炉 铸锻护手",
+      "zh_TW": "怨恨鍛造 鑄模長手套"
+    },
+    "Hateforge Runemastered Moulded Mitts": {
+      "zh_CN": "仇恨熔炉 符文师匠铸锻护手",
+      "zh_TW": "怨恨鍛造 符煉鑄模長手套"
     },
     "Hatungo Garb": {
       "zh_CN": "哈图纳格斯束衣",
@@ -2309,6 +3441,18 @@
       "zh_CN": "君王之颅",
       "zh_TW": "國王首級"
     },
+    "Headhunter Heavy Belt": {
+      "zh_CN": "猎首 重革腰带",
+      "zh_TW": "獵首 重革腰帶"
+    },
+    "Heart of the Well Diamond": {
+      "zh_CN": "泉井之心 宝钻",
+      "zh_TW": "水井之心 鑽石"
+    },
+    "Heartbound Loop Pearl Ring": {
+      "zh_CN": "结魂之环 珠玉戒指",
+      "zh_TW": "結魂之環 珍珠戒指"
+    },
     "Heartcarver Mantle": {
       "zh_CN": "刻心斗篷",
       "zh_TW": "雕心者披肩"
@@ -2316,6 +3460,14 @@
     "Heartwood Shortbow": {
       "zh_CN": "心木短弓",
       "zh_TW": "赤木之弓"
+    },
+    "Heatshiver Runemastered Velvet Cap": {
+      "zh_CN": "寒焰 符文师匠丝绒帽",
+      "zh_TW": "寒焰 符煉天鵝絨便帽"
+    },
+    "Heatshiver Velvet Cap": {
+      "zh_CN": "寒焰 丝绒帽",
+      "zh_TW": "寒焰 天鵝絨便帽"
     },
     "Heavy Belt": {
       "zh_CN": "重革腰带",
@@ -2365,6 +3517,10 @@
       "zh_CN": "英武护甲",
       "zh_TW": "英雄護甲"
     },
+    "Heroic Tragedy Timeless Jewel": {
+      "zh_CN": "英雄的悲歌 永恒珠宝",
+      "zh_TW": "英雄悲劇 永恆珠寶"
+    },
     "Hewn Mask": {
       "zh_CN": "凿制之面",
       "zh_TW": "粗製之面"
@@ -2376,6 +3532,22 @@
     "Hinekora's Lock": {
       "zh_CN": "辛格拉的发辫",
       "zh_TW": "悉妮蔻拉的髮絲"
+    },
+    "Hinekora's Sight Stellar Amulet": {
+      "zh_CN": "辛格拉的凝视 星辉项链",
+      "zh_TW": "悉妮蔻拉之眼 恆星項鍊"
+    },
+    "Hoghunt Felled Greatclub": {
+      "zh_CN": "猎猪大棒 伐采巨棍",
+      "zh_TW": "獵豬 墮落巨棍棒"
+    },
+    "Hoghunt Runeforged Felled Greatclub": {
+      "zh_CN": "猎猪大棒 符文伐采巨棍",
+      "zh_TW": "獵豬 符鍛墮落巨棍棒"
+    },
+    "Hoghunt Runemastered Felled Greatclub": {
+      "zh_CN": "猎猪大棒 符文师匠伐采巨棍",
+      "zh_TW": "獵豬 符煉墮落巨棍棒"
     },
     "Holy Flail": {
       "zh_CN": "神祝连枷",
@@ -2397,9 +3569,33 @@
       "zh_CN": "犄角王冠",
       "zh_TW": "犄角之冠"
     },
+    "Horns of Bynden Runemastered Rusted Greathelm": {
+      "zh_CN": "柏安登的犄角 符文师匠锈蚀巨盔",
+      "zh_TW": "賓登之角 符煉鏽蝕巨盔"
+    },
+    "Horns of Bynden Rusted Greathelm": {
+      "zh_CN": "柏安登的犄角 锈蚀巨盔",
+      "zh_TW": "賓登之角 鏽蝕巨盔"
+    },
+    "Horror's Flight Engraved Bracers": {
+      "zh_CN": "恐惧之翼 雕饰护腕",
+      "zh_TW": "驚懼飛掠 紋刻護腕"
+    },
     "Howling Talisman": {
       "zh_CN": "怒嚎魔符",
       "zh_TW": "狂嚎魔符"
+    },
+    "Hrimnor's Hymn Oak Greathammer": {
+      "zh_CN": "雷姆诺的夺命凶器 橡木大锤",
+      "zh_TW": "雷姆諾的奪命樂具 橡木巨錘"
+    },
+    "Hrimnor's Hymn Runeforged Oak Greathammer": {
+      "zh_CN": "雷姆诺的夺命凶器 符文橡木大锤",
+      "zh_TW": "雷姆諾的奪命樂具 符鍛橡木巨錘"
+    },
+    "Hrimnor's Hymn Runemastered Oak Greathammer": {
+      "zh_CN": "雷姆诺的夺命凶器 符文师匠橡木大锤",
+      "zh_TW": "雷姆諾的奪命樂具 符煉橡木巨錘"
     },
     "Hunter Hood": {
       "zh_CN": "猎者兜帽",
@@ -2421,9 +3617,161 @@
       "zh_CN": "狩猎长矛",
       "zh_TW": "狩獵長矛"
     },
+    "Hyrri's Ire Armoured Vest": {
+      "zh_CN": "西里的战衣 铠装背心",
+      "zh_TW": "西里的戰衣 裝甲背心"
+    },
+    "Hyrri's Ire Runemastered Armoured Vest": {
+      "zh_CN": "西里的战衣 符文师匠铠装背心",
+      "zh_TW": "西里的戰衣 符煉裝甲背心"
+    },
+    "Hysseg's Claw Familial Talisman": {
+      "zh_CN": "西赛格之爪 血亲魔符",
+      "zh_TW": "希塞格之爪 家族魔符"
+    },
+    "Hysseg's Claw Runeforged Familial Talisman": {
+      "zh_CN": "西赛格之爪 符文血亲魔符",
+      "zh_TW": "希塞格之爪 符鍛家族魔符"
+    },
+    "Hysseg's Claw Runemastered Familial Talisman": {
+      "zh_CN": "西赛格之爪 符文师匠血亲魔符",
+      "zh_TW": "希塞格之爪 符煉家族魔符"
+    },
+    "INCOMPLETE Arched Greataxe": {
+      "zh_CN": "未完成 弧刃大斧",
+      "zh_TW": "未完成 拱形巨斧"
+    },
+    "INCOMPLETE Bandit Hatchet": {
+      "zh_CN": "未完成 盗匪手斧",
+      "zh_TW": "未完成 強盜斧"
+    },
+    "INCOMPLETE Bearded Axe": {
+      "zh_CN": "未完成 钩刃斧",
+      "zh_TW": "未完成 鉤刺斧"
+    },
+    "INCOMPLETE Blessed Claymore": {
+      "zh_CN": "未完成 蒙福大剑",
+      "zh_TW": "未完成 祝福大劍"
+    },
+    "INCOMPLETE Broad Greatsword": {
+      "zh_CN": "未完成 阔刃巨剑",
+      "zh_TW": "未完成 闊刃巨劍"
+    },
+    "INCOMPLETE Broadsword": {
+      "zh_CN": "未完成 阔剑",
+      "zh_TW": "未完成 闊劍"
+    },
+    "INCOMPLETE Chain Flail": {
+      "zh_CN": "未完成 精索连枷",
+      "zh_TW": "未完成 鎖鏈鏈錘"
+    },
+    "INCOMPLETE Charred Shortsword": {
+      "zh_CN": "未完成 焦痕短剑",
+      "zh_TW": "未完成 焦黑短劍"
+    },
+    "INCOMPLETE Corroded Longsword": {
+      "zh_CN": "未完成 锈斑长剑",
+      "zh_TW": "未完成 腐蝕長劍"
+    },
+    "INCOMPLETE Crone Knife": {
+      "zh_CN": "未完成 巫妪小刀",
+      "zh_TW": "未完成 巫婆小刀"
+    },
+    "INCOMPLETE Dull Hatchet": {
+      "zh_CN": "未完成 钝锋手斧",
+      "zh_TW": "未完成 鈍斧"
+    },
+    "INCOMPLETE Elegant Glaive": {
+      "zh_CN": "未完成 典雅战刃",
+      "zh_TW": "未完成 優雅長柄刀"
+    },
+    "INCOMPLETE Executioner Greataxe": {
+      "zh_CN": "未完成 惩罚者大斧",
+      "zh_TW": "未完成 處刑者巨斧"
+    },
+    "INCOMPLETE Extended Cleaver": {
+      "zh_CN": "未完成 长柄战斧",
+      "zh_TW": "未完成 加長砍斧"
+    },
+    "INCOMPLETE Holy Flail": {
+      "zh_CN": "未完成 神祝连枷",
+      "zh_TW": "未完成 神聖鏈錘"
+    },
+    "INCOMPLETE Hook Axe": {
+      "zh_CN": "未完成 钩斧",
+      "zh_TW": "未完成 鉤斧"
+    },
+    "INCOMPLETE Hunting Spear": {
+      "zh_CN": "未完成 狩猎长矛",
+      "zh_TW": "未完成 狩獵長矛"
+    },
+    "INCOMPLETE Iron Greatsword": {
+      "zh_CN": "未完成 钢铁巨剑",
+      "zh_TW": "未完成 鍛鐵巨劍"
+    },
+    "INCOMPLETE Light Halberd": {
+      "zh_CN": "未完成 轻装戟斧",
+      "zh_TW": "未完成 輕巧斧槍"
+    },
+    "INCOMPLETE Moon Dagger": {
+      "zh_CN": "未完成 月刃匕首",
+      "zh_TW": "未完成 月之匕首"
+    },
+    "INCOMPLETE Rippled Greatsword": {
+      "zh_CN": "未完成 波纹巨剑",
+      "zh_TW": "未完成 波紋巨劍"
+    },
+    "INCOMPLETE Simple Dagger": {
+      "zh_CN": "未完成 朴实匕首",
+      "zh_TW": "未完成 簡易匕首"
+    },
+    "INCOMPLETE Skinning Knife": {
+      "zh_CN": "未完成 剥皮刀",
+      "zh_TW": "未完成 剝皮刀"
+    },
+    "INCOMPLETE Splintered Flail": {
+      "zh_CN": "未完成 碎裂连枷",
+      "zh_TW": "未完成 分裂鏈錘"
+    },
+    "INCOMPLETE Splitting Greataxe": {
+      "zh_CN": "未完成 裂刃大斧",
+      "zh_TW": "未完成 分裂巨斧"
+    },
+    "INCOMPLETE Twin Flail": {
+      "zh_CN": "未完成 双首连枷",
+      "zh_TW": "未完成 雙生鏈錘"
+    },
+    "INCOMPLETE Vampiric Blade": {
+      "zh_CN": "未完成 喋血之刃",
+      "zh_TW": "未完成 嗜血之刃"
+    },
+    "INCOMPLETE War Spear": {
+      "zh_CN": "未完成 历战长矛",
+      "zh_TW": "未完成 戰爭長矛"
+    },
+    "Icefang Orbit Iron Ring": {
+      "zh_CN": "冰牙指环 锻铁戒指",
+      "zh_TW": "冰風軌跡 鍛鐵戒指"
+    },
+    "Icetomb Mail Vestments": {
+      "zh_CN": "冰息 锁子长衣",
+      "zh_TW": "冰息 鎖甲法衣"
+    },
+    "Icetomb Runemastered Mail Vestments": {
+      "zh_CN": "冰息 符文师匠锁子长衣",
+      "zh_TW": "冰息 符煉鎖甲法衣"
+    },
     "Icicle Flail": {
       "zh_CN": "冰刺连枷",
       "zh_TW": "冰錐鏈錘"
+    },
+    "Idle Hands Runemastered Sectioned Bracers": {
+      "zh_CN": "光阴虚度 符文师匠截片护腕",
+      "zh_TW": "遊手好閒 符煉分段護腕"
+    },
+    "Idle Hands Sectioned Bracers": {
+      "zh_CN": "光阴虚度 截片护腕",
+      "zh_TW": "遊手好閒 分段護腕"
     },
     "Idol of Alira": {
       "zh_CN": "阿莉亚之雕像",
@@ -2481,6 +3829,10 @@
       "zh_CN": "舒尔达纳之雕像",
       "zh_TW": "特盧達納魔偶"
     },
+    "Idol of Uldurn Crimson Amulet": {
+      "zh_CN": "乌尔顿的雕像 赤红项链",
+      "zh_TW": "奧敦塑像 赤紅項鍊"
+    },
     "Idol of Yeena": {
       "zh_CN": "伊娜之雕像",
       "zh_TW": "伊娜魔偶"
@@ -2497,6 +3849,14 @@
       "zh_CN": "谄媚者之雕像",
       "zh_TW": "奉承魔偶"
     },
+    "Igniferis Crimson Amulet": {
+      "zh_CN": "燃印 赤红项链",
+      "zh_TW": "烈焰之擊 赤紅項鍊"
+    },
+    "Immaculate Adherence Solar Amulet": {
+      "zh_CN": "完美信条 日曜项链",
+      "zh_TW": "完美契合 日耀項鍊"
+    },
     "Imperial Greathelm": {
       "zh_CN": "帝国巨盔",
       "zh_TW": "帝國巨盔"
@@ -2504,6 +3864,30 @@
     "Incense Relic": {
       "zh_CN": "熏香遗物",
       "zh_TW": "香爐聖物"
+    },
+    "Indigon Magus Tiara": {
+      "zh_CN": "靛蓝之冠 术士冠冕",
+      "zh_TW": "地印之環 瑪格思頭冠"
+    },
+    "Indigon Runemastered Magus Tiara": {
+      "zh_CN": "靛蓝之冠 符文师匠术士冠冕",
+      "zh_TW": "地印之環 符煉瑪格思頭冠"
+    },
+    "Infernoclasp Plate Belt": {
+      "zh_CN": "狱焰之握 嵌板腰带",
+      "zh_TW": "地獄之握 板甲腰帶"
+    },
+    "Ingenuity Utility Belt": {
+      "zh_CN": "奇思妙想 万用腰带",
+      "zh_TW": "獨創 實用腰帶"
+    },
+    "Innsmouth Runemastered Shabby Hood": {
+      "zh_CN": "印斯茅斯 符文师匠破旧兜帽",
+      "zh_TW": "印斯茅斯 符煉破舊兜帽"
+    },
+    "Innsmouth Shabby Hood": {
+      "zh_CN": "印斯茅斯 破旧兜帽",
+      "zh_TW": "印斯茅斯 破舊兜帽"
     },
     "Inquisitor Crown": {
       "zh_CN": "判官王冠",
@@ -2565,9 +3949,25 @@
       "zh_CN": "钢铁符文",
       "zh_TW": "鍛鐵符文"
     },
+    "Ironbound Runeforged Warden Bow": {
+      "zh_CN": "铁箍战弓 符锻监守弓",
+      "zh_TW": "鐵縛者 符鍛守護者之弓"
+    },
+    "Ironbound Warden Bow": {
+      "zh_CN": "铁箍战弓 监守弓",
+      "zh_TW": "鐵縛者 守護者之弓"
+    },
     "Ironclad Vestments": {
       "zh_CN": "武装长衣",
       "zh_TW": "鐵甲法衣"
+    },
+    "Irongrasp Runemastered Vagabond Armour": {
+      "zh_CN": "铁腕 符文师匠漂泊者护甲",
+      "zh_TW": "鐵握 符煉流浪者護甲"
+    },
+    "Irongrasp Vagabond Armour": {
+      "zh_CN": "铁腕 漂泊者护甲",
+      "zh_TW": "鐵握 流浪者護甲"
     },
     "Ironhead Spear": {
       "zh_CN": "铁头长矛",
@@ -2576,6 +3976,14 @@
     "Ironmail Gauntlets": {
       "zh_CN": "铁甲手套",
       "zh_TW": "鐵鎖護手"
+    },
+    "Ironride Runemastered Visored Helm": {
+      "zh_CN": "铁驭 符文师匠护面之盔",
+      "zh_TW": "鐵騎 符煉假面之盔"
+    },
+    "Ironride Visored Helm": {
+      "zh_CN": "铁驭 护面之盔",
+      "zh_TW": "鐵騎 假面之盔"
     },
     "Ironwood Greathammer": {
       "zh_CN": "铁木大锤",
@@ -2621,6 +4029,14 @@
       "zh_CN": "锯齿战矛",
       "zh_TW": "鋸齒長矛"
     },
+    "Jarngreipr Ringmail Gauntlets": {
+      "zh_CN": "金石手甲 环锁手甲",
+      "zh_TW": "雅恩格利佩爾 環鎖護手"
+    },
+    "Jarngreipr Runemastered Ringmail Gauntlets": {
+      "zh_CN": "金石手甲 符文师匠环锁手甲",
+      "zh_TW": "雅恩格利佩爾 符煉環鎖護手"
+    },
     "Jewelled Gloves": {
       "zh_CN": "宝石手套",
       "zh_TW": "寶石手套"
@@ -2649,6 +4065,10 @@
       "zh_CN": "丛林冠冕",
       "zh_TW": "叢林頭冠"
     },
+    "Kalandra's Touch Ring": {
+      "zh_CN": "卡兰德之触 戒指",
+      "zh_TW": "卡蘭德之觸 戒指"
+    },
     "Kalguuran Cuffs": {
       "zh_CN": "卡古兰袖带",
       "zh_TW": "卡爾葛腕帶"
@@ -2656,6 +4076,14 @@
     "Kalguuran Forgehammer": {
       "zh_CN": "卡古兰锻造锤",
       "zh_TW": "卡爾葛鍛造錘"
+    },
+    "Kaltenhalt Ridged Buckler": {
+      "zh_CN": "冰霜之镜 凸脊轻盾",
+      "zh_TW": "冰霜之鏡 脊狀輕盾"
+    },
+    "Kaltenhalt Runemastered Ridged Buckler": {
+      "zh_CN": "冰霜之镜 符文师匠凸脊轻盾",
+      "zh_TW": "冰霜之鏡 符煉脊狀輕盾"
     },
     "Kamasa's Orb of Sacrifice": {
       "zh_CN": "渎神献祭宝珠",
@@ -2665,21 +4093,65 @@
       "zh_CN": "卡马萨冠冕",
       "zh_TW": "卡瑪薩頭冠"
     },
+    "Kaom's Heart Conqueror Plate": {
+      "zh_CN": "冈姆的壮志 霸王战铠",
+      "zh_TW": "岡姆的壯志 征服者鎧甲"
+    },
+    "Kaom's Heart Runeforged Conqueror Plate": {
+      "zh_CN": "冈姆的壮志 符文霸王战铠",
+      "zh_TW": "岡姆的壯志 符鍛征服者鎧甲"
+    },
     "Katla's Gloom": {
       "zh_CN": "卡塔拉的阴霾",
       "zh_TW": "卡特拉的愁悵"
+    },
+    "Keelhaul Linen Belt": {
+      "zh_CN": "罪罚拖绳 亚麻腰带",
+      "zh_TW": "船拖刑 麻布腰帶"
     },
     "Keen Greatsword": {
       "zh_CN": "寒芒巨剑",
       "zh_TW": "鋒利巨劍"
     },
+    "Keeper of the Arc Runemastered Spiritbone Crown": {
+      "zh_CN": "弧光守护者 符文师匠灵骨王冠",
+      "zh_TW": "電弧守護者 符煉魂骨之冠"
+    },
+    "Keeper of the Arc Spiritbone Crown": {
+      "zh_CN": "弧光守护者 灵骨王冠",
+      "zh_TW": "電弧守護者 魂骨之冠"
+    },
     "Keth Raiment": {
       "zh_CN": "克斯之衣",
       "zh_TW": "凱斯之衣"
     },
+    "Killjoy Linen Wraps": {
+      "zh_CN": "败兴灾星 亚麻裹手",
+      "zh_TW": "掃興之人 麻布裹手"
+    },
+    "Killjoy Runemastered Linen Wraps": {
+      "zh_CN": "败兴灾星 符文师匠亚麻裹手",
+      "zh_TW": "掃興之人 符煉麻布裹手"
+    },
     "Kinetic Ring": {
       "zh_CN": "动能戒指",
       "zh_TW": "動力之戒"
+    },
+    "Kingsguard Full Plate": {
+      "zh_CN": "皇家卫甲 连身铠甲",
+      "zh_TW": "噬咬狂風 連身鎧甲"
+    },
+    "Kingsguard Runemastered Full Plate": {
+      "zh_CN": "皇家卫甲 符文师匠连身铠甲",
+      "zh_TW": "噬咬狂風 符煉連身鎧甲"
+    },
+    "Kitoko's Current Jewelled Gloves": {
+      "zh_CN": "奇托克的洪流 宝石手套",
+      "zh_TW": "奇多可之流 寶石手套"
+    },
+    "Kitoko's Current Runemastered Jewelled Gloves": {
+      "zh_CN": "奇托克的洪流 符文师匠宝石手套",
+      "zh_TW": "奇多可之流 符煉寶石手套"
     },
     "Knight Armour": {
       "zh_CN": "骑士护甲",
@@ -2745,6 +4217,10 @@
       "zh_CN": "硬框鞋履",
       "zh_TW": "格子便鞋"
     },
+    "Lavianga's Spirits Gargantuan Mana Flask": {
+      "zh_CN": "拉维安加之灵 恢弘魔力药剂",
+      "zh_TW": "拉維安加之泉 巨大魔力藥劑"
+    },
     "Lavish Wombgift": {
       "zh_CN": "丰裕孕育赠礼",
       "zh_TW": "奢華之胎贈"
@@ -2776,6 +4252,14 @@
     "Leatherbound Hood": {
       "zh_CN": "皮缚兜帽",
       "zh_TW": "皮革兜帽"
+    },
+    "Leer Cast Hooded Mask": {
+      "zh_CN": "共鸣之面 兜帽之面",
+      "zh_TW": "共鳴之面 風帽之面"
+    },
+    "Leer Cast Runemastered Hooded Mask": {
+      "zh_CN": "共鸣之面 符文师匠兜帽之面",
+      "zh_TW": "共鳴之面 符煉風帽之面"
     },
     "Legacy of A Worthy Foe": {
       "zh_CN": "劲敌之遗产",
@@ -3005,6 +4489,22 @@
       "zh_CN": "伍夫之难之遗产",
       "zh_TW": "傳承．狼之禍"
     },
+    "Legionstride Rough Greaves": {
+      "zh_CN": "军团的进击 粗制胫甲",
+      "zh_TW": "帝國之靴 粗糙脛甲"
+    },
+    "Legionstride Runemastered Rough Greaves": {
+      "zh_CN": "军团的进击 符文师匠粗制胫甲",
+      "zh_TW": "帝國之靴 符煉粗糙脛甲"
+    },
+    "Leopold's Applause Embroidered Gloves": {
+      "zh_CN": "利奥波德的赞许 刺绣手套",
+      "zh_TW": "里歐波德的掌聲 刺繡手套"
+    },
+    "Leopold's Applause Runemastered Embroidered Gloves": {
+      "zh_CN": "利奥波德的赞许 符文师匠刺绣手套",
+      "zh_TW": "里歐波德的掌聲 符煉刺繡手套"
+    },
     "Lesser Adept Rune": {
       "zh_CN": "次级行家符文",
       "zh_TW": "低階嫻熟符文"
@@ -3149,13 +4649,37 @@
       "zh_CN": "次级结界符文",
       "zh_TW": "低階保護符文"
     },
+    "Levinstone Topaz Ring": {
+      "zh_CN": "电光之石 黄玉戒指",
+      "zh_TW": "浮游石 黃玉戒指"
+    },
     "Leyline Focus": {
       "zh_CN": "荒凉原野法器",
       "zh_TW": "地脈法器"
     },
+    "Lifesprig Attuned Wand": {
+      "zh_CN": "生机之记 调谐法杖",
+      "zh_TW": "生機之記 調和法杖"
+    },
     "Light Halberd": {
       "zh_CN": "轻装戟斧",
       "zh_TW": "輕巧斧槍"
+    },
+    "Lightning Coil Ancestral Mail": {
+      "zh_CN": "雷语 先祖锁甲",
+      "zh_TW": "雷語 先祖鎖甲"
+    },
+    "Lightning Coil Runemastered Ancestral Mail": {
+      "zh_CN": "雷语 符文师匠先祖锁甲",
+      "zh_TW": "雷語 符煉先祖鎖甲"
+    },
+    "Ligurium Talisman Lapis Amulet": {
+      "zh_CN": "猞利子护符 海玉项链",
+      "zh_TW": "豐金巫符 海玉護身符"
+    },
+    "Liminal Coil Twisted Wand": {
+      "zh_CN": "阈限螺旋 扭曲法杖",
+      "zh_TW": "臨界纏繞 扭曲法杖"
     },
     "Linen Belt": {
       "zh_CN": "亚麻腰带",
@@ -3164,6 +4688,10 @@
     "Linen Wraps": {
       "zh_CN": "亚麻裹手",
       "zh_TW": "麻布裹手"
+    },
+    "Lioneye's Glare Heavy Bow": {
+      "zh_CN": "狮眼的战弓 重装强弓",
+      "zh_TW": "獅眼的戰弓 重弓"
     },
     "Lionheart Greaves": {
       "zh_CN": "狮心胫甲",
@@ -3197,6 +4725,14 @@
       "zh_CN": "蜥鳞外套",
       "zh_TW": "蜥蜴鱗外套"
     },
+    "Lochtonial Caress Runemastered Tempered Mitts": {
+      "zh_CN": "意识之缘 符文师匠淬炼护手",
+      "zh_TW": "意識之緣 符煉淬鍊長手套"
+    },
+    "Lochtonial Caress Tempered Mitts": {
+      "zh_CN": "意识之缘 淬炼护手",
+      "zh_TW": "意識之緣 淬鍊長手套"
+    },
     "Long Belt": {
       "zh_CN": "加长腰带",
       "zh_TW": "長腰帶"
@@ -3205,9 +4741,25 @@
       "zh_CN": "长柄节杖",
       "zh_TW": "加長細杖"
     },
+    "Loreweave Ornate Ringmail": {
+      "zh_CN": "满溢之甲 华饰环甲",
+      "zh_TW": "智者織衫 華貴環甲"
+    },
+    "Loreweave Runemastered Ornate Ringmail": {
+      "zh_CN": "满溢之甲 符文师匠华饰环甲",
+      "zh_TW": "智者織衫 符煉華貴環甲"
+    },
     "Lumbering Talisman": {
       "zh_CN": "蹒跚魔符",
       "zh_TW": "笨重魔符"
+    },
+    "Luminous Pace Runemastered Straw Sandals": {
+      "zh_CN": "流光步履 符文师匠稻草鞋履",
+      "zh_TW": "閃爍步伐 符煉乾草便鞋"
+    },
+    "Luminous Pace Straw Sandals": {
+      "zh_CN": "流光步履 稻草鞋履",
+      "zh_TW": "閃爍步伐 乾草便鞋"
     },
     "Lunar Amulet": {
       "zh_CN": "月影项链",
@@ -3225,9 +4777,25 @@
       "zh_CN": "奢华便鞋",
       "zh_TW": "奢華便鞋"
     },
+    "Lycosidae Rampart Tower Shield": {
+      "zh_CN": "狼蛛 壁垒塔盾",
+      "zh_TW": "狼蛛 壁壘塔盾"
+    },
+    "Lycosidae Runemastered Rampart Tower Shield": {
+      "zh_CN": "狼蛛 符文师匠壁垒塔盾",
+      "zh_TW": "狼蛛 符煉壁壘塔盾"
+    },
+    "Mageblood Utility Belt": {
+      "zh_CN": "法师之血 万用腰带",
+      "zh_TW": "魔血 實用腰帶"
+    },
     "Magus Tiara": {
       "zh_CN": "术士冠冕",
       "zh_TW": "瑪格思頭冠"
+    },
+    "Mahuxotl's Machination Omen Crest Shield": {
+      "zh_CN": "马赫索托之诈 噩兆纹章盾",
+      "zh_TW": "瑪哈薩多的陰謀 預兆紋章盾"
     },
     "Mail Belt": {
       "zh_CN": "环锁腰带",
@@ -3257,6 +4825,14 @@
       "zh_CN": "拼凑战弩",
       "zh_TW": "臨時十字弓"
     },
+    "Maligaro's Virtuosity Fine Bracers": {
+      "zh_CN": "马雷格罗的玫红手套 精工护腕",
+      "zh_TW": "馬雷葛蘿的血染手套 精良護腕"
+    },
+    "Maligaro's Virtuosity Runemastered Fine Bracers": {
+      "zh_CN": "马雷格罗的玫红手套 符文师匠精工护腕",
+      "zh_TW": "馬雷葛蘿的血染手套 符煉精良護腕"
+    },
     "Mammoth Targe": {
       "zh_CN": "猛犸圆盾",
       "zh_TW": "猛獁圓盾"
@@ -3281,9 +4857,29 @@
       "zh_CN": "行军之锤",
       "zh_TW": "行軍之錘"
     },
+    "Marohi Erqi Totemic Greatclub": {
+      "zh_CN": "尔奇的巨灵之锤 图腾巨棍",
+      "zh_TW": "爾奇的巨靈之錘 圖騰巨棍棒"
+    },
     "Martyr Crown": {
       "zh_CN": "英烈之冠",
       "zh_TW": "殉難之冠"
+    },
+    "Mask of the Sanguimancer Face Mask": {
+      "zh_CN": "血咒师面罩 覆颜面具",
+      "zh_TW": "占血之面 護臉之面"
+    },
+    "Mask of the Sanguimancer Runemastered Face Mask": {
+      "zh_CN": "血咒师面罩 符文师匠覆颜面具",
+      "zh_TW": "占血之面 符煉護臉之面"
+    },
+    "Mask of the Stitched Demon Feathered Tiara": {
+      "zh_CN": "缝合恶魔面罩 羽饰冠冕",
+      "zh_TW": "惡縫之面 羽毛頭冠"
+    },
+    "Mask of the Stitched Demon Runemastered Feathered Tiara": {
+      "zh_CN": "缝合恶魔面罩 符文师匠羽饰冠冕",
+      "zh_TW": "惡縫之面 符煉羽毛頭冠"
     },
     "Masked Greathelm": {
       "zh_CN": "蒙面巨盔",
@@ -3301,9 +4897,21 @@
       "zh_CN": "重型战矛",
       "zh_TW": "巨型長矛"
     },
+    "Mastered Domain Irradiated Tablet": {
+      "zh_CN": "疆域主宰 能量辐照石板",
+      "zh_TW": "主宰領地 輻照碑牌"
+    },
     "Masterwork Rune": {
       "zh_CN": "大师符文",
       "zh_TW": "匠鍛符文"
+    },
+    "Matsya Crescent Quarterstaff": {
+      "zh_CN": "摩蹉 月牙节杖",
+      "zh_TW": "摩蹉 新月細杖"
+    },
+    "Matsya Runeforged Crescent Quarterstaff": {
+      "zh_CN": "摩蹉 符文月牙节杖",
+      "zh_TW": "摩蹉 符鍛新月細杖"
     },
     "Medium Life Flask": {
       "zh_CN": "中型生命药剂",
@@ -3325,6 +4933,18 @@
       "zh_CN": "梅德维德的照料",
       "zh_TW": "梅德偉的照料"
     },
+    "Megalomaniac Diamond": {
+      "zh_CN": "妄想症 宝钻",
+      "zh_TW": "妄想症 鑽石"
+    },
+    "Meginord's Girdle Rawhide Belt": {
+      "zh_CN": "梅吉诺德的力量泉源 生皮腰带",
+      "zh_TW": "梅吉諾德的力量泉源 生皮腰帶"
+    },
+    "Melting Maelstrom Ultimate Mana Flask": {
+      "zh_CN": "消融漩涡 终极魔力药剂",
+      "zh_TW": "融解漩渦 終極魔力藥劑"
+    },
     "Mercenary Greathelm": {
       "zh_CN": "佣兵巨盔",
       "zh_TW": "傭兵巨盔"
@@ -3332,6 +4952,10 @@
     "Mercenary Targe": {
       "zh_CN": "佣兵圆盾",
       "zh_TW": "傭兵圓盾"
+    },
+    "Merit of Service Pelage Targe": {
+      "zh_CN": "奉献的犒赏 毛皮圆盾",
+      "zh_TW": "服役功績 毛皮圓盾"
     },
     "Messer": {
       "zh_CN": "大砍刀",
@@ -3341,6 +4965,10 @@
       "zh_CN": "匠工塔盾",
       "zh_TW": "金屬塔盾"
     },
+    "Midnight Braid Rawhide Belt": {
+      "zh_CN": "午夜穗带 生皮腰带",
+      "zh_TW": "午夜護鏈 生皮腰帶"
+    },
     "Militant Bow": {
       "zh_CN": "军用战弓",
       "zh_TW": "好戰者之弓"
@@ -3349,9 +4977,37 @@
       "zh_CN": "心灵符文",
       "zh_TW": "心靈符文"
     },
+    "Mind of the Council Death Mask": {
+      "zh_CN": "智者之秘 死神之面",
+      "zh_TW": "議會之心 死亡之面"
+    },
+    "Mind of the Council Runemastered Death Mask": {
+      "zh_CN": "智者之秘 符文师匠死神之面",
+      "zh_TW": "議會之心 符煉死亡之面"
+    },
+    "Ming's Heart Amethyst Ring": {
+      "zh_CN": "明恩的慧心 紫晶戒指",
+      "zh_TW": "明恩的慧心 紫晶戒指"
+    },
     "Mirror of Kalandra": {
       "zh_CN": "卡兰德的魔镜",
       "zh_TW": "卡蘭德的魔鏡"
+    },
+    "Mist Whisper Makeshift Crossbow": {
+      "zh_CN": "迷雾低语者 拼凑战弩",
+      "zh_TW": "迷霧低語者 臨時十字弓"
+    },
+    "Mist Whisper Runeforged Makeshift Crossbow": {
+      "zh_CN": "迷雾低语者 符文拼凑战弩",
+      "zh_TW": "迷霧低語者 符鍛臨時十字弓"
+    },
+    "Mjölner Runemastered Torment Club": {
+      "zh_CN": "沉默之雷 符文师匠劫难战棒",
+      "zh_TW": "沉默之雷 符煉磨難棍棒"
+    },
+    "Mjölner Torment Club": {
+      "zh_CN": "沉默之雷 劫难战棒",
+      "zh_TW": "沉默之雷 磨難棍棒"
     },
     "Mnemonic Ring": {
       "zh_CN": "记忆戒指",
@@ -3369,6 +5025,14 @@
       "zh_CN": "月刃匕首",
       "zh_TW": "月之匕首"
     },
+    "Morior Invictus Grand Regalia": {
+      "zh_CN": "无生之辱 恢弘盛装",
+      "zh_TW": "不敗亡者 宏偉華服"
+    },
+    "Morior Invictus Runemastered Grand Regalia": {
+      "zh_CN": "无生之辱 符文师匠恢弘盛装",
+      "zh_TW": "不敗亡者 符煉宏偉華服"
+    },
     "Morning Star": {
       "zh_CN": "流星锤",
       "zh_TW": "晨星"
@@ -3376,6 +5040,18 @@
     "Moulded Mitts": {
       "zh_CN": "铸锻护手",
       "zh_TW": "鑄模長手套"
+    },
+    "Murkshaft Toxic Quiver": {
+      "zh_CN": "沉郁之棍 淬毒箭袋",
+      "zh_TW": "陰暗通道 劇毒箭袋"
+    },
+    "Myris Uxor Covert Hood": {
+      "zh_CN": "迈里斯之妇 匿踪兜帽",
+      "zh_TW": "米立斯之妻 隱蔽兜帽"
+    },
+    "Myris Uxor Runemastered Covert Hood": {
+      "zh_CN": "迈里斯之妇 符文师匠匿踪兜帽",
+      "zh_TW": "米立斯之妻 符煉隱蔽兜帽"
     },
     "Mystic Alloy": {
       "zh_CN": "神秘合金",
@@ -3389,6 +5065,30 @@
       "zh_CN": "窄型兜帽",
       "zh_TW": "狹窄兜帽"
     },
+    "Nascent Hope Thawing Charm": {
+      "zh_CN": "新生希望 融冰咒符",
+      "zh_TW": "萌芽希望 解凍護符"
+    },
+    "Nazir's Judgement Runeforged Steelpoint Quarterstaff": {
+      "zh_CN": "纳吉尔的审判 符文钢缘节杖",
+      "zh_TW": "納齊爾的審判 符鍛鋼尖細杖"
+    },
+    "Nazir's Judgement Steelpoint Quarterstaff": {
+      "zh_CN": "纳吉尔的审判 钢缘节杖",
+      "zh_TW": "納齊爾的審判 鋼尖細杖"
+    },
+    "Nebuloch Execratus Hammer": {
+      "zh_CN": "尼布洛克 秽咒之锤",
+      "zh_TW": "銀河眾星 詛咒之錘"
+    },
+    "Necromantle Bone Raiment": {
+      "zh_CN": "通灵披风 坠饰之衣",
+      "zh_TW": "亡者披肩 骸骨之衣"
+    },
+    "Necromantle Runemastered Bone Raiment": {
+      "zh_CN": "通灵披风 符文师匠坠饰之衣",
+      "zh_TW": "亡者披肩 符煉骸骨之衣"
+    },
     "Necrotic Catalyst": {
       "zh_CN": "腐化催化剂",
       "zh_TW": "死靈催化劑"
@@ -3400,6 +5100,26 @@
     "Neural Catalyst": {
       "zh_CN": "神经催化剂",
       "zh_TW": "神經催化劑"
+    },
+    "Ngamahu's Chosen Ruby Charm": {
+      "zh_CN": "努葛玛呼的亲选 红玉咒符",
+      "zh_TW": "拿瑪乎之選 紅玉護符"
+    },
+    "Nightfall Glacial Fortress": {
+      "zh_CN": "夜临 冰川要塞",
+      "zh_TW": "夜墜 冰川堡壘"
+    },
+    "Nightfall Runemastered Glacial Fortress": {
+      "zh_CN": "夜临 符文师匠冰川要塞",
+      "zh_TW": "夜墜 符煉冰川堡壘"
+    },
+    "Nightscale Pauascale Gloves": {
+      "zh_CN": "夜鳞 海灵鳞缀手套",
+      "zh_TW": "夜鱗 海靈鱗手套"
+    },
+    "Nightscale Runemastered Pauascale Gloves": {
+      "zh_CN": "夜鳞 符文师匠海灵鳞缀手套",
+      "zh_TW": "夜鱗 符煉海靈鱗手套"
     },
     "Noble Greathelm": {
       "zh_CN": "贵族巨盔",
@@ -3413,6 +5133,22 @@
       "zh_CN": "贵族塔盾",
       "zh_TW": "高貴塔盾"
     },
+    "Nocturne Runemastered Wooden Buckler": {
+      "zh_CN": "夜曲 符文师匠木制轻盾",
+      "zh_TW": "夜曲 符煉木頭輕盾"
+    },
+    "Nocturne Wooden Buckler": {
+      "zh_CN": "夜曲 木制轻盾",
+      "zh_TW": "夜曲 木頭輕盾"
+    },
+    "Northpaw Runemastered Suede Bracers": {
+      "zh_CN": "北境凶爪 符文师匠绒皮护腕",
+      "zh_TW": "北方之爪 符煉麂皮護腕"
+    },
+    "Northpaw Suede Bracers": {
+      "zh_CN": "北境凶爪 绒皮护腕",
+      "zh_TW": "北方之爪 麂皮護腕"
+    },
     "Oak Buckler": {
       "zh_CN": "橡木轻盾",
       "zh_TW": "橡木輕盾"
@@ -3424,6 +5160,22 @@
     "Oak Mask": {
       "zh_CN": "欧克面具",
       "zh_TW": "橡木之面"
+    },
+    "Oaksworn Runemastered Sigil Crest Shield": {
+      "zh_CN": "橡木盟誓 符文师匠魔印纹章盾",
+      "zh_TW": "橡誓者 符煉符印紋章盾"
+    },
+    "Oaksworn Sigil Crest Shield": {
+      "zh_CN": "橡木盟誓 魔印纹章盾",
+      "zh_TW": "橡誓者 符印紋章盾"
+    },
+    "Obern's Bastion Runemastered Stacked Sabatons": {
+      "zh_CN": "欧本的壁垒 符文师匠层钢战靴",
+      "zh_TW": "歐伯恩的壁壘 符煉疊層鎧靴"
+    },
+    "Obern's Bastion Stacked Sabatons": {
+      "zh_CN": "欧本的壁垒 层钢战靴",
+      "zh_TW": "歐伯恩的壁壘 疊層鎧靴"
     },
     "Obliterator Bow": {
       "zh_CN": "毁灭者之弓",
@@ -3453,9 +5205,21 @@
       "zh_CN": "欧罗什的圣物厅钥匙",
       "zh_TW": "奧爾羅斯的寶庫鑰匙"
     },
+    "Olroth's Resolve Ultimate Life Flask": {
+      "zh_CN": "欧罗什的决心 终极生命药剂",
+      "zh_TW": "奧爾羅斯的決心 終極生命藥劑"
+    },
     "Olroth's Saga": {
       "zh_CN": "欧罗什之传说",
       "zh_TW": "奧爾羅斯的傳奇"
+    },
+    "Olrovasara Runemastered Torment Club": {
+      "zh_CN": "欧罗瓦萨拉 符文师匠劫难战棒",
+      "zh_TW": "歐洛瓦沙拉 符煉磨難棍棒"
+    },
+    "Olrovasara Torment Club": {
+      "zh_CN": "欧罗瓦萨拉 劫难战棒",
+      "zh_TW": "歐洛瓦沙拉 磨難棍棒"
     },
     "Omen Crest Shield": {
       "zh_CN": "噩兆纹章盾",
@@ -3657,6 +5421,10 @@
       "zh_CN": "欧佩罗蒂的突袭灵核",
       "zh_TW": "歐派理堤的攻擊靈魂核心"
     },
+    "Opportunity Ultimate Life Flask": {
+      "zh_CN": "机遇 终极生命药剂",
+      "zh_TW": "契機 終極生命藥劑"
+    },
     "Opulent Gloves": {
       "zh_CN": "丰裕手套",
       "zh_TW": "奢靡手套"
@@ -3704,6 +5472,10 @@
     "Origin Spark": {
       "zh_CN": "起源火花",
       "zh_TW": "原初光輝"
+    },
+    "Original Sin Amethyst Ring": {
+      "zh_CN": "原初之罪 紫晶戒指",
+      "zh_TW": "原罪 紫晶戒指"
     },
     "Ornate Belt": {
       "zh_CN": "华丽腰带",
@@ -3769,6 +5541,18 @@
       "zh_CN": "彩绘塔盾",
       "zh_TW": "彩繪塔盾"
     },
+    "Painter's Servant Runemastered Torn Gloves": {
+      "zh_CN": "画师之侍 符文师匠破碎手套",
+      "zh_TW": "畫家的侍從 符煉撕裂手套"
+    },
+    "Painter's Servant Torn Gloves": {
+      "zh_CN": "画师之侍 破碎手套",
+      "zh_TW": "畫家的侍從 撕裂手套"
+    },
+    "Palm of the Dreamer Shrine Sceptre": {
+      "zh_CN": "幻梦者之掌 圣地权杖",
+      "zh_TW": "幻夢者之掌 神殿權杖"
+    },
     "Panther Idol": {
       "zh_CN": "黑豹雕像",
       "zh_TW": "花豹魔偶"
@@ -3784,6 +5568,14 @@
     "Pariah Mask": {
       "zh_CN": "贱民面具",
       "zh_TW": "輕蔑之面"
+    },
+    "Pariah's Embrace Cloaked Mail": {
+      "zh_CN": "贱民之拥 披风锁甲",
+      "zh_TW": "草民之擁 斗篷鎖甲"
+    },
+    "Pariah's Embrace Runemastered Cloaked Mail": {
+      "zh_CN": "贱民之拥 符文师匠披风锁甲",
+      "zh_TW": "草民之擁 符煉斗篷鎖甲"
     },
     "Parrying Dagger": {
       "zh_CN": "格挡匕首",
@@ -3840,6 +5632,10 @@
     "Penumbra Ring": {
       "zh_CN": "半影戒指",
       "zh_TW": "半影戒指"
+    },
+    "Perandus Seal Gold Ring": {
+      "zh_CN": "普兰德斯的印章 金光戒指",
+      "zh_TW": "普蘭德斯之印 金光戒指"
     },
     "Perching Staff": {
       "zh_CN": "栖鸟长杖",
@@ -4009,6 +5805,18 @@
       "zh_CN": "完美结界符文",
       "zh_TW": "完美保護符文"
     },
+    "Perfidy Knight Armour": {
+      "zh_CN": "背信弃义 骑士护甲",
+      "zh_TW": "背信忘義 騎士護甲"
+    },
+    "Perfidy Runemastered Knight Armour": {
+      "zh_CN": "背信弃义 符文师匠骑士护甲",
+      "zh_TW": "背信忘義 符煉騎士護甲"
+    },
+    "Periphery Heartwood Shortbow": {
+      "zh_CN": "边缘 心木短弓",
+      "zh_TW": "邊陲 赤木之弓"
+    },
     "Permafrost Staff": {
       "zh_CN": "永霜法杖",
       "zh_TW": "永凍長杖"
@@ -4024,6 +5832,26 @@
     "Pilgrim Vestments": {
       "zh_CN": "朝圣者长衣",
       "zh_TW": "朝聖者法衣"
+    },
+    "Pillar of the Caged God Long Quarterstaff": {
+      "zh_CN": "囚神杵 长柄节杖",
+      "zh_TW": "囚神杵 加長細杖"
+    },
+    "Pillar of the Caged God Runeforged Long Quarterstaff": {
+      "zh_CN": "囚神杵 符文长柄节杖",
+      "zh_TW": "囚神杵 符鍛加長細杖"
+    },
+    "Pillar of the Caged God Runemastered Long Quarterstaff": {
+      "zh_CN": "囚神杵 符文师匠长柄节杖",
+      "zh_TW": "囚神杵 符煉加長細杖"
+    },
+    "Plaguefinger Gauze Wraps": {
+      "zh_CN": "毒疫之指 薄纱裹手",
+      "zh_TW": "瘟疫之指 紗布裹手"
+    },
+    "Plaguefinger Runemastered Gauze Wraps": {
+      "zh_CN": "毒疫之指 符文师匠薄纱裹手",
+      "zh_TW": "瘟疫之指 符煉紗布裹手"
     },
     "Plate Belt": {
       "zh_CN": "嵌板腰带",
@@ -4065,6 +5893,10 @@
       "zh_CN": "钉头巨锤",
       "zh_TW": "尖銳重錘"
     },
+    "Polcirkeln Sapphire Ring": {
+      "zh_CN": "极圈 蓝玉戒指",
+      "zh_TW": "極圈 藍玉戒指"
+    },
     "Polished Bracers": {
       "zh_CN": "闪耀护腕",
       "zh_TW": "亮澤護腕"
@@ -4088,6 +5920,30 @@
     "Potent Liquid Melancholy": {
       "zh_CN": "强效的液化悲哀",
       "zh_TW": "增幅液態憂鬱"
+    },
+    "Powertread Hunting Shoes": {
+      "zh_CN": "神力靴 狩猎便鞋",
+      "zh_TW": "動力圖樣 狩獵輕鞋"
+    },
+    "Powertread Runemastered Hunting Shoes": {
+      "zh_CN": "神力靴 符文师匠狩猎便鞋",
+      "zh_TW": "動力圖樣 符煉狩獵輕鞋"
+    },
+    "Pragmatism Explorer Armour": {
+      "zh_CN": "独断专行 探索者护甲",
+      "zh_TW": "務實主義 探索者護甲"
+    },
+    "Pragmatism Runemastered Explorer Armour": {
+      "zh_CN": "独断专行 符文师匠探索者护甲",
+      "zh_TW": "務實主義 符煉探索者護甲"
+    },
+    "Prayers for Rain Keth Raiment": {
+      "zh_CN": "祈雨祷告 克斯之衣",
+      "zh_TW": "祈雨禱言 凱斯之衣"
+    },
+    "Prayers for Rain Runemastered Keth Raiment": {
+      "zh_CN": "祈雨祷告 符文师匠克斯之衣",
+      "zh_TW": "祈雨禱言 符煉凱斯之衣"
     },
     "Preserved Collarbone": {
       "zh_CN": "遗存锁骨",
@@ -4129,6 +5985,18 @@
       "zh_CN": "精工箭袋",
       "zh_TW": "灌注箭袋"
     },
+    "Prism Guardian Intricate Crest Shield": {
+      "zh_CN": "元素的庇护 精巧纹章盾",
+      "zh_TW": "元素的庇護 錯綜紋章盾"
+    },
+    "Prism Guardian Runemastered Intricate Crest Shield": {
+      "zh_CN": "元素的庇护 符文师匠精巧纹章盾",
+      "zh_TW": "元素的庇護 符煉錯綜紋章盾"
+    },
+    "Prism of Belief Diamond": {
+      "zh_CN": "信念的棱镜 宝钻",
+      "zh_TW": "信仰棱鏡 鑽石"
+    },
     "Prismatic Alloy": {
       "zh_CN": "棱镜合金",
       "zh_TW": "煥彩合金"
@@ -4136,6 +6004,10 @@
     "Prismatic Ring": {
       "zh_CN": "三相戒指",
       "zh_TW": "三相戒指"
+    },
+    "Prized Pain Iron Ring": {
+      "zh_CN": "珍藏的痛苦 锻铁戒指",
+      "zh_TW": "珍貴苦痛 鍛鐵戒指"
     },
     "Profane Cleaver": {
       "zh_CN": "亵渎战斧",
@@ -4161,9 +6033,41 @@
       "zh_CN": "四分纹章盾",
       "zh_TW": "四分紋章盾"
     },
+    "Quatl's Molt Runemastered Serpentscale Coat": {
+      "zh_CN": "羽蛇之带 符文师匠蛇鳞外套",
+      "zh_TW": "夸特之帶 符煉蛇鱗外套"
+    },
+    "Quatl's Molt Serpentscale Coat": {
+      "zh_CN": "羽蛇之带 蛇鳞外套",
+      "zh_TW": "夸特之帶 蛇鱗外套"
+    },
+    "Quecholli Crumbling Maul": {
+      "zh_CN": "重击之锤 摧枯巨锤",
+      "zh_TW": "重擊之錘 崩毀重錘"
+    },
+    "Quecholli Runeforged Crumbling Maul": {
+      "zh_CN": "重击之锤 符文摧枯巨锤",
+      "zh_TW": "重擊之錘 符鍛崩毀重錘"
+    },
+    "Queen of the Forest Runemastered Smuggler Coat": {
+      "zh_CN": "森林之后 符文师匠走私者外套",
+      "zh_TW": "森林之后 符煉走私者外套"
+    },
+    "Queen of the Forest Smuggler Coat": {
+      "zh_CN": "森林之后 走私者外套",
+      "zh_TW": "森林之后 走私者外套"
+    },
     "Quickslip Shoes": {
       "zh_CN": "急迅便鞋",
       "zh_TW": "速行輕鞋"
+    },
+    "Quill Rain Runeforged Shortbow": {
+      "zh_CN": "骤雨之弦 符文短弓",
+      "zh_TW": "驟雨之弦 符鍛短弓"
+    },
+    "Quill Rain Shortbow": {
+      "zh_CN": "骤雨之弦 短弓",
+      "zh_TW": "驟雨之弦 短弓"
     },
     "Quilted Vest": {
       "zh_CN": "菱纹背心",
@@ -4185,6 +6089,14 @@
       "zh_CN": "狂犬魔符",
       "zh_TW": "狂暴魔符"
     },
+    "Radiant Grief Lace Hood": {
+      "zh_CN": "辉煌遗恨 花边兜帽",
+      "zh_TW": "聖光哀痛 綁帶兜帽"
+    },
+    "Radiant Grief Runeforged Lace Hood": {
+      "zh_CN": "辉煌遗恨 符文花边兜帽",
+      "zh_TW": "聖光哀痛 符鍛綁帶兜帽"
+    },
     "Raider Plate": {
       "zh_CN": "劫掠之铠",
       "zh_TW": "俠客鎧甲"
@@ -4193,9 +6105,29 @@
       "zh_CN": "漫步者外衣",
       "zh_TW": "漫步者外衣"
     },
+    "Rampart Raptor Runeforged Tense Crossbow": {
+      "zh_CN": "要塞的猛禽 符文紧弦战弩",
+      "zh_TW": "壁壘猛禽 符鍛緊繃十字弓"
+    },
+    "Rampart Raptor Runemastered Tense Crossbow": {
+      "zh_CN": "要塞的猛禽 符文师匠紧弦战弩",
+      "zh_TW": "壁壘猛禽 符煉緊繃十字弓"
+    },
+    "Rampart Raptor Tense Crossbow": {
+      "zh_CN": "要塞的猛禽 紧弦战弩",
+      "zh_TW": "壁壘猛禽 緊繃十字弓"
+    },
     "Rampart Tower Shield": {
       "zh_CN": "壁垒塔盾",
       "zh_TW": "壁壘塔盾"
+    },
+    "Rathpith Globe Runemastered Plumed Focus": {
+      "zh_CN": "献祭之心 符文师匠彩羽法器",
+      "zh_TW": "獻祭之心 符煉羽飾法器"
+    },
+    "Rathpith Globe Sacred Focus": {
+      "zh_CN": "献祭之心 圣洁法器",
+      "zh_TW": "獻祭之心 神聖法器"
     },
     "Rattling Sceptre": {
       "zh_CN": "罪孽权杖",
@@ -4233,6 +6165,10 @@
       "zh_CN": "收割长杖",
       "zh_TW": "死神長杖"
     },
+    "Rearguard Blunt Quiver": {
+      "zh_CN": "寒锋之卫 钝矢箭袋",
+      "zh_TW": "寒鋒之衛 鈍箭袋"
+    },
     "Reaver Catalyst": {
       "zh_CN": "袭击催化剂",
       "zh_TW": "掠奪催化劑"
@@ -4248,6 +6184,30 @@
     "Recurve Bow": {
       "zh_CN": "反曲弓",
       "zh_TW": "反曲弓"
+    },
+    "Redbeak Shortsword": {
+      "zh_CN": "赤红短刃 短剑",
+      "zh_TW": "赤紅短刃 短劍"
+    },
+    "Redblade Banner Heraldric Tower Shield": {
+      "zh_CN": "红刃旗帜 徽纹塔盾",
+      "zh_TW": "紅刃旗幟 紋章塔盾"
+    },
+    "Redblade Banner Runemastered Heraldric Tower Shield": {
+      "zh_CN": "红刃旗帜 符文师匠徽纹塔盾",
+      "zh_TW": "紅刃旗幟 符煉紋章塔盾"
+    },
+    "Redemption Trarthan Cannon": {
+      "zh_CN": "救赎 特拉珊火炮",
+      "zh_TW": "救贖 特拉特斯巨砲"
+    },
+    "Redflare Conduit Anchorite Garb": {
+      "zh_CN": "赫耀导体 隐士束衣",
+      "zh_TW": "紅焰導體 隱者裝束"
+    },
+    "Redflare Conduit Runemastered Anchorite Garb": {
+      "zh_CN": "赫耀导体 符文师匠隐士束衣",
+      "zh_TW": "紅焰導體 符煉隱者裝束"
     },
     "Reefsteel Greaves": {
       "zh_CN": "卷钢胫甲",
@@ -4337,6 +6297,10 @@
       "zh_CN": "坚毅符文",
       "zh_TW": "決心符文"
     },
+    "Revered Resin Amber Amulet": {
+      "zh_CN": "神圣树脂 琥珀项链",
+      "zh_TW": "崇敬樹脂 琥珀護身符"
+    },
     "Revered Starlit Ore": {
       "zh_CN": "尊崇星辉矿石",
       "zh_TW": "崇敬星耀礦石"
@@ -4344,6 +6308,14 @@
     "Revered Vestments": {
       "zh_CN": "崇礼长衣",
       "zh_TW": "尊敬法衣"
+    },
+    "Reverie Runemastered Shaman Mantle": {
+      "zh_CN": "幻梦曲 符文师匠萨满斗篷",
+      "zh_TW": "綺夢 符煉薩滿披肩"
+    },
+    "Reverie Shaman Mantle": {
+      "zh_CN": "幻梦曲 萨满斗篷",
+      "zh_TW": "綺夢 薩滿披肩"
     },
     "Rhoahide Coat": {
       "zh_CN": "恐喙鸟皮外套",
@@ -4385,6 +6357,18 @@
       "zh_CN": "波纹巨剑",
       "zh_TW": "波紋巨劍"
     },
+    "Rise of the Phoenix Omen Crest Shield": {
+      "zh_CN": "烈炎之翼 噩兆纹章盾",
+      "zh_TW": "烈炎之翼 預兆紋章盾"
+    },
+    "Rise of the Phoenix Runemastered Omen Crest Shield": {
+      "zh_CN": "烈炎之翼 符文师匠噩兆纹章盾",
+      "zh_TW": "烈炎之翼 符煉預兆紋章盾"
+    },
+    "Rite of Passage Golden Charm": {
+      "zh_CN": "仪式通道 黄金咒符",
+      "zh_TW": "儀式通道 黃金護符"
+    },
     "Ritual Tablet": {
       "zh_CN": "驱灵仪式石板",
       "zh_TW": "祭祀碑牌"
@@ -4420,6 +6404,18 @@
     "Rogue's Marker": {
       "zh_CN": "赏金猎人印记",
       "zh_TW": "盜賊之印"
+    },
+    "Rondel de Ezo Plated Buckler": {
+      "zh_CN": "艾佐的诗篇 嵌板轻盾",
+      "zh_TW": "隆德爾．德．艾佐 鋼板輕盾"
+    },
+    "Rondel de Ezo Runemastered Plated Buckler": {
+      "zh_CN": "艾佐的诗篇 符文师匠嵌板轻盾",
+      "zh_TW": "隆德爾．德．艾佐 符煉鋼板輕盾"
+    },
+    "Rondel of Fragility Lunar Amulet": {
+      "zh_CN": "脆弱的诗文 月影项链",
+      "zh_TW": "弱化圓飾 月神項鍊"
     },
     "Rope Cuffs": {
       "zh_CN": "绳索袖带",
@@ -7097,6 +9093,14 @@
       "zh_CN": "符文师匠裹布鞋履",
       "zh_TW": "符煉裹腳便鞋"
     },
+    "Runeseeker's Call Runemastered Runic Fork": {
+      "zh_CN": "符文猎手的呼唤 符文师匠符文之叉",
+      "zh_TW": "符文探求者之喚 符煉符文尖叉"
+    },
+    "Runeseeker's Call Runic Fork": {
+      "zh_CN": "符文猎手的呼唤 符文之叉",
+      "zh_TW": "符文探求者之喚 符文尖叉"
+    },
     "Runic Alloy": {
       "zh_CN": "符文合金",
       "zh_TW": "符文合金"
@@ -7125,6 +9129,10 @@
       "zh_CN": "锈蚀巨盔",
       "zh_TW": "鏽蝕巨盔"
     },
+    "Ryslatha's Coil Ornate Belt": {
+      "zh_CN": "瑞斯拉萨的线圈 华丽腰带",
+      "zh_TW": "瑞斯拉薩之纏 華麗腰帶"
+    },
     "Sacral Quiver": {
       "zh_CN": "圣骨箭袋",
       "zh_TW": "聖禮箭袋"
@@ -7132,6 +9140,10 @@
     "Sacramental Robe": {
       "zh_CN": "圣礼束衣",
       "zh_TW": "聖禮長袍"
+    },
+    "Sacred Flame Shrine Sceptre": {
+      "zh_CN": "神圣之火 圣地权杖",
+      "zh_TW": "神聖烈焰 神殿權杖"
     },
     "Sacred Focus": {
       "zh_CN": "圣洁法器",
@@ -7153,13 +9165,61 @@
       "zh_CN": "献祭盛装",
       "zh_TW": "獻祭法衣"
     },
+    "Sacrosanctum Corvus Mantle": {
+      "zh_CN": "奉圣庇护所 灵鸦斗篷",
+      "zh_TW": "神聖殿堂 烏鴉披肩"
+    },
+    "Sacrosanctum Runemastered Corvus Mantle": {
+      "zh_CN": "奉圣庇护所 符文师匠灵鸦斗篷",
+      "zh_TW": "神聖殿堂 符煉烏鴉披肩"
+    },
+    "Sadist's Mercy Flanged Mace": {
+      "zh_CN": "施虐者的慈悲 钉头锤",
+      "zh_TW": "殘虐者的慈悲 輪緣之錘"
+    },
+    "Saffell's Frame Emblem Crest Shield": {
+      "zh_CN": "萨费尔的智慧 圣徽纹章盾",
+      "zh_TW": "薩費爾的智慧 徽印紋章盾"
+    },
+    "Saffell's Frame Runemastered Emblem Crest Shield": {
+      "zh_CN": "萨费尔的智慧 符文师匠圣徽纹章盾",
+      "zh_TW": "薩費爾的智慧 符煉徽印紋章盾"
+    },
+    "Safrin's Resolve Ring": {
+      "zh_CN": "萨芙琳的决心 戒指",
+      "zh_TW": "薩弗林的決心 戒指"
+    },
     "Saintly Crown": {
       "zh_CN": "圣洁王冠",
       "zh_TW": "聖徒之冠"
     },
+    "Saitha's Spear Barbed Spear": {
+      "zh_CN": "赛萨之矛 倒刺长矛",
+      "zh_TW": "賽塔的長矛 鉤刺長矛"
+    },
+    "Saitha's Spear Runeforged Barbed Spear": {
+      "zh_CN": "赛萨之矛 符文倒刺长矛",
+      "zh_TW": "賽塔的長矛 符鍛鉤刺長矛"
+    },
     "Sanctified Staff": {
       "zh_CN": "神圣长杖",
       "zh_TW": "神化長杖"
+    },
+    "Sands of Silk Runemastered Shrouded Vest": {
+      "zh_CN": "流丝之沙 符文师匠蔽影背心",
+      "zh_TW": "絲綢之沙 符煉籠罩背心"
+    },
+    "Sands of Silk Shrouded Vest": {
+      "zh_CN": "流丝之沙 蔽影背心",
+      "zh_TW": "絲綢之沙 籠罩背心"
+    },
+    "Sandstorm Visage Chain Tiara": {
+      "zh_CN": "禁域面容 锁链冠冕",
+      "zh_TW": "沙瀑面紗 鎖鍊頭冠"
+    },
+    "Sandstorm Visage Runemastered Chain Tiara": {
+      "zh_CN": "禁域面容 符文师匠锁链冠冕",
+      "zh_TW": "沙瀑面紗 符煉鎖鍊頭冠"
     },
     "Sandsworn Cuirass": {
       "zh_CN": "沙誓胸甲",
@@ -7172,6 +9232,14 @@
     "Sandsworn Tiara": {
       "zh_CN": "沙誓冠冕",
       "zh_TW": "沙誓頭冠"
+    },
+    "Sanguine Diviner Bone Wand": {
+      "zh_CN": "赤红占卜师 钙石法杖",
+      "zh_TW": "血色聖者 骸骨法杖"
+    },
+    "Sanguis Heroum Staunching Charm": {
+      "zh_CN": "英雄血液 止血咒符",
+      "zh_TW": "嗜血英雄 止血護符"
     },
     "Sapphire": {
       "zh_CN": "蓝玉",
@@ -7213,6 +9281,14 @@
       "zh_CN": "弯刀",
       "zh_TW": "彎刀"
     },
+    "Scold's Bridle Jade Tiara": {
+      "zh_CN": "禁语 翠玉冠冕",
+      "zh_TW": "禁語 翠玉頭冠"
+    },
+    "Scold's Bridle Runemastered Jade Tiara": {
+      "zh_CN": "禁语 符文师匠翠玉冠冕",
+      "zh_TW": "禁語 符煉翠玉頭冠"
+    },
     "Scoundrel Armour": {
       "zh_CN": "恶棍护甲",
       "zh_TW": "惡棍護甲"
@@ -7229,6 +9305,14 @@
       "zh_CN": "知识卷轴",
       "zh_TW": "知識卷軸"
     },
+    "Sculpted Suffering Runeforged Warpick": {
+      "zh_CN": "雕琢的苦难 符文战镐",
+      "zh_TW": "雕刻苦難 符鍛戰鎬"
+    },
+    "Sculpted Suffering Warpick": {
+      "zh_CN": "雕琢的苦难 战镐",
+      "zh_TW": "雕刻苦難 戰鎬"
+    },
     "Seaglass Spear": {
       "zh_CN": "海琉长矛",
       "zh_TW": "海玻璃長矛"
@@ -7236,6 +9320,10 @@
     "Seal Relic": {
       "zh_CN": "封印遗物",
       "zh_TW": "草紙聖物"
+    },
+    "Season of the Hunt Overseer Tablet": {
+      "zh_CN": "狩猎时节 霸主石板",
+      "zh_TW": "狩獵季節 總督碑牌"
     },
     "Seastorm Mantle": {
       "zh_CN": "海洋风暴斗篷",
@@ -7261,6 +9349,18 @@
       "zh_CN": "坚固裹手",
       "zh_TW": "牢固裹手"
     },
+    "Seed of Cataclysm Lazuli Ring": {
+      "zh_CN": "灾变的种子 青金戒指",
+      "zh_TW": "浩劫種子 青金石戒指"
+    },
+    "Seeing Stars Marching Mace": {
+      "zh_CN": "迷星之锤 行军之锤",
+      "zh_TW": "見證群星 行軍之錘"
+    },
+    "Seeing Stars Runeforged Marching Mace": {
+      "zh_CN": "迷星之锤 符文师匠行军之锤",
+      "zh_TW": "見證群星 符鍛行軍之錘"
+    },
     "Seer Crest Shield": {
       "zh_CN": "先知纹章盾",
       "zh_TW": "先知紋章盾"
@@ -7273,9 +9373,29 @@
       "zh_CN": "丝克玛纹章盾",
       "zh_TW": "絲克瑪紋章盾"
     },
+    "Serle's Grit Kalguuran Forgehammer": {
+      "zh_CN": "瑟尔的坚毅 卡古兰锻造锤",
+      "zh_TW": "瑟雷的毅力 卡爾葛鍛造錘"
+    },
+    "Serle's Grit Runeforged Kalguuran Forgehammer": {
+      "zh_CN": "瑟尔的坚毅 符文卡古兰锻造锤",
+      "zh_TW": "瑟雷的毅力 符鍛卡爾葛鍛造錘"
+    },
     "Serle's Triumph": {
       "zh_CN": "瑟尔的凯旋",
       "zh_TW": "瑟雷的凱旋"
+    },
+    "Serpent's Egg Gold Amulet": {
+      "zh_CN": "毒蛇之卵 帝金项链",
+      "zh_TW": "毒蛇之卵 帝金護身符"
+    },
+    "Serpent's Lesson Runemastered Tonal Focus": {
+      "zh_CN": "毒蛇的训诫 符文师匠音调法器",
+      "zh_TW": "巨蛇教誨 符煉音調法器"
+    },
+    "Serpent's Lesson Tonal Focus": {
+      "zh_CN": "毒蛇的训诫 音调法器",
+      "zh_TW": "巨蛇教誨 音調法器"
     },
     "Serpentscale Boots": {
       "zh_CN": "蛇鳞长靴",
@@ -7293,6 +9413,14 @@
       "zh_CN": "破旧兜帽",
       "zh_TW": "破舊兜帽"
     },
+    "Shackles of the Wretched Aged Cuffs": {
+      "zh_CN": "悲运之缚 风霜袖带",
+      "zh_TW": "悲運之縛 陳舊腕帶"
+    },
+    "Shackles of the Wretched Runemastered Aged Cuffs": {
+      "zh_CN": "悲运之缚 符文师匠风霜袖带",
+      "zh_TW": "悲運之縛 符煉陳舊腕帶"
+    },
     "Shaman Mantle": {
       "zh_CN": "萨满斗篷",
       "zh_TW": "薩滿披肩"
@@ -7301,9 +9429,21 @@
       "zh_CN": "萨满绑腿",
       "zh_TW": "薩滿護腿"
     },
+    "Shankgonne Covered Sabatons": {
+      "zh_CN": "藏锋 掩护战靴",
+      "zh_TW": "香克戈涅 遮蓋鎧靴"
+    },
+    "Shankgonne Runemastered Covered Sabatons": {
+      "zh_CN": "藏锋 符文师匠掩护战靴",
+      "zh_TW": "香克戈涅 符煉遮蓋鎧靴"
+    },
     "Shattered Triskelion": {
       "zh_CN": "破损三耀之火",
       "zh_TW": "破碎三曲"
+    },
+    "Shavronne's Satchel Fine Belt": {
+      "zh_CN": "薛朗的背包 精致腰带",
+      "zh_TW": "薛朗的背包 精良腰帶"
     },
     "Shielded Helm": {
       "zh_CN": "卫护之盔",
@@ -7329,6 +9469,14 @@
       "zh_CN": "蔽影背心",
       "zh_TW": "籠罩背心"
     },
+    "Shyaba Runeforged Temple Maul": {
+      "zh_CN": "席亚巴 符文神殿巨锤",
+      "zh_TW": "沙阿巴 符鍛神殿重錘"
+    },
+    "Shyaba Temple Maul": {
+      "zh_CN": "席亚巴 神殿巨锤",
+      "zh_TW": "沙阿巴 神殿重錘"
+    },
     "Sibilant Catalyst": {
       "zh_CN": "嘶语催化剂",
       "zh_TW": "嘶鳴催化劑"
@@ -7340,6 +9488,14 @@
     "Siege Crossbow": {
       "zh_CN": "摧城弩",
       "zh_TW": "攻城十字弓"
+    },
+    "Sierran Inheritance Marabout Garb": {
+      "zh_CN": "山岭的传承 遁世束衣",
+      "zh_TW": "錫耶拉的遺產 修士裝束"
+    },
+    "Sierran Inheritance Runemastered Marabout Garb": {
+      "zh_CN": "山岭的传承 符文师匠遁世束衣",
+      "zh_TW": "錫耶拉的遺產 符煉修士裝束"
     },
     "Sigil Crest Shield": {
       "zh_CN": "魔印纹章盾",
@@ -7353,6 +9509,14 @@
       "zh_CN": "丝绸便鞋",
       "zh_TW": "絲綢便鞋"
     },
+    "Silks of Veneration Enlightened Robe": {
+      "zh_CN": "敬奉之绸 启迪长袍",
+      "zh_TW": "敬重絲綢 啟蒙長袍"
+    },
+    "Silks of Veneration Runemastered Enlightened Robe": {
+      "zh_CN": "敬奉之绸 符文师匠启迪长袍",
+      "zh_TW": "敬重絲綢 符煉啟蒙長袍"
+    },
     "Silver Charm": {
       "zh_CN": "真银咒符",
       "zh_TW": "白銀護符"
@@ -7360,6 +9524,14 @@
     "Silverbuckled Shoes": {
       "zh_CN": "银扣便鞋",
       "zh_TW": "銀扣輕鞋"
+    },
+    "Silverthorne Runemastered Spiked Buckler": {
+      "zh_CN": "银芒荆棘 符文师匠尖刺轻盾",
+      "zh_TW": "銀白索恩 符煉尖刺輕盾"
+    },
+    "Silverthorne Spiked Buckler": {
+      "zh_CN": "银芒荆棘 尖刺轻盾",
+      "zh_TW": "銀白索恩 尖刺輕盾"
     },
     "Simple Dagger": {
       "zh_CN": "朴实匕首",
@@ -7373,6 +9545,14 @@
       "zh_CN": "梦魇拟像裂片",
       "zh_TW": "幻像斷片"
     },
+    "Sine Aequo Grand Manchettes": {
+      "zh_CN": "公理不存 恢弘袖口",
+      "zh_TW": "無與倫比 宏偉手鐲"
+    },
+    "Sine Aequo Runemastered Grand Manchettes": {
+      "zh_CN": "公理不存 符文师匠恢弘袖口",
+      "zh_TW": "無與倫比 符煉宏偉手鐲"
+    },
     "Sinew Belt": {
       "zh_CN": "肌力腰带",
       "zh_TW": "韌筋腰帶"
@@ -7385,9 +9565,21 @@
       "zh_CN": "虹吸法杖",
       "zh_TW": "虹吸法杖"
     },
+    "Sire of Shards Chiming Staff": {
+      "zh_CN": "破碎传承者 鸣谐长杖",
+      "zh_TW": "破碎傳承者 鳴響長杖"
+    },
     "Sirenscale Gloves": {
       "zh_CN": "海妖之鳞手套",
       "zh_TW": "海妖鱗手套"
+    },
+    "Skin of the Loyal Garment": {
+      "zh_CN": "忠诚之肤 华服装束",
+      "zh_TW": "忠誠之膚 服裝"
+    },
+    "Skin of the Loyal Runeforged Garment": {
+      "zh_CN": "忠诚之肤 符文华服装束",
+      "zh_TW": "忠誠之膚 符鍛服裝"
     },
     "Skinning Knife": {
       "zh_CN": "剥皮刀",
@@ -7408,6 +9600,14 @@
     "Skycrown Tiara": {
       "zh_CN": "天冠冠冕",
       "zh_TW": "天冠頭冠"
+    },
+    "Skysliver Runeforged Winged Spear": {
+      "zh_CN": "苍穹裂片 符文飞翼长矛",
+      "zh_TW": "天銀 符鍛羽翅長矛"
+    },
+    "Skysliver Winged Spear": {
+      "zh_CN": "苍穹裂片 飞翼长矛",
+      "zh_TW": "天銀 羽翅長矛"
     },
     "Sleek Boots": {
       "zh_CN": "滑布长靴",
@@ -7433,6 +9633,14 @@
       "zh_CN": "滑击背心",
       "zh_TW": "快速打擊背心"
     },
+    "Slivertongue Runeforged Zealot Bow": {
+      "zh_CN": "白银之舌 符文狂热弓",
+      "zh_TW": "裂舌 符鍛狂熱者之弓"
+    },
+    "Slivertongue Zealot Bow": {
+      "zh_CN": "白银之舌 狂热弓",
+      "zh_TW": "裂舌 狂熱者之弓"
+    },
     "Smithing Hammer": {
       "zh_CN": "锻铸之锤",
       "zh_TW": "鍛造錘"
@@ -7448,6 +9656,18 @@
     "Snake Idol": {
       "zh_CN": "毒蛇雕像",
       "zh_TW": "蝮蛇魔偶"
+    },
+    "Snakebite Runemastered Spined Bracers": {
+      "zh_CN": "蝮吻 符文师匠精纺护腕",
+      "zh_TW": "蝮吻 符煉棘刺護腕"
+    },
+    "Snakebite Spined Bracers": {
+      "zh_CN": "蝮吻 精纺护腕",
+      "zh_TW": "蝮吻 棘刺護腕"
+    },
+    "Snakepit Pearl Ring": {
+      "zh_CN": "蛇穴 珠玉戒指",
+      "zh_TW": "蛇巢 珍珠戒指"
     },
     "Snakewood Greathammer": {
       "zh_CN": "蛇纹大锤",
@@ -7496,6 +9716,14 @@
     "Solid Mask": {
       "zh_CN": "坚固之面",
       "zh_TW": "堅固之面"
+    },
+    "Solus Ipse Grand Visage": {
+      "zh_CN": "形单影只 恢弘面罩",
+      "zh_TW": "唯我論 宏偉面紗"
+    },
+    "Solus Ipse Runemastered Grand Visage": {
+      "zh_CN": "形单影只 符文师匠恢弘面罩",
+      "zh_TW": "唯我論 符煉宏偉面紗"
     },
     "Sombre Gloves": {
       "zh_CN": "肃穆手套",
@@ -7565,6 +9793,18 @@
       "zh_CN": "赞提佩的灵核",
       "zh_TW": "善堤比靈魂核心"
     },
+    "Soul Mantle Runemastered Sacrificial Mantle": {
+      "zh_CN": "祖灵之约 符文师匠献祭斗篷",
+      "zh_TW": "祖靈之約 符煉獻祭披肩"
+    },
+    "Soul Mantle Sacrificial Mantle": {
+      "zh_CN": "祖灵之约 献祭斗篷",
+      "zh_TW": "祖靈之約 獻祭披肩"
+    },
+    "Soul Tether Long Belt": {
+      "zh_CN": "灵魂羁绊 加长腰带",
+      "zh_TW": "靈魂束縛 長腰帶"
+    },
     "Sovereign Alloy": {
       "zh_CN": "君王合金",
       "zh_TW": "君主合金"
@@ -7601,6 +9841,10 @@
       "zh_CN": "螺旋裹手",
       "zh_TW": "盤繞裹手"
     },
+    "Spire of Ire Helix Spear": {
+      "zh_CN": "怨怒塔矛 螺旋长矛",
+      "zh_TW": "怒火之塔 螺旋長矛"
+    },
     "Spired Greathelm": {
       "zh_CN": "螺旋巨盔",
       "zh_TW": "尖頂巨盔"
@@ -7609,6 +9853,26 @@
       "zh_CN": "灵骨王冠",
       "zh_TW": "魂骨之冠"
     },
+    "Spiteful Floret Nettle Talisman": {
+      "zh_CN": "怨毒之花 荨麻魔符",
+      "zh_TW": "決恨花簇 蕁麻魔符"
+    },
+    "Spiteful Floret Runeforged Nettle Talisman": {
+      "zh_CN": "怨毒之花 符文荨麻魔符",
+      "zh_TW": "決恨花簇 符鍛蕁麻魔符"
+    },
+    "Spiteful Floret Runemastered Nettle Talisman": {
+      "zh_CN": "怨毒之花 符文师匠荨麻魔符",
+      "zh_TW": "決恨花簇 符煉蕁麻魔符"
+    },
+    "Splinter of Lorrata Hardwood Spear": {
+      "zh_CN": "罗瑞塔的破片 硬木长矛",
+      "zh_TW": "蘿拉塔裂片 硬木長矛"
+    },
+    "Splinter of Lorrata Runeforged Hardwood Spear": {
+      "zh_CN": "罗瑞塔的破片 符文硬木长矛",
+      "zh_TW": "蘿拉塔裂片 符鍛硬木長矛"
+    },
     "Splintered Flail": {
       "zh_CN": "碎裂连枷",
       "zh_TW": "分裂鏈錘"
@@ -7616,6 +9880,18 @@
     "Splintered Tower Shield": {
       "zh_CN": "朽木塔盾",
       "zh_TW": "朽木塔盾"
+    },
+    "Splinterheart Recurve Bow": {
+      "zh_CN": "裂心之弦 反曲弓",
+      "zh_TW": "裂心 反曲弓"
+    },
+    "Splinterheart Runeforged Recurve Bow": {
+      "zh_CN": "裂心之弦 符文反曲弓",
+      "zh_TW": "裂心 符鍛反曲弓"
+    },
+    "Split Personality Ruby": {
+      "zh_CN": "人格分裂 红玉",
+      "zh_TW": "人格分裂 紅寶石"
     },
     "Splitting Greataxe": {
       "zh_CN": "裂刃大斧",
@@ -7644,6 +9920,14 @@
     "Stalking Spear": {
       "zh_CN": "潜行战矛",
       "zh_TW": "潛獵長矛"
+    },
+    "Starkonja's Head Leatherbound Hood": {
+      "zh_CN": "斯塔空加之首 皮缚兜帽",
+      "zh_TW": "斯塔空加之首 皮革兜帽"
+    },
+    "Starkonja's Head Runemastered Leatherbound Hood": {
+      "zh_CN": "斯塔空加之首 符文师匠皮缚兜帽",
+      "zh_TW": "斯塔空加之首 符煉皮革兜帽"
     },
     "Staunching Charm": {
       "zh_CN": "止血咒符",
@@ -7725,6 +10009,10 @@
       "zh_CN": "坚石塔盾",
       "zh_TW": "岩石塔盾"
     },
+    "Stone of Lazhwar Lapis Amulet": {
+      "zh_CN": "拉兹瓦的灵石 海玉项链",
+      "zh_TW": "拉茲瓦的靈石 海玉護身符"
+    },
     "Storm Rune": {
       "zh_CN": "风暴符文",
       "zh_TW": "暴風符文"
@@ -7761,6 +10049,10 @@
       "zh_CN": "构造之锤",
       "zh_TW": "建構之錘"
     },
+    "Strugglescream Stellar Amulet": {
+      "zh_CN": "困苦尖啸 星辉项链",
+      "zh_TW": "掙扎吶喊 恆星項鍊"
+    },
     "Studded Boots": {
       "zh_CN": "镶钉长靴",
       "zh_TW": "鑲釘長靴"
@@ -7789,6 +10081,30 @@
       "zh_CN": "烈日神器",
       "zh_TW": "豔陽文物"
     },
+    "Sunsplinter Array Buckler": {
+      "zh_CN": "烈阳残片 阵列轻盾",
+      "zh_TW": "烈日碎片 排列輕盾"
+    },
+    "Sunsplinter Runemastered Array Buckler": {
+      "zh_CN": "烈阳残片 符文师匠阵列轻盾",
+      "zh_TW": "烈日碎片 符煉排列輕盾"
+    },
+    "Surefooted Sigil Jade Amulet": {
+      "zh_CN": "稳步法印 翠玉项链",
+      "zh_TW": "穩健印記 翠玉護身符"
+    },
+    "Surge of the Tide Lumbering Talisman": {
+      "zh_CN": "奔涌潮汐 蹒跚魔符",
+      "zh_TW": "潮汐浪湧 笨重魔符"
+    },
+    "Svalinn Crucible Tower Shield": {
+      "zh_CN": "斯瓦林 熔铸塔盾",
+      "zh_TW": "史瓦林 磨煉塔盾"
+    },
+    "Svalinn Runemastered Crucible Tower Shield": {
+      "zh_CN": "斯瓦林 符文师匠熔铸塔盾",
+      "zh_TW": "史瓦林 符煉磨煉塔盾"
+    },
     "Swathed Cap": {
       "zh_CN": "缠丝帽",
       "zh_TW": "裹頭便帽"
@@ -7813,9 +10129,29 @@
       "zh_CN": "剑刃长矛",
       "zh_TW": "劍刃長矛"
     },
+    "Sylvan's Effigy Stoic Sceptre": {
+      "zh_CN": "森林灵像 克己权杖",
+      "zh_TW": "林木塑像 魔道權杖"
+    },
+    "Tabula Rasa Garment": {
+      "zh_CN": "无尽之衣 华服装束",
+      "zh_TW": "無盡之衣 服裝"
+    },
+    "Tabula Rasa Runeforged Garment": {
+      "zh_CN": "无尽之衣 符文华服装束",
+      "zh_TW": "無盡之衣 符鍛服裝"
+    },
     "Tacati's Soul Core of Affliction": {
       "zh_CN": "塔卡提的折磨灵核",
       "zh_TW": "特卡蒂的苦痛靈魂核心"
+    },
+    "Tangletongue Forked Spear": {
+      "zh_CN": "纠缠之舌 分叉长矛",
+      "zh_TW": "縛舌 叉狀長矛"
+    },
+    "Tangletongue Runeforged Forked Spear": {
+      "zh_CN": "纠缠之舌 符文分叉长矛",
+      "zh_TW": "縛舌 符鍛叉狀長矛"
     },
     "Tangmazu's Reliquary Key": {
       "zh_CN": "唐玛祖的圣物厅钥匙",
@@ -7824,6 +10160,10 @@
     "Tapestry Relic": {
       "zh_CN": "挂毯遗物",
       "zh_TW": "聖經聖物"
+    },
+    "Taryn's Shiver Gelid Staff": {
+      "zh_CN": "塔林的颤栗之语 冰寒长杖",
+      "zh_TW": "塔林的顫慄之語 極寒長杖"
     },
     "Tasalian Focus": {
       "zh_CN": "塔萨里奥法器",
@@ -7873,6 +10213,14 @@
       "zh_CN": "神庙石板",
       "zh_TW": "神廟碑牌"
     },
+    "Temporalis Runemastered Silk Robe": {
+      "zh_CN": "时空之肌 符文师匠丝质之袍",
+      "zh_TW": "時空之物 符煉絲質之袍"
+    },
+    "Temporalis Silk Robe": {
+      "zh_CN": "时空之肌 丝质之袍",
+      "zh_TW": "時空之物 絲質之袍"
+    },
     "Tenebrous Amulet": {
       "zh_CN": "暗黑项链",
       "zh_TW": "黑暗項鍊"
@@ -7912,6 +10260,14 @@
     "Tethering Bands": {
       "zh_CN": "Tethering Bands",
       "zh_TW": "解脫纏帶"
+    },
+    "Tetzlapokal's Desire Runemastered Votive Raiment": {
+      "zh_CN": "特兹拉波卡尔的欲望 符文师匠奉愿之衣",
+      "zh_TW": "特沙波卡爾之慾 符煉還願之衣"
+    },
+    "Tetzlapokal's Desire Votive Raiment": {
+      "zh_CN": "特兹拉波卡尔的欲望 奉愿之衣",
+      "zh_TW": "特沙波卡爾之慾 還願之衣"
     },
     "Thane Girt's Rune of Wildness": {
       "zh_CN": "吉尔特领主的荒野符文",
@@ -7989,9 +10345,185 @@
       "zh_CN": "融冰咒符",
       "zh_TW": "解凍護符"
     },
+    "The Adorned Diamond": {
+      "zh_CN": "浮华 宝钻",
+      "zh_TW": "朝氣之靈 鑽石"
+    },
+    "The Anvil Bloodstone Amulet": {
+      "zh_CN": "信念之砧 血岩项链",
+      "zh_TW": "信念之砧 血石項鍊"
+    },
     "The Arbiter's Reliquary Key": {
       "zh_CN": "仲裁官的圣物厅钥匙",
       "zh_TW": "仲裁者的寶庫鑰匙"
+    },
+    "The Auspex Exquisite Vest": {
+      "zh_CN": "占星师 浮华背心",
+      "zh_TW": "觀鳥者 精美背心"
+    },
+    "The Auspex Runemastered Exquisite Vest": {
+      "zh_CN": "占星师 符文师匠浮华背心",
+      "zh_TW": "觀鳥者 符煉精美背心"
+    },
+    "The Barrow Dweller Rogue Armour": {
+      "zh_CN": "荒坟寄主 盗贼护甲",
+      "zh_TW": "遺塚居民 盜賊護甲"
+    },
+    "The Barrow Dweller Runemastered Rogue Armour": {
+      "zh_CN": "荒坟寄主 符文师匠盗贼护甲",
+      "zh_TW": "遺塚居民 符煉盜賊護甲"
+    },
+    "The Black Cat Grounding Charm": {
+      "zh_CN": "黑猫 根基咒符",
+      "zh_TW": "黑貓 接地護符"
+    },
+    "The Black Doubt Hexer's Robe": {
+      "zh_CN": "疑心暗惑 魔蛊长袍",
+      "zh_TW": "黑色之疑 咒術師長袍"
+    },
+    "The Black Doubt Runemastered Hexer's Robe": {
+      "zh_CN": "疑心暗惑 符文师匠魔蛊长袍",
+      "zh_TW": "黑色之疑 符煉咒術師長袍"
+    },
+    "The Black Insignia Corsair Cap": {
+      "zh_CN": "黑盗勋章 海贼帽",
+      "zh_TW": "漆黑徽章 海盜便帽"
+    },
+    "The Black Insignia Runemastered Corsair Cap": {
+      "zh_CN": "黑盗勋章 符文师匠海贼帽",
+      "zh_TW": "漆黑徽章 符煉海盜便帽"
+    },
+    "The Blood Thorn Runeforged Wrapped Quarterstaff": {
+      "zh_CN": "血棘 符文裹布节杖",
+      "zh_TW": "血棘 符鍛纏繞細杖"
+    },
+    "The Blood Thorn Wrapped Quarterstaff": {
+      "zh_CN": "血棘 裹布节杖",
+      "zh_TW": "血棘 纏繞細杖"
+    },
+    "The Brass Dome Champion Cuirass": {
+      "zh_CN": "巨铜之顶 冠军胸甲",
+      "zh_TW": "堅銅戰罩 冠軍胸甲"
+    },
+    "The Brass Dome Runeforged Champion Cuirass": {
+      "zh_CN": "巨铜之顶 符文冠军胸甲",
+      "zh_TW": "堅銅戰罩 符鍛冠軍胸甲"
+    },
+    "The Bringer of Rain Decorated Helm": {
+      "zh_CN": "祭礼之雨 华饰之盔",
+      "zh_TW": "祭禮之雨 裝飾之盔"
+    },
+    "The Bringer of Rain Runemastered Decorated Helm": {
+      "zh_CN": "祭礼之雨 符文师匠华饰之盔",
+      "zh_TW": "祭禮之雨 符煉裝飾之盔"
+    },
+    "The Burden of Leadership Tapestry Relic": {
+      "zh_CN": "领袖的重负 挂毯遗物",
+      "zh_TW": "領袖的重擔 聖經聖物"
+    },
+    "The Burden of Shadows Chiming Staff": {
+      "zh_CN": "暗影的重负 鸣谐长杖",
+      "zh_TW": "暗影重擔 鳴響長杖"
+    },
+    "The Burrower Topaz Ring": {
+      "zh_CN": "挖掘者 黄玉戒指",
+      "zh_TW": "掘地者 黃玉戒指"
+    },
+    "The Changing Seasons Seal Relic": {
+      "zh_CN": "季节变迁 封印遗物",
+      "zh_TW": "流轉的季節 草紙聖物"
+    },
+    "The Coming Calamity Heroic Armour": {
+      "zh_CN": "灵魂甲胄 英武护甲",
+      "zh_TW": "災難臨頭 英雄護甲"
+    },
+    "The Coming Calamity Runemastered Heroic Armour": {
+      "zh_CN": "灵魂甲胄 符文师匠英武护甲",
+      "zh_TW": "災難臨頭 符煉英雄護甲"
+    },
+    "The Covenant Altar Robe": {
+      "zh_CN": "血誓 祭坛长袍",
+      "zh_TW": "血誓 祭壇長袍"
+    },
+    "The Covenant Runemastered Altar Robe": {
+      "zh_CN": "血誓 符文师匠祭坛长袍",
+      "zh_TW": "血誓 符煉祭壇長袍"
+    },
+    "The Dancing Dervish Scimitar": {
+      "zh_CN": "禅意苦行僧 弯刀",
+      "zh_TW": "狂舞德爾維希 彎刀"
+    },
+    "The Dancing Mirage Runemastered Wayfarer Jacket": {
+      "zh_CN": "跃舞蜃影 符文师匠远行者外衣",
+      "zh_TW": "舞動幻影 符煉旅人外衣"
+    },
+    "The Dancing Mirage Wayfarer Jacket": {
+      "zh_CN": "跃舞蜃影 远行者外衣",
+      "zh_TW": "舞動幻影 旅人外衣"
+    },
+    "The Dark Defiler Rattling Sceptre": {
+      "zh_CN": "黑暗渎神 罪孽权杖",
+      "zh_TW": "黑暗玷汙者 雜響權杖"
+    },
+    "The Deepest Tower Spiritbone Crown": {
+      "zh_CN": "深邃幽塔 灵骨王冠",
+      "zh_TW": "深邃尖塔 魂骨之冠"
+    },
+    "The Desperate Alliance Vase Relic": {
+      "zh_CN": "绝境同盟 花瓶遗物",
+      "zh_TW": "絕望的同盟 器皿聖物"
+    },
+    "The Devouring Diadem Runemastered Wicker Tiara": {
+      "zh_CN": "吞噬者王冠 符文师匠柳枝冠冕",
+      "zh_TW": "吞噬之冠 符煉枝條頭冠"
+    },
+    "The Devouring Diadem Wicker Tiara": {
+      "zh_CN": "吞噬者王冠 柳枝冠冕",
+      "zh_TW": "吞噬之冠 枝條頭冠"
+    },
+    "The Empty Roar Cultist Greathammer": {
+      "zh_CN": "空荡怒吼 教徒大锤",
+      "zh_TW": "空洞怒吼 教徒巨錘"
+    },
+    "The Empty Roar Runeforged Cultist Greathammer": {
+      "zh_CN": "空荡怒吼 符文教徒大锤",
+      "zh_TW": "空洞怒吼 符鍛教徒巨錘"
+    },
+    "The Eternal Spark Crystal Focus": {
+      "zh_CN": "永恒火花 水晶法器",
+      "zh_TW": "永恆火花 水晶法器"
+    },
+    "The Eternal Spark Runemastered Crystal Focus": {
+      "zh_CN": "永恒火花 符文师匠水晶法器",
+      "zh_TW": "永恆火花 符煉水晶法器"
+    },
+    "The Everlasting Gaze Azure Amulet": {
+      "zh_CN": "永恒凝望 碧蓝项链",
+      "zh_TW": "永恆凝視 蒼藍項鍊"
+    },
+    "The Fall of the Axe Silver Charm": {
+      "zh_CN": "落刃时刻 真银咒符",
+      "zh_TW": "斧頭之隕 白銀護符"
+    },
+    "The Fallen Formation Lamellar Mail": {
+      "zh_CN": "溃灭之阵 层叠锁甲",
+      "zh_TW": "殞落之形 分層鎖甲"
+    },
+    "The Flesh Poppet Runeforged Vicious Talisman": {
+      "zh_CN": "血肉傀儡 符文凶恶魔符",
+      "zh_TW": "血肉傀儡 符鍛惡毒魔符"
+    },
+    "The Flesh Poppet Vicious Talisman": {
+      "zh_CN": "血肉傀儡 凶恶魔符",
+      "zh_TW": "血肉傀儡 惡毒魔符"
+    },
+    "The Gnashing Sash Wide Belt": {
+      "zh_CN": "狂獠饰带 宽大腰带",
+      "zh_TW": "憤恨飾帶 寬大腰帶"
+    },
+    "The Grand Project Irradiated Tablet": {
+      "zh_CN": "宏伟计划 能量辐照石板",
+      "zh_TW": "偉大計劃 輻照碑牌"
     },
     "The Greatwolf's Rune of Claws": {
       "zh_CN": "巨狼之利爪符文",
@@ -8001,6 +10533,98 @@
       "zh_CN": "巨狼之意志符文",
       "zh_TW": "巨狼意志符文"
     },
+    "The Hammer of Faith Giant Maul": {
+      "zh_CN": "信仰之锤 伟岸巨锤",
+      "zh_TW": "信仰之錘 巨型重錘"
+    },
+    "The Hollow Mask Hewn Mask": {
+      "zh_CN": "空洞面罩 凿制之面",
+      "zh_TW": "聖潔面具 粗製之面"
+    },
+    "The Hollow Mask Runemastered Hewn Mask": {
+      "zh_CN": "空洞面罩 符文师匠凿制之面",
+      "zh_TW": "聖潔面具 符煉粗製之面"
+    },
+    "The Infinite Pursuit Bronze Greaves": {
+      "zh_CN": "无尽之距 青铜胫甲",
+      "zh_TW": "無盡之距 青銅脛甲"
+    },
+    "The Infinite Pursuit Runemastered Bronze Greaves": {
+      "zh_CN": "无尽之距 符文师匠青铜胫甲",
+      "zh_TW": "無盡之距 符煉青銅脛甲"
+    },
+    "The Knight-errant Mail Sabatons": {
+      "zh_CN": "豪侠骑士 锁链战靴",
+      "zh_TW": "漂泊騎士 鎖甲鎧靴"
+    },
+    "The Knight-errant Runemastered Mail Sabatons": {
+      "zh_CN": "豪侠骑士 符文师匠锁链战靴",
+      "zh_TW": "漂泊騎士 符煉鎖甲鎧靴"
+    },
+    "The Last Flame Incense Relic": {
+      "zh_CN": "终末之火 熏香遗物",
+      "zh_TW": "終焉烈焰 香爐聖物"
+    },
+    "The Last Lament Desolate Crossbow": {
+      "zh_CN": "末后哀歌 苍凉战弩",
+      "zh_TW": "臨終悲歌 蒼涼十字弓"
+    },
+    "The Lethal Draw Sacral Quiver": {
+      "zh_CN": "攫命 圣骨箭袋",
+      "zh_TW": "致命抽取 聖禮箭袋"
+    },
+    "The Master's Reach Tethering Bands": {
+      "zh_CN": "The Master's Reach Tethering Bands",
+      "zh_TW": "主宰之觸 解脫纏帶"
+    },
+    "The Mutable Star Cleric Vestments": {
+      "zh_CN": "易变星辰 圣徒长衣",
+      "zh_TW": "多變之星 教士法衣"
+    },
+    "The Mutable Star Runemastered Cleric Vestments": {
+      "zh_CN": "易变星辰 符文师匠圣徒长衣",
+      "zh_TW": "多變之星 符煉教士法衣"
+    },
+    "The Ordained Grand Spear": {
+      "zh_CN": "天选之人 宏伟战矛",
+      "zh_TW": "神授命使 宏偉長矛"
+    },
+    "The Pandemonius Lapis Amulet": {
+      "zh_CN": "群魔殿 海玉项链",
+      "zh_TW": "群魔殿 海玉護身符"
+    },
+    "The Peacemaker's Draught Amphora Relic": {
+      "zh_CN": "求和者的饮剂 土罐遗物",
+      "zh_TW": "和平使者藥水 陶罐聖物"
+    },
+    "The Prisoner's Manacles Kalguuran Cuffs": {
+      "zh_CN": "囚徒的镣铐 卡古兰袖带",
+      "zh_TW": "囚犯的鐐銬 卡爾葛腕帶"
+    },
+    "The Prisoner's Manacles Runemastered Verisium Cuffs": {
+      "zh_CN": "囚徒的镣铐 符文师匠维金袖带",
+      "zh_TW": "囚犯的鐐銬 符煉維里西姆腕帶"
+    },
+    "The Rat Cage Runemastered Scout's Vest": {
+      "zh_CN": "疫鼠囚笼 符文师匠斥候背心",
+      "zh_TW": "疫鼠囚籠 符煉斥侯背心"
+    },
+    "The Rat Cage Scout's Vest": {
+      "zh_CN": "疫鼠囚笼 斥候背心",
+      "zh_TW": "疫鼠囚籠 斥侯背心"
+    },
+    "The Raven's Flock Perching Staff": {
+      "zh_CN": "渡鸦之群 栖鸟长杖",
+      "zh_TW": "渡鴉集束 棲羽長杖"
+    },
+    "The Remembered Tales Coffer Relic": {
+      "zh_CN": "铭记的传说 匣柜遗物",
+      "zh_TW": "被銘記的故事 寶箱聖物"
+    },
+    "The Road Warrior Raider Plate": {
+      "zh_CN": "征途之士 劫掠之铠",
+      "zh_TW": "無畏戰士 俠客鎧甲"
+    },
     "The Runebinder's Alloy": {
       "zh_CN": "符文缚者的合金",
       "zh_TW": "符文縛者的合金"
@@ -8008,6 +10632,58 @@
     "The Runefather's Alloy": {
       "zh_CN": "符文之父的合金",
       "zh_TW": "符文之父的合金"
+    },
+    "The Searing Touch Pyrophyte Staff": {
+      "zh_CN": "炽炎之使 耐火长杖",
+      "zh_TW": "熾炎之使 炎植長杖"
+    },
+    "The Sentry Gothic Quarterstaff": {
+      "zh_CN": "哨望 哥特节杖",
+      "zh_TW": "哨兵 歌德細杖"
+    },
+    "The Sentry Runeforged Gothic Quarterstaff": {
+      "zh_CN": "哨望 符文哥特节杖",
+      "zh_TW": "哨兵 符鍛歌德細杖"
+    },
+    "The Sentry Runemastered Gothic Quarterstaff": {
+      "zh_CN": "哨望 符文师匠哥特节杖",
+      "zh_TW": "哨兵 符煉歌德細杖"
+    },
+    "The Smiling Knight Cowled Helm": {
+      "zh_CN": "笑面骑士 掩面之盔",
+      "zh_TW": "微笑騎士 斗篷之盔"
+    },
+    "The Smiling Knight Runemastered Cowled Helm": {
+      "zh_CN": "笑面骑士 符文师匠掩面之盔",
+      "zh_TW": "微笑騎士 符煉斗篷之盔"
+    },
+    "The Sunken Vessel Knight Armour": {
+      "zh_CN": "沉没之舟 骑士护甲",
+      "zh_TW": "沉船 騎士護甲"
+    },
+    "The Sunken Vessel Runemastered Knight Armour": {
+      "zh_CN": "沉没之舟 符文师匠骑士护甲",
+      "zh_TW": "沉船 符煉騎士護甲"
+    },
+    "The Surrender Runemastered Vaal Tower Shield": {
+      "zh_CN": "降伏 符文师匠瓦尔塔盾",
+      "zh_TW": "降伏 符煉瓦爾塔盾"
+    },
+    "The Surrender Vaal Tower Shield": {
+      "zh_CN": "降伏 瓦尔塔盾",
+      "zh_TW": "降伏 瓦爾塔盾"
+    },
+    "The Taming Prismatic Ring": {
+      "zh_CN": "元素之章 三相戒指",
+      "zh_TW": "元素之章 三相戒指"
+    },
+    "The Three Dragons Runemastered Solid Mask": {
+      "zh_CN": "三龙战纪 符文师匠坚固之面",
+      "zh_TW": "三龍戰紀 符煉堅固之面"
+    },
+    "The Three Dragons Solid Mask": {
+      "zh_CN": "三龙战纪 坚固之面",
+      "zh_TW": "三龍戰紀 堅固之面"
     },
     "The Trialmaster's Reliquary Key": {
       "zh_CN": "试炼使者的圣物厅钥匙",
@@ -8017,9 +10693,69 @@
       "zh_CN": "重铸三耀之火",
       "zh_TW": "再鑄三曲"
     },
+    "The Unborn Lich Ravenous Staff": {
+      "zh_CN": "未生巫妖 饕餮法杖",
+      "zh_TW": "未誕生的巫妖 貪婪長杖"
+    },
+    "The Unleashed Revered Vestments": {
+      "zh_CN": "破禁者 崇礼长衣",
+      "zh_TW": "釋放者 尊敬法衣"
+    },
+    "The Unleashed Runemastered Revered Vestments": {
+      "zh_CN": "破禁者 符文师匠崇礼长衣",
+      "zh_TW": "釋放者 符煉尊敬法衣"
+    },
+    "The Vertex Runemastered Tribal Mask": {
+      "zh_CN": "谜容 符文师匠部族之面",
+      "zh_TW": "謎容 符煉部落之面"
+    },
+    "The Vertex Tribal Mask": {
+      "zh_CN": "谜容 部族之面",
+      "zh_TW": "謎容 部落之面"
+    },
+    "The Vile Knight Runemastered Shielded Helm": {
+      "zh_CN": "厄难骑士 符文师匠卫护之盔",
+      "zh_TW": "惡劣騎士 符煉庇護之盔"
+    },
+    "The Vile Knight Shielded Helm": {
+      "zh_CN": "厄难骑士 卫护之盔",
+      "zh_TW": "惡劣騎士 庇護之盔"
+    },
+    "The Wailing Wall Effigial Tower Shield": {
+      "zh_CN": "悲泣之壁 塑像塔盾",
+      "zh_TW": "哀嚎之牆 靈像塔盾"
+    },
+    "The Whispering Ice Permafrost Staff": {
+      "zh_CN": "冰点低语 永霜法杖",
+      "zh_TW": "冰點低語 永凍長杖"
+    },
+    "The Wicked Quill Withered Wand": {
+      "zh_CN": "邪恶之翎 凋零法杖",
+      "zh_TW": "邪惡羽毛 凋零法杖"
+    },
+    "Thief's Torment Emerald Ring": {
+      "zh_CN": "窃罪 翡翠戒指",
+      "zh_TW": "竊罪 綠寶石戒指"
+    },
+    "Threaded Light Runemastered Woven Focus": {
+      "zh_CN": "明光丝缕 符文师匠织造法器",
+      "zh_TW": "縫紉之光 符煉編織法器"
+    },
+    "Threaded Light Woven Focus": {
+      "zh_CN": "明光丝缕 织造法器",
+      "zh_TW": "縫紉之光 編織法器"
+    },
     "Threaded Shoes": {
       "zh_CN": "线缝便鞋",
       "zh_TW": "縫紉輕鞋"
+    },
+    "Thrillsteel Runemastered Spired Greathelm": {
+      "zh_CN": "惊险刺激 符文师匠螺旋巨盔",
+      "zh_TW": "顫慄之鋼 符煉尖頂巨盔"
+    },
+    "Thrillsteel Spired Greathelm": {
+      "zh_CN": "惊险刺激 螺旋巨盔",
+      "zh_TW": "顫慄之鋼 尖頂巨盔"
     },
     "Thrud's Might": {
       "zh_CN": "斯鲁德的神力",
@@ -8028,6 +10764,26 @@
     "Thunder Talisman": {
       "zh_CN": "雷霆魔符",
       "zh_TW": "天雷魔符"
+    },
+    "Thunderfist Runemastered Utility Wraps": {
+      "zh_CN": "雷拳 符文师匠万用裹手",
+      "zh_TW": "雷拳 符煉實用裹手"
+    },
+    "Thunderfist Utility Wraps": {
+      "zh_CN": "雷拳 万用裹手",
+      "zh_TW": "雷拳 實用裹手"
+    },
+    "Thunderstep Steeltoe Boots": {
+      "zh_CN": "雷鸣步伐 钢趾靴",
+      "zh_TW": "雷霆步伐 鐵趾長靴"
+    },
+    "Tidebreaker Pointed Maul": {
+      "zh_CN": "局势逆转者 钉头巨锤",
+      "zh_TW": "破浪者 尖銳重錘"
+    },
+    "Tidebreaker Runeforged Pointed Maul": {
+      "zh_CN": "局势逆转者 符文钉头巨锤",
+      "zh_TW": "破浪者 符鍛尖銳重錘"
     },
     "Tideseer Mantle": {
       "zh_CN": "潮贤斗篷",
@@ -8056,6 +10812,14 @@
     "Titan Mitts": {
       "zh_CN": "泰坦护手",
       "zh_TW": "泰坦長手套"
+    },
+    "Titanrot Cataphract Maraketh Cuirass": {
+      "zh_CN": "巨人灾星甲胄 马拉克斯胸甲",
+      "zh_TW": "泰坦腐化重騎兵 馬拉克斯胸甲"
+    },
+    "Titanrot Cataphract Runemastered Maraketh Cuirass": {
+      "zh_CN": "巨人灾星甲胄 符文师匠马拉克斯胸甲",
+      "zh_TW": "泰坦腐化重騎兵 符煉馬拉克斯胸甲"
     },
     "Tonal Focus": {
       "zh_CN": "音调法器",
@@ -8093,6 +10857,14 @@
       "zh_CN": "开拓者护甲",
       "zh_TW": "開拓者護甲"
     },
+    "Trampletoe Runemastered Trimmed Greaves": {
+      "zh_CN": "踏趾靴 符文师匠镶边胫甲",
+      "zh_TW": "踐踏之鞋 符煉鑲邊脛甲"
+    },
+    "Trampletoe Trimmed Greaves": {
+      "zh_CN": "踏趾靴 镶边胫甲",
+      "zh_TW": "踐踏之鞋 鑲邊脛甲"
+    },
     "Transcendent Alloy": {
       "zh_CN": "超凡合金",
       "zh_TW": "超凡合金"
@@ -8121,9 +10893,33 @@
       "zh_CN": "珍奇之刃",
       "zh_TW": "貴重刀刃"
     },
+    "Treefingers Riveted Mitts": {
+      "zh_CN": "树之指 铆接护手",
+      "zh_TW": "樹木之指 鉚接長手套"
+    },
+    "Treefingers Runemastered Riveted Mitts": {
+      "zh_CN": "树之指 符文师匠铆接护手",
+      "zh_TW": "樹木之指 符煉鉚接長手套"
+    },
     "Treerunner Shoes": {
       "zh_CN": "林奔者便鞋",
       "zh_TW": "樹行者輕鞋"
+    },
+    "Trenchtimbre Runeforged Spiked Club": {
+      "zh_CN": "战壕砥柱 符文钝钉木棒",
+      "zh_TW": "壕溝之音 符鍛鈍釘木棒"
+    },
+    "Trenchtimbre Spiked Club": {
+      "zh_CN": "战壕砥柱 钝钉木棒",
+      "zh_TW": "壕溝之音 鈍釘木棒"
+    },
+    "Trephina Forge Maul": {
+      "zh_CN": "穿洞奇械 锻炉巨锤",
+      "zh_TW": "崔非那 鍛造重錘"
+    },
+    "Trephina Runeforged Forge Maul": {
+      "zh_CN": "穿洞奇械 符文锻炉巨锤",
+      "zh_TW": "崔非那 符鍛鍛造重錘"
     },
     "Tribal Bow": {
       "zh_CN": "部族弓",
@@ -8169,6 +10965,14 @@
       "zh_CN": "畸变项链",
       "zh_TW": "扭曲項鍊"
     },
+    "Twisted Empyrean Aberrant Sledge": {
+      "zh_CN": "扭曲天穹 畸变巨锤",
+      "zh_TW": "畸變星穹 怪異攻城錘"
+    },
+    "Twisted Empyrean Runemastered Aberrant Sledge": {
+      "zh_CN": "扭曲天穹 符文师匠畸变巨锤",
+      "zh_TW": "畸變星穹 符煉怪異攻城錘"
+    },
     "Twisted Wand": {
       "zh_CN": "扭曲法杖",
       "zh_TW": "扭曲法杖"
@@ -8181,9 +10985,25 @@
       "zh_CN": "双玉戒指",
       "zh_TW": "雙玉戒指"
     },
+    "Tyranny's Grip Ironhead Spear": {
+      "zh_CN": "暴政之握 铁头长矛",
+      "zh_TW": "暴政之握 鐵木長矛"
+    },
+    "Tyranny's Grip Runeforged Ironhead Spear": {
+      "zh_CN": "暴政之握 符文铁头长矛",
+      "zh_TW": "暴政之握 符鍛鐵木長矛"
+    },
+    "Tyranny's Grip Runemastered Ironhead Spear": {
+      "zh_CN": "暴政之握 符文师匠铁头长矛",
+      "zh_TW": "暴政之握 符煉鐵木長矛"
+    },
     "Tzamoto's Soul Core of Ferocity": {
       "zh_CN": "提扎墨脱的狂暴灵核",
       "zh_TW": "薩摩特的狂暴靈魂核心"
+    },
+    "Uhtred's Chalice Transcendent Mana Flask": {
+      "zh_CN": "乌崔德圣杯 非凡魔力药剂",
+      "zh_TW": "烏特雷的聖杯 卓越魔力藥劑"
     },
     "Uhtred's Crest of the Chalice": {
       "zh_CN": "乌崔德的圣杯徽记",
@@ -8213,6 +11033,10 @@
       "zh_CN": "超凡巨剑",
       "zh_TW": "終極巨劍"
     },
+    "Umbilicus Immortalis Linen Belt": {
+      "zh_CN": "不朽系命 亚麻腰带",
+      "zh_TW": "不朽繫命 麻布腰帶"
+    },
     "Uncut Skill Gem": {
       "zh_CN": "未切割的技能宝石",
       "zh_TW": "未切割的技能寶石"
@@ -8228,6 +11052,18 @@
     "Uncut Support Gem": {
       "zh_CN": "未切割的辅助宝石",
       "zh_TW": "未切割的輔助寶石"
+    },
+    "Undying Hate Timeless Jewel": {
+      "zh_CN": "不朽之恨 永恒珠宝",
+      "zh_TW": "不朽恨意 永恆珠寶"
+    },
+    "Unforeseen Consequences Abyss Tablet": {
+      "zh_CN": "无常因果 深渊石板",
+      "zh_TW": "始料未及的後果 深淵碑牌"
+    },
+    "Ungil's Harmony Azure Amulet": {
+      "zh_CN": "恩吉尔的和谐 碧蓝项链",
+      "zh_TW": "恩吉爾的和諧 蒼藍項鍊"
     },
     "Unset Ring": {
       "zh_CN": "潜能之戒",
@@ -8317,6 +11153,18 @@
       "zh_CN": "漂泊者护甲",
       "zh_TW": "流浪者護甲"
     },
+    "Valako's Roar Topaz Charm": {
+      "zh_CN": "瓦拉克怒吼 黄玉咒符",
+      "zh_TW": "瓦拉庫之吼 黃玉護符"
+    },
+    "Valako's Vice Plate Gauntlets": {
+      "zh_CN": "瓦拉库的离奇 铁板护手",
+      "zh_TW": "瓦拉庫之惡 鎧甲護手"
+    },
+    "Valako's Vice Runemastered Plate Gauntlets": {
+      "zh_CN": "瓦拉库的离奇 符文师匠铁板护手",
+      "zh_TW": "瓦拉庫之惡 符煉鎧甲護手"
+    },
     "Vampiric Blade": {
       "zh_CN": "喋血之刃",
       "zh_TW": "嗜血之刃"
@@ -8329,9 +11177,21 @@
       "zh_CN": "花瓶遗物",
       "zh_TW": "器皿聖物"
     },
+    "Veil of the Night Martyr Crown": {
+      "zh_CN": "夜幕 英烈之冠",
+      "zh_TW": "夜幕 殉難之冠"
+    },
+    "Veil of the Night Runemastered Martyr Crown": {
+      "zh_CN": "夜幕 符文师匠英烈之冠",
+      "zh_TW": "夜幕 符煉殉難之冠"
+    },
     "Veiled Mask": {
       "zh_CN": "蒙纱之面",
       "zh_TW": "隱匿之面"
+    },
+    "Veilpiercer Amethyst Ring": {
+      "zh_CN": "破幕者 紫晶戒指",
+      "zh_TW": "破帷者 紫晶戒指"
     },
     "Velour Shoes": {
       "zh_CN": "鹅绒便鞋",
@@ -8349,6 +11209,14 @@
       "zh_CN": "庄严星辉矿石",
       "zh_TW": "古老星耀礦石"
     },
+    "Venopuncture Iron Ring": {
+      "zh_CN": "静脉穿刺 锻铁戒指",
+      "zh_TW": "脈絡針刺 鍛鐵戒指"
+    },
+    "Ventor's Gamble Gold Ring": {
+      "zh_CN": "赌神芬多 金光戒指",
+      "zh_TW": "賭神芬多 金光戒指"
+    },
     "Veridical Chain": {
       "zh_CN": "真相之链",
       "zh_TW": "幻象鎖鏈"
@@ -8365,6 +11233,14 @@
       "zh_CN": "朱砂头冠",
       "zh_TW": "鍍金頭環"
     },
+    "Vestige of Darkness Runemastered Tenebrous Crown": {
+      "zh_CN": "黑暗残迹 符文师匠阴暗王冠",
+      "zh_TW": "幽暗殘餘 符煉幽暗寶冠"
+    },
+    "Vestige of Darkness Tenebrous Crown": {
+      "zh_CN": "黑暗残迹 阴暗王冠",
+      "zh_TW": "幽暗殘餘 幽暗寶冠"
+    },
     "Veteran Sabatons": {
       "zh_CN": "老兵战靴",
       "zh_TW": "老兵鎧靴"
@@ -8376,6 +11252,10 @@
     "Victorious Fate": {
       "zh_CN": "胜利的命运",
       "zh_TW": "勝利之運"
+    },
+    "Vigilant View Emerald Ring": {
+      "zh_CN": "警戒凝视 翡翠戒指",
+      "zh_TW": "警戒之視 綠寶石戒指"
     },
     "Vile Greataxe": {
       "zh_CN": "厄难大斧",
@@ -8389,6 +11269,22 @@
       "zh_CN": "毒蝰帽",
       "zh_TW": "毒蛇便帽"
     },
+    "Vis Mortis Plated Raiment": {
+      "zh_CN": "兀鸣 嵌板之衣",
+      "zh_TW": "兀鳴 鎧甲之衣"
+    },
+    "Vis Mortis Runemastered Plated Raiment": {
+      "zh_CN": "兀鸣 符文师匠嵌板之衣",
+      "zh_TW": "兀鳴 符煉鎧甲之衣"
+    },
+    "Visage of Ayah Beaded Circlet": {
+      "zh_CN": "阿雅的面目 珠饰头冠",
+      "zh_TW": "艾雅面紗 串珠頭環"
+    },
+    "Visage of Ayah Runemastered Beaded Circlet": {
+      "zh_CN": "阿雅的面目 符文师匠珠饰头冠",
+      "zh_TW": "艾雅面紗 符煉串珠頭環"
+    },
     "Visceral Quiver": {
       "zh_CN": "贯心箭袋",
       "zh_TW": "內臟箭袋"
@@ -8397,6 +11293,10 @@
       "zh_CN": "幻象符文",
       "zh_TW": "遠見符文"
     },
+    "Visions of Paradise Irradiated Tablet": {
+      "zh_CN": "乐园幻象 能量辐照石板",
+      "zh_TW": "天堂異象 輻照碑牌"
+    },
     "Visored Helm": {
       "zh_CN": "护面之盔",
       "zh_TW": "假面之盔"
@@ -8404,6 +11304,10 @@
     "Vitalic Ring": {
       "zh_CN": "活力戒指",
       "zh_TW": "維生之戒"
+    },
+    "Voices Sapphire": {
+      "zh_CN": "天神之音 蓝玉",
+      "zh_TW": "嗓音 藍寶石"
     },
     "Void Flux": {
       "zh_CN": "虚空溶剂",
@@ -8417,9 +11321,21 @@
       "zh_CN": "易变法杖",
       "zh_TW": "失衡法杖"
     },
+    "Voll's Protector Plated Vestments": {
+      "zh_CN": "福尔的战铠 嵌板长衣",
+      "zh_TW": "福爾的戰鎧 鎧甲法衣"
+    },
+    "Voll's Protector Runemastered Ironclad Vestments": {
+      "zh_CN": "福尔的战铠 符文师匠武装长衣",
+      "zh_TW": "福爾的戰鎧 符煉鐵甲法衣"
+    },
     "Voltaic Staff": {
       "zh_CN": "雷霆长杖",
       "zh_TW": "電流長杖"
+    },
+    "Voltaxic Rift Fanatic Bow": {
+      "zh_CN": "魔暴之痕 狂热之弓",
+      "zh_TW": "魔暴之痕 盲信之弓"
     },
     "Voltfang Talisman": {
       "zh_CN": "电牙魔符",
@@ -8445,6 +11361,22 @@
       "zh_CN": "奉愿之衣",
       "zh_TW": "還願之衣"
     },
+    "Waistgate Heavy Belt": {
+      "zh_CN": "腰际之门 重革腰带",
+      "zh_TW": "腰閥 重革腰帶"
+    },
+    "Waistgate Runemastered Heavy Belt": {
+      "zh_CN": "腰际之门 符文师匠重革腰带",
+      "zh_TW": "腰閥 符煉重革腰帶"
+    },
+    "Wake of Destruction Runemastered Secured Leggings": {
+      "zh_CN": "覆灭之兆 符文师匠牢靠绑腿",
+      "zh_TW": "覆滅之兆 符煉牢固護腿"
+    },
+    "Wake of Destruction Secured Leggings": {
+      "zh_CN": "覆灭之兆 牢靠绑腿",
+      "zh_TW": "覆滅之兆 牢固護腿"
+    },
     "Wanderer Armour": {
       "zh_CN": "流浪者护甲",
       "zh_TW": "漫遊者護甲"
@@ -8452,6 +11384,22 @@
     "Wanderer Shoes": {
       "zh_CN": "游荡者便鞋",
       "zh_TW": "漫遊者輕鞋"
+    },
+    "Wandering Reliquary Runemastered Steel Plate": {
+      "zh_CN": "流浪圣柜 符文师匠冷钢之铠",
+      "zh_TW": "流浪寶庫 符煉堅鋼鎧甲"
+    },
+    "Wandering Reliquary Steel Plate": {
+      "zh_CN": "流浪圣柜 冷钢之铠",
+      "zh_TW": "流浪寶庫 堅鋼鎧甲"
+    },
+    "Wanderlust Runemastered Wrapped Sandals": {
+      "zh_CN": "苦行之履 符文师匠裹布鞋履",
+      "zh_TW": "苦行之履 符煉裹腳便鞋"
+    },
+    "Wanderlust Wrapped Sandals": {
+      "zh_CN": "苦行之履 裹布鞋履",
+      "zh_TW": "苦行之履 裹腳便鞋"
     },
     "War Spear": {
       "zh_CN": "历战长矛",
@@ -8573,6 +11521,14 @@
       "zh_CN": "战士巨盔",
       "zh_TW": "戰士巨盔"
     },
+    "Waveshaper Runemastered Tideseer Mantle": {
+      "zh_CN": "塑成惊涛 符文师匠潮贤斗篷",
+      "zh_TW": "浪湧塑形器 符煉潮汐先知披肩"
+    },
+    "Waveshaper Tideseer Mantle": {
+      "zh_CN": "塑成惊涛 潮贤斗篷",
+      "zh_TW": "浪湧塑形器 潮汐先知披肩"
+    },
     "Waxed Jacket": {
       "zh_CN": "防水外衣",
       "zh_TW": "打蠟外衣"
@@ -8665,6 +11621,10 @@
       "zh_CN": "织履绑腿",
       "zh_TW": "編織者護腿"
     },
+    "Whisper of the Brotherhood Sapphire Ring": {
+      "zh_CN": "兄弟会的耳语 蓝玉戒指",
+      "zh_TW": "意志低語 藍玉戒指"
+    },
     "Whorl Focus": {
       "zh_CN": "涡旋法器",
       "zh_TW": "螺旋法器"
@@ -8677,13 +11637,57 @@
       "zh_CN": "宽大腰带",
       "zh_TW": "寬大腰帶"
     },
+    "Widow's Reign Knight Armour": {
+      "zh_CN": "寡妇的统治 骑士护甲",
+      "zh_TW": "寡婦統治 騎士護甲"
+    },
+    "Widow's Reign Runemastered Knight Armour": {
+      "zh_CN": "寡妇的统治 符文师匠骑士护甲",
+      "zh_TW": "寡婦統治 符煉騎士護甲"
+    },
+    "Widowhail Crude Bow": {
+      "zh_CN": "遗孀之雹 粗制弓",
+      "zh_TW": "鰥寡之托 粗製弓"
+    },
+    "Widowhail Runeforged Crude Bow": {
+      "zh_CN": "遗孀之雹 符文粗制弓",
+      "zh_TW": "鰥寡之托 符鍛粗製弓"
+    },
     "Wildwood Talisman": {
       "zh_CN": "荒林魔符",
       "zh_TW": "荒林魔符"
     },
+    "Window to Paradise Barricade Tower Shield": {
+      "zh_CN": "乐土之窗 障壁塔盾",
+      "zh_TW": "通往天堂之窗 障壁塔盾"
+    },
+    "Window to Paradise Runemastered Barricade Tower Shield": {
+      "zh_CN": "乐土之窗 符文师匠障壁塔盾",
+      "zh_TW": "通往天堂之窗 符煉障壁塔盾"
+    },
+    "Windscream Feathered Sandals": {
+      "zh_CN": "恶风足迹 羽饰鞋履",
+      "zh_TW": "惡風足跡 羽毛便鞋"
+    },
+    "Windscream Runemastered Feathered Sandals": {
+      "zh_CN": "恶风足迹 符文师匠羽饰鞋履",
+      "zh_TW": "惡風足跡 符煉羽毛便鞋"
+    },
     "Winged Spear": {
       "zh_CN": "飞翼长矛",
       "zh_TW": "羽翅長矛"
+    },
+    "Wings of Caelyn Runemastered Rusted Greathelm": {
+      "zh_CN": "凯琳飞翼 符文师匠锈蚀巨盔",
+      "zh_TW": "凱林之翼 符煉鏽蝕巨盔"
+    },
+    "Wings of Caelyn Rusted Greathelm": {
+      "zh_CN": "凯琳飞翼 锈蚀巨盔",
+      "zh_TW": "凱林之翼 鏽蝕巨盔"
+    },
+    "Winter's Bite Glass Shank": {
+      "zh_CN": "寒冬噬咬 玻璃利片",
+      "zh_TW": "寒冬嚙蝕 玻璃利片"
     },
     "Withered Wand": {
       "zh_CN": "凋零法杖",
@@ -8696,6 +11700,14 @@
     "Wolfskin Mantle": {
       "zh_CN": "狼皮斗篷",
       "zh_TW": "狼皮披肩"
+    },
+    "Wondertrap Runemastered Silk Slippers": {
+      "zh_CN": "回光之迹 符文师匠丝绸便鞋",
+      "zh_TW": "迴光之跡 符煉絲綢便鞋"
+    },
+    "Wondertrap Silk Slippers": {
+      "zh_CN": "回光之迹 丝绸便鞋",
+      "zh_TW": "迴光之跡 絲綢便鞋"
     },
     "Wooden Buckler": {
       "zh_CN": "木制轻盾",
@@ -8716,6 +11728,10 @@
     "Woven Focus": {
       "zh_CN": "织造法器",
       "zh_TW": "編織法器"
+    },
+    "Wraeclast Besieged Breach Tablet": {
+      "zh_CN": "围困瓦尔克拉斯 裂隙石板",
+      "zh_TW": "被圍攻的瓦爾克拉斯 裂痕碑牌"
     },
     "Wrapped Cap": {
       "zh_CN": "包裹帽",
@@ -8741,6 +11757,18 @@
       "zh_CN": "花环法器",
       "zh_TW": "花環法器"
     },
+    "Wulfsbane Painted Tower Shield": {
+      "zh_CN": "伍夫之难 彩绘塔盾",
+      "zh_TW": "狼之禍 彩繪塔盾"
+    },
+    "Wulfsbane Runemastered Painted Tower Shield": {
+      "zh_CN": "伍夫之难 符文师匠彩绘塔盾",
+      "zh_TW": "狼之禍 符煉彩繪塔盾"
+    },
+    "Wylund's Stake Smithing Hammer": {
+      "zh_CN": "怀伦德之桩 锻铸之锤",
+      "zh_TW": "威倫德的木樁 鍛造錘"
+    },
     "Wyrm Quarterstaff": {
       "zh_CN": "腾龙节杖",
       "zh_TW": "蠕蟲細杖"
@@ -8761,6 +11789,10 @@
       "zh_CN": "肖佩克的力量灵核",
       "zh_TW": "柔派克的力量靈魂核心"
     },
+    "Xoph's Blood Amber Amulet": {
+      "zh_CN": "索伏之血 琥珀项链",
+      "zh_TW": "索伏之血 琥珀護身符"
+    },
     "Xoph's Catalyst": {
       "zh_CN": "索伏催化剂",
       "zh_TW": "索伏的催化劑"
@@ -8769,9 +11801,25 @@
       "zh_CN": "残暴献祭宝珠",
       "zh_TW": "殘酷奉獻寶珠"
     },
+    "Yoke of Suffering Bloodstone Amulet": {
+      "zh_CN": "苦难羁绊 血岩项链",
+      "zh_TW": "磨難之軛 血石項鍊"
+    },
+    "Yriel's Fostering Runemastered Strider Vest": {
+      "zh_CN": "伊瑞的精通 符文师匠疾行者背心",
+      "zh_TW": "伊瑞的栽培 符煉疾行者背心"
+    },
+    "Yriel's Fostering Strider Vest": {
+      "zh_CN": "伊瑞的精通 疾行者背心",
+      "zh_TW": "伊瑞的栽培 疾行者背心"
+    },
     "Yugul's Orb of Sacrifice": {
       "zh_CN": "皇家献祭宝珠",
       "zh_TW": "皇家奉獻寶珠"
+    },
+    "Zaida's Longevity Ring": {
+      "zh_CN": "寨达的长寿 戒指",
+      "zh_TW": "扎伊達的長壽 戒指"
     },
     "Zalatl's Soul Core of Insulation": {
       "zh_CN": "扎拉迪的绝缘灵核",
@@ -8800,6 +11848,18 @@
     "Zealot Greathammer": {
       "zh_CN": "狂热大锤",
       "zh_TW": "狂熱巨錘"
+    },
+    "Zerphi's Genesis Heavy Belt": {
+      "zh_CN": "泽佛伊的本源 重革腰带",
+      "zh_TW": "澤佛伊的創世紀 重革腰帶"
+    },
+    "Zerphi's Serape Runemastered Scalper's Jacket": {
+      "zh_CN": "泽佛伊的毛披肩 符文师匠猎头者外衣",
+      "zh_TW": "澤菲披肩 符煉投機者外衣"
+    },
+    "Zerphi's Serape Scalper's Jacket": {
+      "zh_CN": "泽佛伊的毛披肩 猎头者外衣",
+      "zh_TW": "澤菲披肩 投機者外衣"
     }
   },
   "stats": {
@@ -39684,7 +42744,7 @@
       "zh_TW": "Bonded: #% of Damage from Hits is taken from your Damageable Companion's Life before you"
     },
     "rune.stat_4111152445": {
-      "zh_CN": "Bonded: # to Level of all Lightning Skills",
+      "zh_CN": "羁绊： 所有闪电技能等级 #",
       "zh_TW": "命定: 全部閃電技能等級#"
     },
     "rune.stat_4111745607": {
@@ -50362,7 +53422,7 @@
       "zh_TW": "命定: 全部攻擊技能等級#"
     },
     "Bonded: # to Level of all Lightning Skills": {
-      "zh_CN": "Bonded: # to Level of all Lightning Skills",
+      "zh_CN": "羁绊： 所有闪电技能等级 #",
       "zh_TW": "命定: 全部閃電技能等級#"
     },
     "Bonded: # to Level of all Minion Skills": {

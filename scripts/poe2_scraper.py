@@ -14,16 +14,12 @@ from pathlib import Path
 from typing import Any
 from urllib.parse import urljoin, urlparse
 
-try:
-    import aiohttp
-except ModuleNotFoundError:  # pragma: no cover
-    aiohttp = None
+from curl_cffi.requests import AsyncSession
 
 
 DEFAULT_ROOT_URL = "https://poe2db.tw/us/Modifiers"
 REPO_ROOT = Path(__file__).resolve().parents[1]
 DEFAULT_HEADERS = {
-    "User-Agent": "Mozilla/5.0 (compatible; poe2-data-scraper/1.0)",
     "Accept": "text/html,application/xhtml+xml,application/json;q=0.9,*/*;q=0.8",
 }
 HTML_TAG_RE = re.compile(r"<[^>]+>")
@@ -114,33 +110,18 @@ class PageResult:
     affixes: list[dict[str, Any]]
 
 
-def require_aiohttp() -> Any:
-    if aiohttp is None:  # pragma: no cover
-        raise RuntimeError(
-            "aiohttp is not installed. Run `uv sync` to install dependencies first."
-        )
-    return aiohttp
-
-
 def build_async_client(max_connections: int) -> Any:
-    aiohttp_module = require_aiohttp()
-    timeout = aiohttp_module.ClientTimeout(total=30.0, connect=10.0)
-    connector = aiohttp_module.TCPConnector(
-        limit=max_connections,
-        limit_per_host=max_connections,
-    )
-    return aiohttp_module.ClientSession(
+    return AsyncSession(
         headers=DEFAULT_HEADERS,
-        timeout=timeout,
-        connector=connector,
-        raise_for_status=True,
-        trust_env=True,
+        impersonate="chrome",
+        max_clients=max_connections,
     )
 
 
 async def fetch_text(client: Any, url: str) -> str:
-    async with client.get(url, allow_redirects=True) as response:
-        return await response.text()
+    response = await client.get(url, allow_redirects=True, timeout=30)
+    response.raise_for_status()
+    return response.text
 
 
 def discover_modifier_links(html: str, base_url: str = DEFAULT_ROOT_URL) -> list[str]:

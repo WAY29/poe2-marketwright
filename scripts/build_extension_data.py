@@ -46,11 +46,10 @@ TRADE_FILTERS_URL = "https://www.pathofexile.com/api/trade2/data/filters"
 TRADE_FILTERS_ZH_CN_URL = "https://poe.game.qq.com/api/trade2/data/filters"
 TRADE_FILTERS_ZH_TW_URL = "https://pathofexile.tw/api/trade2/data/filters"
 POE2DB_ITEM_ROOT_URL = "https://poe2db.tw/us/"
-CLIENT_STRINGS_URL = "https://raw.githubusercontent.com/LocalIdentity/poe2-data/main/data/clientstrings.json"
-CLIENT_STRINGS_ZH_TW_URL = (
-    "https://raw.githubusercontent.com/LocalIdentity/poe2-data/main/"
-    "data/traditional%20chinese/clientstrings.json"
-)
+DEFAULT_POE2DB_BATCH_SIZE = 10
+DEFAULT_POE2DB_BATCH_DELAY_SECONDS = 5.0
+UNIQUE_ITEM_PAGE_CACHE_VERSION = 1
+UNIQUE_ITEM_MOD_TEXTS_CACHE_VERSION = 2
 TRADE_ITEM_LOCALIZATION_PAGE_SLUGS = (
     "Stackable_Currency",
     "Augment",
@@ -113,7 +112,17 @@ TRADE_CATEGORY_LOCALIZATION_PAGE_SLUGS = {
 }
 TRADE_STAT_WILDCARD_PLACEHOLDERS = {
     "azmeri spirit",
+    "passive skill",
 }
+POE2DB_REDUNDANT_PASSIVE_SKILL_RE = re.compile(
+    r"\bpassives in radius of passive skills?\s+(?=can be allocated\b)",
+    re.IGNORECASE,
+)
+POE2DB_PASSIVE_SKILL_RE = re.compile(r"\bpassive skills?\b", re.IGNORECASE)
+POE2DB_RANDOM_KEYSTONE_PASSIVE_SKILL_RE = re.compile(
+    r"^random # keystone passive skills?(?: \[#,#\])?$",
+    re.IGNORECASE,
+)
 HTML_VOID_TAGS = {
     "area",
     "base",
@@ -457,6 +466,8 @@ class Poe2dbPageArtifactsParser(HTMLParser):
         self.base_item_mod_texts: list[str] = []
 
     def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag == "br":
+            self.add_text_separator()
         attrs_dict = dict(attrs)
         class_tokens = (attrs_dict.get("class", "") or "").split()
         if self.capture_item_mod_depth > 0 and tag not in HTML_VOID_TAGS:
@@ -501,6 +512,8 @@ class Poe2dbPageArtifactsParser(HTMLParser):
             self.current_text = []
 
     def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag == "br":
+            self.add_text_separator()
         if self.capture_implicit_depth > 0:
             self.record_granted_skill_icon(tag, dict(attrs))
 
@@ -541,6 +554,14 @@ class Poe2dbPageArtifactsParser(HTMLParser):
         if self.capture_implicit_depth > 0:
             self.current_implicit_text.append(data)
 
+    def add_text_separator(self) -> None:
+        if self.capture_item_mod_depth > 0:
+            self.current_item_mod_text.append(" ")
+        if self.capture_base_item_mod_depth > 0:
+            self.current_base_item_mod_text.append(" ")
+        if self.capture_implicit_depth > 0:
+            self.current_implicit_text.append(" ")
+
     def record_granted_skill_icon(self, tag: str, attrs_dict: dict[str, str | None]) -> None:
         if tag != "img":
             return
@@ -570,6 +591,39 @@ class Poe2dbPageArtifactsParser(HTMLParser):
         if text:
             self.base_item_mod_texts.append(text)
         self.current_base_item_mod_text = []
+
+
+class Poe2dbUniqueItemFieldsParser(HTMLParser):
+    """Read the unique name and base type from the item card's ordered fields."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.capture_depth = 0
+        self.current_text: list[str] = []
+        self.fields: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if self.capture_depth > 0:
+            if tag not in HTML_VOID_TAGS:
+                self.capture_depth += 1
+            return
+        if tag == "span" and "lc" in (dict(attrs).get("class") or "").split() and len(self.fields) < 2:
+            self.capture_depth = 1
+            self.current_text = []
+
+    def handle_endtag(self, tag: str) -> None:
+        if self.capture_depth <= 0:
+            return
+        self.capture_depth -= 1
+        if self.capture_depth == 0:
+            text = WHITESPACE_RE.sub(" ", "".join(self.current_text)).strip()
+            if text:
+                self.fields.append(text)
+            self.current_text = []
+
+    def handle_data(self, data: str) -> None:
+        if self.capture_depth > 0:
+            self.current_text.append(data)
 
 
 class Poe2dbStatSourceParser(HTMLParser):
@@ -658,6 +712,14 @@ def parse_poe2db_stat_source_records(html: str, page_slug: str) -> list[Poe2dbSt
     parser = Poe2dbStatSourceParser(page_slug)
     parser.feed(html)
     return list(dict.fromkeys(parser.records))
+
+
+def parse_poe2db_unique_item_fields(html: str) -> dict[str, str]:
+    parser = Poe2dbUniqueItemFieldsParser()
+    parser.feed(html)
+    if len(parser.fields) != 2:
+        return {}
+    return {"name": parser.fields[0], "type": parser.fields[1]}
 
 
 def poe2db_stat_source_identity(record: Poe2dbStatSourceRecord) -> tuple[str, str, str, str, tuple[str, ...]]:
@@ -852,6 +914,33 @@ def canonicalize_stat_text(text: str) -> str:
     text = re.sub(r"(^|[\s(])%", r"\1#%", text)
     text = WHITESPACE_RE.sub(" ", text).strip()
     return text
+
+
+def poe2db_trade_stat_templates(text: str) -> list[str]:
+    """Expand verified PoE2DB placeholders into their Trade stat templates."""
+
+    pattern = canonicalize_stat_text(text)
+    if not pattern:
+        return []
+    if POE2DB_REDUNDANT_PASSIVE_SKILL_RE.search(pattern):
+        return dedupe_preserve_order(
+            [
+                POE2DB_REDUNDANT_PASSIVE_SKILL_RE.sub("Passives in Radius ", pattern),
+                POE2DB_REDUNDANT_PASSIVE_SKILL_RE.sub("Passives in Radius of [Passive Skill] ", pattern),
+            ]
+        )
+    return dedupe_preserve_order(
+        [
+            pattern,
+            POE2DB_PASSIVE_SKILL_RE.sub("[Passive Skill]", pattern),
+        ]
+    )
+
+
+def normalize_poe2db_trade_stat_template(text: str) -> str:
+    """Return the primary Trade template for compatibility with existing callers."""
+
+    return next(iter(poe2db_trade_stat_templates(text)), "")
 
 
 def canonicalize_match_key(text: str) -> str:
@@ -1172,32 +1261,6 @@ def build_trade_stat_text_map(trade_stats_payload: dict[str, Any]) -> dict[str, 
             if stat_id and text and stat_id not in text_by_id:
                 text_by_id[stat_id] = text
     return text_by_id
-
-
-def build_client_string_localizations(
-    english_payload: list[dict[str, Any]],
-    traditional_payload: list[dict[str, Any]],
-) -> dict[str, dict[str, str]]:
-    """Map client UI copy through stable ClientStrings IDs without guessing duplicates."""
-
-    traditional_by_id = {
-        str(record.get("Id") or "").strip(): str(record.get("Text") or "").strip()
-        for record in traditional_payload
-        if str(record.get("Id") or "").strip() and str(record.get("Text") or "").strip()
-    }
-    candidates: dict[str, set[str]] = {}
-    for record in english_payload:
-        record_id = str(record.get("Id") or "").strip()
-        english = str(record.get("Text") or "").strip()
-        traditional = traditional_by_id.get(record_id, "")
-        if record_id and english and traditional:
-            candidates.setdefault(english, set()).add(traditional)
-
-    return {
-        english: {"en": english, "zh_CN": english, "zh_TW": next(iter(translations))}
-        for english, translations in sorted(candidates.items())
-        if len(translations) == 1
-    }
 
 
 def build_trade_stat_group_records(
@@ -1644,7 +1707,6 @@ def build_trade_localization_metadata(
     return {
         "version": 1,
         "strings": dict(sorted(strings.items())),
-        "clientStrings": display_metadata.get("clientStrings") or {},
         "search": {
             "items": dedupe_search(item_search),
             "stats": dedupe_search(stat_search),
@@ -1683,7 +1745,7 @@ def build_trade_item_localization_bundle(trade_localization: dict[str, Any]) -> 
             strings[key] = {"zh_CN": simplified, "zh_TW": traditional}
 
     return {
-        "version": 5,
+        "version": 6,
         "items": dict(sorted(items.items())),
         "stats": dict(sorted(stats.items())),
         "strings": dict(sorted(strings.items())),
@@ -1793,6 +1855,148 @@ def build_safe_numeric_trade_item_localizations(
     return {name: next(iter(names)) for name, names in candidates.items() if len(names) == 1}
 
 
+def current_unique_trade_item_records(trade_items_payload: dict[str, Any]) -> list[dict[str, str]]:
+    records: list[dict[str, str]] = []
+    for group in trade_items_payload.get("result", []):
+        for entry in group.get("entries", []):
+            if (
+                not isinstance(entry, dict)
+                or not entry.get("flags", {}).get("unique")
+                or entry.get("disc")
+            ):
+                continue
+            name = str(entry.get("name") or "").strip()
+            item_type = str(entry.get("type") or "").strip()
+            display_name = str(entry.get("text") or "").strip()
+            records.append(
+                {
+                    "name": name,
+                    "type": item_type,
+                    "display": display_name,
+                    "slug": poe2db_item_slug(name) if name else "",
+                }
+            )
+    return sorted(records, key=lambda record: (record["display"], record["type"], record["name"]))
+
+
+def build_verified_unique_trade_item_localizations(
+    trade_items_payload: dict[str, Any],
+    pages_by_slug: dict[str, dict[str, dict[str, str]]],
+    item_type_localizations: dict[str, dict[str, str]] | None = None,
+) -> tuple[dict[str, dict[str, str]], dict[str, Any]]:
+    """Map current unique Trade labels through a verified name page and item type."""
+
+    records = current_unique_trade_item_records(trade_items_payload)
+    item_type_localizations = item_type_localizations or {}
+    rejections: dict[str, dict[str, set[str]]] = {"zh_CN": {}, "zh_TW": {}}
+    candidates: dict[str, dict[str, set[str]]] = {}
+    candidate_slugs: dict[str, set[str]] = {}
+
+    def reject(record: dict[str, str], reason: str, locales: tuple[str, ...] = ("zh_CN", "zh_TW")) -> None:
+        display = record["display"] or record["name"] or "<missing Trade item name>"
+        for locale in locales:
+            rejections[locale].setdefault(reason, set()).add(display)
+
+    for record in records:
+        name = record["name"]
+        item_type = record["type"]
+        display = record["display"]
+        slug = record["slug"]
+        if not name or not item_type or not display or not slug:
+            reject(record, "missing_trade_fields")
+            continue
+        if display != f"{name} {item_type}":
+            reject(record, "unexpected_trade_display")
+            continue
+
+        page = pages_by_slug.get(slug) or {}
+        english_fields = page.get("us") or {}
+        if not english_fields:
+            reject(record, "missing_page")
+            continue
+        if normalize_lookup_text(english_fields.get("name") or "") != normalize_lookup_text(name):
+            reject(record, "name_conflict")
+            continue
+
+        candidate_slugs.setdefault(display, set()).add(slug)
+        for source_locale, output_locale in (("cn", "zh_CN"), ("tw", "zh_TW")):
+            localized_fields = page.get(source_locale) or {}
+            localized_name = str(localized_fields.get("name") or "").strip()
+            type_record = item_type_localizations.get(item_type) or {}
+            localized_type = ""
+            if str(type_record.get("en") or "").strip() == item_type:
+                localized_type = str(type_record.get(output_locale) or "").strip()
+            elif normalize_lookup_text(english_fields.get("type") or "") == normalize_lookup_text(item_type):
+                localized_type = str(localized_fields.get("type") or "").strip()
+            if not localized_name or not localized_type:
+                reject(record, "missing_type_localization", (output_locale,))
+                continue
+            candidates.setdefault(display, {}).setdefault(output_locale, set()).add(
+                f"{localized_name} {localized_type}"
+            )
+
+    items: dict[str, dict[str, str]] = {}
+    for display, localized_by_locale in candidates.items():
+        if len(candidate_slugs.get(display, set())) != 1:
+            for record in records:
+                if record["display"] == display:
+                    reject(record, "ambiguous_page_identity")
+            continue
+        localized = {
+            locale: next(iter(values))
+            for locale, values in localized_by_locale.items()
+            if len(values) == 1
+        }
+        for locale, values in localized_by_locale.items():
+            if len(values) > 1:
+                for record in records:
+                    if record["display"] == display:
+                        reject(record, "ambiguous_localized_name", (locale,))
+        if localized:
+            items[display] = localized
+
+    unmapped = {
+        locale: sorted(
+            {
+                record["display"] or record["name"] or "<missing Trade item name>"
+                for record in records
+                if locale not in items.get(record["display"], {})
+            }
+        )
+        for locale in ("zh_CN", "zh_TW")
+    }
+    coverage = {
+        locale: {
+            "mapped": len(records) - sum(
+                1 for record in records if locale not in items.get(record["display"], {})
+            ),
+            "total": len(records),
+            "ratio": round(
+                (len(records) - sum(1 for record in records if locale not in items.get(record["display"], {})))
+                / len(records)
+                if records
+                else 1.0,
+                6,
+            ),
+        }
+        for locale in ("zh_CN", "zh_TW")
+    }
+    return (
+        dict(sorted(items.items())),
+        {
+            "coverage": coverage,
+            "unmappedEnglishNames": unmapped,
+            "rejections": {
+                locale: {
+                    reason: sorted(displays)
+                    for reason, displays in sorted(reasons.items())
+                }
+                for locale, reasons in rejections.items()
+            },
+        },
+    )
+
+
 def build_trade_stat_universe(trade_stats_payload: dict[str, Any]) -> tuple[list[str], list[str]]:
     patterns: set[str] = set()
     stat_ids: set[str] = set()
@@ -1860,25 +2064,40 @@ def map_trade_stat_texts_to_trade_stat_ids(
     trade_stat_index: dict[str, set[str]],
     trade_stat_records: list[TradeStatRecord] | None = None,
     include_unmatched_patterns: bool = True,
+    verified_keystone_names: set[str] | None = None,
 ) -> tuple[list[str], list[str]]:
     patterns: set[str] = set()
     stat_ids: set[str] = set()
+    trade_stat_records = trade_stat_records or []
+    verified_keystone_keys = {
+        canonicalize_match_key(name)
+        for name in verified_keystone_names or set()
+        if canonicalize_match_key(name)
+    }
     for trade_stat_text in trade_stat_texts:
-        pattern = canonicalize_stat_text(trade_stat_text)
-        if not pattern:
-            continue
-        matched_stat_ids: set[str] = set()
-        for key in trade_stat_lookup_keys(pattern):
-            matched_stat_ids.update(trade_stat_index.get(key, set()))
-        wildcard_match_re = build_trade_stat_wildcard_match_re(pattern)
-        if wildcard_match_re:
-            for record in trade_stat_records or []:
-                if wildcard_match_re.match(record.key):
+        source_pattern = canonicalize_stat_text(trade_stat_text)
+        if POE2DB_RANDOM_KEYSTONE_PASSIVE_SKILL_RE.fullmatch(source_pattern):
+            for record in trade_stat_records:
+                if record.key in verified_keystone_keys:
                     patterns.add(record.pattern)
-                    matched_stat_ids.add(record.stat_id)
-        if include_unmatched_patterns or matched_stat_ids:
-            patterns.add(pattern)
-        stat_ids.update(matched_stat_ids)
+                    stat_ids.add(record.stat_id)
+            continue
+        templates = poe2db_trade_stat_templates(trade_stat_text)
+        for pattern in templates:
+            matched_stat_ids: set[str] = set()
+            for key in trade_stat_lookup_keys(pattern):
+                matched_stat_ids.update(trade_stat_index.get(key, set()))
+            wildcard_match_re = build_trade_stat_wildcard_match_re(pattern)
+            if wildcard_match_re:
+                for record in trade_stat_records:
+                    if wildcard_match_re.match(record.key) and (
+                        "[passive skill]" not in canonicalize_match_key(pattern) or "#" not in record.pattern
+                    ):
+                        patterns.add(record.pattern)
+                        matched_stat_ids.add(record.stat_id)
+            if matched_stat_ids or (include_unmatched_patterns and len(templates) == 1):
+                patterns.add(pattern)
+            stat_ids.update(matched_stat_ids)
     return sorted(patterns), sorted(stat_ids)
 
 
@@ -1890,7 +2109,7 @@ def build_trade_stat_wildcard_match_re(pattern: str) -> re.Pattern[str] | None:
     if not placeholders or any(placeholder not in TRADE_STAT_WILDCARD_PLACEHOLDERS for placeholder in placeholders):
         return None
     parts = re.split(r"\[[^\]]+\]", key)
-    if any(not part for part in parts):
+    if not parts[0]:
         return None
     return re.compile(r"^" + r".+".join(re.escape(part) for part in parts) + r"$")
 
@@ -1903,6 +2122,31 @@ def dedupe_preserve_order(values: list[str]) -> list[str]:
             seen.add(value)
             output.append(value)
     return output
+
+
+def split_into_batches(values: list[Any], size: int) -> list[list[Any]]:
+    if size < 1:
+        raise ValueError("batch size must be at least 1")
+    return [values[index : index + size] for index in range(0, len(values), size)]
+
+
+def load_unique_item_page_cache(path: Path) -> dict[str, Any]:
+    try:
+        cache = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"version": UNIQUE_ITEM_PAGE_CACHE_VERSION, "pages": {}}
+    if (
+        not isinstance(cache, dict)
+        or cache.get("version") != UNIQUE_ITEM_PAGE_CACHE_VERSION
+        or not isinstance(cache.get("pages"), dict)
+    ):
+        return {"version": UNIQUE_ITEM_PAGE_CACHE_VERSION, "pages": {}}
+    return cache
+
+
+def write_unique_item_page_cache(path: Path, cache: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(cache, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
 def merge_extra_artifacts(*artifacts_by_slug: dict[str, list[str]]) -> dict[str, list[str]]:
@@ -1932,22 +2176,35 @@ async def collect_page_html_artifacts(
     page_urls: list[str],
     workers: int,
     item_class_codes_by_slug: dict[str, str | None] | None = None,
+    batch_size: int = DEFAULT_POE2DB_BATCH_SIZE,
+    batch_delay_seconds: float = DEFAULT_POE2DB_BATCH_DELAY_SECONDS,
 ) -> dict[str, PageHtmlArtifacts]:
     semaphore = asyncio.Semaphore(max(1, workers))
     item_class_codes_by_slug = item_class_codes_by_slug or {}
 
     async def task(page_url: str, client: Any) -> tuple[str, PageHtmlArtifacts]:
-        async with semaphore:
-            html = await fetch_text(client, page_url)
+        for attempt in range(3):
+            try:
+                async with semaphore:
+                    html = await fetch_text(client, page_url)
+                break
+            except Exception:
+                if attempt == 2:
+                    raise
+                await asyncio.sleep(attempt + 1)
         page_slug = page_slug_from_url(page_url)
         return page_slug, parse_page_html_artifacts(
             html,
             item_class_codes_by_slug.get(page_slug),
         )
 
+    batches = split_into_batches(page_urls, batch_size)
+    results: list[tuple[str, PageHtmlArtifacts]] = []
     async with build_async_client(max_connections=max(1, workers)) as client:
-        tasks = [task(page_url, client) for page_url in page_urls]
-        results = await asyncio.gather(*tasks)
+        for index, page_urls_batch in enumerate(batches):
+            results.extend(await asyncio.gather(*(task(page_url, client) for page_url in page_urls_batch)))
+            if index + 1 < len(batches):
+                await asyncio.sleep(batch_delay_seconds)
     return dict(results)
 
 
@@ -1955,15 +2212,96 @@ def map_item_mod_texts_to_trade_stats(
     item_mod_texts: list[str],
     trade_stat_index: dict[str, set[str]],
     trade_stat_records: list[TradeStatRecord],
+    verified_keystone_names: set[str] | None = None,
 ) -> tuple[list[str], list[str]]:
     _, stat_ids = map_trade_stat_texts_to_trade_stat_ids(
         item_mod_texts,
         trade_stat_index,
         trade_stat_records,
         include_unmatched_patterns=False,
+        verified_keystone_names=verified_keystone_names,
     )
     patterns = sorted({record.pattern for record in trade_stat_records if record.stat_id in stat_ids})
     return patterns, stat_ids
+
+
+def build_unique_item_type_artifacts(
+    trade_items_payload: dict[str, Any],
+    unique_item_page_cache: dict[str, Any],
+    trade_stat_index: dict[str, set[str]],
+    trade_stat_records: list[TradeStatRecord],
+    verified_keystone_names: set[str] | None = None,
+) -> tuple[dict[str, str], dict[str, dict[str, list[str]]]]:
+    """Union verified unique stats by the official Trade base type."""
+
+    aliases: dict[str, set[str]] = {}
+    patterns_by_type: dict[str, set[str]] = {}
+    stat_ids_by_type: dict[str, set[str]] = {}
+    cached_pages = unique_item_page_cache.get("pages") or {}
+
+    for record in current_unique_trade_item_records(trade_items_payload):
+        item_type = normalize_lookup_text(record["type"])
+        if not item_type:
+            continue
+        for alias in (record["display"], f'{record["name"]} {record["type"]}'):
+            normalized_alias = normalize_lookup_text(alias)
+            if normalized_alias:
+                aliases.setdefault(normalized_alias, set()).add(item_type)
+
+        cached_item = (cached_pages.get(record["slug"]) or {}).get("us") or {}
+        if cached_item.get("itemModTextsVersion") != UNIQUE_ITEM_MOD_TEXTS_CACHE_VERSION:
+            continue
+        item_mod_texts = cached_item.get("itemModTexts")
+        if not isinstance(item_mod_texts, list):
+            continue
+        patterns, stat_ids = map_item_mod_texts_to_trade_stats(
+            item_mod_texts,
+            trade_stat_index,
+            trade_stat_records,
+            verified_keystone_names,
+        )
+        patterns_by_type.setdefault(item_type, set()).update(patterns)
+        stat_ids_by_type.setdefault(item_type, set()).update(stat_ids)
+
+    unique_aliases = {
+        alias: next(iter(item_types))
+        for alias, item_types in aliases.items()
+        if len(item_types) == 1
+    }
+    artifacts = {
+        item_type: {
+            "allowedPatterns": sorted(patterns_by_type.get(item_type, set())),
+            "allowedStatIds": sorted(stat_ids_by_type.get(item_type, set())),
+        }
+        for item_type in sorted(set(patterns_by_type) | set(stat_ids_by_type))
+    }
+    return unique_aliases, artifacts
+
+
+def add_verified_unique_item_localized_selection_aliases(
+    item_name_to_selection: dict[str, dict[str, str]],
+    unique_item_type_by_name: dict[str, str],
+    unique_item_localizations: dict[str, dict[str, str]],
+) -> None:
+    """Reuse verified localized unique labels for selection and type lookups."""
+
+    for english, localized_values in unique_item_localizations.items():
+        english_key = normalize_lookup_text(english)
+        selection = item_name_to_selection.get(english_key)
+        unique_item_type = unique_item_type_by_name.get(english_key)
+        if not selection or not unique_item_type:
+            continue
+        for localized in localized_values.values():
+            localized_key = normalize_lookup_text(localized)
+            if not localized_key:
+                continue
+            existing_selection = item_name_to_selection.get(localized_key)
+            if existing_selection not in (None, selection):
+                continue
+            item_name_to_selection[localized_key] = selection
+            existing_type = unique_item_type_by_name.get(localized_key)
+            if existing_type in (None, unique_item_type):
+                unique_item_type_by_name[localized_key] = unique_item_type
 
 
 def collect_base_item_mod_stat_artifacts(
@@ -1991,42 +2329,89 @@ async def collect_unique_item_stat_artifacts(
     trade_stat_index: dict[str, set[str]],
     trade_stat_records: list[TradeStatRecord],
     workers: int,
+    batch_size: int = DEFAULT_POE2DB_BATCH_SIZE,
+    batch_delay_seconds: float = DEFAULT_POE2DB_BATCH_DELAY_SECONDS,
+    cache: dict[str, Any] | None = None,
+    cache_path: Path | None = None,
+    force: bool = False,
+    verified_keystone_names: set[str] | None = None,
 ) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
     semaphore = asyncio.Semaphore(max(1, workers))
     patterns_by_page: dict[str, set[str]] = {}
     stat_ids_by_page: dict[str, set[str]] = {}
-    tasks_input = [
-        (page_slug, item_name)
-        for page_slug, item_names in unique_item_names_by_page.items()
-        for item_name in item_names
-    ]
+    cache = cache if cache is not None else {"version": UNIQUE_ITEM_PAGE_CACHE_VERSION, "pages": {}}
+    cached_pages = cache["pages"]
+    page_categories_by_item_slug: dict[str, set[str]] = {}
+    for page_slug, item_names in unique_item_names_by_page.items():
+        for item_name in item_names:
+            item_slug = poe2db_item_slug(item_name)
+            if item_slug:
+                page_categories_by_item_slug.setdefault(item_slug, set()).add(page_slug)
 
-    async def task(page_slug: str, item_name: str, client: Any) -> tuple[str, list[str], list[str]]:
-        item_url = urljoin(POE2DB_ITEM_ROOT_URL, poe2db_item_slug(item_name))
-        try:
-            async with semaphore:
-                html = await fetch_text(client, item_url)
-        except Exception as error:
-            print(f"[build_extension_data] failed to fetch unique item page {item_url}: {error}", file=sys.stderr)
-            return page_slug, [], []
-
-        item_mod_texts = parse_page_html_artifacts(html).item_mod_texts
+    def add_item_mod_texts(item_slug: str, item_mod_texts: list[str]) -> None:
         patterns, stat_ids = map_trade_stat_texts_to_trade_stat_ids(
             item_mod_texts,
             trade_stat_index,
             trade_stat_records,
             include_unmatched_patterns=False,
+            verified_keystone_names=verified_keystone_names,
         )
-        return page_slug, patterns, stat_ids
+        for page_slug in page_categories_by_item_slug[item_slug]:
+            patterns_by_page.setdefault(page_slug, set()).update(patterns)
+            stat_ids_by_page.setdefault(page_slug, set()).update(stat_ids)
+
+    def has_current_item_mod_texts(item_slug: str) -> bool:
+        cached_us_page = (cached_pages.get(item_slug) or {}).get("us") or {}
+        return (
+            isinstance(cached_us_page.get("itemModTexts"), list)
+            and cached_us_page.get("itemModTextsVersion") == UNIQUE_ITEM_MOD_TEXTS_CACHE_VERSION
+        )
+
+    missing_item_slugs = [
+        item_slug
+        for item_slug in page_categories_by_item_slug
+        if force or not has_current_item_mod_texts(item_slug)
+    ]
+
+    for item_slug in page_categories_by_item_slug:
+        cached_item_mod_texts = (cached_pages.get(item_slug) or {}).get("us", {}).get("itemModTexts")
+        if not force and has_current_item_mod_texts(item_slug):
+            add_item_mod_texts(item_slug, cached_item_mod_texts)
+
+    async def task(item_slug: str, client: Any) -> tuple[str, list[str] | None, dict[str, str]]:
+        item_url = urljoin(POE2DB_ITEM_ROOT_URL, item_slug)
+        for attempt in range(3):
+            try:
+                async with semaphore:
+                    html = await fetch_text(client, item_url)
+                artifacts = parse_page_html_artifacts(html)
+                return item_slug, artifacts.item_mod_texts, parse_poe2db_unique_item_fields(html)
+            except Exception as error:
+                if attempt == 2:
+                    print(f"[build_extension_data] failed to fetch unique item page {item_url}: {error}", file=sys.stderr)
+                    return item_slug, None, {}
+                await asyncio.sleep(attempt + 1)
 
     async with build_async_client(max_connections=max(1, workers)) as client:
-        results = await asyncio.gather(
-            *[task(page_slug, item_name, client) for page_slug, item_name in tasks_input]
-        )
-
-    for page_slug, patterns, stat_ids in results:
-        patterns_by_page.setdefault(page_slug, set()).update(patterns)
-        stat_ids_by_page.setdefault(page_slug, set()).update(stat_ids)
+        batches = split_into_batches(missing_item_slugs, batch_size)
+        for index, item_slug_batch in enumerate(batches):
+            for item_slug, item_mod_texts, fields in await asyncio.gather(
+                *(task(item_slug, client) for item_slug in item_slug_batch)
+            ):
+                if item_mod_texts is None:
+                    continue
+                cached_item = cached_pages.setdefault(item_slug, {})
+                cached_item["us"] = {
+                    **(cached_item.get("us") or {}),
+                    **fields,
+                    "itemModTexts": item_mod_texts,
+                    "itemModTextsVersion": UNIQUE_ITEM_MOD_TEXTS_CACHE_VERSION,
+                }
+                add_item_mod_texts(item_slug, item_mod_texts)
+            if cache_path:
+                write_unique_item_page_cache(cache_path, cache)
+            if index + 1 < len(batches):
+                await asyncio.sleep(batch_delay_seconds)
 
     return (
         {page_slug: sorted(patterns) for page_slug, patterns in patterns_by_page.items()},
@@ -2042,6 +2427,63 @@ async def fetch_trade_stats(url: str) -> dict[str, Any]:
 async def fetch_trade_items(url: str) -> dict[str, Any]:
     async with build_async_client(max_connections=1) as client:
         return json.loads(await fetch_text(client, url))
+
+
+async def collect_poe2db_unique_item_pages(
+    trade_items_payload: dict[str, Any],
+    workers: int,
+    batch_size: int = DEFAULT_POE2DB_BATCH_SIZE,
+    batch_delay_seconds: float = DEFAULT_POE2DB_BATCH_DELAY_SECONDS,
+    cache: dict[str, Any] | None = None,
+    cache_path: Path | None = None,
+    force: bool = False,
+) -> dict[str, dict[str, dict[str, str]]]:
+    """Fetch the same verified item-page slug in all supported PoE2DB locales."""
+
+    slugs = sorted({record["slug"] for record in current_unique_trade_item_records(trade_items_payload) if record["slug"]})
+    cache = cache if cache is not None else {"version": UNIQUE_ITEM_PAGE_CACHE_VERSION, "pages": {}}
+    cached_pages = cache["pages"]
+    semaphore = asyncio.Semaphore(max(1, workers))
+
+    def has_fields(page: dict[str, Any], locale: str) -> bool:
+        fields = page.get(locale) or {}
+        return bool(str(fields.get("name") or "").strip() and str(fields.get("type") or "").strip())
+
+    async with build_async_client(max_connections=max(1, workers)) as client:
+        async def fetch_page(slug: str, locale: str) -> tuple[str, str, dict[str, str]]:
+            url = f"https://poe2db.tw/{locale}/{slug}"
+            for attempt in range(3):
+                try:
+                    async with semaphore:
+                        html = await fetch_text(client, url)
+                    return slug, locale, parse_poe2db_unique_item_fields(html)
+                except Exception as error:
+                    if attempt == 2:
+                        print(f"[build_extension_data] failed to fetch unique item page {url}: {error}", file=sys.stderr)
+                        return slug, locale, {}
+                    await asyncio.sleep(attempt + 1)
+
+        missing_locales_by_slug = {
+            slug: tuple(
+                locale
+                for locale in ("us", "cn", "tw")
+                if force or not has_fields(cached_pages.get(slug) or {}, locale)
+            )
+            for slug in slugs
+        }
+        missing_slugs = [slug for slug, locales in missing_locales_by_slug.items() if locales]
+        batches = split_into_batches(missing_slugs, batch_size)
+        for index, slug_batch in enumerate(batches):
+            for slug, locale, fields in await asyncio.gather(
+                *(fetch_page(slug, locale) for slug in slug_batch for locale in missing_locales_by_slug[slug])
+            ):
+                if fields:
+                    cached_pages.setdefault(slug, {})[locale] = fields
+            if cache_path:
+                write_unique_item_page_cache(cache_path, cache)
+            if index + 1 < len(batches):
+                await asyncio.sleep(batch_delay_seconds)
+    return {slug: cached_pages.get(slug, {}) for slug in slugs}
 
 
 async def collect_poe2db_stat_source_records(
@@ -2439,18 +2881,30 @@ def build_page_item_name_lookup(
     page_categories: dict[str, Any],
     include_item_names: bool,
 ) -> dict[str, str]:
-    lookup: dict[str, str] = {}
+    page_aliases: dict[str, set[str]] = {}
+    item_name_candidates: dict[str, set[str]] = {}
     for page_slug, page in page_categories.items():
-        names = [
+        for name in [
             page["label"],
             *page.get("aliases", []),
-        ]
-        if include_item_names:
-            names.extend(page.get("itemNames", []))
-        for name in names:
+        ]:
             normalized = normalize_lookup_text(name)
             if normalized:
-                lookup.setdefault(normalized, page_slug)
+                page_aliases.setdefault(normalized, set()).add(page_slug)
+        if include_item_names:
+            for name in page.get("itemNames", []):
+                normalized = normalize_lookup_text(name)
+                if normalized:
+                    item_name_candidates.setdefault(normalized, set()).add(page_slug)
+
+    lookup = {
+        name: next(iter(page_slugs))
+        for name, page_slugs in page_aliases.items()
+        if len(page_slugs) == 1
+    }
+    for name, page_slugs in item_name_candidates.items():
+        if name not in page_aliases and len(page_slugs) == 1:
+            lookup[name] = next(iter(page_slugs))
     return lookup
 
 
@@ -2610,16 +3064,6 @@ async def main() -> int:
         help="Official Taiwan trade2 filters API URL used for rendered-text localization.",
     )
     parser.add_argument(
-        "--client-strings-url",
-        default=CLIENT_STRINGS_URL,
-        help="Official game client English ClientStrings data used as a Trade UI fallback.",
-    )
-    parser.add_argument(
-        "--zh-tw-client-strings-url",
-        default=CLIENT_STRINGS_ZH_TW_URL,
-        help="Official game client Traditional Chinese ClientStrings data used as a Trade UI fallback.",
-    )
-    parser.add_argument(
         "--minimum-display-coverage",
         type=float,
         default=0.95,
@@ -2630,6 +3074,28 @@ async def main() -> int:
         type=int,
         default=2,
         help="Concurrent PoE2DB category-page requests for build-time item display metadata.",
+    )
+    parser.add_argument(
+        "--poe2db-batch-size",
+        type=int,
+        default=DEFAULT_POE2DB_BATCH_SIZE,
+        help="PoE2DB pages to fetch before cooling down.",
+    )
+    parser.add_argument(
+        "--poe2db-batch-delay-seconds",
+        type=float,
+        default=DEFAULT_POE2DB_BATCH_DELAY_SECONDS,
+        help="Cooldown between PoE2DB page batches.",
+    )
+    parser.add_argument(
+        "--poe2db-unique-cache",
+        default=str(REPO_ROOT / "build/poe2db-unique-item-pages.json"),
+        help="Persistent cache for verified unique-item pages.",
+    )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Ignore cached unique-item pages and fetch them again.",
     )
     parser.add_argument(
         "--localized-item-cache",
@@ -2654,8 +3120,18 @@ async def main() -> int:
         help="Minimum regional coverage for stable static/filter Trade UI records.",
     )
     args = parser.parse_args()
+    if args.poe2db_batch_size < 1:
+        parser.error("--poe2db-batch-size must be at least 1")
+    if args.poe2db_batch_delay_seconds < 0:
+        parser.error("--poe2db-batch-delay-seconds cannot be negative")
 
     split_dir = Path(args.split_dir)
+    unique_item_cache_path = Path(args.poe2db_unique_cache)
+    unique_item_page_cache = (
+        {"version": UNIQUE_ITEM_PAGE_CACHE_VERSION, "pages": {}}
+        if args.force
+        else load_unique_item_page_cache(unique_item_cache_path)
+    )
     trade_stats_payload = await fetch_trade_stats(args.trade_stats_url)
     trade_items_payload = await fetch_trade_items(args.trade_items_url)
     (
@@ -2669,8 +3145,6 @@ async def main() -> int:
         filters_payload,
         simplified_filters_payload,
         traditional_filters_payload,
-        client_strings_payload,
-        traditional_client_strings_payload,
     ) = await asyncio.gather(
         fetch_trade_stats(args.zh_cn_trade_stats_url),
         fetch_trade_stats(args.zh_tw_trade_stats_url),
@@ -2682,18 +3156,29 @@ async def main() -> int:
         fetch_trade_stats(args.trade_filters_url),
         fetch_trade_stats(args.zh_cn_trade_filters_url),
         fetch_trade_stats(args.zh_tw_trade_filters_url),
-        fetch_trade_stats(args.client_strings_url),
-        fetch_trade_stats(args.zh_tw_client_strings_url),
     )
     trade_stat_index = build_trade_stat_index(trade_stats_payload)
     trade_stat_records = build_trade_stat_records(trade_stats_payload)
     trade_skill_stat_index = build_trade_skill_stat_index(trade_stats_payload)
+    (
+        verified_keystone_names,
+        keystone_simplified_names,
+        keystone_traditional_names,
+    ) = await collect_localized_item_names(
+        sorted(set(build_trade_stat_text_map(trade_stats_payload).values())),
+        [f"{POE2DB_ITEM_ROOT_URL}{page_slug}" for page_slug in TRADE_STAT_LOCALIZATION_PAGE_SLUGS],
+        args.localized_item_workers,
+        allow_item_page_fallback=False,
+        include_passive_skills=True,
+    )
     artifacts = load_page_artifacts(split_dir, trade_stat_index)
     tier_mappings = load_tier_mappings(split_dir, trade_stat_index)
     page_html_artifacts_by_slug = await collect_page_html_artifacts(
         [artifact.page_url for artifact in artifacts],
         args.workers,
         PAGE_ITEM_NAME_CLASS_FILTERS,
+        args.poe2db_batch_size,
+        args.poe2db_batch_delay_seconds,
     )
     item_names_by_slug = {
         page_slug: page_html_artifacts.item_names
@@ -2727,6 +3212,19 @@ async def main() -> int:
         trade_stat_index,
         trade_stat_records,
         args.workers,
+        args.poe2db_batch_size,
+        args.poe2db_batch_delay_seconds,
+        unique_item_page_cache,
+        unique_item_cache_path,
+        args.force,
+        verified_keystone_names=set(verified_keystone_names),
+    )
+    unique_item_type_by_name, unique_item_type_artifacts = build_unique_item_type_artifacts(
+        trade_items_payload,
+        unique_item_page_cache,
+        trade_stat_index,
+        trade_stat_records,
+        set(verified_keystone_names),
     )
     extra_allowed_patterns_by_slug = merge_extra_artifacts(
         granted_skill_patterns_by_slug,
@@ -2792,30 +3290,6 @@ async def main() -> int:
         trade_stats_payload,
         simplified_stats_payload,
         traditional_stats_payload,
-    )
-    display_metadata["clientStrings"] = build_client_string_localizations(
-        client_strings_payload,
-        traditional_client_strings_payload,
-    )
-    missing_stat_names = sorted(
-        {
-            str(record.get("en") or "").strip()
-            for record in display_metadata["stats"].values()
-            if record.get("en")
-            and record.get("zh_CN") == record.get("en")
-            and record.get("zh_TW") == record.get("en")
-        }
-    )
-    (
-        verified_keystone_names,
-        keystone_simplified_names,
-        keystone_traditional_names,
-    ) = await collect_localized_item_names(
-        missing_stat_names,
-        [f"{POE2DB_ITEM_ROOT_URL}{page_slug}" for page_slug in TRADE_STAT_LOCALIZATION_PAGE_SLUGS],
-        args.localized_item_workers,
-        allow_item_page_fallback=False,
-        include_passive_skills=True,
     )
     display_metadata["poe2dbKeystoneStatCount"] = apply_verified_poe2db_stat_localizations(
         display_metadata["stats"],
@@ -2936,6 +3410,29 @@ async def main() -> int:
         filters_payload,
         trade_category_page_titles,
     )
+    unique_item_localizations, unique_item_localization_report = build_verified_unique_trade_item_localizations(
+        trade_items_payload,
+        await collect_poe2db_unique_item_pages(
+            trade_items_payload,
+            args.localized_item_workers,
+            args.poe2db_batch_size,
+            args.poe2db_batch_delay_seconds,
+            unique_item_page_cache,
+            unique_item_cache_path,
+            args.force,
+        ),
+        display_metadata["items"],
+    )
+    print(
+        "[build_extension_data] unique item localization "
+        + json.dumps(unique_item_localization_report, ensure_ascii=False, sort_keys=True),
+        file=sys.stderr,
+    )
+    add_verified_unique_item_localized_selection_aliases(
+        item_name_to_selection,
+        unique_item_type_by_name,
+        unique_item_localizations,
+    )
     supplemental_trade_strings = dict(trade_filter_page_localizations)
     for record in trade_category_page_localizations.values():
         supplemental_trade_strings.setdefault(record["en"], record)
@@ -2951,8 +3448,16 @@ async def main() -> int:
         minimum_coverage=args.minimum_trade_localization_coverage,
         supplemental_categories=trade_category_page_localizations,
     )
-    display_metadata.pop("clientStrings", None)
-
+    trade_localization["search"]["items"].extend(
+        {
+            "id": english,
+            "en": english,
+            "zh_CN": localized.get("zh_CN", english),
+            "zh_TW": localized.get("zh_TW", english),
+        }
+        for english, localized in unique_item_localizations.items()
+    )
+    trade_localization["uniqueItemCoverage"] = unique_item_localization_report["coverage"]
     output = {
         "version": 6,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
@@ -2979,10 +3484,6 @@ async def main() -> int:
             "poe2db": "https://poe2db.tw/{locale}/Stackable_Currency",
         },
         "tradeLocalizationSources": {
-            "clientStrings": {
-                "en": args.client_strings_url,
-                "zh_TW": args.zh_tw_client_strings_url,
-            },
             "static": {
                 "en": args.trade_static_url,
                 "zh_CN": args.zh_cn_trade_static_url,
@@ -3007,12 +3508,15 @@ async def main() -> int:
                 }
                 for category_id, page_slug in TRADE_CATEGORY_LOCALIZATION_PAGE_SLUGS.items()
             },
+            "poe2dbUniqueItems": "https://poe2db.tw/{locale}/{slug}",
         },
         "tradeItemsSource": args.trade_items_url,
         "pageCategories": page_categories,
         "logicalCategories": logical_categories,
         "itemNameToPage": item_name_to_page,
         "itemNameToSelection": item_name_to_selection,
+        "uniqueItemTypeByName": unique_item_type_by_name,
+        "uniqueItemTypeArtifacts": unique_item_type_artifacts,
         "categoryAliasToSelection": category_alias_to_selection,
         "selectionOptions": selection_options,
         "allPatterns": all_patterns,
