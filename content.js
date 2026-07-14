@@ -87,6 +87,14 @@
     "endgame filters": { en: "Endgame Filters", zh_CN: "终局筛选器", zh_TW: "終局篩選器" },
     miscellaneous: { en: "Miscellaneous", zh_CN: "其他", zh_TW: "其他" },
     "stat filters": { en: "Stat Filters", zh_CN: "属性筛选器", zh_TW: "屬性篩選器" },
+    "+ add stat filter": { en: "+ Add Stat Filter", zh_CN: "+ 添加属性筛选器", zh_TW: "+ 新增屬性篩選器" },
+    "+ add stat group": { en: "+ Add Stat Group", zh_CN: "+ 添加属性组", zh_TW: "+ 新增屬性群組" },
+    "activate live search": { en: "Activate Live Search", zh_CN: "启用实时搜索", zh_TW: "啟用即時搜尋" },
+    search: { en: "Search", zh_CN: "搜索", zh_TW: "搜尋" },
+    clear: { en: "Clear", zh_CN: "清除", zh_TW: "清除" },
+    "hide filters": { en: "Hide Filters", zh_CN: "隐藏筛选器", zh_TW: "隱藏篩選器" },
+    "travel to hideout": { en: "Travel to Hideout", zh_CN: "前往藏身处", zh_TW: "前往藏身處" },
+    "ignore player": { en: "Ignore Player", zh_CN: "忽略玩家", zh_TW: "忽略玩家" },
     "weighted sum": { en: "WEIGHTED SUM", zh_CN: "加权总和", zh_TW: "加權總和" },
     "crucible passive tree path": {
       en: "Crucible Passive Tree Path",
@@ -141,6 +149,7 @@
     ".filter-group",
     ".multiselect__tags",
     ".multiselect__content-wrapper",
+    ".controls",
     ".search-results",
     ".results",
     ".result",
@@ -4952,7 +4961,7 @@
     }
     for (const element of root.querySelectorAll("[placeholder], [title], [aria-label]")) {
       if (element.closest(TRADE_LOCALIZATION_SELECTOR)) {
-        localizeTradeAttributes(element);
+        localizeTradeAttributes(element, { allowAdvancedFilterCopy: true });
       }
     }
     localizeTradeFilterTipCopy(root);

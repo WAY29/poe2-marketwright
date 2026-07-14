@@ -595,7 +595,28 @@ test("Trade filter terminology overrides translate headings and help copy", () =
     )
   });
   hooks.runtime.state = { pageLanguage: "zh_CN" };
-  const simplified = hooks.getLocalizedTradeText("WEIGHTED SUM");
+  const simplified = structuredClone({
+    weighted: hooks.getLocalizedTradeText("WEIGHTED SUM"),
+    addStatFilter: hooks.getLocalizedTradeText("+ Add Stat Filter"),
+    addStatGroup: hooks.getLocalizedTradeText("+ Add Stat Group"),
+    activateLiveSearch: hooks.getLocalizedTradeText("Activate Live Search"),
+    search: hooks.getLocalizedTradeText("Search"),
+    clear: hooks.getLocalizedTradeText("Clear"),
+    hideFilters: hooks.getLocalizedTradeText("Hide Filters"),
+    travelToHideout: hooks.getLocalizedTradeText("Travel to Hideout"),
+    ignorePlayer: hooks.getLocalizedTradeText("Ignore Player")
+  });
+  hooks.runtime.state = { pageLanguage: "zh_TW" };
+  const traditionalControls = structuredClone({
+    addStatFilter: hooks.getLocalizedTradeText("+ Add Stat Filter"),
+    addStatGroup: hooks.getLocalizedTradeText("+ Add Stat Group"),
+    activateLiveSearch: hooks.getLocalizedTradeText("Activate Live Search"),
+    search: hooks.getLocalizedTradeText("Search"),
+    clear: hooks.getLocalizedTradeText("Clear"),
+    hideFilters: hooks.getLocalizedTradeText("Hide Filters"),
+    travelToHideout: hooks.getLocalizedTradeText("Travel to Hideout"),
+    ignorePlayer: hooks.getLocalizedTradeText("Ignore Player")
+  });
   assert.deepStrictEqual(traditional, {
     heading: "類別篩選器",
     equipment: "裝備篩選器",
@@ -607,7 +628,27 @@ test("Trade filter terminology overrides translate headings and help copy", () =
     rarityTip: "增加物品稀有度",
     weightedTip: "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
   });
-  assert.equal(simplified, "加权总和");
+  assert.deepStrictEqual(simplified, {
+    weighted: "加权总和",
+    addStatFilter: "+ 添加属性筛选器",
+    addStatGroup: "+ 添加属性组",
+    activateLiveSearch: "启用实时搜索",
+    search: "搜索",
+    clear: "清除",
+    hideFilters: "隐藏筛选器",
+    travelToHideout: "前往藏身处",
+    ignorePlayer: "忽略玩家"
+  });
+  assert.deepStrictEqual(traditionalControls, {
+    addStatFilter: "+ 新增屬性篩選器",
+    addStatGroup: "+ 新增屬性群組",
+    activateLiveSearch: "啟用即時搜尋",
+    search: "搜尋",
+    clear: "清除",
+    hideFilters: "隱藏篩選器",
+    travelToHideout: "前往藏身處",
+    ignorePlayer: "忽略玩家"
+  });
 });
 
 test("trade localization queries semantic descendants relative to the trade root", () => {
@@ -636,6 +677,7 @@ test("trade localization queries semantic descendants relative to the trade root
     }
   });
   assert.ok(selector.includes(".search-panel"));
+  assert.ok(selector.includes(".controls"));
   assert.ok(!selector.includes("#trade"));
 });
 
