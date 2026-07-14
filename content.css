@@ -1307,7 +1307,12 @@
 }
 
 .poe2-trade2-affix-filter-header .poe2-trade2-affix-filter-collapse-toggle {
-  margin-left: auto;
+  order: 1;
+  margin-right: auto;
+}
+
+.poe2-trade2-affix-filter-header .poe2-trade2-affix-filter-brand {
+  order: 2;
 }
 
 .poe2-trade2-affix-filter-arrow {
@@ -1315,6 +1320,21 @@
   height: 12px;
   fill: currentColor;
   filter: drop-shadow(0 1px 0 rgba(0, 0, 0, 0.7));
+  transform: scaleX(-1);
+}
+
+#poe2-trade2-affix-filter-root.poe2-marketwright-sidebar-right .poe2-trade2-affix-filter-header .poe2-trade2-affix-filter-collapse-toggle {
+  order: 2;
+  margin-right: 0;
+  margin-left: auto;
+}
+
+#poe2-trade2-affix-filter-root.poe2-marketwright-sidebar-right .poe2-trade2-affix-filter-header .poe2-trade2-affix-filter-brand {
+  order: 1;
+}
+
+#poe2-trade2-affix-filter-root.poe2-marketwright-sidebar-right .poe2-trade2-affix-filter-arrow {
+  transform: none;
 }
 
 .poe2-trade2-affix-filter-collapsed-button {
