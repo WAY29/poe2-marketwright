@@ -116,6 +116,7 @@
       pageTranslationEnabled: false,
       filterOptionTexts: {},
       leagueOptionTexts: {},
+      staticEntryTexts: {},
       allowedKeys: [],
       allowedStatIds: [],
       allKeys: [],
@@ -211,6 +212,7 @@
         ? "zh_TW"
         : "en";
     const shouldTranslate = payload.pageTranslationEnabled !== false && locale !== "en";
+    const bilingual = language.endsWith("_en");
 
     const filterOptionTexts = payload.filterOptionTexts || {};
     visitVueComponents(runtime.app, (component) => {
@@ -226,7 +228,7 @@
           if (!option || typeof option !== "object") {
             continue;
           }
-          localizeTradeOptionText(option, translations, locale, shouldTranslate);
+          localizeTradeOptionText(option, translations, locale, shouldTranslate, bilingual);
         }
       }
     });
@@ -234,13 +236,45 @@
       for (const filter of group?.filters || []) {
         const translations = filterOptionTexts[`${group?.id || ""}/${filter?.id || ""}`];
         for (const option of translations ? filter.option?.options || [] : []) {
-          localizeTradeOptionText(option, translations, locale, shouldTranslate);
+          localizeTradeOptionText(option, translations, locale, shouldTranslate, bilingual);
         }
+      }
+    }
+    localizeTradeStaticEntryTexts(
+      runtime.app?.$data?.static_,
+      payload.staticEntryTexts || {},
+      locale,
+      shouldTranslate,
+      bilingual
+    );
+  }
+
+  function localizeTradeStaticEntryTexts(value, translations, locale, shouldTranslate, bilingual, seen = new Set()) {
+    if (!value || typeof value !== "object" || seen.has(value)) {
+      return;
+    }
+    seen.add(value);
+    if (Array.isArray(value)) {
+      value.forEach((entry) => localizeTradeStaticEntryTexts(entry, translations, locale, shouldTranslate, bilingual, seen));
+      return;
+    }
+
+    const entry = translations[String(value.id || "")];
+    if (entry && typeof value.text === "string") {
+      const english = String(entry.en || value.text);
+      const localized = String(entry[locale] || english);
+      value.text = shouldTranslate
+        ? bilingual && localized !== english ? `${localized} (${english})` : localized
+        : english;
+    }
+    for (const [key, child] of Object.entries(value)) {
+      if (key !== "text") {
+        localizeTradeStaticEntryTexts(child, translations, locale, shouldTranslate, bilingual, seen);
       }
     }
   }
 
-  function localizeTradeOptionText(option, translations, locale, shouldTranslate) {
+  function localizeTradeOptionText(option, translations, locale, shouldTranslate, bilingual) {
     if (!option || typeof option !== "object") {
       return;
     }
@@ -248,8 +282,12 @@
       runtime.tradeOptionOriginalTexts.set(option, String(option.text || ""));
     }
     const original = runtime.tradeOptionOriginalTexts.get(option) || "";
-    const localized = translations[String(option.id || "")]?.[locale];
-    const nextText = shouldTranslate && typeof localized === "string" && localized ? localized : original;
+    const record = translations[String(option.id || "")] || {};
+    const english = String(record.en || original);
+    const localized = record[locale];
+    const nextText = shouldTranslate && typeof localized === "string" && localized
+      ? bilingual && localized !== english ? `${localized} (${english})` : localized
+      : english;
     if (option.text !== nextText) {
       option.text = nextText;
     }

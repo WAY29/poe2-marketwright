@@ -36,9 +36,9 @@
     });
   }
 
-  function getCacheVersion(bundle, locale) {
+  function getCacheVersion(bundle, locale, bilingual) {
     const extensionVersion = chrome.runtime.getManifest?.().version || "development";
-    return `${extensionVersion}:${bundle.version || 1}:${locale}`;
+    return `${extensionVersion}:${bundle.version || 1}:${locale}:${bilingual ? "bilingual" : "localized"}`;
   }
 
   function hasCurrentNativeTradeCaches(cacheVersion) {
@@ -82,9 +82,10 @@
     }
     const language = resolvePageLanguage(state.pageLanguage || state.uiLanguage);
     const locale = getLocale(language);
+    const bilingual = language.endsWith("_en");
     const enabled = state.pageTranslationEnabled !== false;
     const bundle = await response.json();
-    const cacheVersion = getCacheVersion(bundle, locale);
+    const cacheVersion = getCacheVersion(bundle, locale, bilingual);
     window.postMessage(
       {
         source: MESSAGE_SOURCE,
@@ -92,6 +93,7 @@
         payload: {
           enabled,
           locale,
+          bilingual,
           cacheVersion,
           items: bundle.items || {},
           stats: bundle.stats || {},

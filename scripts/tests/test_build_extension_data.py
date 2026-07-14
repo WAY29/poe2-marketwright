@@ -193,6 +193,19 @@ class TradeStatMappingTests(unittest.TestCase):
         )
 
     def test_collects_trade_price_option_translations_by_stable_id(self) -> None:
+        english_filters = {
+            "result": [
+                {
+                    "id": "trade_filters",
+                    "filters": [
+                        {
+                            "id": "price",
+                            "option": {"options": [{"id": "mirror", "text": "Mirror of Kalandra"}]},
+                        }
+                    ],
+                }
+            ]
+        }
         simplified_filters = {
             "result": [
                 {
@@ -221,8 +234,8 @@ class TradeStatMappingTests(unittest.TestCase):
         }
 
         self.assertEqual(
-            collect_trade_filter_option_localizations(simplified_filters, traditional_filters),
-            {"trade_filters/price": {"mirror": {"zh_CN": "卡兰德的魔镜", "zh_TW": "卡蘭德魔鏡"}}},
+            collect_trade_filter_option_localizations(simplified_filters, traditional_filters, english_filters),
+            {"trade_filters/price": {"mirror": {"en": "Mirror of Kalandra", "zh_CN": "卡兰德的魔镜", "zh_TW": "卡蘭德魔鏡"}}},
         )
 
     @patch("build_extension_data.build_async_client")
@@ -859,37 +872,43 @@ class TradeStatMappingTests(unittest.TestCase):
             },
         }
         english_static = {
-            "result": {
-                "currency": {
+            "result": [
+                {
+                    "id": "Currency",
                     "label": "Currency",
                     "entries": [
                         {"id": "chaos", "text": "Chaos Orb"},
+                        {"id": "exalted", "text": "Exalted Orb"},
                         {"id": "rider", "text": "Rider Bow"},
                     ],
                 }
-            }
+            ]
         }
         simplified_static = {
-            "result": {
-                "currency": {
+            "result": [
+                {
+                    "id": "Currency",
                     "label": "通货",
                     "entries": [
                         {"id": "chaos", "text": "混沌石"},
+                        {"id": "exalted", "text": "崇高石"},
                         {"id": "rider", "text": "Rider Bow"},
                     ],
                 }
-            }
+            ]
         }
         traditional_static = {
-            "result": {
-                "currency": {
+            "result": [
+                {
+                    "id": "Currency",
                     "label": "通貨",
                     "entries": [
                         {"id": "chaos", "text": "混沌石"},
+                        {"id": "exalted", "text": "崇高石"},
                         {"id": "rider", "text": "Rider Bow"},
                     ],
                 }
-            }
+            ]
         }
         english_filters = {
             "result": [
@@ -964,7 +983,67 @@ class TradeStatMappingTests(unittest.TestCase):
             metadata["search"]["categories"],
             [{"id": "weapon.bow", "en": "Bow", "zh_CN": "弓", "zh_TW": "弓"}],
         )
+        self.assertEqual(
+            metadata["staticEntryTexts"]["exalted"],
+            {"en": "Exalted Orb", "zh_CN": "崇高石", "zh_TW": "崇高石"},
+        )
         self.assertNotIn("clientStrings", metadata)
+
+    def test_removes_field_label_punctuation_from_the_sale_type_option(self) -> None:
+        english_filters = {
+            "result": [
+                {
+                    "id": "trade_filters",
+                    "filters": [
+                        {
+                            "id": "sale_type",
+                            "option": {"options": [{"id": "priced_with_info", "text": "Price with Note"}]},
+                        }
+                    ],
+                }
+            ]
+        }
+        simplified_filters = {
+            "result": [
+                {
+                    "id": "trade_filters",
+                    "filters": [
+                        {
+                            "id": "sale_type",
+                            "option": {"options": [{"id": "priced_with_info", "text": "备注标价"}]},
+                        }
+                    ],
+                }
+            ]
+        }
+        traditional_filters = {
+            "result": [
+                {
+                    "id": "trade_filters",
+                    "filters": [
+                        {
+                            "id": "sale_type",
+                            "option": {"options": [{"id": "priced_with_info", "text": "標價："}]},
+                        }
+                    ],
+                }
+            ]
+        }
+
+        metadata = build_trade_localization_metadata(
+            {"stats": {}, "items": {}},
+            {"result": {}},
+            {"result": {}},
+            {"result": {}},
+            english_filters,
+            simplified_filters,
+            traditional_filters,
+        )
+
+        self.assertEqual(
+            metadata["strings"]["Price with Note"],
+            {"en": "Price with Note", "zh_CN": "备注标价", "zh_TW": "標價"},
+        )
 
     def test_builds_native_trade_search_localization_bundle(self) -> None:
         bundle = build_trade_item_localization_bundle(

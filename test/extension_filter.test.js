@@ -155,6 +155,11 @@ test("page bridge localizes Trade status, price, and league options", () => {
     { id: "divine", text: "Divine Orb" },
     { id: "mirror", text: "Mirror of Kalandra" },
   ];
+  const currencyOptions = [
+    { id: "exalted", text: "崇高石" },
+    { id: "chaos", text: "混沌石" },
+    { id: "divine", text: "神聖石" }
+  ];
   const sandbox = {
     window: { addEventListener() {}, postMessage() {} },
     console
@@ -162,45 +167,59 @@ test("page bridge localizes Trade status, price, and league options", () => {
   vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
   const hooks = sandbox.window.__testHooks;
   hooks.runtime.app = {
-    $data: { static_: { propertyFilters: [{ id: "trade_filters", filters: [{ id: "price", option: { options: priceOptions } }] }] } },
+    $data: {
+      static_: {
+        propertyFilters: [{ id: "trade_filters", filters: [{ id: "price", option: { options: priceOptions } }] }],
+        exchangeData: currencyOptions
+      }
+    },
     $children: [{ statusOptions, $children: [{ leagueOptions, $children: [] }] }]
   };
   hooks.runtime.lastPayload = {
-    pageLanguage: "zh_TW",
+    pageLanguage: "zh_TW_en",
     pageTranslationEnabled: true,
     filterOptionTexts: {
       "status_filters/status": {
-        available: { zh_TW: "即刻購買以及面對面交易" },
-        securable: { zh_CN: "立即购买", zh_TW: "即刻購買" },
-        onlineleague: { zh_TW: "面對面交易(聯盟在線)" },
-        online: { zh_TW: "面對面交易(在線)" },
-        any: { zh_TW: "任何" }
+        available: { en: "Instant Buyout and In Person", zh_TW: "即刻購買以及面對面交易" },
+        securable: { en: "Instant Buyout", zh_CN: "立即购买", zh_TW: "即刻購買" },
+        onlineleague: { en: "In Person (Online in League)", zh_TW: "面對面交易(聯盟在線)" },
+        online: { en: "In Person (Online)", zh_TW: "面對面交易(在線)" },
+        any: { en: "Any", zh_TW: "任何" }
       },
       "trade_filters/price": {
-        mirror: { zh_CN: "卡兰德的魔镜", zh_TW: "卡蘭德魔鏡" }
+        mirror: { en: "Mirror of Kalandra", zh_CN: "卡兰德的魔镜", zh_TW: "卡蘭德魔鏡" }
       }
     },
     leagueOptionTexts: {
-      "Runes of Aldur": { zh_TW: "阿德爾的符文" },
-      "HC Runes of Aldur": { zh_TW: "阿德爾的符文 專家模式" }
+      "Runes of Aldur": { en: "Runes of Aldur", zh_TW: "阿德爾的符文" },
+      "HC Runes of Aldur": { en: "HC Runes of Aldur", zh_TW: "阿德爾的符文 專家模式" }
+    },
+    staticEntryTexts: {
+      exalted: { en: "Exalted Orb", zh_TW: "崇高石" },
+      chaos: { en: "Chaos Orb", zh_TW: "混沌石" },
+      divine: { en: "Divine Orb", zh_TW: "神聖石" }
     }
   };
   hooks.localizeTradeOptions();
   const localized = structuredClone(statusOptions.map((option) => option.text));
   const localizedLeagues = structuredClone(leagueOptions.map((option) => option.text));
   const localizedPrices = structuredClone(priceOptions.map((option) => option.text));
+  const localizedCurrencies = structuredClone(currencyOptions.map((option) => option.text));
   hooks.runtime.lastPayload.pageLanguage = "en";
   hooks.localizeTradeOptions();
   const restored = structuredClone(statusOptions.map((option) => option.text));
   const restoredLeagues = structuredClone(leagueOptions.map((option) => option.text));
   const restoredPrices = structuredClone(priceOptions.map((option) => option.text));
+  const restoredCurrencies = structuredClone(currencyOptions.map((option) => option.text));
 
-  assert.deepStrictEqual(localized, ["即刻購買以及面對面交易", "即刻購買", "面對面交易(聯盟在線)", "面對面交易(在線)", "任何"]);
-  assert.deepStrictEqual(localizedLeagues, ["阿德爾的符文", "阿德爾的符文 專家模式"]);
-  assert.deepStrictEqual(localizedPrices, ["Divine Orb", "卡蘭德魔鏡"]);
+  assert.deepStrictEqual(localized, ["即刻購買以及面對面交易 (Instant Buyout and In Person)", "即刻購買 (Instant Buyout)", "面對面交易(聯盟在線) (In Person (Online in League))", "面對面交易(在線) (In Person (Online))", "任何 (Any)"]);
+  assert.deepStrictEqual(localizedLeagues, ["阿德爾的符文 (Runes of Aldur)", "阿德爾的符文 專家模式 (HC Runes of Aldur)"]);
+  assert.deepStrictEqual(localizedPrices, ["神聖石 (Divine Orb)", "卡蘭德魔鏡 (Mirror of Kalandra)"]);
+  assert.deepStrictEqual(localizedCurrencies, ["崇高石 (Exalted Orb)", "混沌石 (Chaos Orb)", "神聖石 (Divine Orb)"]);
   assert.deepStrictEqual(restored, ["Instant Buyout and In Person", "Instant Buyout", "In Person (Online in League)", "In Person (Online)", "Any"]);
   assert.deepStrictEqual(restoredLeagues, ["Runes of Aldur", "HC Runes of Aldur"]);
   assert.deepStrictEqual(restoredPrices, ["Divine Orb", "Mirror of Kalandra"]);
+  assert.deepStrictEqual(restoredCurrencies, ["Exalted Orb", "Chaos Orb", "Divine Orb"]);
 });
 
 test("page bridge inserts a Tier selector for a Vue stat filter and updates min", () => {

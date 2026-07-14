@@ -39,6 +39,7 @@ test("native item bridge renders bilingual labels without changing English item 
   const localized = sandbox.window.__testHooks.localizeTradeItemsPayload(payload, {
     enabled: true,
     locale: "zh_TW",
+    bilingual: true,
     items: {
       "Gold Ring": { zh_CN: "金环", zh_TW: "金環" },
       "From Nothing Diamond": { zh_CN: "无根之源 宝钻", zh_TW: "從無到有 鑽石" }
@@ -47,6 +48,7 @@ test("native item bridge renders bilingual labels without changing English item 
   const disabled = sandbox.window.__testHooks.localizeTradeItemsPayload(payload, {
     enabled: false,
     locale: "zh_TW",
+    bilingual: true,
     items: {
       "Gold Ring": { zh_CN: "金环", zh_TW: "金環" },
       "From Nothing Diamond": { zh_CN: "无根之源 宝钻", zh_TW: "從無到有 鑽石" }
@@ -106,6 +108,7 @@ test("native item cache stores bilingual labels without changing the English que
     {
       enabled: true,
       locale: "zh_CN",
+      bilingual: true,
       cacheVersion: "1.3.1:2:zh_CN",
       items: {
         "Gold Ring": { zh_CN: "金光戒指" },
@@ -141,6 +144,7 @@ test("native stat cache uses stable stat IDs and static labels use the same cach
   const config = {
     enabled: true,
     locale: "zh_CN",
+    bilingual: true,
     stats: { "explicit.stat_life": { zh_CN: "+# 最大生命" } },
     strings: { "Item Category": { zh_CN: "物品类型" } }
   };
@@ -171,7 +175,108 @@ test("native stat cache uses stable stat IDs and static labels use the same cach
     structuredClone(sandbox.window.__testHooks.localizeTradeStatsPayload(stats, config).result[0].entries),
     localizedEntries
   );
-  assert.deepStrictEqual(structuredClone(staticData), { result: { category: { label: "物品类型" } } });
+  assert.deepStrictEqual(structuredClone(staticData), { result: { category: { label: "物品类型 (Item Category)" } } });
+});
+
+test("native filter cache renders bilingual category, rarity, and sale options", () => {
+  let source = fs.readFileSync("trade-localization-bridge.js", "utf8");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { localizeTradeTextPayload };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {}, fetch() {}, setTimeout() {} },
+    localStorage: { getItem() { return null; }, setItem() {}, removeItem() {} },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "trade-localization-bridge.js" });
+  const localized = sandbox.window.__testHooks.localizeTradeTextPayload(
+    {
+      result: [
+        {
+          id: "type_filters",
+          filters: [
+            {
+              id: "category",
+              text: "Item Category",
+              option: { options: [{ id: null, text: "Any" }, { id: "weapon.bow", text: "Bow" }] }
+            },
+            {
+              id: "rarity",
+              text: "Item Rarity",
+              option: { options: [{ id: "normal", text: "Normal" }, { id: "rare", text: "Rare" }] }
+            }
+          ]
+        },
+        {
+          id: "trade_filters",
+          filters: [
+            {
+              id: "sale_type",
+              text: "Sale Type",
+              option: {
+                options: [
+                  { id: null, text: "Buyout or Fixed Price" },
+                  { id: "priced_with_info", text: "Price with Note" }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      enabled: true,
+      locale: "zh_TW",
+      bilingual: true,
+      strings: {
+        "Item Category": { zh_TW: "道具分類" },
+        Any: { zh_TW: "任何" },
+        Bow: { zh_TW: "弓" },
+        "Item Rarity": { zh_TW: "物品稀有度" },
+        Normal: { zh_TW: "一般" },
+        Rare: { zh_TW: "稀有" },
+        "Sale Type": { zh_TW: "販售型式" },
+        "Buyout or Fixed Price": { zh_TW: "直購價或定價" },
+        "Price with Note": { zh_TW: "標價" }
+      }
+    }
+  );
+
+  assert.deepStrictEqual(structuredClone(localized), {
+    result: [
+      {
+        id: "type_filters",
+        filters: [
+          {
+            id: "category",
+            text: "道具分類 (Item Category)",
+            option: { options: [{ id: null, text: "任何 (Any)" }, { id: "weapon.bow", text: "弓 (Bow)" }] }
+          },
+          {
+            id: "rarity",
+            text: "物品稀有度 (Item Rarity)",
+            option: { options: [{ id: "normal", text: "一般 (Normal)" }, { id: "rare", text: "稀有 (Rare)" }] }
+          }
+        ]
+      },
+      {
+        id: "trade_filters",
+        filters: [
+          {
+            id: "sale_type",
+            text: "販售型式 (Sale Type)",
+            option: {
+              options: [
+                { id: null, text: "直購價或定價 (Buyout or Fixed Price)" },
+                { id: "priced_with_info", text: "標價 (Price with Note)" }
+              ]
+            }
+          }
+        ]
+      }
+    ]
+  });
 });
 
 test("bridge clears unmarked native Trade caches left by another extension", () => {

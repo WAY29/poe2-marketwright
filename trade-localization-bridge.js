@@ -54,7 +54,7 @@
                 config.locale
               ];
               const english = englishText || englishType;
-              const text = getLocalizedText(english, localized, true);
+              const text = getLocalizedText(english, localized, config.bilingual === true);
               return localized && text !== englishText ? { ...entry, text } : entry;
             })
           : group?.entries
@@ -74,7 +74,7 @@
         entries: Array.isArray(group?.entries)
           ? group.entries.map((entry) => {
               const english = String(entry?.text || "");
-              const text = getLocalizedText(english, stats[String(entry?.id || "")]?.[config.locale], true);
+              const text = getLocalizedText(english, stats[String(entry?.id || "")]?.[config.locale], config.bilingual === true);
               return text && text !== english ? { ...entry, text } : entry;
             })
           : group?.entries
@@ -83,7 +83,7 @@
   }
 
   function localizeStaticValue(value, config) {
-    return getLocalizedText(value, config.strings?.[value]?.[config.locale], false);
+    return getLocalizedText(value, config.strings?.[value]?.[config.locale], config.bilingual === true);
   }
 
   function localizeTradeTextPayload(payload, config) {

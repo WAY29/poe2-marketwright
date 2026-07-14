@@ -113,6 +113,11 @@ TRADE_FILTER_LOCALIZATION_PAGE_SLUGS = {
 TRADE_CATEGORY_LOCALIZATION_PAGE_SLUGS = {
     "flask.charm": "Charms",
 }
+# The official Taiwan sale-type option includes punctuation intended for a
+# field label. The option's stable API identity must render as a plain value.
+TRADE_FILTER_TEXT_OVERRIDES = {
+    "group=trade_filters/filter=sale_type/option=priced_with_info/text": {"zh_TW": "標價"},
+}
 TRADE_STAT_WILDCARD_PLACEHOLDERS = {
     "azmeri spirit",
     "passive skill",
@@ -1445,6 +1450,11 @@ def collect_static_trade_text_records(payload: dict[str, Any]) -> dict[str, str]
     records: dict[str, str] = {}
 
     def walk(value: Any, path: tuple[str, ...]) -> None:
+        if isinstance(value, list):
+            for entry in value:
+                if isinstance(entry, dict) and str(entry.get("id") or "").strip():
+                    walk(entry, path)
+            return
         if isinstance(value, dict):
             identifier = str(value.get("id") or "").strip()
             current_path = (*path, f"id={identifier}") if identifier else path
@@ -1464,6 +1474,35 @@ def collect_static_trade_text_records(payload: dict[str, Any]) -> dict[str, str]
 
     walk(payload.get("result"), ("result",))
     return records
+
+
+def build_trade_static_entry_text_localizations(
+    english_payload: dict[str, Any],
+    simplified_payload: dict[str, Any],
+    traditional_payload: dict[str, Any],
+) -> dict[str, dict[str, str]]:
+    """Map unambiguous static entry IDs to their regional display text."""
+
+    english_records = collect_static_trade_text_records(english_payload)
+    simplified_records = collect_static_trade_text_records(simplified_payload)
+    traditional_records = collect_static_trade_text_records(traditional_payload)
+    candidates: dict[str, set[tuple[str, str, str]]] = {}
+    for key, english in english_records.items():
+        if not key.endswith("/text") or "/id=" not in key:
+            continue
+        entry_id = key.rsplit("/id=", 1)[1].removesuffix("/text")
+        simplified = simplified_records.get(key, "")
+        traditional = traditional_records.get(key, "")
+        if entry_id and english and simplified and traditional:
+            candidates.setdefault(entry_id, set()).add((english, simplified, traditional))
+
+    return {
+        entry_id: {"en": english, "zh_CN": simplified, "zh_TW": traditional}
+        for entry_id, records in sorted(candidates.items())
+        if len(records) == 1
+        for english, simplified, traditional in records
+        if simplified != english or traditional != english
+    }
 
 
 def collect_filter_trade_text_records(
@@ -1509,6 +1548,7 @@ def collect_filter_trade_text_records(
 def collect_trade_filter_option_localizations(
     simplified_filters_payload: dict[str, Any],
     traditional_filters_payload: dict[str, Any],
+    english_filters_payload: dict[str, Any] | None = None,
 ) -> dict[str, dict[str, dict[str, str]]]:
     """Collect selected Trade filter labels by the IDs used by the Vue client.
 
@@ -1539,6 +1579,25 @@ def collect_trade_filter_option_localizations(
                     text = str(option.get("text") or "").strip()
                     if option_id and text:
                         filter_options.setdefault(option_id, {})[locale] = text
+
+    for group in (english_filters_payload or {}).get("result", []):
+        group_id = str(group.get("id") or "").strip()
+        allowed_filters = {
+            "status_filters": {"status"},
+            "trade_filters": {"price"},
+        }.get(group_id)
+        if not allowed_filters:
+            continue
+        for filter_data in group.get("filters", []):
+            filter_id = str(filter_data.get("id") or "").strip()
+            if filter_id not in allowed_filters:
+                continue
+            filter_options = localizations.setdefault(f"{group_id}/{filter_id}", {})
+            for option in filter_data.get("option", {}).get("options", []):
+                option_id = str(option.get("id") or "").strip()
+                text = str(option.get("text") or "").strip()
+                if option_id and text:
+                    filter_options.setdefault(option_id, {})["en"] = text
 
     return {
         filter_id: {
@@ -1757,16 +1816,23 @@ def build_trade_localization_metadata(
             collect_static_trade_text_records(english_static_payload),
             collect_static_trade_text_records(simplified_static_payload),
             collect_static_trade_text_records(traditional_static_payload),
+            {},
         ),
         (
             collect_filter_trade_text_records(english_filters_payload)[0],
             collect_filter_trade_text_records(simplified_filters_payload)[0],
             collect_filter_trade_text_records(traditional_filters_payload)[0],
+            TRADE_FILTER_TEXT_OVERRIDES,
         ),
     )
-    for english_records, simplified_records, traditional_records in sources:
+    for english_records, simplified_records, traditional_records, overrides in sources:
         for key, english in english_records.items():
-            add_record(english, simplified_records.get(key, ""), traditional_records.get(key, ""))
+            override = overrides.get(key, {})
+            add_record(
+                english,
+                override.get("zh_CN", simplified_records.get(key, "")),
+                override.get("zh_TW", traditional_records.get(key, "")),
+            )
 
     for english, record in (supplemental_strings or {}).items():
         add_record(
@@ -1830,6 +1896,11 @@ def build_trade_localization_metadata(
     return {
         "version": 1,
         "strings": dict(sorted(strings.items())),
+        "staticEntryTexts": build_trade_static_entry_text_localizations(
+            english_static_payload,
+            simplified_static_payload,
+            traditional_static_payload,
+        ),
         "search": {
             "items": dedupe_search(item_search),
             "stats": dedupe_search(stat_search),
@@ -3595,6 +3666,7 @@ async def main() -> int:
     filter_option_localizations = collect_trade_filter_option_localizations(
         simplified_filters_payload,
         traditional_filters_payload,
+        filters_payload,
     )
     league_option_localizations = collect_trade_league_localizations(
         leagues_payload,
