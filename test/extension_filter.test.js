@@ -306,8 +306,8 @@ test("page bridge inserts a Tier selector for a Vue stat filter and updates min"
   assert.equal(filter.children.indexOf(control), filter.children.indexOf(filterBody) - 1);
   assert.equal(select.attributes["aria-label"], "Tier");
   assert.equal(trigger.textContent, "T");
-  assert.equal(select.size, 3);
-  assert.deepEqual(select.children.map((option) => option.textContent), ["Tier", "Rings T1", "Rings T2"]);
+  assert.equal(select.size, 2);
+  assert.deepEqual(select.children.map((option) => option.textContent), ["Rings T1", "Rings T2"]);
 
   hooks.installTierControls();
   trigger.dispatchEvent(new FakeEvent("click"));

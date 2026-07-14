@@ -378,10 +378,6 @@
       .join("|");
     if (control.__poe2MarketwrightTierSignature !== signature) {
       select.replaceChildren();
-      const blank = select.ownerDocument.createElement("option");
-      blank.value = "";
-      blank.textContent = runtime.tierLabel;
-      select.appendChild(blank);
       for (const option of options) {
         const element = select.ownerDocument.createElement("option");
         element.value = getTierOptionValue(option);
@@ -391,7 +387,7 @@
       control.__poe2MarketwrightTierSignature = signature;
     }
     control.__poe2MarketwrightTierOptions = options;
-    select.size = Math.min(options.length + 1, 8);
+    select.size = Math.min(options.length, 8);
     if (control.__poe2MarketwrightTierMinInput !== minInput) {
       control.__poe2MarketwrightTierMinInput = minInput;
       bindTierInput(control, minInput);
