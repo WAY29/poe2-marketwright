@@ -4453,6 +4453,10 @@
       "zh_CN": "哨望之遗产",
       "zh_TW": "傳承．哨兵"
     },
+    "Legacy of The Smiling Knight": {
+      "zh_CN": "笑面骑士之遗产",
+      "zh_TW": "傳承．微笑騎士"
+    },
     "Legacy of The Unleashed": {
       "zh_CN": "破禁者之遗产",
       "zh_TW": "傳承．束縛"
@@ -38287,6 +38291,10 @@
       "zh_CN": "配置 野兽恩泽",
       "zh_TW": "配置野獸之賜"
     },
+    "fractured.stat_2954116742|52764": {
+      "zh_CN": "配置 神秘狂怒",
+      "zh_TW": "配置神秘盛怒"
+    },
     "fractured.stat_2954116742|5284": {
       "zh_CN": "配置 粉碎巨力",
       "zh_TW": "配置粉碎之力"
@@ -39574,6 +39582,10 @@
     "fractured.stat_394473632": {
       "zh_CN": "范围内的小型天赋同时提供 易燃强度提高 #%",
       "zh_TW": "範圍內小型天賦也會賦予 增加#%易燃幅度"
+    },
+    "fractured.stat_3946450303": {
+      "zh_CN": "范围内的核心天赋同时提供 冰霜抗性 #%",
+      "zh_TW": "Notable Passive Skills in Radius also grant #% to Cold Resistance"
     },
     "fractured.stat_3962278098": {
       "zh_CN": "火焰伤害提高 #%",
@@ -59500,6 +59512,10 @@
     "Legacy of The Sentry": {
       "zh_CN": "哨望之遗产",
       "zh_TW": "傳承．哨兵"
+    },
+    "Legacy of The Smiling Knight": {
+      "zh_CN": "笑面骑士之遗产",
+      "zh_TW": "傳承．微笑騎士"
     },
     "Legacy of The Unleashed": {
       "zh_CN": "破禁者之遗产",

@@ -16,6 +16,7 @@ from build_extension_data import (
     build_safe_numeric_trade_item_localizations,
     build_trade_filter_page_localizations,
     build_trade_category_page_localizations,
+    collect_trade_filter_option_localizations,
     build_trade_item_localization_bundle,
     build_verified_unique_trade_item_localizations,
     build_display_metadata,
@@ -61,6 +62,55 @@ from build_extension_data import (
 
 
 class TradeStatMappingTests(unittest.TestCase):
+    def test_collects_trade_status_option_translations_by_stable_id(self) -> None:
+        simplified_filters = {
+            "result": [
+                {
+                    "id": "status_filters",
+                    "filters": [
+                        {
+                            "id": "status",
+                            "option": {"options": [{"id": "securable", "text": "立即购买"}]},
+                        }
+                    ],
+                }
+            ]
+        }
+        traditional_filters = {
+            "result": [
+                {
+                    "id": "status_filters",
+                    "filters": [
+                        {
+                            "id": "status",
+                            "option": {
+                                "options": [
+                                    {"id": "available", "text": "即刻購買以及面對面交易"},
+                                    {"id": "securable", "text": "即刻購買"},
+                                    {"id": "onlineleague", "text": "面對面交易(聯盟在線)"},
+                                    {"id": "online", "text": "面對面交易(在線)"},
+                                    {"id": "any", "text": "任何"},
+                                ]
+                            },
+                        }
+                    ],
+                }
+            ]
+        }
+
+        self.assertEqual(
+            collect_trade_filter_option_localizations(simplified_filters, traditional_filters),
+            {
+                "status_filters/status": {
+                    "any": {"zh_TW": "任何"},
+                    "available": {"zh_TW": "即刻購買以及面對面交易"},
+                    "online": {"zh_TW": "面對面交易(在線)"},
+                    "onlineleague": {"zh_TW": "面對面交易(聯盟在線)"},
+                    "securable": {"zh_CN": "立即购买", "zh_TW": "即刻購買"},
+                }
+            },
+        )
+
     @patch("build_extension_data.build_async_client")
     def test_reuses_cached_unique_item_pages_without_requests(self, build_async_client: object) -> None:
         class Client:

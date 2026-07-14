@@ -112,6 +112,9 @@
       // Capture result details during initial content-script startup. Content state can disable this afterward.
       favoritesEnabled: true,
       currencyConversionEnabled: false,
+      pageLanguage: "en",
+      pageTranslationEnabled: false,
+      statusOptionTexts: {},
       allowedKeys: [],
       allowedStatIds: [],
       allKeys: [],
@@ -130,7 +133,8 @@
     tierOpenControl: null,
     tierOutsidePointerBound: false,
     tierObserver: null,
-    tierRefreshTimer: null
+    tierRefreshTimer: null,
+    statusOptionOriginalTexts: new WeakMap()
   };
 
   window.addEventListener("message", (event) => {
@@ -161,6 +165,7 @@
 
     runtime.lastPayload = { ...runtime.lastPayload, ...(event.data.payload || {}) };
     applyKnownStatsFilter();
+    localizeTradeStatusOptions();
     installWhitespaceSearch();
     restoreCurrentSearchSnapshot();
     notifyState();
@@ -191,8 +196,54 @@
     if (!runtime.originalKnownStats) {
       runtime.originalKnownStats = cloneKnownStats(staticData.knownStats);
     }
+    localizeTradeStatusOptions();
     installWhitespaceSearch();
     return true;
+  }
+
+  function localizeTradeStatusOptions() {
+    const payload = runtime.lastPayload || {};
+    const language = String(payload.pageLanguage || "en");
+    const locale = language.startsWith("zh_CN")
+      ? "zh_CN"
+      : language.startsWith("zh_TW")
+        ? "zh_TW"
+        : "en";
+    const translations = payload.statusOptionTexts || {};
+    const shouldTranslate = payload.pageTranslationEnabled !== false && locale !== "en";
+
+    visitVueComponents(runtime.app, (component) => {
+      const options = component?.statusOptions;
+      if (!Array.isArray(options)) {
+        return;
+      }
+      for (const option of options) {
+        if (!option || typeof option !== "object") {
+          continue;
+        }
+        if (!runtime.statusOptionOriginalTexts.has(option)) {
+          runtime.statusOptionOriginalTexts.set(option, String(option.text || ""));
+        }
+        const original = runtime.statusOptionOriginalTexts.get(option) || "";
+        const optionId = String(option.id || "");
+        const localized = translations[optionId]?.[locale];
+        const nextText = shouldTranslate && typeof localized === "string" && localized ? localized : original;
+        if (option.text !== nextText) {
+          option.text = nextText;
+        }
+      }
+    });
+  }
+
+  function visitVueComponents(component, visitor, seen = new Set()) {
+    if (!component || typeof component !== "object" || seen.has(component)) {
+      return;
+    }
+    seen.add(component);
+    visitor(component);
+    for (const child of Array.isArray(component.$children) ? component.$children : []) {
+      visitVueComponents(child, visitor, seen);
+    }
   }
 
   function installWhitespaceSearch() {

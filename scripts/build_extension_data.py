@@ -1499,6 +1499,43 @@ def collect_filter_trade_text_records(
     return records, categories
 
 
+def collect_trade_filter_option_localizations(
+    simplified_filters_payload: dict[str, Any],
+    traditional_filters_payload: dict[str, Any],
+) -> dict[str, dict[str, dict[str, str]]]:
+    """Collect Trade status labels by the IDs used by the Vue client.
+
+    The China endpoint currently omits several status options.  Keep each
+    regional translation independently so the Taiwan labels remain usable.
+    """
+
+    localizations: dict[str, dict[str, dict[str, str]]] = {}
+    for locale, payload in (
+        ("zh_CN", simplified_filters_payload),
+        ("zh_TW", traditional_filters_payload),
+    ):
+        for group in payload.get("result", []):
+            if str(group.get("id") or "").strip() != "status_filters":
+                continue
+            for filter_data in group.get("filters", []):
+                if str(filter_data.get("id") or "").strip() != "status":
+                    continue
+                filter_options = localizations.setdefault("status_filters/status", {})
+                for option in filter_data.get("option", {}).get("options", []):
+                    option_id = str(option.get("id") or "").strip()
+                    text = str(option.get("text") or "").strip()
+                    if option_id and text:
+                        filter_options.setdefault(option_id, {})[locale] = text
+
+    return {
+        filter_id: {
+            option_id: dict(sorted(translations.items()))
+            for option_id, translations in sorted(options.items())
+        }
+        for filter_id, options in sorted(localizations.items())
+    }
+
+
 def collect_trade_filter_text_by_id(payload: dict[str, Any]) -> dict[str, str]:
     """Index visible Trade filter labels by their official filter ID."""
 
@@ -3447,6 +3484,10 @@ async def main() -> int:
         supplemental_strings=supplemental_trade_strings,
         minimum_coverage=args.minimum_trade_localization_coverage,
         supplemental_categories=trade_category_page_localizations,
+    )
+    trade_localization["filterOptions"] = collect_trade_filter_option_localizations(
+        simplified_filters_payload,
+        traditional_filters_payload,
     )
     trade_localization["search"]["items"].extend(
         {

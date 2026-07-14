@@ -122,6 +122,50 @@ test("page bridge limits Tier options to the selected exact category", () => {
   assert.deepStrictEqual(exact, [{ tier: 1, min: 17, pageId: "Rings", label: "T1" }]);
 });
 
+test("page bridge localizes Trade status options by their official IDs", () => {
+  const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
+  let source = fs
+    .readFileSync("page-bridge.js", "utf8")
+    .replace(bootstrapCall, "")
+    .replace(
+      /\n\}\)\(\);\s*$/,
+      "\n  window.__testHooks = { localizeTradeStatusOptions, runtime };\n})();"
+    );
+  const statusOptions = [
+    { id: "available", text: "Instant Buyout and In Person" },
+    { id: "securable", text: "Instant Buyout" },
+    { id: "onlineleague", text: "In Person (Online in League)" },
+    { id: "online", text: "In Person (Online)" },
+    { id: "any", text: "Any" },
+  ];
+  const sandbox = {
+    window: { addEventListener() {}, postMessage() {} },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.app = { $children: [{ statusOptions, $children: [] }] };
+  hooks.runtime.lastPayload = {
+    pageLanguage: "zh_TW",
+    pageTranslationEnabled: true,
+    statusOptionTexts: {
+      available: { zh_TW: "即刻購買以及面對面交易" },
+      securable: { zh_CN: "立即购买", zh_TW: "即刻購買" },
+      onlineleague: { zh_TW: "面對面交易(聯盟在線)" },
+      online: { zh_TW: "面對面交易(在線)" },
+      any: { zh_TW: "任何" }
+    }
+  };
+  hooks.localizeTradeStatusOptions();
+  const localized = structuredClone(statusOptions.map((option) => option.text));
+  hooks.runtime.lastPayload.pageLanguage = "en";
+  hooks.localizeTradeStatusOptions();
+  const restored = structuredClone(statusOptions.map((option) => option.text));
+
+  assert.deepStrictEqual(localized, ["即刻購買以及面對面交易", "即刻購買", "面對面交易(聯盟在線)", "面對面交易(在線)", "任何"]);
+  assert.deepStrictEqual(restored, ["Instant Buyout and In Person", "Instant Buyout", "In Person (Online in League)", "In Person (Online)", "Any"]);
+});
+
 test("page bridge inserts a Tier selector for a Vue stat filter and updates min", () => {
   const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
   let source = fs
