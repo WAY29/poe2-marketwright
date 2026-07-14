@@ -192,6 +192,39 @@ class TradeStatMappingTests(unittest.TestCase):
             },
         )
 
+    def test_collects_trade_price_option_translations_by_stable_id(self) -> None:
+        simplified_filters = {
+            "result": [
+                {
+                    "id": "trade_filters",
+                    "filters": [
+                        {
+                            "id": "price",
+                            "option": {"options": [{"id": "mirror", "text": "卡兰德的魔镜"}]},
+                        }
+                    ],
+                }
+            ]
+        }
+        traditional_filters = {
+            "result": [
+                {
+                    "id": "trade_filters",
+                    "filters": [
+                        {
+                            "id": "price",
+                            "option": {"options": [{"id": "mirror", "text": "卡蘭德魔鏡"}]},
+                        }
+                    ],
+                }
+            ]
+        }
+
+        self.assertEqual(
+            collect_trade_filter_option_localizations(simplified_filters, traditional_filters),
+            {"trade_filters/price": {"mirror": {"zh_CN": "卡兰德的魔镜", "zh_TW": "卡蘭德魔鏡"}}},
+        )
+
     @patch("build_extension_data.build_async_client")
     def test_reuses_cached_unique_item_pages_without_requests(self, build_async_client: object) -> None:
         class Client:

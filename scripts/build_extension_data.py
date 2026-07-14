@@ -1506,7 +1506,7 @@ def collect_trade_filter_option_localizations(
     simplified_filters_payload: dict[str, Any],
     traditional_filters_payload: dict[str, Any],
 ) -> dict[str, dict[str, dict[str, str]]]:
-    """Collect Trade status labels by the IDs used by the Vue client.
+    """Collect selected Trade filter labels by the IDs used by the Vue client.
 
     The China endpoint currently omits several status options.  Keep each
     regional translation independently so the Taiwan labels remain usable.
@@ -1518,12 +1518,18 @@ def collect_trade_filter_option_localizations(
         ("zh_TW", traditional_filters_payload),
     ):
         for group in payload.get("result", []):
-            if str(group.get("id") or "").strip() != "status_filters":
+            group_id = str(group.get("id") or "").strip()
+            allowed_filters = {
+                "status_filters": {"status"},
+                "trade_filters": {"price"},
+            }.get(group_id)
+            if not allowed_filters:
                 continue
             for filter_data in group.get("filters", []):
-                if str(filter_data.get("id") or "").strip() != "status":
+                filter_id = str(filter_data.get("id") or "").strip()
+                if filter_id not in allowed_filters:
                     continue
-                filter_options = localizations.setdefault("status_filters/status", {})
+                filter_options = localizations.setdefault(f"{group_id}/{filter_id}", {})
                 for option in filter_data.get("option", {}).get("options", []):
                     option_id = str(option.get("id") or "").strip()
                     text = str(option.get("text") or "").strip()

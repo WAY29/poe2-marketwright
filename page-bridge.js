@@ -114,7 +114,7 @@
       currencyConversionEnabled: false,
       pageLanguage: "en",
       pageTranslationEnabled: false,
-      statusOptionTexts: {},
+      filterOptionTexts: {},
       leagueOptionTexts: {},
       allowedKeys: [],
       allowedStatIds: [],
@@ -212,9 +212,10 @@
         : "en";
     const shouldTranslate = payload.pageTranslationEnabled !== false && locale !== "en";
 
+    const filterOptionTexts = payload.filterOptionTexts || {};
     visitVueComponents(runtime.app, (component) => {
       for (const [property, translations] of [
-        ["statusOptions", payload.statusOptionTexts || {}],
+        ["statusOptions", filterOptionTexts["status_filters/status"] || {}],
         ["leagueOptions", payload.leagueOptionTexts || {}]
       ]) {
         const options = component?.[property];
@@ -225,18 +226,33 @@
           if (!option || typeof option !== "object") {
             continue;
           }
-          if (!runtime.tradeOptionOriginalTexts.has(option)) {
-            runtime.tradeOptionOriginalTexts.set(option, String(option.text || ""));
-          }
-          const original = runtime.tradeOptionOriginalTexts.get(option) || "";
-          const localized = translations[String(option.id || "")]?.[locale];
-          const nextText = shouldTranslate && typeof localized === "string" && localized ? localized : original;
-          if (option.text !== nextText) {
-            option.text = nextText;
-          }
+          localizeTradeOptionText(option, translations, locale, shouldTranslate);
         }
       }
     });
+    for (const group of runtime.app?.$data?.static_?.propertyFilters || []) {
+      for (const filter of group?.filters || []) {
+        const translations = filterOptionTexts[`${group?.id || ""}/${filter?.id || ""}`];
+        for (const option of translations ? filter.option?.options || [] : []) {
+          localizeTradeOptionText(option, translations, locale, shouldTranslate);
+        }
+      }
+    }
+  }
+
+  function localizeTradeOptionText(option, translations, locale, shouldTranslate) {
+    if (!option || typeof option !== "object") {
+      return;
+    }
+    if (!runtime.tradeOptionOriginalTexts.has(option)) {
+      runtime.tradeOptionOriginalTexts.set(option, String(option.text || ""));
+    }
+    const original = runtime.tradeOptionOriginalTexts.get(option) || "";
+    const localized = translations[String(option.id || "")]?.[locale];
+    const nextText = shouldTranslate && typeof localized === "string" && localized ? localized : original;
+    if (option.text !== nextText) {
+      option.text = nextText;
+    }
   }
 
   function visitVueComponents(component, visitor, seen = new Set()) {

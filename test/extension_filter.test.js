@@ -122,7 +122,7 @@ test("page bridge limits Tier options to the selected exact category", () => {
   assert.deepStrictEqual(exact, [{ tier: 1, min: 17, pageId: "Rings", label: "T1" }]);
 });
 
-test("page bridge localizes Trade status and league options", () => {
+test("page bridge localizes Trade status, price, and league options", () => {
   const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
   let source = fs
     .readFileSync("page-bridge.js", "utf8")
@@ -142,22 +142,34 @@ test("page bridge localizes Trade status and league options", () => {
     { id: "Runes of Aldur", text: "Runes of Aldur" },
     { id: "HC Runes of Aldur", text: "HC Runes of Aldur" },
   ];
+  const priceOptions = [
+    { id: "divine", text: "Divine Orb" },
+    { id: "mirror", text: "Mirror of Kalandra" },
+  ];
   const sandbox = {
     window: { addEventListener() {}, postMessage() {} },
     console
   };
   vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
   const hooks = sandbox.window.__testHooks;
-  hooks.runtime.app = { $children: [{ statusOptions, $children: [{ leagueOptions, $children: [] }] }] };
+  hooks.runtime.app = {
+    $data: { static_: { propertyFilters: [{ id: "trade_filters", filters: [{ id: "price", option: { options: priceOptions } }] }] } },
+    $children: [{ statusOptions, $children: [{ leagueOptions, $children: [] }] }]
+  };
   hooks.runtime.lastPayload = {
     pageLanguage: "zh_TW",
     pageTranslationEnabled: true,
-    statusOptionTexts: {
-      available: { zh_TW: "即刻購買以及面對面交易" },
-      securable: { zh_CN: "立即购买", zh_TW: "即刻購買" },
-      onlineleague: { zh_TW: "面對面交易(聯盟在線)" },
-      online: { zh_TW: "面對面交易(在線)" },
-      any: { zh_TW: "任何" }
+    filterOptionTexts: {
+      "status_filters/status": {
+        available: { zh_TW: "即刻購買以及面對面交易" },
+        securable: { zh_CN: "立即购买", zh_TW: "即刻購買" },
+        onlineleague: { zh_TW: "面對面交易(聯盟在線)" },
+        online: { zh_TW: "面對面交易(在線)" },
+        any: { zh_TW: "任何" }
+      },
+      "trade_filters/price": {
+        mirror: { zh_CN: "卡兰德的魔镜", zh_TW: "卡蘭德魔鏡" }
+      }
     },
     leagueOptionTexts: {
       "Runes of Aldur": { zh_TW: "阿德爾的符文" },
@@ -167,15 +179,19 @@ test("page bridge localizes Trade status and league options", () => {
   hooks.localizeTradeOptions();
   const localized = structuredClone(statusOptions.map((option) => option.text));
   const localizedLeagues = structuredClone(leagueOptions.map((option) => option.text));
+  const localizedPrices = structuredClone(priceOptions.map((option) => option.text));
   hooks.runtime.lastPayload.pageLanguage = "en";
   hooks.localizeTradeOptions();
   const restored = structuredClone(statusOptions.map((option) => option.text));
   const restoredLeagues = structuredClone(leagueOptions.map((option) => option.text));
+  const restoredPrices = structuredClone(priceOptions.map((option) => option.text));
 
   assert.deepStrictEqual(localized, ["即刻購買以及面對面交易", "即刻購買", "面對面交易(聯盟在線)", "面對面交易(在線)", "任何"]);
   assert.deepStrictEqual(localizedLeagues, ["阿德爾的符文", "阿德爾的符文 專家模式"]);
+  assert.deepStrictEqual(localizedPrices, ["Divine Orb", "卡蘭德魔鏡"]);
   assert.deepStrictEqual(restored, ["Instant Buyout and In Person", "Instant Buyout", "In Person (Online in League)", "In Person (Online)", "Any"]);
   assert.deepStrictEqual(restoredLeagues, ["Runes of Aldur", "HC Runes of Aldur"]);
+  assert.deepStrictEqual(restoredPrices, ["Divine Orb", "Mirror of Kalandra"]);
 });
 
 test("page bridge inserts a Tier selector for a Vue stat filter and updates min", () => {
