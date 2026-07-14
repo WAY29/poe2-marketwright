@@ -95,6 +95,8 @@
     "hide filters": { en: "Hide Filters", zh_CN: "隐藏筛选器", zh_TW: "隱藏篩選器" },
     "travel to hideout": { en: "Travel to Hideout", zh_CN: "前往藏身处", zh_TW: "前往藏身處" },
     "ignore player": { en: "Ignore Player", zh_CN: "忽略玩家", zh_TW: "忽略玩家" },
+    online: { en: "Online", zh_CN: "在线", zh_TW: "在線" },
+    "direct whisper": { en: "Direct Whisper", zh_CN: "直接密语", zh_TW: "直接密語" },
     "weighted sum": { en: "WEIGHTED SUM", zh_CN: "加权总和", zh_TW: "加權總和" },
     "crucible passive tree path": {
       en: "Crucible Passive Tree Path",
@@ -173,7 +175,6 @@
   const TRADE_LOCALIZATION_EXCLUDED_SELECTOR = [
     "[data-field='account']",
     "[data-field='whisper']",
-    ".whisper-btn",
     ".item-note",
     ".result-note",
     ".listing-account",

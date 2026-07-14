@@ -559,6 +559,40 @@ test("trade localization preserves numeric stat values and English fallback", ()
   });
 });
 
+test("result whisper controls use compact localized labels without excluding their display text", () => {
+  class FakeElement {
+    closest(selector) {
+      return selector.includes(".whisper-btn") ? this : null;
+    }
+  }
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getLocalizedTradeText, isExcludedTradeLocalizationElement, runtime };\n})();"
+  );
+  const sandbox = {
+    Element: FakeElement,
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageLanguage: "zh_TW_en" };
+
+  assert.deepStrictEqual(
+    structuredClone({
+      online: hooks.getLocalizedTradeText("Online"),
+      whisper: hooks.getLocalizedTradeText("Direct Whisper"),
+      excluded: hooks.isExcludedTradeLocalizationElement(new FakeElement())
+    }),
+    { online: "在線", whisper: "直接密語", excluded: false }
+  );
+});
+
 test("Trade filter terminology overrides translate headings and help copy", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
