@@ -5,6 +5,15 @@ const fs = require("node:fs");
 const vm = require("node:vm");
 const { test } = require("node:test");
 
+test("open Tier selector stacks above adjacent Tier controls", () => {
+  const styles = fs.readFileSync("content.css", "utf8");
+
+  assert.match(
+    styles,
+    /\.poe2-marketwright-tier-control-open\s*\{\s*z-index:\s*14;/
+  );
+});
+
 test("page bridge applies native multi-token search only to item and stat selectors", () => {
   const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
   let source = fs

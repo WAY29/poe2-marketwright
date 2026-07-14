@@ -438,6 +438,41 @@ class TradeStatMappingTests(unittest.TestCase):
             {},
         )
 
+    def test_ignores_essence_sequences_when_building_normal_affix_tiers(self) -> None:
+        def affix(group: str, code: str, values: tuple[int, int]) -> dict[str, object]:
+            return {
+                "affix_group": group,
+                "code": code,
+                "families": ["LightningDamage"],
+                "text_html": (
+                    "Adds "
+                    f"<span class='mod-value'>({values[0]}-{values[0] + 1})</span> to "
+                    f"<span class='mod-value'>({values[1]}-{values[1] + 1})</span> Lightning Damage"
+                ),
+            }
+
+        self.assertEqual(
+            build_tier_mappings(
+                {
+                    "Bows": [
+                        affix("normal", "LocalAddedLightningDamage1", (1, 3)),
+                        affix("normal", "LocalAddedLightningDamage2", (3, 7)),
+                        affix("essence", "LocalAddedLightningDamage1", (10, 20)),
+                        affix("essence", "LocalAddedLightningDamage2", (20, 40)),
+                    ]
+                },
+                {"adds # to # lightning damage": {"explicit.stat_lightning_damage"}},
+            ),
+            {
+                "Bows": {
+                    "explicit.stat_lightning_damage": [
+                        {"tier": 1, "exactMin": 5, "exactMax": 6, "min": 3.1},
+                        {"tier": 2, "exactMin": 2, "exactMax": 3},
+                    ]
+                }
+            },
+        )
+
     def test_requires_an_exact_trade_stat_for_semantic_suffixes(self) -> None:
         def affix(code: str, values: tuple[int, int]) -> dict[str, object]:
             return {

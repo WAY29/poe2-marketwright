@@ -1098,13 +1098,15 @@ def get_affix_tier_source(affix: dict[str, Any]) -> tuple[str, int] | None:
 
 def get_tier_trade_stat_group(affix: dict[str, Any]) -> str:
     affix_group = str(affix.get("affix_group") or "").lower()
+    if affix_group == "normal":
+        return "explicit"
     if affix_group == "desecrated":
         return "desecrated"
     if affix_group in {"socketable", "bonded"}:
         return "rune"
     if affix_group == "corrupted":
         return "implicit"
-    return "explicit"
+    return ""
 
 
 def normalize_tier_minimum(value: float) -> int | float:
@@ -1125,6 +1127,8 @@ def build_tier_mappings(
                 continue
             source, source_rank = tier_source
             stat_group = get_tier_trade_stat_group(affix)
+            if not stat_group:
+                continue
             affix_group = str(affix.get("affix_group") or "").lower()
             families = tuple(sorted(str(value) for value in affix.get("families") or [] if value))
             for line_html in split_affix_stat_html_lines(affix.get("text_html") or affix.get("text") or ""):

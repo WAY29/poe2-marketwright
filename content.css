@@ -1994,6 +1994,10 @@
   vertical-align: top;
 }
 
+.poe2-marketwright-tier-control-open {
+  z-index: 14;
+}
+
 .poe2-marketwright-tier-trigger {
   width: 26px;
   height: 26px;
