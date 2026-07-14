@@ -378,30 +378,41 @@
   }
 
   function renderFavoriteRow(favorite) {
+    const editing = local.editing?.kind === "favorite" && local.editing.id === favorite.signature;
     const row = createElement("article", "favorites-panel-item-row");
-    const launch = createElement("button", "favorites-panel-item-launch");
-    launch.type = "button";
-    launch.setAttribute("aria-label", favorite.displayName || favorite.baseName || "");
-    bindLinkFavoriteTooltip(launch, getFavoriteTooltipLink(favorite));
-    launch.addEventListener("click", () => run("launch-favorite", { signature: favorite.signature }));
-    appendEditableName(
-      launch,
-      "favorite",
-      favorite.signature,
-      favorite.displayName || favorite.baseName || "",
-      (name) => run("rename-favorite", { signature: favorite.signature, name })
-    );
-    const time = Number(favorite.createdAt);
-    if (Number.isFinite(time) && time > 0) {
-      launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
-    }
-    const visibleMods = (favorite.mods || []).slice(0, 3);
-    for (const mod of visibleMods) {
-      launch.appendChild(renderLinkFavoriteStat(getFavoriteModifierPresentation(mod)));
-    }
-    const moreCount = Math.max(0, (favorite.mods || []).length - visibleMods.length);
-    if (moreCount) {
-      launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
+    const launch = createElement(editing ? "div" : "button", "favorites-panel-item-launch");
+    if (editing) {
+      appendEditableName(
+        launch,
+        "favorite",
+        favorite.signature,
+        favorite.displayName || favorite.baseName || "",
+        (name) => run("rename-favorite", { signature: favorite.signature, name })
+      );
+    } else {
+      launch.type = "button";
+      launch.setAttribute("aria-label", favorite.displayName || favorite.baseName || "");
+      bindLinkFavoriteTooltip(launch, getFavoriteTooltipLink(favorite));
+      launch.addEventListener("click", () => run("launch-favorite", { signature: favorite.signature }));
+      appendEditableName(
+        launch,
+        "favorite",
+        favorite.signature,
+        favorite.displayName || favorite.baseName || "",
+        (name) => run("rename-favorite", { signature: favorite.signature, name })
+      );
+      const time = Number(favorite.createdAt);
+      if (Number.isFinite(time) && time > 0) {
+        launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
+      }
+      const visibleMods = (favorite.mods || []).slice(0, 3);
+      for (const mod of visibleMods) {
+        launch.appendChild(renderLinkFavoriteStat(getFavoriteModifierPresentation(mod)));
+      }
+      const moreCount = Math.max(0, (favorite.mods || []).length - visibleMods.length);
+      if (moreCount) {
+        launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
+      }
     }
     const actions = createElement("div", "favorites-panel-row-actions");
     const rename = createIconButton(t("renameFavorite"), icons.edit);
@@ -464,6 +475,8 @@
         render();
       }
     });
+    input.addEventListener("click", (event) => event.stopPropagation());
+    input.addEventListener("mousedown", (event) => event.stopPropagation());
     input.addEventListener("blur", commit, { once: true });
     parent.appendChild(input);
     window.setTimeout(() => {
@@ -967,26 +980,31 @@
   function renderLinkRow(state, link) {
     const row = createElement("article", "favorites-panel-link-row");
     setDropTarget(row, { kind: "link", id: link.id, folderId: link.folderId || null });
+    const editing = local.editing?.kind === "link" && local.editing.id === link.id;
     const drag = createIconButton(t("reorderLinkFavorite"), icons.drag, "favorites-panel-drag-handle");
     setDragSource(drag, { kind: "link", id: link.id, folderId: link.folderId || null });
-    const launch = createElement("button", "favorites-panel-link-launch");
-    launch.type = "button";
-    launch.setAttribute("aria-label", link.displayName || "");
-    bindLinkFavoriteTooltip(launch, link);
-    launch.appendChild(createElement("span", "favorites-panel-name", link.displayName || ""));
-    const time = Number(link.lastUsedAt || link.createdAt);
-    if (Number.isFinite(time) && time > 0) {
-      launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
+    const launch = createElement(editing ? "div" : "button", "favorites-panel-link-launch");
+    if (editing) {
+      appendEditableName(launch, "link", link.id, link.displayName || "", (name) => run("rename-link", { linkId: link.id, name }));
+    } else {
+      launch.type = "button";
+      launch.setAttribute("aria-label", link.displayName || "");
+      bindLinkFavoriteTooltip(launch, link);
+      launch.appendChild(createElement("span", "favorites-panel-name", link.displayName || ""));
+      const time = Number(link.lastUsedAt || link.createdAt);
+      if (Number.isFinite(time) && time > 0) {
+        launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
+      }
+      const statFilters = getLinkFavoriteStatFilters(link);
+      for (const filter of statFilters.slice(0, 3)) {
+        launch.appendChild(renderLinkFavoriteStatFilter(filter));
+      }
+      const moreCount = Math.max(0, statFilters.length - 3);
+      if (moreCount) {
+        launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
+      }
+      launch.addEventListener("click", () => run("open-link", { linkId: link.id }));
     }
-    const statFilters = getLinkFavoriteStatFilters(link);
-    for (const filter of statFilters.slice(0, 3)) {
-      launch.appendChild(renderLinkFavoriteStatFilter(filter));
-    }
-    const moreCount = Math.max(0, statFilters.length - 3);
-    if (moreCount) {
-      launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
-    }
-    launch.addEventListener("click", () => run("open-link", { linkId: link.id }));
     const actions = createElement("div", "favorites-panel-row-actions");
     if (local.movingLinkId === link.id) {
       const select = createElement("select", "favorites-panel-move-select");
@@ -1022,10 +1040,6 @@
       const remove = createIconButton(t("deleteLinkFavorite"), icons.delete, "favorites-panel-delete");
       remove.addEventListener("click", () => run("delete-link", { linkId: link.id }));
       actions.append(rename, move, remove);
-    }
-    if (local.editing?.kind === "link" && local.editing.id === link.id) {
-      launch.replaceChildren();
-      appendEditableName(launch, "link", link.id, link.displayName || "", (name) => run("rename-link", { linkId: link.id, name }));
     }
     row.append(drag, launch, actions);
     return row;

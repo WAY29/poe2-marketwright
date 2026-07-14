@@ -1109,6 +1109,85 @@ test("full item tooltip keeps the hidden item group through group normalization"
   assert.deepStrictEqual(result, [{"label": "Item", "hideLabel": true, "values": [{"text": "Storm Ward", "source": null, "heading": true}, {"text": "Base type: Rider Bow", "source": null}, {"text": "Category: Bow", "source": null}, {"text": "Rarity: RARE", "source": null}]}, {"label": "Modifiers", "values": [{"text": "+60 to maximum Life", "source": null}]}]);
 });
 
+test("rename mode renders favorite hosts as non-button containers", async () => {
+  let source = fs.readFileSync("favorites-panel.js", "utf8");
+  source = source.replace("  bindUi();\n  bootstrap();", "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { renderFavoriteRow, renderLinkRow, local };\n})();"
+  );
+  class Node {
+    constructor(tagName = "div") {
+      this.tagName = String(tagName).toUpperCase();
+      this.children = [];
+      this.className = "";
+      this.dataset = {};
+      this.attributes = {};
+      this.listeners = {};
+      this.classList = {
+        values: new Set(),
+        add: (...values) => values.forEach((value) => this.classList.values.add(value)),
+        remove: (...values) => values.forEach((value) => this.classList.values.delete(value)),
+        contains: (value) => this.classList.values.has(value)
+      };
+    }
+    appendChild(child) { this.children.push(child); return child; }
+    append(...children) { children.forEach((child) => this.appendChild(child)); }
+    replaceChildren(...children) { this.children = children; }
+    addEventListener(type, listener) { this.listeners[type] = listener; }
+    setAttribute(name, value) { this.attributes[name] = value; }
+    focus() {}
+    select() {}
+  }
+  const sandbox = {
+    window: { setTimeout(fn) { fn(); return 1; }, clearTimeout() {}, parent: null },
+    document: {
+      createElement(tagName) { return new Node(tagName); },
+      querySelector() { return null; },
+      querySelectorAll() { return []; },
+      documentElement: new Node("html")
+    },
+    location: { search: "" },
+    URLSearchParams,
+    Intl: { DateTimeFormat: class { format() { return "date"; } } },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.local.editing = { kind: "favorite", id: "sig-1" };
+  const itemRow = hooks.renderFavoriteRow({
+    signature: "sig-1",
+    displayName: "Storm Ward",
+    baseName: "Rider Bow",
+    mods: []
+  });
+  hooks.local.editing = { kind: "link", id: "link-1" };
+  const linkRow = hooks.renderLinkRow(
+    { linkFavorites: { folders: [] }, canSaveCurrentLink: false, linkFavoritesEnabled: true },
+    { id: "link-1", displayName: "Life ring", folderId: null, createdAt: 1 }
+  );
+  const itemHost = itemRow.children.find((child) => String(child.className).includes("favorites-panel-item-launch"));
+  const linkHost = linkRow.children.find((child) => String(child.className).includes("favorites-panel-link-launch"));
+  assert.deepStrictEqual(
+    {
+      itemTag: itemHost?.tagName,
+      itemClick: Boolean(itemHost?.listeners.click),
+      itemInput: itemHost?.children[0]?.tagName,
+      linkTag: linkHost?.tagName,
+      linkClick: Boolean(linkHost?.listeners.click),
+      linkInput: linkHost?.children[0]?.tagName
+    },
+    {
+      itemTag: "DIV",
+      itemClick: false,
+      itemInput: "INPUT",
+      linkTag: "DIV",
+      linkClick: false,
+      linkInput: "INPUT"
+    }
+  );
+});
+
 test("full view drag handles publish a recoverable drag source", async () => {
   let source = fs.readFileSync("favorites-panel.js", "utf8");
   source = source.replace("  bindUi();\n  bootstrap();", "");

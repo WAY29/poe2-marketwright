@@ -2614,7 +2614,7 @@
       );
       renameButton.addEventListener("click", (event) => {
         event.stopPropagation();
-        startFavoriteRename(favorite, name);
+        startFavoriteRename(favorite, launch);
       });
       const deleteButton = createFavoriteIconButton(
         "poe2-marketwright-favorite-action poe2-marketwright-favorite-delete",
@@ -2679,7 +2679,7 @@
     );
   }
 
-  function startFavoriteRename(favorite, nameNode) {
+  function startFavoriteRename(favorite, hostNode) {
     const input = document.createElement("input");
     input.type = "text";
     input.className = "poe2-marketwright-favorite-rename-input";
@@ -2700,8 +2700,10 @@
         renderFavoriteDrawer();
       }
     });
+    input.addEventListener("click", (event) => event.stopPropagation());
+    input.addEventListener("mousedown", (event) => event.stopPropagation());
     input.addEventListener("blur", commit, { once: true });
-    nameNode.replaceWith(input);
+    hostNode.replaceWith(input);
     input.focus();
     input.select();
   }
@@ -3206,7 +3208,7 @@
     await setAllLinkFavoriteFoldersCollapsed(folders.some((folder) => !folder.collapsed));
   }
 
-  function startLinkFavoriteRename(nameNode, initialName, label, save) {
+  function startLinkFavoriteRename(hostNode, initialName, label, save) {
     const input = document.createElement("input");
     input.type = "text";
     input.className = "poe2-marketwright-link-favorite-rename-input";
@@ -3227,8 +3229,10 @@
         renderLinkFavoritesDrawer();
       }
     });
+    input.addEventListener("click", (event) => event.stopPropagation());
+    input.addEventListener("mousedown", (event) => event.stopPropagation());
     input.addEventListener("blur", commit, { once: true });
-    nameNode.replaceWith(input);
+    hostNode.replaceWith(input);
     input.focus();
     input.select();
   }
