@@ -17,6 +17,7 @@ from build_extension_data import (
     build_trade_filter_page_localizations,
     build_trade_category_page_localizations,
     collect_trade_filter_option_localizations,
+    collect_trade_league_localizations,
     build_trade_item_localization_bundle,
     build_verified_unique_trade_item_localizations,
     build_display_metadata,
@@ -62,6 +63,42 @@ from build_extension_data import (
 
 
 class TradeStatMappingTests(unittest.TestCase):
+    def test_collects_trade_league_translations_from_aligned_regional_lists(self) -> None:
+        english_leagues = {
+            "result": [
+                {"id": "Runes of Aldur", "realm": "poe2", "text": "Runes of Aldur"},
+                {"id": "HC Runes of Aldur", "realm": "poe2", "text": "HC Runes of Aldur"},
+            ]
+        }
+        simplified_leagues = {
+            "result": [
+                {"id": "奥杜尔秘符", "realm": "poe2", "text": "奥杜尔秘符"},
+                {"id": "奥杜尔秘符（专家）", "realm": "poe2", "text": "奥杜尔秘符（专家）"},
+            ]
+        }
+        traditional_leagues = {
+            "result": [
+                {"id": "阿德爾的符文", "realm": "poe2", "text": "阿德爾的符文"},
+                {"id": "阿德爾的符文 專家模式", "realm": "poe2", "text": "阿德爾的符文 專家模式"},
+            ]
+        }
+
+        self.assertEqual(
+            collect_trade_league_localizations(english_leagues, simplified_leagues, traditional_leagues),
+            {
+                "HC Runes of Aldur": {"zh_CN": "奥杜尔秘符（专家）", "zh_TW": "阿德爾的符文 專家模式"},
+                "Runes of Aldur": {"zh_CN": "奥杜尔秘符", "zh_TW": "阿德爾的符文"},
+            },
+        )
+        traditional_leagues["result"][1]["realm"] = "pc"
+        self.assertEqual(
+            collect_trade_league_localizations(english_leagues, simplified_leagues, traditional_leagues),
+            {
+                "HC Runes of Aldur": {"zh_CN": "奥杜尔秘符（专家）"},
+                "Runes of Aldur": {"zh_CN": "奥杜尔秘符"},
+            },
+        )
+
     def test_collects_trade_status_option_translations_by_stable_id(self) -> None:
         simplified_filters = {
             "result": [

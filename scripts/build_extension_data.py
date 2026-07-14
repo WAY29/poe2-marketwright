@@ -45,6 +45,9 @@ TRADE_STATIC_ZH_TW_URL = "https://pathofexile.tw/api/trade2/data/static"
 TRADE_FILTERS_URL = "https://www.pathofexile.com/api/trade2/data/filters"
 TRADE_FILTERS_ZH_CN_URL = "https://poe.game.qq.com/api/trade2/data/filters"
 TRADE_FILTERS_ZH_TW_URL = "https://pathofexile.tw/api/trade2/data/filters"
+TRADE_LEAGUES_URL = "https://www.pathofexile.com/api/trade2/data/leagues"
+TRADE_LEAGUES_ZH_CN_URL = "https://poe.game.qq.com/api/trade2/data/leagues"
+TRADE_LEAGUES_ZH_TW_URL = "https://pathofexile.tw/api/trade2/data/leagues"
 POE2DB_ITEM_ROOT_URL = "https://poe2db.tw/us/"
 DEFAULT_POE2DB_BATCH_SIZE = 10
 DEFAULT_POE2DB_BATCH_DELAY_SECONDS = 5.0
@@ -1534,6 +1537,48 @@ def collect_trade_filter_option_localizations(
         }
         for filter_id, options in sorted(localizations.items())
     }
+
+
+def collect_trade_league_localizations(
+    english_leagues_payload: dict[str, Any],
+    simplified_leagues_payload: dict[str, Any],
+    traditional_leagues_payload: dict[str, Any],
+) -> dict[str, dict[str, str]]:
+    """Align regional league labels using the Trade API's synchronized catalogue order.
+
+    Regional Trade APIs localize their league IDs, so no cross-server ID
+    exists.  A locale is omitted unless its complete realm sequence matches
+    the international catalogue exactly.
+    """
+
+    english_entries = english_leagues_payload.get("result")
+    if not isinstance(english_entries, list):
+        return {}
+
+    localizations: dict[str, dict[str, str]] = {}
+    for locale, payload in (
+        ("zh_CN", simplified_leagues_payload),
+        ("zh_TW", traditional_leagues_payload),
+    ):
+        localized_entries = payload.get("result")
+        if not isinstance(localized_entries, list) or len(localized_entries) != len(english_entries):
+            continue
+        if any(
+            not isinstance(english, dict)
+            or not isinstance(localized, dict)
+            or str(english.get("realm") or "").strip() != str(localized.get("realm") or "").strip()
+            for english, localized in zip(english_entries, localized_entries)
+        ):
+            continue
+        for english, localized in zip(english_entries, localized_entries):
+            if not isinstance(english, dict) or not isinstance(localized, dict):
+                continue
+            league_id = str(english.get("id") or "").strip()
+            text = str(localized.get("text") or "").strip()
+            if league_id and text:
+                localizations.setdefault(league_id, {})[locale] = text
+
+    return {league_id: dict(sorted(texts.items())) for league_id, texts in sorted(localizations.items())}
 
 
 def collect_trade_filter_text_by_id(payload: dict[str, Any]) -> dict[str, str]:
@@ -3101,6 +3146,21 @@ async def main() -> int:
         help="Official Taiwan trade2 filters API URL used for rendered-text localization.",
     )
     parser.add_argument(
+        "--trade-leagues-url",
+        default=TRADE_LEAGUES_URL,
+        help="Official international trade2 leagues API URL used for league labels.",
+    )
+    parser.add_argument(
+        "--zh-cn-trade-leagues-url",
+        default=TRADE_LEAGUES_ZH_CN_URL,
+        help="Official China trade2 leagues API URL used for simplified league labels.",
+    )
+    parser.add_argument(
+        "--zh-tw-trade-leagues-url",
+        default=TRADE_LEAGUES_ZH_TW_URL,
+        help="Official Taiwan trade2 leagues API URL used for traditional league labels.",
+    )
+    parser.add_argument(
         "--minimum-display-coverage",
         type=float,
         default=0.95,
@@ -3182,6 +3242,9 @@ async def main() -> int:
         filters_payload,
         simplified_filters_payload,
         traditional_filters_payload,
+        leagues_payload,
+        simplified_leagues_payload,
+        traditional_leagues_payload,
     ) = await asyncio.gather(
         fetch_trade_stats(args.zh_cn_trade_stats_url),
         fetch_trade_stats(args.zh_tw_trade_stats_url),
@@ -3193,6 +3256,9 @@ async def main() -> int:
         fetch_trade_stats(args.trade_filters_url),
         fetch_trade_stats(args.zh_cn_trade_filters_url),
         fetch_trade_stats(args.zh_tw_trade_filters_url),
+        fetch_trade_stats(args.trade_leagues_url),
+        fetch_trade_stats(args.zh_cn_trade_leagues_url),
+        fetch_trade_stats(args.zh_tw_trade_leagues_url),
     )
     trade_stat_index = build_trade_stat_index(trade_stats_payload)
     trade_stat_records = build_trade_stat_records(trade_stats_payload)
@@ -3489,6 +3555,11 @@ async def main() -> int:
         simplified_filters_payload,
         traditional_filters_payload,
     )
+    trade_localization["leagueOptions"] = collect_trade_league_localizations(
+        leagues_payload,
+        simplified_leagues_payload,
+        traditional_leagues_payload,
+    )
     trade_localization["search"]["items"].extend(
         {
             "id": english,
@@ -3534,6 +3605,11 @@ async def main() -> int:
                 "en": args.trade_filters_url,
                 "zh_CN": args.zh_cn_trade_filters_url,
                 "zh_TW": args.zh_tw_trade_filters_url,
+            },
+            "leagues": {
+                "en": args.trade_leagues_url,
+                "zh_CN": args.zh_cn_trade_leagues_url,
+                "zh_TW": args.zh_tw_trade_leagues_url,
             },
             "poe2dbFilterPages": {
                 filter_id: {

@@ -115,6 +115,7 @@
       pageLanguage: "en",
       pageTranslationEnabled: false,
       statusOptionTexts: {},
+      leagueOptionTexts: {},
       allowedKeys: [],
       allowedStatIds: [],
       allKeys: [],
@@ -134,7 +135,7 @@
     tierOutsidePointerBound: false,
     tierObserver: null,
     tierRefreshTimer: null,
-    statusOptionOriginalTexts: new WeakMap()
+    tradeOptionOriginalTexts: new WeakMap()
   };
 
   window.addEventListener("message", (event) => {
@@ -165,7 +166,7 @@
 
     runtime.lastPayload = { ...runtime.lastPayload, ...(event.data.payload || {}) };
     applyKnownStatsFilter();
-    localizeTradeStatusOptions();
+    localizeTradeOptions();
     installWhitespaceSearch();
     restoreCurrentSearchSnapshot();
     notifyState();
@@ -196,12 +197,12 @@
     if (!runtime.originalKnownStats) {
       runtime.originalKnownStats = cloneKnownStats(staticData.knownStats);
     }
-    localizeTradeStatusOptions();
+    localizeTradeOptions();
     installWhitespaceSearch();
     return true;
   }
 
-  function localizeTradeStatusOptions() {
+  function localizeTradeOptions() {
     const payload = runtime.lastPayload || {};
     const language = String(payload.pageLanguage || "en");
     const locale = language.startsWith("zh_CN")
@@ -209,27 +210,30 @@
       : language.startsWith("zh_TW")
         ? "zh_TW"
         : "en";
-    const translations = payload.statusOptionTexts || {};
     const shouldTranslate = payload.pageTranslationEnabled !== false && locale !== "en";
 
     visitVueComponents(runtime.app, (component) => {
-      const options = component?.statusOptions;
-      if (!Array.isArray(options)) {
-        return;
-      }
-      for (const option of options) {
-        if (!option || typeof option !== "object") {
+      for (const [property, translations] of [
+        ["statusOptions", payload.statusOptionTexts || {}],
+        ["leagueOptions", payload.leagueOptionTexts || {}]
+      ]) {
+        const options = component?.[property];
+        if (!Array.isArray(options)) {
           continue;
         }
-        if (!runtime.statusOptionOriginalTexts.has(option)) {
-          runtime.statusOptionOriginalTexts.set(option, String(option.text || ""));
-        }
-        const original = runtime.statusOptionOriginalTexts.get(option) || "";
-        const optionId = String(option.id || "");
-        const localized = translations[optionId]?.[locale];
-        const nextText = shouldTranslate && typeof localized === "string" && localized ? localized : original;
-        if (option.text !== nextText) {
-          option.text = nextText;
+        for (const option of options) {
+          if (!option || typeof option !== "object") {
+            continue;
+          }
+          if (!runtime.tradeOptionOriginalTexts.has(option)) {
+            runtime.tradeOptionOriginalTexts.set(option, String(option.text || ""));
+          }
+          const original = runtime.tradeOptionOriginalTexts.get(option) || "";
+          const localized = translations[String(option.id || "")]?.[locale];
+          const nextText = shouldTranslate && typeof localized === "string" && localized ? localized : original;
+          if (option.text !== nextText) {
+            option.text = nextText;
+          }
         }
       }
     });
