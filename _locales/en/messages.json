@@ -450,6 +450,54 @@
   "linkFavoriteFolderDeleted": {
     "message": "Folder deleted"
   },
+  "favoriteFolderDeleted": {
+    "message": "Folder deleted"
+  },
+  "createFavoriteFolder": {
+    "message": "Create folder"
+  },
+  "renameFavoriteFolder": {
+    "message": "Rename folder"
+  },
+  "deleteFavoriteFolder": {
+    "message": "Delete folder"
+  },
+  "confirmDeleteFavoriteFolder": {
+    "message": "Delete folder and $1 favorites"
+  },
+  "cancelFavoriteFolderDelete": {
+    "message": "Cancel"
+  },
+  "moveFavorite": {
+    "message": "Move favorite"
+  },
+  "moveFavoriteToRoot": {
+    "message": "Top level"
+  },
+  "dropFavoriteAtRoot": {
+    "message": "Drop here to move to the top level"
+  },
+  "dropFavoriteFolderAtTop": {
+    "message": "Drop here to move folder to the top"
+  },
+  "reorderFavorite": {
+    "message": "Drag to reorder favorite"
+  },
+  "reorderFavoriteFolder": {
+    "message": "Drag to reorder folder"
+  },
+  "expandFavoriteFolder": {
+    "message": "Expand folder"
+  },
+  "collapseFavoriteFolder": {
+    "message": "Collapse folder"
+  },
+  "collapseAllFavoriteFolders": {
+    "message": "Collapse all folders"
+  },
+  "expandAllFavoriteFolders": {
+    "message": "Expand all folders"
+  },
   "enableLinkFavorites": {
     "message": "Enable link bookmarks"
   },

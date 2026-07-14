@@ -738,6 +738,54 @@
   "linkFavoriteFolderDeleted": {
     "message": "文件夹已删除"
   },
+  "favoriteFolderDeleted": {
+    "message": "文件夹已删除"
+  },
+  "createFavoriteFolder": {
+    "message": "新建文件夹"
+  },
+  "renameFavoriteFolder": {
+    "message": "重命名文件夹"
+  },
+  "deleteFavoriteFolder": {
+    "message": "删除文件夹"
+  },
+  "confirmDeleteFavoriteFolder": {
+    "message": "删除文件夹及 $1 个收藏"
+  },
+  "cancelFavoriteFolderDelete": {
+    "message": "取消"
+  },
+  "moveFavorite": {
+    "message": "移动收藏"
+  },
+  "moveFavoriteToRoot": {
+    "message": "最外层"
+  },
+  "dropFavoriteAtRoot": {
+    "message": "拖到这里移至最外层"
+  },
+  "dropFavoriteFolderAtTop": {
+    "message": "拖到这里置顶文件夹"
+  },
+  "reorderFavorite": {
+    "message": "拖拽排序收藏"
+  },
+  "reorderFavoriteFolder": {
+    "message": "拖拽排序文件夹"
+  },
+  "expandFavoriteFolder": {
+    "message": "展开文件夹"
+  },
+  "collapseFavoriteFolder": {
+    "message": "收起文件夹"
+  },
+  "collapseAllFavoriteFolders": {
+    "message": "收起全部文件夹"
+  },
+  "expandAllFavoriteFolders": {
+    "message": "展开全部文件夹"
+  },
   "enableLinkFavorites": {
     "message": "启用链接收藏"
   },

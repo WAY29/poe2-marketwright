@@ -40,6 +40,22 @@
     deleteFavorite: "Delete favorite",
     undoFavoriteDelete: "Undo",
     favoriteDeleted: "Favorite deleted",
+    favoriteFolderDeleted: "Folder deleted",
+    createFavoriteFolder: "Create folder",
+    renameFavoriteFolder: "Rename folder",
+    deleteFavoriteFolder: "Delete folder",
+    confirmDeleteFavoriteFolder: "Delete folder and $1 favorites",
+    cancelFavoriteFolderDelete: "Cancel",
+    moveFavorite: "Move favorite",
+    moveFavoriteToRoot: "Top level",
+    dropFavoriteAtRoot: "Drop here to move to the top level",
+    dropFavoriteFolderAtTop: "Drop here to move folder to the top",
+    reorderFavorite: "Drag to reorder favorite",
+    reorderFavoriteFolder: "Drag to reorder folder",
+    expandFavoriteFolder: "Expand folder",
+    collapseFavoriteFolder: "Collapse folder",
+    collapseAllFavoriteFolders: "Collapse all folders",
+    expandAllFavoriteFolders: "Expand all folders",
     renameLinkFavorite: "Rename bookmark",
     moveLinkFavorite: "Move bookmark",
     deleteLinkFavorite: "Delete bookmark",
@@ -122,6 +138,9 @@
     itemSearch: "",
     linkSearch: "",
     editing: null,
+    creatingFavoriteFolder: false,
+    confirmingFavoriteFolderId: null,
+    movingFavoriteSignature: null,
     creatingFolder: false,
     importing: false,
     confirmingFolderId: null,
@@ -333,6 +352,21 @@
         renderItemResults(state, results);
       })
     );
+    const createFolder = createIconButton(t("createFavoriteFolder"), icons.folderAdd);
+    createFolder.disabled = !state.favoritesEnabled;
+    createFolder.addEventListener("click", () => {
+      local.creatingFavoriteFolder = true;
+      render();
+    });
+    const folders = state.favoriteFolders?.folders || [];
+    const allCollapsed = folders.length > 0 && folders.every((folder) => folder.collapsed);
+    const collapseAll = createIconButton(
+      t(allCollapsed ? "expandAllFavoriteFolders" : "collapseAllFavoriteFolders"),
+      allCollapsed ? icons.expand : icons.collapse
+    );
+    collapseAll.disabled = !state.favoritesEnabled || folders.length === 0;
+    collapseAll.addEventListener("click", () => run("toggle-all-favorite-folders"));
+    toolbar.append(createFolder, collapseAll);
     root.append(toolbar, results);
     renderItemResults(state, results);
     return root;
@@ -342,18 +376,42 @@
     root.replaceChildren();
     if (state.deletedFavorite) {
       const feedback = createElement("div", "favorites-panel-feedback");
-      feedback.appendChild(createElement("span", "", t("favoriteDeleted")));
+      feedback.appendChild(createElement("span", "", t(state.deletedFavorite.kind === "folder" ? "favoriteFolderDeleted" : "favoriteDeleted")));
       const undo = makeTextButton(t("undoFavoriteDelete"));
       undo.addEventListener("click", () => run("undo-favorite"));
       feedback.appendChild(undo);
       root.appendChild(feedback);
     }
+    if (local.creatingFavoriteFolder) {
+      const input = createElement("input", "favorites-panel-folder-input");
+      input.type = "text";
+      input.placeholder = t("createFavoriteFolder");
+      input.setAttribute("aria-label", t("createFavoriteFolder"));
+      let cancelled = false;
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          input.blur();
+        }
+        if (event.key === "Escape") {
+          cancelled = true;
+          local.creatingFavoriteFolder = false;
+          render();
+        }
+      });
+      input.addEventListener("blur", () => {
+        local.creatingFavoriteFolder = false;
+        if (cancelled || !input.value.trim()) {
+          render();
+          return;
+        }
+        run("create-favorite-folder", { name: input.value });
+      }, { once: true });
+      root.appendChild(input);
+      window.setTimeout(() => input.focus(), 0);
+    }
     const query = local.itemSearch.trim().toLocaleLowerCase();
-    const favorites = (state.favorites || []).filter((favorite) => {
-      if (!query) {
-        return true;
-      }
-      return [
+    const matches = (favorite) => !query || [
         ...(favorite.searchTerms || []),
         favorite.displayName,
         favorite.baseName,
@@ -363,23 +421,58 @@
       ]
         .filter(Boolean)
         .some((value) => String(value).toLocaleLowerCase().includes(query));
-    });
-    if (!favorites.length) {
-      root.appendChild(
-        createElement("p", "favorites-panel-empty", query ? t("favoritesNoMatches") : t("favoritesEmpty"))
-      );
-    } else {
-      const list = createElement("div", "favorites-panel-list");
-      for (const favorite of favorites) {
-        list.appendChild(renderFavoriteRow(favorite));
+    const folders = state.favoriteFolders?.folders || [];
+    const rootFavorites = getFavoritesForFolder(state, null).filter(matches);
+    const rootList = createElement("div", "favorites-panel-link-list favorites-panel-root");
+    setGroupDropTarget(rootList, null, "favorite");
+    if (rootFavorites.length) {
+      for (const favorite of rootFavorites) {
+        rootList.appendChild(renderFavoriteRow(state, favorite, null));
       }
-      root.appendChild(list);
+    } else if (!folders.length) {
+      rootList.appendChild(createElement("p", "favorites-panel-empty", query ? t("favoritesNoMatches") : t("favoritesEmpty")));
     }
+    rootList.appendChild(createElement("div", "favorites-panel-root-drop-area", t("dropFavoriteAtRoot")));
+    const folderList = createElement("div", "favorites-panel-list");
+    if (folders.length) {
+      const folderTopDropArea = createElement("div", "favorites-panel-folder-top-drop-area", t("dropFavoriteFolderAtTop"));
+      setFolderTopDropTarget(folderTopDropArea, folders, "favorite-folder");
+      folderList.appendChild(folderTopDropArea);
+    }
+    let visibleFolderCount = 0;
+    for (const folder of folders) {
+      const favorites = getFavoritesForFolder(state, folder.id).filter(matches);
+      if (query && !favorites.length && !folder.name.toLocaleLowerCase().includes(query)) {
+        continue;
+      }
+      folderList.appendChild(renderFavoriteFolder(state, folder, favorites));
+      visibleFolderCount += 1;
+    }
+    if (!visibleFolderCount && query && !rootFavorites.length) {
+      folderList.appendChild(createElement("p", "favorites-panel-empty", t("favoritesNoMatches")));
+    }
+    root.append(folderList, rootList);
   }
 
-  function renderFavoriteRow(favorite) {
+  function getFavoritesForFolder(state, folderId) {
+    const ids = folderId
+      ? state.favoriteFolders?.folderFavoriteSignatures?.[folderId] || []
+      : state.favoriteFolders?.rootFavoriteSignatures || [];
+    const favorites = state.favorites || [];
+    return ids.map((signature) => favorites.find((favorite) => favorite.signature === signature)).filter(Boolean);
+  }
+
+  function renderFavoriteRow(state, favorite, folderId) {
+    if (!favorite) {
+      favorite = state;
+      state = local.state || {};
+      folderId = null;
+    }
     const editing = local.editing?.kind === "favorite" && local.editing.id === favorite.signature;
-    const row = createElement("article", "favorites-panel-item-row");
+    const row = createElement("article", "favorites-panel-item-row favorites-panel-link-row");
+    setDropTarget(row, { kind: "favorite", id: favorite.signature, folderId });
+    const drag = createIconButton(t("reorderFavorite"), icons.drag, "favorites-panel-drag-handle");
+    setDragSource(drag, { kind: "favorite", id: favorite.signature, folderId });
     const launch = createElement(editing ? "div" : "button", "favorites-panel-item-launch");
     if (editing) {
       appendEditableName(
@@ -415,23 +508,106 @@
       }
     }
     const actions = createElement("div", "favorites-panel-row-actions");
-    const rename = createIconButton(t("renameFavorite"), icons.edit);
-    rename.addEventListener("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      local.editing = { kind: "favorite", id: favorite.signature };
+    if (local.movingFavoriteSignature === favorite.signature) {
+      const select = createElement("select", "favorites-panel-move-select");
+      select.setAttribute("aria-label", t("moveFavorite"));
+      const groups = [{ id: "", name: t("moveFavoriteToRoot") }].concat(
+        (state.favoriteFolders?.folders || []).map((folder) => ({ id: folder.id, name: folder.name }))
+      );
+      for (const group of groups) {
+        const option = createElement("option", "", group.name);
+        option.value = group.id;
+        option.selected = group.id === (folderId || "");
+        select.appendChild(option);
+      }
+      select.addEventListener("change", () => run("move-favorite", { signature: favorite.signature, folderId: select.value || null }));
+      select.addEventListener("blur", () => {
+        local.movingFavoriteSignature = null;
+        render();
+      }, { once: true });
+      actions.appendChild(select);
+      window.setTimeout(() => select.focus(), 0);
+    } else {
+      const rename = createIconButton(t("renameFavorite"), icons.edit);
+      rename.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        local.editing = { kind: "favorite", id: favorite.signature };
+        notifyParentHover();
+        render();
+      });
+      const move = createIconButton(t("moveFavorite"), icons.move);
+      move.addEventListener("click", () => {
+        local.movingFavoriteSignature = favorite.signature;
+        render();
+      });
+      const remove = createIconButton(t("deleteFavorite"), icons.delete, "favorites-panel-delete");
+      remove.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        run("delete-favorite", { signature: favorite.signature });
+      });
+      actions.append(rename, move, remove);
+    }
+    row.append(drag, launch, actions);
+    return row;
+  }
+
+  function renderFavoriteFolder(state, folder, favorites) {
+    const section = createElement("section", "favorites-panel-folder");
+    const header = createElement("div", "favorites-panel-folder-header");
+    setDropTarget(header, { kind: "favorite-folder", id: folder.id });
+    setGroupDropTarget(header, folder.id, "favorite");
+    const drag = createIconButton(t("reorderFavoriteFolder"), icons.drag, "favorites-panel-drag-handle");
+    setDragSource(drag, { kind: "favorite-folder", id: folder.id });
+    const collapse = createIconButton(
+      t(folder.collapsed ? "expandFavoriteFolder" : "collapseFavoriteFolder"),
+      folder.collapsed ? icons.expand : icons.collapse
+    );
+    collapse.setAttribute("aria-expanded", String(!folder.collapsed));
+    collapse.addEventListener("click", () => run("toggle-favorite-folder", { folderId: folder.id, collapsed: !folder.collapsed }));
+    const nameHost = createElement("div", "favorites-panel-folder-name");
+    appendEditableName(nameHost, "favorite-folder", folder.id, folder.name || "", (name) => run("rename-favorite-folder", { folderId: folder.id, name }));
+    const actions = createElement("div", "favorites-panel-folder-actions");
+    const rename = createIconButton(t("renameFavoriteFolder"), icons.edit);
+    rename.addEventListener("click", () => {
+      local.editing = { kind: "favorite-folder", id: folder.id };
       notifyParentHover();
       render();
     });
-    const remove = createIconButton(t("deleteFavorite"), icons.delete, "favorites-panel-delete");
-    remove.addEventListener("click", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      run("delete-favorite", { signature: favorite.signature });
+    const remove = createIconButton(t("deleteFavoriteFolder"), icons.delete, "favorites-panel-delete");
+    remove.addEventListener("click", () => {
+      local.confirmingFavoriteFolderId = folder.id;
+      render();
     });
     actions.append(rename, remove);
-    row.append(launch, actions);
-    return row;
+    header.append(drag, collapse, nameHost, actions);
+    section.appendChild(header);
+    if (!folder.collapsed) {
+      const list = createElement("div", "favorites-panel-link-list");
+      setGroupDropTarget(list, folder.id, "favorite");
+      for (const favorite of favorites) {
+        list.appendChild(renderFavoriteRow(state, favorite, folder.id));
+      }
+      section.appendChild(list);
+    }
+    if (local.confirmingFavoriteFolderId === folder.id) {
+      const confirm = createElement("div", "favorites-panel-confirm");
+      const count = getFavoritesForFolder(state, folder.id).length;
+      confirm.appendChild(createElement("span", "", t("confirmDeleteFavoriteFolder", count)));
+      const buttons = createElement("div", "favorites-panel-confirm-actions");
+      const cancel = makeTextButton(t("cancelFavoriteFolderDelete"));
+      cancel.addEventListener("click", () => {
+        local.confirmingFavoriteFolderId = null;
+        render();
+      });
+      const remove = makeTextButton(t("deleteFavoriteFolder"), "favorites-panel-confirm-delete");
+      remove.addEventListener("click", () => run("delete-favorite-folder", { folderId: folder.id, confirm: true }));
+      buttons.append(cancel, remove);
+      confirm.appendChild(buttons);
+      section.appendChild(confirm);
+    }
+    return section;
   }
 
   function appendEditableName(parent, kind, id, initialValue, save) {
@@ -444,7 +620,7 @@
     input.value = initialValue;
     input.setAttribute(
       "aria-label",
-      t(kind === "folder" ? "renameLinkFavoriteFolder" : kind === "link" ? "renameLinkFavorite" : "renameFavorite")
+      t(kind === "folder" ? "renameLinkFavoriteFolder" : kind === "favorite-folder" ? "renameFavoriteFolder" : kind === "link" ? "renameLinkFavorite" : "renameFavorite")
     );
     let finished = false;
     const finishEditing = () => {
@@ -1147,7 +1323,10 @@
       if (source.kind === "link") {
         return { kind: "link", id: source.id, folderId: source.folderId || null };
       }
-      return source.kind === "folder" ? { kind: "folder", id: source.id } : null;
+      if (source.kind === "favorite") {
+        return { kind: "favorite", id: source.id, folderId: source.folderId || null };
+      }
+      return source.kind === "folder" || source.kind === "favorite-folder" ? { kind: source.kind, id: source.id } : null;
     } catch (error) {
       return null;
     }
@@ -1204,10 +1383,10 @@
     });
   }
 
-  function setGroupDropTarget(element, folderId) {
+  function setGroupDropTarget(element, folderId, kind = "link") {
     element.addEventListener("dragover", (event) => {
       const source = getFavoritePanelDragSource(event);
-      if (source?.kind !== "link" || source.folderId === folderId) {
+      if (source?.kind !== kind || source.folderId === folderId) {
         return;
       }
       event.preventDefault();
@@ -1223,20 +1402,20 @@
     });
     element.addEventListener("drop", (event) => {
       const source = getFavoritePanelDragSource(event);
-      if (source?.kind !== "link" || source.folderId === folderId) {
+      if (source?.kind !== kind || source.folderId === folderId) {
         return;
       }
       event.preventDefault();
       event.stopPropagation();
       element.classList.remove("favorites-panel-drop-target");
-      void drop(source, folderId ? { kind: "folder", id: folderId } : { kind: "root" });
+      void drop(source, folderId ? { kind: kind === "favorite" ? "favorite-folder" : "folder", id: folderId } : { kind: "root" });
     });
   }
 
-  function setFolderTopDropTarget(element, folders) {
+  function setFolderTopDropTarget(element, folders, kind = "folder") {
     element.addEventListener("dragover", (event) => {
       const source = getFavoritePanelDragSource(event);
-      if (source?.kind !== "folder") {
+      if (source?.kind !== kind) {
         return;
       }
       event.preventDefault();
@@ -1255,14 +1434,14 @@
     element.addEventListener("drop", (event) => {
       const source = getFavoritePanelDragSource(event);
       const firstFolderId = folders[0]?.id;
-      if (source?.kind !== "folder" || !firstFolderId || source.id === firstFolderId) {
+      if (source?.kind !== kind || !firstFolderId || source.id === firstFolderId) {
         return;
       }
       event.preventDefault();
       event.stopPropagation();
       element.classList.remove("favorites-panel-drop-target");
       clearDropPosition(element);
-      void drop(source, { kind: "folder", id: firstFolderId }, false);
+      void drop(source, { kind, id: firstFolderId }, false);
     });
   }
 
@@ -1289,8 +1468,32 @@
       await run("move-link", { linkId: source.id, folderId: target.kind === "folder" ? target.id : null });
       return;
     }
+    if (source.kind === "favorite") {
+      if (target.kind === "favorite") {
+        if ((source.folderId || null) === (target.folderId || null)) {
+          await run("reorder-favorite", {
+            signature: source.id,
+            folderId: target.folderId || null,
+            targetSignature: target.id,
+            placeAfter
+          });
+        } else {
+          await run("move-favorite", {
+            signature: source.id,
+            folderId: target.folderId || null,
+            targetSignature: target.id,
+            placeAfter
+          });
+        }
+        return;
+      }
+      await run("move-favorite", { signature: source.id, folderId: target.kind === "favorite-folder" ? target.id : null });
+      return;
+    }
     if (target.kind === "folder") {
       await run("reorder-folder", { folderId: source.id, targetId: target.id, placeAfter });
+    } else if (target.kind === "favorite-folder") {
+      await run("reorder-favorite-folder", { folderId: source.id, targetId: target.id, placeAfter });
     }
   }
 
@@ -1302,6 +1505,12 @@
       }
       if (command === "create-folder") {
         local.creatingFolder = false;
+      }
+      if (command === "create-favorite-folder") {
+        local.creatingFavoriteFolder = false;
+      }
+      if (command === "delete-favorite-folder") {
+        local.confirmingFavoriteFolderId = null;
       }
       if (command === "import-links") {
         local.importing = false;

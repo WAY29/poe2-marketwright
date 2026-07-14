@@ -1025,7 +1025,7 @@ test("full item delete feedback precedes the favorite list", async () => {
       ? child.children.map((result) => result.className)
       : [child.className]
   ));
-  assert.deepStrictEqual(result, ["favorites-panel-toolbar", "favorites-panel-feedback", "favorites-panel-empty"]);
+  assert.deepStrictEqual(result, ["favorites-panel-toolbar", "favorites-panel-feedback", "favorites-panel-list", "favorites-panel-link-list favorites-panel-root"]);
 });
 
 test("compact item tooltip omits a base type that is already the title", async () => {
@@ -1255,6 +1255,34 @@ test("full view drop recovers the drag source from data transfer", async () => {
     }
   }));
   assert.deepStrictEqual(result, {"kind": "link", "id": "link-1", "folderId": "folder-1"});
+});
+
+test("full view drop recovers an item favorite drag source from data transfer", async () => {
+  let source = fs.readFileSync("favorites-panel.js", "utf8");
+  source = source.replace("  bindUi();\n  bootstrap();", "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getFavoritePanelDragSource };\n})();"
+  );
+  const sandbox = {
+    window: {},
+    document: { querySelector() { return null; } },
+    location: { search: "" },
+    URLSearchParams,
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
+  const sourceValue = { kind: "favorite", id: "favorite-signature", folderId: "folder-1" };
+  const result = structuredClone(sandbox.window.__testHooks.getFavoritePanelDragSource({
+    dataTransfer: {
+      getData(type) {
+        return type === "application/x-poe2-marketwright-favorite-drag"
+          ? JSON.stringify(sourceValue)
+          : "";
+      }
+    }
+  }));
+  assert.deepStrictEqual(result, {"kind": "favorite", "id": "favorite-signature", "folderId": "folder-1"});
 });
 
 test("full view drag targets show insert position and accept top level links", async () => {

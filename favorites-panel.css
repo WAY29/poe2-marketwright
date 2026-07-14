@@ -642,6 +642,7 @@ h1 {
   user-select: none;
 }
 
+.favorites-panel-content.favorites-panel-dragging-favorite .favorites-panel-root-drop-area,
 .favorites-panel-content.favorites-panel-dragging-link .favorites-panel-root-drop-area {
   height: 27px;
   padding: 6px 8px;

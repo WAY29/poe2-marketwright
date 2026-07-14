@@ -590,6 +590,7 @@
   gap: 6px;
 }
 
+.poe2-marketwright-favorites-header-action,
 .poe2-marketwright-link-favorites-header-action,
 .poe2-marketwright-link-favorites-close {
   display: inline-flex;
@@ -612,6 +613,7 @@
   cursor: pointer;
 }
 
+.poe2-marketwright-favorites-header-action svg,
 .poe2-marketwright-link-favorites-header-action svg,
 .poe2-marketwright-link-favorites-close svg {
   width: 12px;
@@ -623,6 +625,8 @@
   fill: none;
 }
 
+.poe2-marketwright-favorites-header-action:hover:not(:disabled),
+.poe2-marketwright-favorites-header-action:focus-visible:not(:disabled),
 .poe2-marketwright-link-favorites-header-action:hover:not(:disabled),
 .poe2-marketwright-link-favorites-header-action:focus-visible:not(:disabled),
 .poe2-marketwright-link-favorites-close:hover,
@@ -632,6 +636,7 @@
   outline: none;
 }
 
+.poe2-marketwright-favorites-header-action:disabled,
 .poe2-marketwright-link-favorites-header-action:disabled {
   cursor: default;
   opacity: 0.56;
@@ -719,6 +724,7 @@
   user-select: none;
 }
 
+.poe2-marketwright-favorites-list.poe2-marketwright-link-favorites-dragging-favorite .poe2-marketwright-link-favorite-root-drop-area,
 .poe2-marketwright-link-favorites-list.poe2-marketwright-link-favorites-dragging-link .poe2-marketwright-link-favorite-root-drop-area {
   height: 27px;
   padding: 6px 8px;

@@ -1357,6 +1357,133 @@ test("dragging a link to another folder moves it into that folder", async () => 
   assert.deepStrictEqual(result["links"][0]["folderId"], "folder-b");
 });
 
+test("moving an item favorite into a folder preserves the requested insert position", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { moveFavorite, runtime };\n})();"
+  );
+  const window = {
+    location: {
+      href: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+      pathname: "/trade2/search/poe2/Dawn/query-1"
+    },
+    addEventListener() {},
+    clearTimeout() {},
+    setTimeout() { return 1; }
+  };
+  const sandbox = {
+    window,
+    document: { querySelector() { return null; }, querySelectorAll() { return []; } },
+    location: window.location,
+    console,
+    Element: class {},
+    HTMLInputElement: class {},
+    HTMLTextAreaElement: class {},
+    MutationObserver: class {},
+    chrome: { storage: { local: { set: async () => {} } } },
+    Poe2MarketwrightFavorites: {
+      createFavoriteTools() {
+        return {
+          getLeagueFromTradeUrl() { return "Dawn"; },
+          normalizeFavoriteFoldersState(state) { return state; }
+        };
+      }
+    }
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = window.__testHooks;
+  hooks.runtime.state.favorites = [
+    { signature: "root", league: "Dawn" },
+    { signature: "target", league: "Dawn" }
+  ];
+  hooks.runtime.state.favoriteFolders = {
+    version: 1,
+    leagues: {
+      Dawn: {
+        folders: [{ id: "weapons", name: "Weapons", collapsed: true }],
+        folderOrder: ["weapons"],
+        rootFavoriteSignatures: ["root"],
+        folderFavoriteSignatures: { weapons: ["target"] }
+      }
+    }
+  };
+  await hooks.moveFavorite("root", "weapons", "target", false);
+  const result = structuredClone(hooks.runtime.state.favoriteFolders.leagues.Dawn);
+  assert.deepStrictEqual(result, {
+    folders: [{ id: "weapons", name: "Weapons", collapsed: false }],
+    folderOrder: ["weapons"],
+    rootFavoriteSignatures: [],
+    folderFavoriteSignatures: { weapons: ["root", "target"] }
+  });
+});
+
+test("deleting an item favorite folder can restore its original contents and order", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { deleteFavoriteFolder, undoDeletedFavorite, runtime };\n})();"
+  );
+  const window = {
+    location: {
+      href: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+      pathname: "/trade2/search/poe2/Dawn/query-1"
+    },
+    addEventListener() {},
+    clearTimeout() {},
+    setTimeout() { return 1; }
+  };
+  const sandbox = {
+    window,
+    document: { querySelector() { return null; }, querySelectorAll() { return []; } },
+    location: window.location,
+    console,
+    Element: class {},
+    HTMLInputElement: class {},
+    HTMLTextAreaElement: class {},
+    MutationObserver: class {},
+    chrome: { storage: { local: { set: async () => {} } } },
+    Poe2MarketwrightFavorites: {
+      createFavoriteTools() {
+        return {
+          getLeagueFromTradeUrl() { return "Dawn"; },
+          normalizeFavoriteFoldersState(state) { return state; }
+        };
+      }
+    }
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = window.__testHooks;
+  hooks.runtime.state.favorites = [
+    { signature: "root", league: "Dawn" },
+    { signature: "bow", league: "Dawn" },
+    { signature: "axe", league: "Dawn" }
+  ];
+  hooks.runtime.state.favoriteFolders = {
+    version: 1,
+    leagues: {
+      Dawn: {
+        folders: [{ id: "weapons", name: "Weapons", collapsed: false }],
+        folderOrder: ["weapons"],
+        rootFavoriteSignatures: ["root"],
+        folderFavoriteSignatures: { weapons: ["bow", "axe"] }
+      }
+    }
+  };
+  await hooks.deleteFavoriteFolder("weapons");
+  const deleted = structuredClone({
+    favorites: hooks.runtime.state.favorites.map((favorite) => favorite.signature),
+    folders: hooks.runtime.state.favoriteFolders.leagues.Dawn.folders
+  });
+  await hooks.undoDeletedFavorite();
+  const restored = structuredClone(hooks.runtime.state);
+  assert.deepStrictEqual(deleted, { favorites: ["root"], folders: [] });
+  assert.deepStrictEqual(restored.favoriteFolders.leagues.Dawn.folderFavoriteSignatures, { weapons: ["bow", "axe"] });
+  assert.deepStrictEqual(restored.favorites.map((favorite) => favorite.signature), ["root", "bow", "axe"]);
+});
+
 test("dragging a link to another folder uses the previewed insert position", async () => {
 
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;

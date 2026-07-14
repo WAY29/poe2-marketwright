@@ -17,6 +17,7 @@
   ]);
   const COMBINED_STAT_SOURCES = new Set(["fractured", "desecrated"]);
   const NUMBER_RE = /-?\d+(?:\.\d+)?/g;
+  const FAVORITE_FOLDERS_VERSION = 1;
   const LINK_FAVORITES_VERSION = 2;
   const LINK_FAVORITE_STAT_GROUPS_VERSION = 3;
   const TRADE_SEARCH_ORIGINS = new Set(["https://pathofexile.com", "https://www.pathofexile.com"]);
@@ -276,7 +277,99 @@
       }
     };
 
-    return { createFavoriteRecord, createTradeSearchPayload, getLeagueFromTradeUrl };
+    const createFavoriteFolderId = () => {
+      const randomId = globalThis.crypto?.randomUUID?.();
+      return randomId
+        ? `folder-${randomId}`
+        : `folder-${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 10)}`;
+    };
+
+    const normalizeFavoriteFoldersState = (storedState, favorites) => {
+      const current = storedState?.version === FAVORITE_FOLDERS_VERSION ? storedState : { leagues: {} };
+      const favoritesByLeague = new Map();
+      for (const [position, favorite] of (Array.isArray(favorites) ? favorites : []).entries()) {
+        const signature = String(favorite?.signature || "").trim();
+        const league = String(favorite?.league || "").trim();
+        if (!signature || !league) {
+          continue;
+        }
+        const entries = favoritesByLeague.get(league) || [];
+        if (!entries.some((entry) => entry.signature === signature)) {
+          entries.push({ signature, position, createdAt: Number(favorite?.createdAt) || 0 });
+        }
+        favoritesByLeague.set(league, entries);
+      }
+
+      const leagues = {};
+      const leagueNames = new Set([...Object.keys(current.leagues || {}), ...favoritesByLeague.keys()]);
+      for (const league of leagueNames) {
+        const rawState = current.leagues?.[league] || {};
+        const validEntries = favoritesByLeague.get(league) || [];
+        const validSignatures = new Set(validEntries.map((entry) => entry.signature));
+        const folders = [];
+        const folderIds = new Set();
+        for (const rawFolder of Array.isArray(rawState.folders) ? rawState.folders : []) {
+          const id = String(rawFolder?.id || "").trim();
+          const name = String(rawFolder?.name || "").replace(/\s+/g, " ").trim();
+          if (!id || !name || folderIds.has(id)) {
+            continue;
+          }
+          folderIds.add(id);
+          folders.push({
+            id,
+            name,
+            createdAt: Number.isFinite(Number(rawFolder?.createdAt)) ? Number(rawFolder.createdAt) : 0,
+            collapsed: Boolean(rawFolder?.collapsed)
+          });
+        }
+        const folderOrder = [];
+        for (const id of Array.isArray(rawState.folderOrder) ? rawState.folderOrder : []) {
+          if (folderIds.has(id) && !folderOrder.includes(id)) {
+            folderOrder.push(id);
+          }
+        }
+        for (const folder of folders) {
+          if (!folderOrder.includes(folder.id)) {
+            folderOrder.push(folder.id);
+          }
+        }
+
+        const assigned = new Set();
+        const orderedSignatures = (source) => {
+          const result = [];
+          for (const signature of Array.isArray(source) ? source : []) {
+            if (validSignatures.has(signature) && !assigned.has(signature)) {
+              assigned.add(signature);
+              result.push(signature);
+            }
+          }
+          return result;
+        };
+        const rootFavoriteSignatures = orderedSignatures(rawState.rootFavoriteSignatures);
+        const folderFavoriteSignatures = {};
+        for (const folderId of folderOrder) {
+          folderFavoriteSignatures[folderId] = orderedSignatures(rawState.folderFavoriteSignatures?.[folderId]);
+        }
+        for (const entry of validEntries
+          .filter((entry) => !assigned.has(entry.signature))
+          .sort((left, right) => right.createdAt - left.createdAt || left.position - right.position)) {
+          rootFavoriteSignatures.push(entry.signature);
+        }
+
+        if (folders.length || rootFavoriteSignatures.length) {
+          leagues[league] = { folders, folderOrder, rootFavoriteSignatures, folderFavoriteSignatures };
+        }
+      }
+      return { version: FAVORITE_FOLDERS_VERSION, leagues };
+    };
+
+    return {
+      createFavoriteFolderId,
+      createFavoriteRecord,
+      createTradeSearchPayload,
+      getLeagueFromTradeUrl,
+      normalizeFavoriteFoldersState
+    };
   }
 
   function createLinkFavoriteTools() {

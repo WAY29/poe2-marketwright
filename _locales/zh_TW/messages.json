@@ -738,6 +738,54 @@
   "linkFavoriteFolderDeleted": {
     "message": "資料夾已刪除"
   },
+  "favoriteFolderDeleted": {
+    "message": "資料夾已刪除"
+  },
+  "createFavoriteFolder": {
+    "message": "建立資料夾"
+  },
+  "renameFavoriteFolder": {
+    "message": "重新命名資料夾"
+  },
+  "deleteFavoriteFolder": {
+    "message": "刪除資料夾"
+  },
+  "confirmDeleteFavoriteFolder": {
+    "message": "刪除資料夾及 $1 個收藏"
+  },
+  "cancelFavoriteFolderDelete": {
+    "message": "取消"
+  },
+  "moveFavorite": {
+    "message": "移動收藏"
+  },
+  "moveFavoriteToRoot": {
+    "message": "最外層"
+  },
+  "dropFavoriteAtRoot": {
+    "message": "拖曳到這裡移至最外層"
+  },
+  "dropFavoriteFolderAtTop": {
+    "message": "拖曳到這裡置頂資料夾"
+  },
+  "reorderFavorite": {
+    "message": "拖曳排序收藏"
+  },
+  "reorderFavoriteFolder": {
+    "message": "拖曳排序資料夾"
+  },
+  "expandFavoriteFolder": {
+    "message": "展開資料夾"
+  },
+  "collapseFavoriteFolder": {
+    "message": "收起資料夾"
+  },
+  "collapseAllFavoriteFolders": {
+    "message": "收起全部資料夾"
+  },
+  "expandAllFavoriteFolders": {
+    "message": "展開全部資料夾"
+  },
   "enableLinkFavorites": {
     "message": "啟用連結收藏"
   },

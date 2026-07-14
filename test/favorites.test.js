@@ -233,6 +233,79 @@ test("combines desecrated value into matching normal stat", async () => {
   assert.deepStrictEqual(result, [{"id": "explicit.stat_1509134228", "value": {"min": 74, "max": 74}}, {"id": "desecrated.stat_1509134228", "value": {"min": 4, "max": 4}}]);
 });
 
+test("migrates flat item favorites into league root order", () => {
+  const sandbox = { console };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+
+  const result = structuredClone(sandbox.Poe2MarketwrightFavorites.createFavoriteTools().normalizeFavoriteFoldersState(
+    null,
+    [
+      { signature: "dawn-old", league: "Dawn", createdAt: 1 },
+      { signature: "other", league: "Other League", createdAt: 3 },
+      { signature: "dawn-new", league: "Dawn", createdAt: 2 }
+    ]
+  ));
+  assert.deepStrictEqual(result, {
+    version: 1,
+    leagues: {
+      Dawn: {
+        folders: [],
+        folderOrder: [],
+        rootFavoriteSignatures: ["dawn-new", "dawn-old"],
+        folderFavoriteSignatures: {}
+      },
+      "Other League": {
+        folders: [],
+        folderOrder: [],
+        rootFavoriteSignatures: ["other"],
+        folderFavoriteSignatures: {}
+      }
+    }
+  });
+});
+
+test("normalizes item favorite folder assignments without losing saved items", () => {
+  const sandbox = { console };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+
+  const result = structuredClone(sandbox.Poe2MarketwrightFavorites.createFavoriteTools().normalizeFavoriteFoldersState(
+    {
+      version: 1,
+      leagues: {
+        Dawn: {
+          folders: [
+            { id: "weapons", name: " Weapons ", createdAt: 5, collapsed: true },
+            { id: "weapons", name: "Duplicate" }
+          ],
+          folderOrder: ["missing", "weapons", "weapons"],
+          rootFavoriteSignatures: ["ring", "missing", "ring"],
+          folderFavoriteSignatures: { weapons: ["bow", "ring", "bow"] }
+        }
+      }
+    },
+    [
+      { signature: "ring", league: "Dawn", createdAt: 1 },
+      { signature: "bow", league: "Dawn", createdAt: 2 },
+      { signature: "axe", league: "Dawn", createdAt: 3 }
+    ]
+  ));
+  assert.deepStrictEqual(result, {
+    version: 1,
+    leagues: {
+      Dawn: {
+        folders: [{ id: "weapons", name: "Weapons", createdAt: 5, collapsed: true }],
+        folderOrder: ["weapons"],
+        rootFavoriteSignatures: ["ring", "axe"],
+        folderFavoriteSignatures: { weapons: ["bow"] }
+      }
+    }
+  });
+});
+
 test("page bridge forwards trade fetch when favorites are enabled", async () => {
   const listeners = [];
   const messages = [];
