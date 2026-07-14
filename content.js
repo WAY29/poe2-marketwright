@@ -1740,6 +1740,10 @@
     }
     root.addEventListener("pointerenter", () => setSidebarHovered(true));
     root.addEventListener("pointerleave", () => setSidebarHovered(false));
+    root.addEventListener("focusin", updateIdleTransparencyState);
+    root.addEventListener("focusout", () => {
+      window.setTimeout?.(updateIdleTransparencyState, 0);
+    });
     window.addEventListener("message", (event) => {
       if (
         event.source !== runtime.ui?.favoritesPanelFrame?.contentWindow ||
@@ -1762,9 +1766,23 @@
     updateIdleTransparencyState();
   }
 
+  function isIdleTransparencySuppressed() {
+    const active = document.activeElement;
+    return Boolean(
+      runtime.linkFavoriteDrag ||
+      active?.classList?.contains("poe2-marketwright-favorite-rename-input") ||
+      active?.classList?.contains("poe2-marketwright-link-favorite-rename-input")
+    );
+  }
+
   function updateIdleTransparencyState() {
     window.clearTimeout?.(runtime.idleTransparencyTimer);
-    if (runtime.sidebarHovered || runtime.favoritesPanelHovered || !isIdleTransparencyEnabled()) {
+    if (
+      runtime.sidebarHovered ||
+      runtime.favoritesPanelHovered ||
+      isIdleTransparencySuppressed() ||
+      !isIdleTransparencyEnabled()
+    ) {
       applyIdleTransparency();
       return;
     }
@@ -1777,7 +1795,10 @@
 
   function applyIdleTransparency() {
     const idle = Boolean(
-      isIdleTransparencyEnabled() && !runtime.sidebarHovered && !runtime.favoritesPanelHovered
+      isIdleTransparencyEnabled() &&
+        !runtime.sidebarHovered &&
+        !runtime.favoritesPanelHovered &&
+        !isIdleTransparencySuppressed()
     );
     const opacity = String(normalizeIdleTransparency(runtime.state.idleTransparency) / 100);
     for (const element of [runtime.ui?.root, runtime.ui?.favoritesPanelFrame]) {
@@ -3244,6 +3265,7 @@
         event.dataTransfer.effectAllowed = "move";
       }
       handle.classList.add("poe2-marketwright-link-favorite-dragging");
+      updateIdleTransparencyState();
     });
     handle.addEventListener("dragend", () => {
       runtime.linkFavoriteDrag = null;
@@ -3253,6 +3275,7 @@
       );
       handle.classList.remove("poe2-marketwright-link-favorite-dragging");
       clearLinkFavoriteDragStyles();
+      updateIdleTransparencyState();
     });
   }
 

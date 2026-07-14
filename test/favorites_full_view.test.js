@@ -176,6 +176,69 @@ test("sidebar setting mirrors the full view and applies idle opacity only to sid
   });
 });
 
+test("idle transparency stays off during favorite drag and rename", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { applyIdleTransparency, runtime };\n})();"
+  );
+  const classList = () => {
+    const values = new Set();
+    return {
+      toggle(name, enabled) { if (enabled) values.add(name); else values.delete(name); },
+      has(name) { return values.has(name); }
+    };
+  };
+  const style = () => ({
+    values: {},
+    setProperty(name, value) { this.values[name] = value; }
+  });
+  const root = { classList: classList(), style: style() };
+  const frame = { classList: classList(), style: style() };
+  const renameInput = {
+    classList: {
+      contains(name) {
+        return name === "poe2-marketwright-link-favorite-rename-input";
+      }
+    }
+  };
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: { activeElement: null },
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = {
+    idleTransparencyEnabled: true,
+    idleTransparency: 50
+  };
+  hooks.runtime.ui = { root, favoritesPanelFrame: frame };
+  hooks.runtime.sidebarHovered = false;
+  hooks.runtime.favoritesPanelHovered = false;
+
+  hooks.runtime.linkFavoriteDrag = { kind: "link", id: "link-1" };
+  hooks.applyIdleTransparency();
+  const duringDrag = root.classList.has("poe2-marketwright-idle");
+
+  hooks.runtime.linkFavoriteDrag = null;
+  sandbox.document.activeElement = renameInput;
+  hooks.applyIdleTransparency();
+  const duringRename = root.classList.has("poe2-marketwright-idle");
+
+  sandbox.document.activeElement = null;
+  hooks.applyIdleTransparency();
+  const afterIdle = root.classList.has("poe2-marketwright-idle");
+
+  assert.deepStrictEqual(
+    { duringDrag, duringRename, afterIdle },
+    { duringDrag: false, duringRename: false, afterIdle: true }
+  );
+});
+
 test("background relays panel requests only to the registered trade tab", async () => {
   let messageListener;
   const tabMessages = [];
