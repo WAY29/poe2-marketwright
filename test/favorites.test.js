@@ -295,9 +295,12 @@ test("link favorite tools validate and create current trade search records", asy
   } catch (error) {
     invalidCode = error.code;
   }
+  const realmless = tools.validateTradeSearchUrl(
+    "https://www.pathofexile.com/trade2/search/Runes%20of%20Aldur/X39m5o8WTP"
+  );
 
-  const result = structuredClone({ record, invalidCode });
-  assert.deepStrictEqual(result, {"record": {"id": "link-1", "league": "Dawn of the Hunt", "queryId": "query-7", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-7", "displayName": "Warmonger Bow", "folderId": "folder-1", "createdAt": 123, "lastUsedAt": null, "filterGroups": [{"label": "Type Filters", "values": ["Bow", "Rare"]}, {"label": "Stat Filters", "values": ["+# to maximum Life"]}]}, "invalidCode": "invalid_trade_search_url"});
+  const result = structuredClone({ record, invalidCode, realmless });
+  assert.deepStrictEqual(result, {"record": {"id": "link-1", "league": "Dawn of the Hunt", "queryId": "query-7", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-7", "displayName": "Warmonger Bow", "folderId": "folder-1", "createdAt": 123, "lastUsedAt": null, "filterGroups": [{"label": "Type Filters", "values": ["Bow", "Rare"]}, {"label": "Stat Filters", "values": ["+# to maximum Life"]}]}, "invalidCode": "invalid_trade_search_url", "realmless": {"url": "https://www.pathofexile.com/trade2/search/Runes%20of%20Aldur/X39m5o8WTP", "league": "Runes of Aldur", "queryId": "X39m5o8WTP"}});
 });
 
 test("link favorite rejects legacy flat display snapshots", async () => {

@@ -808,9 +808,12 @@
     if (isExtensionContextInvalidated(error)) {
       return;
     }
-    console.error(`[PoE2 Marketwright] ${operation} failed`, {
+    const message = error?.message || String(error);
+    console.error(`[PoE2 Marketwright] ${operation} failed: ${message}`, {
       error,
-      message: error?.message || String(error),
+      message,
+      stack: error?.stack || null,
+      code: error?.code || null,
       requestedLeague: error?.requestedLeague || error?.details?.requestedLeague || null,
       searchUrl: error?.searchUrl || error?.details?.searchUrl || null,
       details: error?.details || null
@@ -2027,6 +2030,16 @@
     return getFavoriteTools()?.getLeagueFromTradeUrl(window.location.href) || null;
   }
 
+  function buildTradeSearchPath(league, queryId) {
+    const encodedLeague = encodeURIComponent(league);
+    const encodedQueryId = encodeURIComponent(queryId);
+    // Match the live page shape: some clients omit the /poe2/ realm segment.
+    const useRealm = /\/trade2\/search\/poe2\//i.test(window.location.pathname);
+    return useRealm
+      ? `/trade2/search/poe2/${encodedLeague}/${encodedQueryId}`
+      : `/trade2/search/${encodedLeague}/${encodedQueryId}`;
+  }
+
   function getCurrentLinkFavoriteContext() {
     const tools = getLinkFavoriteTools();
     if (!tools) {
@@ -2774,10 +2787,7 @@
         throw new Error("Trade search returned no query id");
       }
       window.location.assign(
-        new URL(
-          `/trade2/search/poe2/${encodeURIComponent(favorite.league)}/${encodeURIComponent(result.id)}`,
-          window.location.origin
-        ).toString()
+        new URL(buildTradeSearchPath(favorite.league, result.id), window.location.origin).toString()
       );
     } catch (error) {
       console.debug("[PoE2 Marketwright] favorite search failed", error);

@@ -433,7 +433,8 @@
         });
       }
 
-      const match = parsedUrl.pathname.match(/^\/trade2\/search\/poe2\/([^/]+)\/([^/]+)\/?$/i);
+      // Official pages may use /trade2/search/poe2/{league}/{id} or /trade2/search/{league}/{id}.
+      const match = parsedUrl.pathname.match(/^\/trade2\/search\/(?:poe2\/)?([^/]+)\/([^/]+)\/?$/i);
       if (!match) {
         throw createLinkFavoriteError("invalid_trade_search_url", "Link must include a PoE2 league and search id", {
           pathname: parsedUrl.pathname
@@ -448,8 +449,13 @@
       } catch (error) {
         throw createLinkFavoriteError("invalid_trade_search_url", "Link contains an invalid league or search id");
       }
-      if (!league || !queryId || league.includes("/") || queryId.includes("/")) {
-        throw createLinkFavoriteError("invalid_trade_search_url", "Link must include a PoE2 league and search id");
+      // Never treat the realm segment as a league if a bare /poe2/{id} path slips through.
+      if (!league || !queryId || league.includes("/") || queryId.includes("/") || league.toLowerCase() === "poe2") {
+        throw createLinkFavoriteError("invalid_trade_search_url", "Link must include a PoE2 league and search id", {
+          pathname: parsedUrl.pathname,
+          league,
+          queryId
+        });
       }
 
       parsedUrl.search = "";
