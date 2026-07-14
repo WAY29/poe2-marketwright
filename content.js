@@ -5192,6 +5192,15 @@
     if (exact) {
       return `${leading}${getLocalizedTradePageText(exact, text, false)}${trailing}`;
     }
+    const optionText = runtime.tradeLocalization.optionStrings?.[text];
+    if (optionText) {
+      return `${leading}${getLocalizedTradePageText(optionText, text, false)}${trailing}`;
+    }
+    const prefixedOption = text.match(/^(.*?\s-\s)(.+)$/);
+    const prefixedOptionText = runtime.tradeLocalization.optionStrings?.[prefixedOption?.[2] || ""];
+    if (prefixedOptionText) {
+      return `${leading}${prefixedOption[1]}${getLocalizedTradePageText(prefixedOptionText, prefixedOption[2], false)}${trailing}`;
+    }
     const item = runtime.tradeSearchRecords.items?.find((record) => record?.en === text);
     return item
       ? `${leading}${getLocalizedTradePageText(item, text, false)}${trailing}`

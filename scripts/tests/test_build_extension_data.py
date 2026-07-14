@@ -18,6 +18,7 @@ from build_extension_data import (
     build_trade_category_page_localizations,
     collect_trade_filter_option_localizations,
     collect_trade_league_localizations,
+    build_trade_option_text_localizations,
     build_trade_item_localization_bundle,
     build_verified_unique_trade_item_localizations,
     build_display_metadata,
@@ -63,6 +64,49 @@ from build_extension_data import (
 
 
 class TradeStatMappingTests(unittest.TestCase):
+    def test_builds_selected_trade_option_texts_from_official_ids(self) -> None:
+        english_filters = {
+            "result": [
+                {
+                    "id": "status_filters",
+                    "filters": [
+                        {
+                            "id": "status",
+                            "option": {
+                                "options": [
+                                    {"id": "available", "text": "Instant Buyout and In Person"},
+                                    {"id": "securable", "text": "Instant Buyout"},
+                                ]
+                            },
+                        }
+                    ],
+                }
+            ]
+        }
+        english_leagues = {"result": [{"id": "Runes of Aldur", "text": "Runes of Aldur"}]}
+
+        self.assertEqual(
+            build_trade_option_text_localizations(
+                english_filters,
+                {
+                    "status_filters/status": {
+                        "available": {"zh_TW": "即刻購買以及面對面交易"},
+                        "securable": {"zh_CN": "立即购买", "zh_TW": "即刻購買"},
+                    }
+                },
+                english_leagues,
+                {"Runes of Aldur": {"zh_CN": "奥杜尔秘符", "zh_TW": "阿德爾的符文"}},
+            ),
+            {
+                "Instant Buyout": {"en": "Instant Buyout", "zh_CN": "立即购买", "zh_TW": "即刻購買"},
+                "Instant Buyout and In Person": {
+                    "en": "Instant Buyout and In Person",
+                    "zh_TW": "即刻購買以及面對面交易",
+                },
+                "Runes of Aldur": {"en": "Runes of Aldur", "zh_CN": "奥杜尔秘符", "zh_TW": "阿德爾的符文"},
+            },
+        )
+
     def test_collects_trade_league_translations_from_aligned_regional_lists(self) -> None:
         english_leagues = {
             "result": [

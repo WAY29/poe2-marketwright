@@ -1581,6 +1581,37 @@ def collect_trade_league_localizations(
     return {league_id: dict(sorted(texts.items())) for league_id, texts in sorted(localizations.items())}
 
 
+def build_trade_option_text_localizations(
+    english_filters_payload: dict[str, Any],
+    filter_option_localizations: dict[str, dict[str, dict[str, str]]],
+    english_leagues_payload: dict[str, Any],
+    league_option_localizations: dict[str, dict[str, str]],
+) -> dict[str, dict[str, str]]:
+    """Map the option text rendered by selected Trade controls to its locale strings."""
+
+    records: dict[str, dict[str, str]] = {}
+    status_localizations = filter_option_localizations.get("status_filters/status", {})
+    for group in english_filters_payload.get("result", []):
+        if str(group.get("id") or "").strip() != "status_filters":
+            continue
+        for filter_data in group.get("filters", []):
+            if str(filter_data.get("id") or "").strip() != "status":
+                continue
+            for option in filter_data.get("option", {}).get("options", []):
+                option_id = str(option.get("id") or "").strip()
+                english = str(option.get("text") or "").strip()
+                if english:
+                    records[english] = {"en": english, **status_localizations.get(option_id, {})}
+
+    for league in english_leagues_payload.get("result", []):
+        league_id = str(league.get("id") or "").strip()
+        english = str(league.get("text") or "").strip()
+        if english:
+            records[english] = {"en": english, **league_option_localizations.get(league_id, {})}
+
+    return dict(sorted(records.items()))
+
+
 def collect_trade_filter_text_by_id(payload: dict[str, Any]) -> dict[str, str]:
     """Index visible Trade filter labels by their official filter ID."""
 
@@ -3551,14 +3582,22 @@ async def main() -> int:
         minimum_coverage=args.minimum_trade_localization_coverage,
         supplemental_categories=trade_category_page_localizations,
     )
-    trade_localization["filterOptions"] = collect_trade_filter_option_localizations(
+    filter_option_localizations = collect_trade_filter_option_localizations(
         simplified_filters_payload,
         traditional_filters_payload,
     )
-    trade_localization["leagueOptions"] = collect_trade_league_localizations(
+    league_option_localizations = collect_trade_league_localizations(
         leagues_payload,
         simplified_leagues_payload,
         traditional_leagues_payload,
+    )
+    trade_localization["filterOptions"] = filter_option_localizations
+    trade_localization["leagueOptions"] = league_option_localizations
+    trade_localization["optionStrings"] = build_trade_option_text_localizations(
+        filters_payload,
+        filter_option_localizations,
+        leagues_payload,
+        league_option_localizations,
     )
     trade_localization["search"]["items"].extend(
         {

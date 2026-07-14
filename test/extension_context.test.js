@@ -579,6 +579,13 @@ test("Trade filter terminology overrides translate headings and help copy", () =
   hooks.runtime.tradeLocalization = {
     strings: {
       "Type Filters": { en: "Type Filters", zh_CN: "类型过滤器", zh_TW: "類別過濾" }
+    },
+    optionStrings: {
+      "Instant Buyout and In Person": {
+        en: "Instant Buyout and In Person",
+        zh_TW: "即刻購買以及面對面交易"
+      },
+      "Runes of Aldur": { en: "Runes of Aldur", zh_CN: "奥杜尔秘符", zh_TW: "阿德爾的符文" }
     }
   };
   const traditional = structuredClone({
@@ -590,6 +597,8 @@ test("Trade filter terminology overrides translate headings and help copy", () =
     runicWard: hooks.getLocalizedTradeText("Runic Ward"),
     equipmentTip: hooks.getLocalizedTradeText("Includes base value, local modifiers, and maximum quality"),
     rarityTip: hooks.getLocalizedTradeText("Increased Item Rarity"),
+    selectedStatus: hooks.getLocalizedTradeText("Instant Buyout and In Person"),
+    selectedLeague: hooks.getLocalizedTradeText("PoE2 - Runes of Aldur"),
     weightedTip: hooks.getLocalizedTradeText(
       "Each stat value that meets the `min` and `max` (if provided, otherwise existence) requirements will be multiplied by the `weight` before being summed together.\nUse the group's `min` and `max` to filter items based on the total summed value."
     )
@@ -626,6 +635,8 @@ test("Trade filter terminology overrides translate headings and help copy", () =
     runicWard: "符文保護",
     equipmentTip: "包含基礎數值、本地詞綴與最高品質",
     rarityTip: "增加物品稀有度",
+    selectedStatus: "即刻購買以及面對面交易",
+    selectedLeague: "PoE2 - 阿德爾的符文",
     weightedTip: "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
   });
   assert.deepStrictEqual(simplified, {
