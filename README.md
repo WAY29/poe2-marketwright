@@ -91,9 +91,8 @@ Stats with Tier support show a `T` button on the left for selecting a Tier direc
 - `Minimum` is the default mode: it sets only `MIN` and preserves the existing `MAX`. `Exact` sets both `MIN` and `MAX` to the selected Tier's average range.
 
 <p align="center">
-  <img src="assets/tier-selected-item.png" alt="Tier list for a selected item type" width="36%">
-  <img src="assets/tier-multiple-categories.png" alt="Tier list with multiple item types" width="31%">
-  <img src="assets/tier-category-labels.png" alt="Tier list labelled by item type" width="31%">
+  <img src="assets/tier-selected-item.png" alt="Tier list for a selected item type" width="52%">
+  <img src="assets/tier-multiple-categories.png" alt="Tier list with multiple item types" width="43%">
 </p>
 
 Tier mappings are generated from verified PoE2DB modifier ranges and matched by stable Trade stat IDs; ambiguous stats do not show the selector. For modifiers with overlapping ranges, such as added damage, selecting T1 may still return T2 because the filter uses average values rather than full modifier ranges.
