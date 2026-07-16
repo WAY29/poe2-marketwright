@@ -103,6 +103,17 @@
       if (quality !== undefined) {
         headerLines.push(`Quality: ${quality}`);
       }
+      const runeSocketIndexes = Array.isArray(item.sockets)
+        ? item.sockets.flatMap((socket, index) => (socket?.type === "rune" ? [index] : []))
+        : [];
+      if (runeSocketIndexes.length) {
+        headerLines.push(`Sockets: ${runeSocketIndexes.map(() => "S").join(" ")}`);
+        const socketedItems = Array.isArray(item.socketedItems) ? item.socketedItems : [];
+        for (const index of runeSocketIndexes) {
+          const runeName = socketedItems.find((socketedItem) => socketedItem?.socket === index)?.baseType;
+          headerLines.push(`Rune: ${typeof runeName === "string" && runeName.trim() ? runeName.trim() : "None"}`);
+        }
+      }
       const radius = getPropertyValue(item, "radius");
       if (radius) {
         headerLines.push(`Radius: ${radius.trim()}`);

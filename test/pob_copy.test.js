@@ -32,6 +32,29 @@ test("pob builder outputs create custom item text", async () => {
   assert.deepStrictEqual(result, ["Rarity: RARE", "Dawn Veil", "Expert Omen Wand", "Quality: 20", "Implicits: 1", "{implicit}+20% to Fire Resistance", "+30 to Spirit", "+12% increased Attack Speed"]);
 });
 
+test("pob builder emits PoB2 rune sockets and names", () => {
+  const sandbox = { console };
+  vm.runInNewContext(fs.readFileSync("pob-copy.js", "utf8"), sandbox, {
+    filename: "pob-copy.js"
+  });
+
+  const text = sandbox.Poe2MarketwrightPobCopy.createItemTextBuilder([
+    { key: "runeMods", tag: "rune" }
+  ]).buildPobFullText({
+    rarity: "Rare",
+    name: "Beast Guide",
+    typeLine: "Warmonger Bow",
+    sockets: [{ type: "rune" }, { type: "rune" }, { type: "rune" }],
+    socketedItems: [
+      { socket: 0, baseType: "Greater Adept Rune" },
+      { socket: 1, baseType: "Greater Iron Rune" }
+    ],
+    runeMods: ["+1 Suffix Modifier allowed", "20% increased Physical Damage"]
+  });
+
+  assert.match(text, /\nSockets: S S S\nRune: Greater Adept Rune\nRune: Greater Iron Rune\nRune: None\n/);
+});
+
 test("page bridge forwards trade fetch when pob copy is enabled", async () => {
   const listeners = [];
   const messages = [];
