@@ -140,7 +140,7 @@ test("sidebar setting mirrors the full view and applies idle opacity only to sid
     document: {},
     location: { pathname: "/trade2" },
     console,
-    chrome: { storage: { local: { set: async () => {} } } }
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } }
   };
   vm.runInNewContext(source, sandbox, { filename: "content.js" });
   const hooks = sandbox.window.__testHooks;
@@ -314,7 +314,7 @@ test("full view toggles only the current document panel", async () => {
     location: { pathname: "/trade2", href: "https://www.pathofexile.com/trade2/search/poe2/Runes/query-1" },
     console,
     chrome: {
-      storage: { local: { set: async () => {} } }
+      storage: { local: { get: async () => ({}), set: async () => {} } }
     }
   };
   vm.runInNewContext(source, sandbox, { filename: "content.js" });
@@ -355,7 +355,7 @@ test("clicking the open full view section closes the side panel", async () => {
     location: { pathname: "/trade2", href: "https://www.pathofexile.com/trade2/search/poe2/Runes/query-1" },
     console,
     chrome: {
-      storage: { local: { set: async () => {} } }
+      storage: { local: { get: async () => ({}), set: async () => {} } }
     }
   };
   vm.runInNewContext(source, sandbox, { filename: "content.js" });

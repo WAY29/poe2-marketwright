@@ -1409,7 +1409,7 @@ test("dragging a link to another folder moves it into that folder", async () => 
     HTMLInputElement: class {},
     HTMLTextAreaElement: class {},
     MutationObserver: class {},
-    chrome: { storage: { local: { set: async () => {} } } },
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } },
     Poe2MarketwrightFavorites: {
       createLinkFavoriteTools() {
         return {
@@ -1482,7 +1482,7 @@ test("moving an item favorite into a folder preserves the requested insert posit
     HTMLInputElement: class {},
     HTMLTextAreaElement: class {},
     MutationObserver: class {},
-    chrome: { storage: { local: { set: async () => {} } } },
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } },
     Poe2MarketwrightFavorites: {
       createFavoriteTools() {
         return {
@@ -1544,7 +1544,7 @@ test("deleting an item favorite folder can restore its original contents and ord
     HTMLInputElement: class {},
     HTMLTextAreaElement: class {},
     MutationObserver: class {},
-    chrome: { storage: { local: { set: async () => {} } } },
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } },
     Poe2MarketwrightFavorites: {
       createFavoriteTools() {
         return {
@@ -1618,7 +1618,7 @@ test("dragging a link to another folder uses the previewed insert position", asy
     HTMLInputElement: class {},
     HTMLTextAreaElement: class {},
     MutationObserver: class {},
-    chrome: { storage: { local: { set: async () => {} } } },
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } },
     Poe2MarketwrightFavorites: {
       createLinkFavoriteTools() {
         return {
@@ -1712,7 +1712,7 @@ test("dragging a folder to the top drop area moves it to the top", async () => {
     HTMLInputElement: class {},
     HTMLTextAreaElement: class {},
     MutationObserver: class {},
-    chrome: { storage: { local: { set: async () => {} } } },
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } },
     Poe2MarketwrightFavorites: {
       createLinkFavoriteTools() {
         return {
@@ -1780,7 +1780,7 @@ test("dragging a folder link to the root drop area moves it to the top level", a
     HTMLInputElement: class {},
     HTMLTextAreaElement: class {},
     MutationObserver: class {},
-    chrome: { storage: { local: { set: async () => {} } } },
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } },
     Poe2MarketwrightFavorites: {
       createLinkFavoriteTools() {
         return {
@@ -1873,7 +1873,7 @@ test("link favorites render on a league search root without a query id", async (
     HTMLInputElement: class {},
     HTMLTextAreaElement: class {},
     MutationObserver: class {},
-    chrome: { storage: { local: { set: async () => {} } } },
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } },
     Poe2MarketwrightFavorites: {
       createFavoriteTools() {
         return {
@@ -1947,7 +1947,7 @@ test("collapsing all link favorite folders updates every folder", async () => {
     HTMLInputElement: class {},
     HTMLTextAreaElement: class {},
     MutationObserver: class {},
-    chrome: { storage: { local: { set: async () => {} } } },
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } },
     Poe2MarketwrightFavorites: {
       createLinkFavoriteTools() {
         return {

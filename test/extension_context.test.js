@@ -21,6 +21,7 @@ test("save state ignores invalidated extension context", async () => {
     chrome: {
       storage: {
         local: {
+          get: async () => ({}),
           set() {
             return Promise.reject(new Error("Extension context invalidated."));
           }
@@ -257,7 +258,7 @@ test("sidebar position buttons reflect the saved position", async () => {
     document: {},
     location: { pathname: "/trade2" },
     console,
-    chrome: { storage: { local: { set: async () => {} } } }
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } }
   };
   vm.runInNewContext(source, sandbox, { filename: "content.js" });
   const hooks = sandbox.window.__testHooks;
@@ -1058,7 +1059,7 @@ test("expanding from the collapsed mark keeps the saved vertical position", asyn
     document: {},
     location: { pathname: "/trade2" },
     console,
-    chrome: { storage: { local: { set: async () => {} } } }
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } }
   };
   vm.runInNewContext(source, sandbox, { filename: "content.js" });
 

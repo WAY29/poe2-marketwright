@@ -9,6 +9,7 @@
   window.__poe2Trade2AffixFilterLoaded = true;
 
   const STORAGE_KEY = "poe2Trade2AffixFilterState";
+  const FAVORITE_DATA_KEYS = Object.freeze(["favorites", "favoriteFolders", "linkFavorites"]);
   const DEFAULT_STATE = {
     uiLanguage: null,
     pageLanguage: null,
@@ -804,10 +805,28 @@
     return Number.isFinite(position?.top) ? { top: position.top } : null;
   }
 
-  async function saveState() {
+  async function saveState(options = {}) {
     try {
+      const stored = await chrome.storage.local.get(STORAGE_KEY);
+      const previous = stored[STORAGE_KEY] || {};
+      let next;
+      if (Array.isArray(options.favoriteKeys) && options.favoriteKeys.length) {
+        // Only the mutating tab may write favorite payloads; keep other fields from storage.
+        next = { ...previous };
+        for (const key of options.favoriteKeys) {
+          next[key] = runtime.state[key];
+        }
+      } else {
+        // UI/settings saves must not clobber favorites written by another tab.
+        next = { ...runtime.state };
+        for (const key of FAVORITE_DATA_KEYS) {
+          if (Object.prototype.hasOwnProperty.call(previous, key)) {
+            next[key] = previous[key];
+          }
+        }
+      }
       await chrome.storage.local.set({
-        [STORAGE_KEY]: runtime.state
+        [STORAGE_KEY]: next
       });
       return true;
     } catch (error) {
@@ -816,6 +835,81 @@
       }
       throw error;
     }
+  }
+
+  function getFavoriteDataFingerprint(state) {
+    return JSON.stringify({
+      favorites: state?.favorites || [],
+      favoriteFolders: state?.favoriteFolders || null,
+      linkFavorites: state?.linkFavorites || null,
+      favoritesEnabled: Boolean(state?.favoritesEnabled),
+      linkFavoritesEnabled: Boolean(state?.linkFavoritesEnabled)
+    });
+  }
+
+  function applyExternalFavoriteState(storedState) {
+    if (!runtime.state || !storedState) {
+      return false;
+    }
+    const tools = getFavoriteTools();
+    const linkTools = getLinkFavoriteTools();
+    const favorites = Array.isArray(storedState.favorites) ? storedState.favorites : [];
+    const nextState = {
+      favorites,
+      favoriteFolders: tools?.normalizeFavoriteFoldersState
+        ? tools.normalizeFavoriteFoldersState(storedState.favoriteFolders, favorites)
+        : storedState.favoriteFolders || runtime.state.favoriteFolders,
+      linkFavorites: linkTools?.normalizeLinkFavoritesState
+        ? linkTools.normalizeLinkFavoritesState(storedState.linkFavorites)
+        : storedState.linkFavorites || runtime.state.linkFavorites,
+      favoritesEnabled:
+        typeof storedState.favoritesEnabled === "boolean"
+          ? storedState.favoritesEnabled
+          : runtime.state.favoritesEnabled,
+      linkFavoritesEnabled:
+        typeof storedState.linkFavoritesEnabled === "boolean"
+          ? storedState.linkFavoritesEnabled
+          : runtime.state.linkFavoritesEnabled
+    };
+    if (getFavoriteDataFingerprint(nextState) === getFavoriteDataFingerprint(runtime.state)) {
+      return false;
+    }
+    runtime.state.favorites = nextState.favorites;
+    runtime.state.favoriteFolders = nextState.favoriteFolders;
+    runtime.state.linkFavorites = nextState.linkFavorites;
+    runtime.state.favoritesEnabled = nextState.favoritesEnabled;
+    runtime.state.linkFavoritesEnabled = nextState.linkFavoritesEnabled;
+    runtime.favorites?.setFavorites(nextState.favorites);
+    runtime.favorites?.setEnabled(nextState.favoritesEnabled);
+    if (!nextState.favoritesEnabled) {
+      runtime.state.favoritesDrawerOpen = false;
+    }
+    if (!nextState.linkFavoritesEnabled) {
+      runtime.state.linkFavoritesDrawerOpen = false;
+    }
+    if (runtime.ui?.root) {
+      updateFavoritesToggleButton();
+      updateLinkFavoritesToggleButton();
+      applyFavoritesDrawerState();
+      applyLinkFavoritesDrawerState();
+      applyPanelPosition();
+      renderFavoriteDrawer();
+      renderLinkFavoritesDrawer();
+    }
+    publishFavoritesPanelState();
+    return true;
+  }
+
+  function bindFavoriteStorageSync() {
+    if (!globalThis.chrome?.storage?.onChanged?.addListener) {
+      return;
+    }
+    chrome.storage.onChanged.addListener((changes, areaName) => {
+      if (areaName !== "local" || !changes?.[STORAGE_KEY]) {
+        return;
+      }
+      applyExternalFavoriteState(changes[STORAGE_KEY].newValue || {});
+    });
   }
 
   function isExtensionContextInvalidated(error) {
@@ -2949,7 +3043,7 @@
     runtime.favorites?.setFavorites(nextFavorites);
     renderFavoriteDrawer();
     try {
-      await saveState();
+      await saveState({ favoriteKeys: ["favorites", "favoriteFolders"] });
       publishFavoritesPanelState();
     } catch (error) {
       runtime.state.favorites = previousFavorites;
@@ -3340,7 +3434,7 @@
     runtime.state.linkFavorites = tools.normalizeLinkFavoritesState(nextLinkFavorites);
     renderLinkFavoritesDrawer();
     try {
-      await saveState();
+      await saveState({ favoriteKeys: ["linkFavorites"] });
       publishFavoritesPanelState();
     } catch (error) {
       runtime.state.linkFavorites = previous;
@@ -5300,6 +5394,7 @@
   }
 
   function bindGlobalListeners() {
+    bindFavoriteStorageSync();
     bindFavoritesPanelMessages();
     bindTradeControlListeners();
     bindTradeInteractionListeners();
