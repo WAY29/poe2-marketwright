@@ -106,13 +106,16 @@ Tier 映射由已验证的 PoE2DB 词缀范围生成，并按官方 Trade 稳定
   <img src="assets/favorites-item-library.png" alt="物品收藏管理视图" width="55%">
 </p>
 
-### 链接收藏
+### 链接收藏与历史
 
 链接收藏会保存当前搜索链接及其完整搜索条件，便于快速回到某类物品。可在收藏视图中创建文件夹、分类管理，并预览链接的筛选条件与词缀。
 
 <p align="center">
   <img src="assets/favorites-search-links.png" alt="链接收藏管理视图" width="44%">
 </p>
+另外搜索历史也会自动存储,在链接收藏的最底下,如图所示:
+
+![image-20260716224410969](./assets/image-20260716224410969.png)
 
 ### PoB 复制按钮
 

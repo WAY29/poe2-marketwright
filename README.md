@@ -106,13 +106,17 @@ Save an item for later when you cannot buy it yet. With this feature enabled, a 
   <img src="assets/favorites-item-library.png" alt="Item favorites management view" width="55%">
 </p>
 
-### Search-Link Favorites
+### Search-Link Favorites and History
 
 Search-link favorites save the current search URL and its complete search conditions, making it quick to return to a category of items. The favorites view supports folders, organization, and previews of the link's filters and modifiers.
 
 <p align="center">
   <img src="assets/favorites-search-links.png" alt="Search-link favorites management view" width="44%">
 </p>
+
+Search history is also saved automatically and appears at the bottom of the search-link favorites list:
+
+![Search history in search-link favorites](assets/image-20260716224410969.png)
 
 ### PoB Copy Button
 
