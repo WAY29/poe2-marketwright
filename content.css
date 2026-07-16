@@ -807,6 +807,10 @@
   background-size: auto, 128px 128px;
 }
 
+.poe2-marketwright-link-history-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
 .poe2-marketwright-link-favorite-row > .poe2-marketwright-link-favorite-drag-handle {
   align-self: start;
   margin: 7px 0 4px 5px;
@@ -1474,11 +1478,16 @@
 
 .poe2-marketwright-link-favorites-feature {
   position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 35px;
+  display: grid;
   padding: 0;
   border-color: rgba(130, 91, 46, 0.86);
+}
+
+.poe2-marketwright-link-favorites-main {
+  position: relative;
+  display: flex;
+  min-height: 35px;
+  align-items: center;
 }
 
 .poe2-marketwright-link-favorites-disclosure {
@@ -1508,10 +1517,78 @@
   cursor: default;
 }
 
-.poe2-marketwright-link-favorites-feature .poe2-trade2-affix-filter-feature-toggle {
+.poe2-marketwright-link-favorites-main > .poe2-trade2-affix-filter-feature-toggle {
   position: relative;
   z-index: 1;
   margin: 7px 7px 7px 5px;
+}
+
+.poe2-marketwright-link-history-controls {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  align-items: center;
+  gap: 5px;
+  border-top: 1px solid rgba(112, 78, 37, 0.7);
+  padding: 5px 7px 6px;
+}
+
+.poe2-marketwright-link-history-toggle-row,
+.poe2-marketwright-link-history-limit-field {
+  display: flex;
+  min-width: 0;
+  align-items: center;
+  gap: 6px;
+}
+
+.poe2-marketwright-link-history-open {
+  flex: 1;
+  align-self: stretch;
+  min-width: 0;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+  text-align: left;
+}
+
+.poe2-marketwright-link-history-limit-field {
+  justify-content: space-between;
+}
+
+.poe2-marketwright-link-history-toggle-row .poe2-trade2-affix-filter-field-label,
+.poe2-marketwright-link-history-limit-field .poe2-trade2-affix-filter-field-label {
+  margin: 0;
+  white-space: nowrap;
+}
+
+.poe2-marketwright-link-history-open:hover .poe2-trade2-affix-filter-field-label,
+.poe2-marketwright-link-history-open:focus-visible .poe2-trade2-affix-filter-field-label {
+  color: #f0d99e;
+}
+
+.poe2-marketwright-link-history-open:hover {
+  background: rgba(141, 98, 42, 0.16);
+}
+
+.poe2-marketwright-link-history-open:focus-visible {
+  outline: 2px solid rgba(211, 166, 83, 0.86);
+  outline-offset: -2px;
+}
+
+.poe2-marketwright-link-history-toggle-row .poe2-trade2-affix-filter-toggle {
+  margin-left: auto;
+}
+
+.poe2-marketwright-link-history-limit-field select {
+  width: 52px;
+  height: 22px;
+  padding: 2px 4px;
+  border: 1px solid #8d6735;
+  border-radius: 3px;
+  color: #ead7aa;
+  background: #14110d;
+  font: 700 10px/1 Georgia, "Times New Roman", serif;
 }
 
 .poe2-trade2-affix-filter-currency-league {

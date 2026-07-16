@@ -671,6 +671,74 @@
       };
     };
 
+    const normalizeLinkFavoriteRecord = (rawLink, league, allowFolder = true) => {
+      const id = normalizeId(rawLink?.id);
+      const displayName = normalizeName(rawLink?.displayName);
+      if (!id || !displayName) {
+        return null;
+      }
+      let parsed;
+      try {
+        parsed = validateTradeSearchUrl(rawLink?.url);
+      } catch (error) {
+        return null;
+      }
+      if (parsed.league !== league) {
+        return null;
+      }
+      const filterGroups = normalizeLinkFavoriteFilterGroups(rawLink?.filterGroups);
+      const displaySnapshot = normalizeLinkFavoriteDisplaySnapshot(rawLink?.displaySnapshot);
+      return {
+        id,
+        league,
+        queryId: parsed.queryId,
+        url: parsed.url,
+        displayName,
+        folderId: allowFolder ? normalizeId(rawLink?.folderId) : null,
+        createdAt: normalizeTimestamp(rawLink?.createdAt),
+        lastUsedAt: rawLink?.lastUsedAt == null ? null : normalizeTimestamp(rawLink.lastUsedAt),
+        ...(filterGroups.length ? { filterGroups } : {}),
+        ...(displaySnapshot ? { displaySnapshot } : {})
+      };
+    };
+
+    const normalizeLinkFavoriteHistory = (rawHistory, league) => {
+      const byUrl = new Map();
+      const historyIds = new Set();
+      for (const rawLink of Array.isArray(rawHistory) ? rawHistory : []) {
+        const record = normalizeLinkFavoriteRecord(rawLink, league, false);
+        if (!record || historyIds.has(record.id)) {
+          continue;
+        }
+        historyIds.add(record.id);
+        const timestamp = record.lastUsedAt ?? record.createdAt;
+        const previous = byUrl.get(record.url);
+        if (!previous || timestamp >= (previous.lastUsedAt ?? previous.createdAt)) {
+          byUrl.set(record.url, { ...record, lastUsedAt: timestamp });
+        }
+      }
+      return Array.from(byUrl.values()).sort(
+        (left, right) => (right.lastUsedAt ?? right.createdAt) - (left.lastUsedAt ?? left.createdAt)
+      );
+    };
+
+    const upsertLinkFavoriteHistory = (history, context, limit, usedAt = Date.now()) => {
+      const parsed = validateTradeSearchUrl(context?.url);
+      const normalized = normalizeLinkFavoriteHistory(history, parsed.league);
+      const existing = normalized.find((entry) => entry.url === parsed.url);
+      const timestamp = normalizeTimestamp(usedAt, Date.now());
+      const record = createLinkFavoriteRecord({
+        ...existing,
+        ...context,
+        id: existing?.id || createLinkFavoriteId("history"),
+        folderId: null,
+        createdAt: existing?.createdAt ?? timestamp
+      });
+      record.lastUsedAt = timestamp;
+      const maxEntries = Math.max(0, Math.floor(Number(limit)) || 0);
+      return [record, ...normalized.filter((entry) => entry.url !== record.url)].slice(0, maxEntries);
+    };
+
     const createEmptyLinkFavoritesState = () => ({ version: LINK_FAVORITES_VERSION, leagues: {} });
 
     const normalizeLeagueState = (league, state) => {
@@ -694,37 +762,18 @@
       const links = [];
       const linkIds = new Set();
       for (const rawLink of Array.isArray(state?.links) ? state.links : []) {
-        const id = normalizeId(rawLink?.id);
-        const displayName = normalizeName(rawLink?.displayName);
-        if (!id || !displayName || linkIds.has(id)) {
+        const link = normalizeLinkFavoriteRecord(rawLink, league);
+        if (!link || linkIds.has(link.id)) {
           continue;
         }
-        let parsed;
-        try {
-          parsed = validateTradeSearchUrl(rawLink?.url);
-        } catch (error) {
-          continue;
-        }
-        if (parsed.league !== league) {
-          continue;
-        }
-        linkIds.add(id);
-        const folderId = normalizeId(rawLink?.folderId);
-        const filterGroups = normalizeLinkFavoriteFilterGroups(rawLink?.filterGroups);
-        const displaySnapshot = normalizeLinkFavoriteDisplaySnapshot(rawLink?.displaySnapshot);
+        linkIds.add(link.id);
         links.push({
-          id,
-          league,
-          queryId: parsed.queryId,
-          url: parsed.url,
-          displayName,
-          folderId: folderId && folderIds.has(folderId) ? folderId : null,
-          createdAt: normalizeTimestamp(rawLink?.createdAt),
-          lastUsedAt: rawLink?.lastUsedAt == null ? null : normalizeTimestamp(rawLink.lastUsedAt),
-          ...(filterGroups.length ? { filterGroups } : {}),
-          ...(displaySnapshot ? { displaySnapshot } : {})
+          ...link,
+          folderId: link.folderId && folderIds.has(link.folderId) ? link.folderId : null
         });
       }
+
+      const history = normalizeLinkFavoriteHistory(state?.history, league);
 
       const orderedIds = (ids, validIds) => {
         const seen = new Set();
@@ -765,7 +814,9 @@
         folderOrder,
         links,
         rootLinkIds,
-        folderLinkIds
+        folderLinkIds,
+        ...(state?.historyCollapsed === true ? { historyCollapsed: true } : {}),
+        ...(history.length ? { history } : {})
       };
     };
 
@@ -783,7 +834,9 @@
           normalized.folders.length ||
           normalized.links.length ||
           normalized.folderOrder.length ||
-          normalized.rootLinkIds.length
+          normalized.rootLinkIds.length ||
+          normalized.history?.length ||
+          normalized.historyCollapsed
         ) {
           leagues[league] = normalized;
         }
@@ -969,7 +1022,9 @@
       importExternalLinkFavorites,
       normalizeLinkFavoriteFilterGroups,
       normalizeLinkFavoriteDisplaySnapshot,
+      normalizeLinkFavoriteHistory,
       normalizeLinkFavoritesState,
+      upsertLinkFavoriteHistory,
       validateTradeSearchUrl
     };
   }

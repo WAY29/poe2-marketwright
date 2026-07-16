@@ -643,7 +643,7 @@
     "message": "稀有度：$1"
   },
   "linkFavoritesTitle": {
-    "message": "链接收藏"
+    "message": "链接收藏与历史"
   },
   "linkFavoritesLeague": {
     "message": "链接收藏：$1"
@@ -653,6 +653,36 @@
   },
   "linkFavoritesEmpty": {
     "message": "暂无保存的书签"
+  },
+  "linkHistoryTitle": {
+    "message": "搜索历史"
+  },
+  "linkHistoryLimit": {
+    "message": "历史记录上限"
+  },
+  "enableLinkHistory": {
+    "message": "启用搜索历史"
+  },
+  "disableLinkHistory": {
+    "message": "关闭搜索历史"
+  },
+  "linkHistory": {
+    "message": "历史"
+  },
+  "openLinkHistory": {
+    "message": "打开搜索历史"
+  },
+  "linkHistoryEmpty": {
+    "message": "暂无搜索历史"
+  },
+  "linkHistoryUnnamedSearch": {
+    "message": "搜索"
+  },
+  "clearLinkHistory": {
+    "message": "清空历史"
+  },
+  "confirmClearLinkHistory": {
+    "message": "清空 $1 条历史记录？"
   },
   "linkFavoriteUnnamedSearch": {
     "message": "未命名搜索"
@@ -725,6 +755,9 @@
   },
   "linkFavoriteSaved": {
     "message": "书签已保存"
+  },
+  "linkFavoriteAlreadySaved": {
+    "message": "书签已收藏"
   },
   "linkFavoriteDeleted": {
     "message": "可撤销 $1 条书签删除"

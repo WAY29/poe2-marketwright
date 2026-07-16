@@ -28,6 +28,8 @@
     favoritesPanelTab: "items",
     linkFavoritesEnabled: true,
     linkFavorites: { version: 2, leagues: {} },
+    linkHistoryEnabled: true,
+    linkHistoryLimit: 50,
     linkFavoritesDrawerOpen: false,
     sidebarPosition: "left",
     idleTransparencyEnabled: true,
@@ -80,6 +82,15 @@
   const LOCALIZED_ALIAS_LOCALES = ["zh_CN", "zh_TW"];
   const SUPPORTED_UI_LANGUAGES = Object.freeze(["en", "zh_CN", "zh_TW"]);
   const SUPPORTED_PAGE_LANGUAGES = Object.freeze(["en", "zh_CN", "zh_TW", "zh_CN_en", "zh_TW_en"]);
+  const LINK_FAVORITE_STAT_GROUP_LABELS = Object.freeze({
+    filters: { en: "Stat Filters", zh_CN: "词缀筛选", zh_TW: "詞綴篩選" },
+    and: { en: "AND", zh_CN: "且", zh_TW: "且" },
+    or: { en: "OR", zh_CN: "或", zh_TW: "或" },
+    count: { en: "COUNT", zh_CN: "计数", zh_TW: "計數" },
+    weighted: { en: "WEIGHTED SUM", zh_CN: "加权总和", zh_TW: "加權總和" },
+    not: { en: "NOT", zh_CN: "非", zh_TW: "非" },
+    if: { en: "IF", zh_CN: "若", zh_TW: "若" }
+  });
   // Keep Trade filter terminology consistent when official data has a missing or legacy translation.
   const TRADE_TERM_LOCALIZATION_OVERRIDES = Object.freeze({
     "type filters": { en: "Type Filters", zh_CN: "类型筛选器", zh_TW: "類別篩選器" },
@@ -439,6 +450,17 @@
     idleTransparencyOpacity: "Idle opacity: $1%",
     enableIdleTransparency: "Enable idle transparency",
     disableIdleTransparency: "Disable idle transparency",
+    linkHistoryTitle: "Search history",
+    linkHistoryLimit: "History limit",
+    enableLinkHistory: "Enable search history",
+    disableLinkHistory: "Disable search history",
+    linkHistory: "History",
+    openLinkHistory: "Open search history",
+    clearLinkHistory: "Clear history",
+    confirmClearLinkHistory: "Clear $1 history entries?",
+    linkHistoryEmpty: "No search history",
+    linkHistoryUnnamedSearch: "Search",
+    linkFavoriteAlreadySaved: "Bookmark already saved",
     languageEnglish: "English",
     languageSimplifiedChinese: "Simplified Chinese",
     languageTraditionalChinese: "Traditional Chinese",
@@ -606,6 +628,9 @@
     favoriteLeague: null,
     linkFavoriteLeague: null,
     linkFavoriteLocationHref: null,
+    linkHistoryLocationHref: null,
+    linkHistoryFocus: false,
+    linkHistoryFocusTimer: null,
     pobCopy: null,
     favorites: null,
     currencyConversion: null,
@@ -655,6 +680,7 @@
     initializeTradeLocalization();
     mountPanel();
     bindGlobalListeners();
+    runAsync(recordCurrentLinkHistory, "record link history");
     scheduleRefresh();
   }
 
@@ -713,6 +739,16 @@
     return "en";
   }
 
+  function getPrimaryPageLanguage() {
+    return getMessageLocale(resolvePageLanguage(runtime.state.pageLanguage));
+  }
+
+  function getLinkFavoritePresentationLanguage() {
+    return isPageTranslationEnabled()
+      ? getPrimaryPageLanguage()
+      : resolveUiLanguage(runtime.state.uiLanguage);
+  }
+
   async function loadUiMessages(language) {
     const locale = getMessageLocale(resolveUiLanguage(language));
     try {
@@ -769,6 +805,11 @@
           ? savedState.linkFavoritesEnabled
           : DEFAULT_STATE.linkFavoritesEnabled,
       linkFavorites: getLinkFavoriteTools()?.normalizeLinkFavoritesState(savedState.linkFavorites) || DEFAULT_STATE.linkFavorites,
+      linkHistoryEnabled:
+        typeof savedState.linkHistoryEnabled === "boolean"
+          ? savedState.linkHistoryEnabled
+          : DEFAULT_STATE.linkHistoryEnabled,
+      linkHistoryLimit: normalizeLinkHistoryLimit(savedState.linkHistoryLimit),
       linkFavoritesDrawerOpen:
         typeof savedState.linkFavoritesDrawerOpen === "boolean"
           ? savedState.linkFavoritesDrawerOpen
@@ -797,6 +838,11 @@
       : DEFAULT_STATE.idleTransparency;
   }
 
+  function normalizeLinkHistoryLimit(value) {
+    const limit = Number(value);
+    return [20, 50, 100, 200].includes(limit) ? limit : DEFAULT_STATE.linkHistoryLimit;
+  }
+
   function normalizeTierMode(value) {
     return value === "exact" ? "exact" : "minimum";
   }
@@ -810,10 +856,16 @@
       const stored = await chrome.storage.local.get(STORAGE_KEY);
       const previous = stored[STORAGE_KEY] || {};
       let next;
-      if (Array.isArray(options.favoriteKeys) && options.favoriteKeys.length) {
+      if (
+        (Array.isArray(options.favoriteKeys) && options.favoriteKeys.length) ||
+        (Array.isArray(options.stateKeys) && options.stateKeys.length)
+      ) {
         // Only the mutating tab may write favorite payloads; keep other fields from storage.
         next = { ...previous };
-        for (const key of options.favoriteKeys) {
+        for (const key of options.favoriteKeys || []) {
+          next[key] = runtime.state[key];
+        }
+        for (const key of options.stateKeys || []) {
           next[key] = runtime.state[key];
         }
       } else {
@@ -843,7 +895,9 @@
       favoriteFolders: state?.favoriteFolders || null,
       linkFavorites: state?.linkFavorites || null,
       favoritesEnabled: Boolean(state?.favoritesEnabled),
-      linkFavoritesEnabled: Boolean(state?.linkFavoritesEnabled)
+      linkFavoritesEnabled: Boolean(state?.linkFavoritesEnabled),
+      linkHistoryEnabled: Boolean(state?.linkHistoryEnabled),
+      linkHistoryLimit: normalizeLinkHistoryLimit(state?.linkHistoryLimit)
     });
   }
 
@@ -869,7 +923,12 @@
       linkFavoritesEnabled:
         typeof storedState.linkFavoritesEnabled === "boolean"
           ? storedState.linkFavoritesEnabled
-          : runtime.state.linkFavoritesEnabled
+          : runtime.state.linkFavoritesEnabled,
+      linkHistoryEnabled:
+        typeof storedState.linkHistoryEnabled === "boolean"
+          ? storedState.linkHistoryEnabled
+          : runtime.state.linkHistoryEnabled,
+      linkHistoryLimit: normalizeLinkHistoryLimit(storedState.linkHistoryLimit)
     };
     if (getFavoriteDataFingerprint(nextState) === getFavoriteDataFingerprint(runtime.state)) {
       return false;
@@ -879,6 +938,8 @@
     runtime.state.linkFavorites = nextState.linkFavorites;
     runtime.state.favoritesEnabled = nextState.favoritesEnabled;
     runtime.state.linkFavoritesEnabled = nextState.linkFavoritesEnabled;
+    runtime.state.linkHistoryEnabled = nextState.linkHistoryEnabled;
+    runtime.state.linkHistoryLimit = nextState.linkHistoryLimit;
     runtime.favorites?.setFavorites(nextState.favorites);
     runtime.favorites?.setEnabled(nextState.favoritesEnabled);
     if (!nextState.favoritesEnabled) {
@@ -890,6 +951,7 @@
     if (runtime.ui?.root) {
       updateFavoritesToggleButton();
       updateLinkFavoritesToggleButton();
+      updateLinkHistoryControls();
       applyFavoritesDrawerState();
       applyLinkFavoritesDrawerState();
       applyPanelPosition();
@@ -1101,11 +1163,25 @@
           <button id="poe2-marketwright-favorites-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
         </section>
         <section class="poe2-trade2-affix-filter-feature poe2-marketwright-link-favorites-feature">
-          <button id="poe2-marketwright-link-favorites-disclosure" class="poe2-marketwright-link-favorites-disclosure" type="button" aria-label="" title="">
-            <span id="poe2-marketwright-link-favorites-title" class="poe2-trade2-affix-filter-feature-title"></span>
-          </button>
-          <button id="poe2-marketwright-link-favorites-view-mode" class="poe2-marketwright-favorites-view-mode" type="button" aria-label="" title=""></button>
-          <button id="poe2-marketwright-link-favorites-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
+          <div class="poe2-marketwright-link-favorites-main">
+            <button id="poe2-marketwright-link-favorites-disclosure" class="poe2-marketwright-link-favorites-disclosure" type="button" aria-label="" title="">
+              <span id="poe2-marketwright-link-favorites-title" class="poe2-trade2-affix-filter-feature-title"></span>
+            </button>
+            <button id="poe2-marketwright-link-favorites-view-mode" class="poe2-marketwright-favorites-view-mode" type="button" aria-label="" title=""></button>
+            <button id="poe2-marketwright-link-favorites-enabled" class="poe2-trade2-affix-filter-toggle poe2-trade2-affix-filter-feature-toggle" type="button"></button>
+          </div>
+          <div class="poe2-marketwright-link-history-controls">
+            <div class="poe2-marketwright-link-history-toggle-row">
+              <button id="poe2-marketwright-link-history-open" class="poe2-marketwright-link-history-open" type="button">
+                <span id="poe2-marketwright-link-history-title" class="poe2-trade2-affix-filter-field-label"></span>
+              </button>
+              <button id="poe2-marketwright-link-history-enabled" class="poe2-trade2-affix-filter-toggle" type="button"></button>
+            </div>
+            <label class="poe2-marketwright-link-history-limit-field">
+              <span id="poe2-marketwright-link-history-limit-label" class="poe2-trade2-affix-filter-field-label"></span>
+              <select id="poe2-marketwright-link-history-limit"></select>
+            </label>
+          </div>
         </section>
         <section class="poe2-trade2-affix-filter-feature poe2-trade2-affix-filter-currency-feature">
           <div class="poe2-trade2-affix-filter-feature-header">
@@ -1204,6 +1280,11 @@
     runtime.ui.idleTransparencyEnabled = root.querySelector("#poe2-trade2-affix-filter-idle-transparency-enabled");
     runtime.ui.idleTransparencyOpacityLabel = root.querySelector("#poe2-trade2-affix-filter-idle-transparency-opacity-label");
     runtime.ui.idleTransparencyOpacity = root.querySelector("#poe2-trade2-affix-filter-idle-transparency-opacity");
+    runtime.ui.linkHistoryTitle = root.querySelector("#poe2-marketwright-link-history-title");
+    runtime.ui.linkHistoryOpen = root.querySelector("#poe2-marketwright-link-history-open");
+    runtime.ui.linkHistoryEnabled = root.querySelector("#poe2-marketwright-link-history-enabled");
+    runtime.ui.linkHistoryLimitLabel = root.querySelector("#poe2-marketwright-link-history-limit-label");
+    runtime.ui.linkHistoryLimit = root.querySelector("#poe2-marketwright-link-history-limit");
     runtime.ui.statTitle = root.querySelector("#poe2-trade2-affix-filter-stat-title");
     runtime.ui.tierTitle = root.querySelector("#poe2-marketwright-tier-title");
     runtime.ui.tierModeLabel = root.querySelector("#poe2-marketwright-tier-mode-label");
@@ -1222,11 +1303,13 @@
     populateSelectionOptions(runtime.ui.selection);
     populateLanguageOptions(runtime.ui.language);
     populatePageLanguageOptions(runtime.ui.pageLanguage);
+    populateLinkHistoryLimitOptions(runtime.ui.linkHistoryLimit);
 
     runtime.ui.selection.value = runtime.state.selection;
     runtime.ui.language.value = runtime.state.uiLanguage;
     runtime.ui.pageLanguage.value = runtime.state.pageLanguage;
     runtime.ui.idleTransparencyOpacity.value = String(runtime.state.idleTransparency);
+    runtime.ui.linkHistoryLimit.value = String(runtime.state.linkHistoryLimit);
     updateToggleButton();
     renderFavoriteDrawer();
     renderLinkFavoritesDrawer();
@@ -1386,7 +1469,7 @@
 
     runtime.ui.linkFavoritesEnabled.addEventListener("click", () => {
       runtime.state.linkFavoritesEnabled = !runtime.state.linkFavoritesEnabled;
-      if (!runtime.state.linkFavoritesEnabled) {
+      if (!isLinkFavoritesViewAvailable()) {
         runtime.state.linkFavoritesDrawerOpen = false;
       }
       updateLinkFavoritesToggleButton();
@@ -1456,6 +1539,15 @@
     runtime.ui.idleTransparencyOpacity.addEventListener("change", () => {
       runAsync(() => saveState(), "change idle transparency");
     });
+    runtime.ui.linkHistoryEnabled.addEventListener("click", () => {
+      runAsync(() => setLinkHistoryEnabled(!isLinkHistoryEnabled()), "toggle link history");
+    });
+    runtime.ui.linkHistoryOpen.addEventListener("click", () => {
+      runAsync(toggleLinkHistory, "toggle link history view");
+    });
+    runtime.ui.linkHistoryLimit.addEventListener("change", () => {
+      runAsync(() => setLinkHistoryLimit(runtime.ui.linkHistoryLimit.value), "change link history limit");
+    });
   }
 
   function updateStaticUiText() {
@@ -1472,6 +1564,10 @@
       option.textContent = t(option.dataset.sidebarPosition === "right" ? "sidebarPositionRight" : "sidebarPositionLeft");
     });
     runtime.ui.idleTransparencyTitle.textContent = t("idleTransparency");
+    runtime.ui.linkHistoryTitle.textContent = t("linkHistoryTitle");
+    runtime.ui.linkHistoryOpen.title = t("openLinkHistory");
+    runtime.ui.linkHistoryOpen.setAttribute("aria-label", t("openLinkHistory"));
+    runtime.ui.linkHistoryLimitLabel.textContent = t("linkHistoryLimit");
     runtime.ui.statTitle.textContent = t("statFilterTitle");
     runtime.ui.tierTitle.textContent = t("tierFeatureTitle");
     runtime.ui.tierModeLabel.textContent = t("tierMode");
@@ -1510,6 +1606,7 @@
       option.textContent = t(option.dataset.tierMode === "exact" ? "tierModeExact" : "tierModeMinimum");
     });
     updateSidebarPositionControls();
+    updateLinkHistoryControls();
     applyFavoritesDrawerState();
     applyLinkFavoritesDrawerState();
   }
@@ -1548,6 +1645,19 @@
       const option = document.createElement("option");
       option.value = language;
       option.textContent = labels[language];
+      select.appendChild(option);
+    }
+  }
+
+  function populateLinkHistoryLimitOptions(select) {
+    if (!select) {
+      return;
+    }
+    select.replaceChildren();
+    for (const limit of [20, 50, 100, 200]) {
+      const option = document.createElement("option");
+      option.value = String(limit);
+      option.textContent = String(limit);
       select.appendChild(option);
     }
   }
@@ -2021,6 +2131,9 @@
       favoritesPanelTab: getFavoritesPanelTab(),
       favoritesEnabled: Boolean(runtime.state.favoritesEnabled),
       linkFavoritesEnabled: Boolean(runtime.state.linkFavoritesEnabled),
+      linkHistoryEnabled: Boolean(runtime.state.linkHistoryEnabled),
+      linkHistoryLimit: normalizeLinkHistoryLimit(runtime.state.linkHistoryLimit),
+      focusLinkHistory: Boolean(runtime.linkHistoryFocus),
       favorites: favorites.map(getFavoritePresentation),
       favoriteFolders: {
         folders: favoriteFolders,
@@ -2031,7 +2144,9 @@
         folders,
         links: (leagueState?.links || []).map(getLinkFavoritePresentation),
         rootLinkIds: leagueState?.rootLinkIds || [],
-        folderLinkIds: leagueState?.folderLinkIds || {}
+        folderLinkIds: leagueState?.folderLinkIds || {},
+        history: (leagueState?.history || []).map(getLinkFavoritePresentation),
+        historyCollapsed: Boolean(leagueState?.historyCollapsed)
       },
       canSaveCurrentLink: Boolean(linkContext),
       deletedFavorite: runtime.deletedFavorite
@@ -2125,6 +2240,9 @@
       case "open-link":
         await launchLinkFavorite(payload.linkId);
         break;
+      case "open-history":
+        await launchLinkHistory(payload.linkId);
+        break;
       case "create-folder":
         await createLinkFavoriteFolder(payload.name);
         break;
@@ -2153,6 +2271,20 @@
         break;
       case "delete-link":
         await deleteLinkFavorite(payload.linkId);
+        break;
+      case "save-history":
+        await saveLinkHistory(payload.linkId);
+        break;
+      case "delete-history":
+        await deleteLinkHistory(payload.linkId);
+        break;
+      case "toggle-history":
+        await setLinkHistoryCollapsed(Boolean(payload.collapsed));
+        break;
+      case "clear-history":
+        if (payload.confirm === true) {
+          await clearLinkHistory();
+        }
         break;
       case "undo-link":
         await undoDeletedLinkFavorite();
@@ -2250,6 +2382,47 @@
       collectMultiselectSelectedTexts(getItemSearchRoot() || getItemSearchInput()),
       collectMultiselectSelectedTexts(getTypeCategoryMultiselect())
     );
+  }
+
+  function getLinkHistoryDisplayName(context) {
+    const snapshot = context?.displaySnapshot || {};
+    const localize = (value) => getLocalizedLinkFavoriteFilterLabel(value).replace(/\s+/g, " ").trim();
+    const titleCase = (value) => String(value || "")
+      .replace(/[_-]+/g, " ")
+      .replace(/\b\w/g, (letter) => letter.toUpperCase());
+    let category = "";
+    let rarity = "";
+    for (const group of context?.filterGroups || []) {
+      for (const value of group?.values || []) {
+        const [rawLabel, ...rawValue] = String(value || "").split(/[:：]/);
+        const label = normalizeLookupText(rawLabel);
+        const text = rawValue.join(":").trim();
+        if (!text) {
+          continue;
+        }
+        if (/(?:item\s*(?:category|type)|\u7269\u54c1(?:\u7c7b\u522b|\u985e\u5225)|\u9053\u5177(?:\u5206\u7c7b|\u5206\u985e))/.test(label)) {
+          category ||= localize(text);
+        } else if (/(?:item\s*rarity|rarity|\u7a00\u6709\u5ea6)/.test(label)) {
+          rarity ||= localize(text);
+        }
+      }
+    }
+    const selectionName = localize(context?.displayName);
+    const unnamed = t("linkFavoriteUnnamedSearch");
+    const savedNameEnglish = getLinkFavoriteBilingualText(context?.displayName)?.english || "";
+    const selectionIsUnnamed =
+      normalizeLookupText(selectionName) === normalizeLookupText(unnamed) ||
+      normalizeLookupText(savedNameEnglish) === normalizeLookupText(unnamed);
+    const selectionIsCategory = category && normalizeLookupText(selectionName) === normalizeLookupText(category);
+    const itemName = (!selectionIsCategory && !selectionIsUnnamed && selectionName ? selectionName : "") ||
+      localize(snapshot.type);
+    category ||= localize(titleCase(String(snapshot.category || "").split(".").pop() || ""));
+    rarity ||= localize(titleCase(snapshot.rarity));
+    const details = [category, rarity].filter(Boolean);
+    if (itemName) {
+      return `${itemName}${details.length ? ` (${details.join(" ")})` : ""}`;
+    }
+    return details.join(" ") || t("linkHistoryUnnamedSearch");
   }
 
   function getCurrentLinkFavoriteFilterGroups() {
@@ -2419,11 +2592,26 @@
     if (!text || !isPageTranslationEnabled()) {
       return text;
     }
-    const localized = getLocalizedTradeText(text);
-    if (localized !== text) {
-      return localized;
+    const bilingual = getLinkFavoriteBilingualText(text);
+    const source = bilingual?.english || text;
+    const localized = getLocalizedTradeText(source);
+    if (localized !== source || !bilingual) {
+      return getLinkFavoritePrimaryText(localized);
     }
-    return text;
+    return bilingual.primary;
+  }
+
+  function getLinkFavoriteBilingualText(value) {
+    const text = getLinkFavoriteFilterText(value);
+    const match = text.match(/^(.+?)\s+\((.+)\)$/);
+    if (!match || !/[^\x00-\x7f]/.test(match[1]) || !/^[\x00-\x7f]+$/.test(match[2]) || !/[A-Za-z]/.test(match[2])) {
+      return null;
+    }
+    return { primary: match[1].trim(), english: match[2].trim() };
+  }
+
+  function getLinkFavoritePrimaryText(value) {
+    return getLinkFavoriteBilingualText(value)?.primary || getLinkFavoriteFilterText(value);
   }
 
   function localizeLinkFavoriteFilterValue(value) {
@@ -2433,7 +2621,9 @@
       return getLocalizedLinkFavoriteFilterLabel(text);
     }
     const label = text.slice(0, separatorIndex);
-    return `${getLocalizedLinkFavoriteFilterLabel(label)}${text.slice(separatorIndex)}`;
+    const rawValue = text.slice(separatorIndex + 1);
+    const leading = rawValue.match(/^\s*/)?.[0] || "";
+    return `${getLocalizedLinkFavoriteFilterLabel(label)}${text[separatorIndex]}${leading}${getLocalizedLinkFavoriteFilterLabel(rawValue)}`;
   }
 
   function localizeLinkFavoriteFilterGroups(groups) {
@@ -2496,6 +2686,10 @@
     return getLocalizedDisplayTextForLanguage(record, fallback, runtime.state.uiLanguage);
   }
 
+  function getLocalizedLinkFavoriteDisplayText(record, fallback) {
+    return getLocalizedDisplayTextForLanguage(record, fallback, getLinkFavoritePresentationLanguage());
+  }
+
   function getLocalizedDisplayTextForLanguage(record, fallback, languageValue) {
     const language = resolvePageLanguage(languageValue);
     if (language === "en") {
@@ -2537,19 +2731,52 @@
     return pageId ? localizeSelectionLabel({ kind: "page", id: pageId }, fallback) : fallback;
   }
 
-  function getLocalizedFavoriteRarity(rarity) {
+  function getLocalizedLinkFavoriteCategory(category) {
+    const fallback = FAVORITE_TRADE_CATEGORY_LABELS[category] || category || "";
+    if (!isPageTranslationEnabled()) {
+      return getLocalizedFavoriteCategory(category);
+    }
+    return getLocalizedLinkFavoriteFilterLabel(fallback);
+  }
+
+  function getLocalizedLinkFavoriteStatGroupLabel(group) {
+    const type = String(group?.type || "and").trim().toLocaleLowerCase().replace(/[\s-]+/g, "_");
+    const language = getLinkFavoritePresentationLanguage();
+    const relation = getLocalizedDisplayTextForLanguage(
+      LINK_FAVORITE_STAT_GROUP_LABELS[type],
+      type.toUpperCase().replaceAll("_", " "),
+      language
+    );
+    const rawMin = group?.value?.min;
+    const rawMax = group?.value?.max;
+    const min = rawMin == null || rawMin === "" ? Number.NaN : Number(rawMin);
+    const max = rawMax == null || rawMax === "" ? Number.NaN : Number(rawMax);
+    const range = formatLinkFavoriteRange(Number.isFinite(min) ? min : "", Number.isFinite(max) ? max : "");
+    const filters = getLocalizedDisplayTextForLanguage(
+      LINK_FAVORITE_STAT_GROUP_LABELS.filters,
+      "Stat Filters",
+      language
+    );
+    return `${filters}: ${relation}${range ? ` (${range})` : ""}`;
+  }
+
+  function getLocalizedFavoriteRarity(rarity, languageValue = runtime.state.uiLanguage) {
     const labels = {
       normal: { en: "Normal", zh_CN: "普通", zh_TW: "普通" },
       magic: { en: "Magic", zh_CN: "魔法", zh_TW: "魔法" },
       rare: { en: "Rare", zh_CN: "稀有", zh_TW: "稀有" },
       unique: { en: "Unique", zh_CN: "传奇", zh_TW: "傳奇" }
     };
-    return getLocalizedDisplayText(labels[String(rarity || "").toLowerCase()], rarity);
+    return getLocalizedDisplayTextForLanguage(labels[String(rarity || "").toLowerCase()], rarity, languageValue);
   }
 
-  function formatLocalizedFavoriteModifier(modifier) {
+  function formatLocalizedFavoriteModifier(modifier, languageValue = runtime.state.uiLanguage) {
     const text = String(modifier?.text || "");
-    const localizedTemplate = getLocalizedDisplayText(getDisplayMetadata().stats?.[modifier?.id], text);
+    const localizedTemplate = getLocalizedDisplayTextForLanguage(
+      getDisplayMetadata().stats?.[modifier?.id],
+      text,
+      languageValue
+    );
     const numbers = text.match(NUMBER_RE) || [];
     let numberIndex = 0;
     const localizedText = localizedTemplate.replace(/#/g, (placeholder, offset, template) => {
@@ -2566,7 +2793,10 @@
     let valueIndex = 0;
     const englishText = englishTemplate.replace(/#/g, () => values[valueIndex++] || values.at(-1) || "#");
     return {
-      ...formatLocalizedFavoriteModifier({ id: stat?.id, text: englishText, source: String(stat?.id || "").split(".", 1)[0] }),
+      ...formatLocalizedFavoriteModifier(
+        { id: stat?.id, text: englishText, source: String(stat?.id || "").split(".", 1)[0] },
+        getLinkFavoritePresentationLanguage()
+      ),
       source: getLocalizedFavoriteModifierSource(String(stat?.id || "").split(".", 1)[0]),
       ...(stat?.disabled === true ? { disabled: true } : {}),
       ...(Number.isFinite(Number(stat?.weight)) ? { weight: Number(stat.weight) } : {})
@@ -2579,7 +2809,7 @@
     if (!snapshot) {
       return { ...link, filterGroups };
     }
-    const type = getLocalizedDisplayText(getFavoriteItemRecord(snapshot.type), snapshot.type);
+    const type = getLocalizedLinkFavoriteDisplayText(getFavoriteItemRecord(snapshot.type), snapshot.type);
     const statGroups = (snapshot.statGroups || [])
       .map((group) => {
         const filters = (group?.filters || []).map(formatLocalizedLinkSnapshotStat).filter((stat) => stat.text);
@@ -2592,6 +2822,7 @@
         const max = rawMax == null || rawMax === "" ? Number.NaN : Number(rawMax);
         return {
           type: String(group?.type || "and"),
+          label: getLocalizedLinkFavoriteStatGroupLabel(group),
           ...(Number.isFinite(min) || Number.isFinite(max)
             ? { value: { ...(Number.isFinite(min) ? { min } : {}), ...(Number.isFinite(max) ? { max } : {}) } }
             : {}),
@@ -2605,8 +2836,8 @@
       filterGroups,
       localizedSnapshot: {
         ...(type ? { type } : {}),
-        ...(snapshot.category ? { category: getLocalizedFavoriteCategory(snapshot.category) } : {}),
-        ...(snapshot.rarity ? { rarity: getLocalizedFavoriteRarity(snapshot.rarity) } : {}),
+        ...(snapshot.category ? { category: getLocalizedLinkFavoriteCategory(snapshot.category) } : {}),
+        ...(snapshot.rarity ? { rarity: getLocalizedFavoriteRarity(snapshot.rarity, getLinkFavoritePresentationLanguage()) } : {}),
         ...(stats.length ? { stats } : {}),
         ...(statGroups.length ? { statGroups } : {})
       }
@@ -2623,7 +2854,7 @@
           ? getLocalizedDisplayText(automaticNameRecord, baseName)
           : automaticName || baseName
         : favorite?.displayName || baseName;
-    const mods = (favorite?.mods || []).map(formatLocalizedFavoriteModifier);
+    const mods = (favorite?.mods || []).map((modifier) => formatLocalizedFavoriteModifier(modifier));
     return {
       ...favorite,
       displayName,
@@ -3425,7 +3656,7 @@
     publishFavoritesPanelState();
   }
 
-  async function replaceLinkFavorites(nextLinkFavorites) {
+  async function replaceLinkFavorites(nextLinkFavorites, options = {}) {
     const tools = getLinkFavoriteTools();
     if (!tools) {
       throw new Error("Link favorite tools are unavailable");
@@ -3434,7 +3665,7 @@
     runtime.state.linkFavorites = tools.normalizeLinkFavoritesState(nextLinkFavorites);
     renderLinkFavoritesDrawer();
     try {
-      await saveState({ favoriteKeys: ["linkFavorites"] });
+      await saveState({ favoriteKeys: ["linkFavorites"], stateKeys: options.stateKeys });
       publishFavoritesPanelState();
     } catch (error) {
       runtime.state.linkFavorites = previous;
@@ -3532,6 +3763,164 @@
     });
     leagueState.links.push(record);
     getLinkFavoriteLinkIds(leagueState, folderId).push(record.id);
+    await replaceLinkFavorites(next);
+    showLinkFavoriteFeedback("linkFavoriteSaved");
+  }
+
+  function isLinkHistoryEnabled() {
+    return runtime.state.linkHistoryEnabled !== false;
+  }
+
+  function isLinkFavoritesViewAvailable() {
+    return Boolean(runtime.state.linkFavoritesEnabled || isLinkHistoryEnabled());
+  }
+
+  function getLinkHistory(leagueState) {
+    return leagueState?.history || [];
+  }
+
+  async function recordCurrentLinkHistory() {
+    const href = location.href;
+    runtime.linkHistoryLocationHref = href;
+    if (!isLinkHistoryEnabled()) {
+      return;
+    }
+    const context = getCurrentLinkFavoriteContext();
+    const tools = getLinkFavoriteTools();
+    if (!context || !tools?.upsertLinkFavoriteHistory) {
+      return;
+    }
+    const next = cloneLinkFavoritesState();
+    const leagueState = getLinkFavoriteLeagueState(next, context.league, true);
+    leagueState.history = tools.upsertLinkFavoriteHistory(
+      getLinkHistory(leagueState),
+      { ...context, displayName: getLinkHistoryDisplayName(context) },
+      runtime.state.linkHistoryLimit
+    );
+    await replaceLinkFavorites(next);
+  }
+
+  async function setLinkHistoryEnabled(enabled) {
+    runtime.state.linkHistoryEnabled = Boolean(enabled);
+    updateLinkHistoryControls();
+    renderLinkFavoritesDrawer();
+    applyLinkFavoritesDrawerState();
+    await saveState({ stateKeys: ["linkHistoryEnabled"] });
+    if (enabled) {
+      await recordCurrentLinkHistory();
+    }
+    publishFavoritesPanelState();
+  }
+
+  async function setLinkHistoryLimit(value) {
+    const limit = normalizeLinkHistoryLimit(value);
+    const next = cloneLinkFavoritesState();
+    for (const leagueState of Object.values(next.leagues || {})) {
+      leagueState.history = getLinkHistory(leagueState).slice(0, limit);
+    }
+    runtime.state.linkHistoryLimit = limit;
+    await replaceLinkFavorites(next, { stateKeys: ["linkHistoryLimit"] });
+    updateLinkHistoryControls();
+  }
+
+  async function setLinkHistoryCollapsed(collapsed) {
+    const league = getCurrentLinkFavoriteLeague();
+    const next = cloneLinkFavoritesState();
+    const leagueState = getLinkFavoriteLeagueState(next, league, true);
+    if (leagueState.historyCollapsed === Boolean(collapsed)) {
+      return;
+    }
+    leagueState.historyCollapsed = Boolean(collapsed);
+    await replaceLinkFavorites(next);
+  }
+
+  async function openLinkHistory() {
+    const league = getCurrentLinkFavoriteLeague();
+    if (league) {
+      await setLinkHistoryCollapsed(false);
+    }
+    runtime.linkHistoryFocus = true;
+    renderLinkFavoritesDrawer();
+    publishFavoritesPanelState();
+    await setLinkFavoritesDrawerOpen(true);
+    if (runtime.linkHistoryFocusTimer) {
+      window.clearTimeout(runtime.linkHistoryFocusTimer);
+    }
+    runtime.linkHistoryFocusTimer = window.setTimeout(() => {
+      runtime.linkHistoryFocus = false;
+      runtime.linkHistoryFocusTimer = null;
+      publishFavoritesPanelState();
+    }, 750);
+  }
+
+  async function toggleLinkHistory() {
+    const open = getFavoritesViewMode() === "full"
+      ? Boolean(runtime.state.favoritesPanelOpen && getFavoritesPanelTab() === "links")
+      : Boolean(runtime.state.linkFavoritesDrawerOpen);
+    if (open) {
+      await setLinkFavoritesDrawerOpen(false);
+      return;
+    }
+    await openLinkHistory();
+  }
+
+  async function launchLinkHistory(linkId) {
+    const league = getCurrentLinkFavoriteLeague();
+    const history = getLinkHistory(getLinkFavoriteLeagueState(runtime.state.linkFavorites, league));
+    const entry = history.find((link) => link.id === linkId);
+    if (entry) {
+      window.location.assign(entry.url);
+    }
+  }
+
+  async function deleteLinkHistory(linkId) {
+    const league = getCurrentLinkFavoriteLeague();
+    const next = cloneLinkFavoritesState();
+    const leagueState = getLinkFavoriteLeagueState(next, league);
+    if (!leagueState) {
+      return;
+    }
+    const history = getLinkHistory(leagueState);
+    const nextHistory = history.filter((link) => link.id !== linkId);
+    if (nextHistory.length === history.length) {
+      return;
+    }
+    leagueState.history = nextHistory;
+    await replaceLinkFavorites(next);
+  }
+
+  async function clearLinkHistory() {
+    const league = getCurrentLinkFavoriteLeague();
+    const next = cloneLinkFavoritesState();
+    const leagueState = getLinkFavoriteLeagueState(next, league);
+    if (!leagueState || !getLinkHistory(leagueState).length) {
+      return;
+    }
+    leagueState.history = [];
+    await replaceLinkFavorites(next);
+  }
+
+  async function saveLinkHistory(linkId) {
+    const league = getCurrentLinkFavoriteLeague();
+    const next = cloneLinkFavoritesState();
+    const leagueState = getLinkFavoriteLeagueState(next, league);
+    const history = getLinkHistory(leagueState);
+    const entry = history.find((link) => link.id === linkId);
+    if (!entry) {
+      return;
+    }
+    if (leagueState.links.some((link) => link.url === entry.url)) {
+      showLinkFavoriteFeedback("linkFavoriteAlreadySaved");
+      return;
+    }
+    const record = getLinkFavoriteTools().createLinkFavoriteRecord({
+      ...entry,
+      id: null,
+      folderId: null,
+      createdAt: Date.now()
+    });
+    leagueState.links.push(record);
+    leagueState.rootLinkIds.push(record.id);
     await replaceLinkFavorites(next);
     showLinkFavoriteFeedback("linkFavoriteSaved");
   }
@@ -4041,6 +4430,10 @@
   }
 
   function getCompactLinkFavoriteStatGroupLabel(group) {
+    const localizedLabel = String(group?.label || "").trim();
+    if (localizedLabel) {
+      return localizedLabel;
+    }
     const type = String(group?.type || "and").trim().toLocaleLowerCase().replace(/[\s-]+/g, "_");
     const relation = {
       and: t("favoriteTooltipStatGroupAnd", [], "AND"),
@@ -4372,6 +4765,123 @@
     return row;
   }
 
+  function renderLinkHistoryRow(link) {
+    const row = document.createElement("article");
+    row.className = "poe2-marketwright-link-favorite-row poe2-marketwright-link-history-row";
+    row.dataset.linkHistoryId = link.id;
+    const launch = document.createElement("button");
+    launch.type = "button";
+    launch.className = "poe2-marketwright-link-favorite-launch";
+    const presentation = getCompactLinkFavoritePresentation(getLinkFavoritePresentation(link));
+    const name = document.createElement("span");
+    name.className = "poe2-marketwright-link-favorite-name";
+    name.textContent = link.displayName;
+    launch.appendChild(name);
+    for (const stat of presentation.stats.slice(0, 3)) {
+      launch.appendChild(renderCompactLinkFavoriteStat(stat));
+    }
+    const moreCount = Math.max(0, presentation.stats.length - 3);
+    if (moreCount) {
+      const more = document.createElement("span");
+      more.className = "poe2-marketwright-link-favorite-more";
+      more.textContent = t("favoriteMoreMods", moreCount);
+      launch.appendChild(more);
+    }
+    bindCompactLinkFavoriteTooltip(launch, presentation);
+    launch.addEventListener("click", () => runAsync(() => launchLinkHistory(link.id), "open link history"));
+
+    const actions = document.createElement("div");
+    actions.className = "poe2-marketwright-link-favorite-actions";
+    const save = createLinkFavoriteIconButton(
+      "poe2-marketwright-link-favorite-action poe2-marketwright-link-favorite-save",
+      t("createLinkFavorite"),
+      "M4 1.75h8a1 1 0 0 1 1 1v11.1l-5-2.85-5 2.85V2.75a1 1 0 0 1 1-1z"
+    );
+    save.disabled = !runtime.state.linkFavoritesEnabled;
+    save.addEventListener("click", () => runAsync(() => saveLinkHistory(link.id), "save link history"));
+    const remove = createLinkFavoriteIconButton(
+      "poe2-marketwright-link-favorite-action poe2-marketwright-link-favorite-delete",
+      t("deleteLinkFavorite"),
+      "M4 4.5h8l-.6 9H4.6l-.6-9zm2-2h4l.6 1H13v1.5H3V3.5h2.4L6 2.5zm1 4v5h1.5v-5H7zm2.5 0v5H11v-5H9.5z"
+    );
+    remove.addEventListener("click", () => runAsync(() => deleteLinkHistory(link.id), "delete link history"));
+    actions.append(save, remove);
+    row.append(launch, actions);
+    return row;
+  }
+
+  function renderLinkHistoryGroup(leagueState) {
+    const group = document.createElement("section");
+    group.className = "poe2-marketwright-link-favorite-group poe2-marketwright-link-history-group";
+    const header = document.createElement("div");
+    header.className = "poe2-marketwright-link-favorite-group-header";
+    const collapsed = Boolean(leagueState.historyCollapsed);
+    const collapse = createLinkFavoriteIconButton(
+      "poe2-marketwright-link-favorite-collapse",
+      t(collapsed ? "expandLinkFavoriteFolder" : "collapseLinkFavoriteFolder"),
+      collapsed
+        ? "M3.2 2.5 8 7.3l4.8-4.8v2.15L8 9.45 3.2 4.65V2.5zm0 6.05L8 13.35l4.8-4.8v2.15L8 15.5 3.2 10.7V8.55z"
+        : "M3.2 13.5 8 8.7l4.8 4.8v-2.15L8 6.55 3.2 11.35v2.15zm0-6.05L8 2.65l4.8 4.8V5.3L8 .5 3.2 5.3v2.15z"
+    );
+    collapse.setAttribute("aria-expanded", String(!collapsed));
+    collapse.addEventListener("click", () => runAsync(() => setLinkHistoryCollapsed(!collapsed), "toggle link history"));
+    const name = document.createElement("span");
+    name.className = "poe2-marketwright-link-favorite-group-name";
+    name.textContent = t("linkHistory");
+    const clear = createLinkFavoriteIconButton(
+      "poe2-marketwright-link-favorite-action poe2-marketwright-link-favorite-delete",
+      t("clearLinkHistory"),
+      "M4 4.5h8l-.6 9H4.6l-.6-9zm2-2h4l.6 1H13v1.5H3V3.5h2.4L6 2.5zm1 4v5h1.5v-5H7zm2.5 0v5H11v-5H9.5z"
+    );
+    clear.disabled = getLinkHistory(leagueState).length === 0;
+    clear.addEventListener("click", () => {
+      runtime.pendingLinkHistoryClear = true;
+      renderLinkFavoritesDrawer();
+    });
+    header.append(collapse, name, clear);
+    group.appendChild(header);
+    if (!collapsed) {
+      const list = document.createElement("div");
+      list.className = "poe2-marketwright-link-favorite-list";
+      const history = getLinkHistory(leagueState);
+      if (history.length) {
+        for (const link of history) {
+          list.appendChild(renderLinkHistoryRow(link));
+        }
+      } else {
+        const empty = document.createElement("div");
+        empty.className = "poe2-marketwright-link-favorites-empty";
+        empty.textContent = t("linkHistoryEmpty");
+        list.appendChild(empty);
+      }
+      group.appendChild(list);
+    }
+    if (runtime.pendingLinkHistoryClear) {
+      const confirm = document.createElement("div");
+      confirm.className = "poe2-marketwright-link-favorite-folder-confirm";
+      const message = document.createElement("span");
+      message.textContent = t("confirmClearLinkHistory", getLinkHistory(leagueState).length);
+      const cancel = document.createElement("button");
+      cancel.type = "button";
+      cancel.textContent = t("cancelLinkFavoriteFolderDelete");
+      cancel.addEventListener("click", () => {
+        runtime.pendingLinkHistoryClear = false;
+        renderLinkFavoritesDrawer();
+      });
+      const remove = document.createElement("button");
+      remove.type = "button";
+      remove.className = "poe2-marketwright-link-favorite-folder-confirm-delete";
+      remove.textContent = t("clearLinkHistory");
+      remove.addEventListener("click", () => runAsync(async () => {
+        runtime.pendingLinkHistoryClear = false;
+        await clearLinkHistory();
+      }, "clear link history"));
+      confirm.append(message, cancel, remove);
+      group.appendChild(confirm);
+    }
+    return group;
+  }
+
   function createCurrentLinkFavoriteIconButton(folderId) {
     const available = Boolean(getCurrentLinkFavoriteContext());
     const title = available ? t("createLinkFavorite") : t("createLinkFavoriteUnavailable");
@@ -4604,6 +5114,13 @@
       runtime.ui.linkFavoritesList.appendChild(renderLinkFavoriteGroup(leagueState, folder));
     }
     runtime.ui.linkFavoritesList.appendChild(root);
+    if (isLinkHistoryEnabled()) {
+      const historyGroup = renderLinkHistoryGroup(leagueState);
+      runtime.ui.linkFavoritesList.appendChild(historyGroup);
+      if (runtime.linkHistoryFocus) {
+        window.setTimeout(() => historyGroup.scrollIntoView?.({ block: "nearest" }), 0);
+      }
+    }
     if (runtime.linkFavoriteCreatingFolder) {
       const input = document.createElement("input");
       input.type = "text";
@@ -4678,7 +5195,7 @@
   }
 
   async function setLinkFavoritesDrawerOpen(open) {
-    if (!runtime.state.linkFavoritesEnabled) {
+    if (!isLinkFavoritesViewAvailable()) {
       return;
     }
     if (getFavoritesViewMode() === "full") {
@@ -4725,13 +5242,13 @@
       return;
     }
     const open = Boolean(
-      runtime.state.linkFavoritesEnabled &&
+      isLinkFavoritesViewAvailable() &&
         !runtime.state.collapsed &&
         ((getFavoritesViewMode() === "compact" && runtime.state.linkFavoritesDrawerOpen) ||
           (isFavoritesFullViewFallbackActive() && getFavoritesPanelTab() === "links"))
     );
     runtime.ui.root.classList.toggle("poe2-marketwright-link-favorites-open", open);
-    runtime.ui.linkFavoritesDisclosure.disabled = !runtime.state.linkFavoritesEnabled;
+    runtime.ui.linkFavoritesDisclosure.disabled = !isLinkFavoritesViewAvailable();
     runtime.ui.linkFavoritesDisclosure.setAttribute("aria-expanded", String(open));
     runtime.ui.linkFavoritesDisclosure.setAttribute(
       "aria-label",
@@ -5466,6 +5983,9 @@
         renderLinkFavoritesDrawer();
         publishFavoritesPanelState();
       }
+      if (location.href !== runtime.linkHistoryLocationHref) {
+        runAsync(recordCurrentLinkHistory, "record link history");
+      }
       const signature = getSelectionDomSignature();
       if (signature === runtime.selectionSignature) {
         return;
@@ -5592,6 +6112,10 @@
           runtime.tradeSearchSnapshots.set(`${league}\u0000${queryId}`, snapshot);
           if (runtime.tradeSearchSnapshots.size > 12) {
             runtime.tradeSearchSnapshots.delete(runtime.tradeSearchSnapshots.keys().next().value);
+          }
+          const current = getCurrentLinkFavoriteContext();
+          if (current?.league === league && current.queryId === queryId) {
+            runAsync(recordCurrentLinkHistory, "update link history snapshot");
           }
         }
         return;
@@ -6354,6 +6878,19 @@
     runtime.ui.linkFavoritesEnabled.textContent = enabled ? t("toggleOn") : t("toggleOff");
     runtime.ui.linkFavoritesEnabled.setAttribute("aria-pressed", String(enabled));
     runtime.ui.linkFavoritesEnabled.title = enabled ? t("disableLinkFavorites") : t("enableLinkFavorites");
+  }
+
+  function updateLinkHistoryControls() {
+    if (!runtime.ui.linkHistoryEnabled || !runtime.ui.linkHistoryLimit) {
+      return;
+    }
+    const enabled = isLinkHistoryEnabled();
+    runtime.ui.linkHistoryEnabled.textContent = enabled ? t("toggleOn") : t("toggleOff");
+    runtime.ui.linkHistoryEnabled.setAttribute("aria-pressed", String(enabled));
+    runtime.ui.linkHistoryEnabled.title = enabled ? t("disableLinkHistory") : t("enableLinkHistory");
+    runtime.ui.linkHistoryLimit.value = String(normalizeLinkHistoryLimit(runtime.state.linkHistoryLimit));
+    runtime.ui.linkHistoryLimit.disabled = !enabled;
+    runtime.ui.linkHistoryLimit.setAttribute("aria-disabled", String(!enabled));
   }
 
   function updateCurrencyConversionToggleButton() {

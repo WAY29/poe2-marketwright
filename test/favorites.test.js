@@ -587,6 +587,111 @@ test("link favorite state ignores pre-current versions", async () => {
   assert.deepStrictEqual(result, {"version": 2, "leagues": {}});
 });
 
+test("link history normalizes, deduplicates, and keeps its newest entries", async () => {
+  const sandbox = { console, URL };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+
+  const tools = sandbox.Poe2MarketwrightFavorites.createLinkFavoriteTools();
+  const state = tools.normalizeLinkFavoritesState({
+    version: 2,
+    leagues: {
+      Dawn: {
+        folders: [],
+        folderOrder: [],
+        links: [],
+        rootLinkIds: [],
+        folderLinkIds: {},
+        historyCollapsed: true,
+        history: [
+          {
+            id: "old",
+            url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+            displayName: "Old name",
+            createdAt: 10,
+            lastUsedAt: 20
+          },
+          {
+            id: "new",
+            url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1?ignored=value",
+            displayName: "New name",
+            createdAt: 10,
+            lastUsedAt: 30
+          },
+          {
+            id: "invalid",
+            url: "https://example.test/not-a-trade-search",
+            displayName: "Ignored"
+          }
+        ]
+      }
+    }
+  });
+  const updated = tools.upsertLinkFavoriteHistory(
+    state.leagues.Dawn.history,
+    {
+      url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-2",
+      displayName: "Second search",
+      filterGroups: [{ label: "Type Filters", values: ["Bow"] }]
+    },
+    2,
+    40
+  );
+
+  const result = structuredClone({ state, updated });
+  const generatedId = result.updated[0].id;
+  delete result.updated[0].id;
+  assert.deepStrictEqual(result, {
+    state: {
+      version: 2,
+      leagues: {
+        Dawn: {
+          folders: [],
+          folderOrder: [],
+          links: [],
+          rootLinkIds: [],
+          folderLinkIds: {},
+          historyCollapsed: true,
+          history: [{
+            id: "new",
+            league: "Dawn",
+            queryId: "query-1",
+            url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+            displayName: "New name",
+            folderId: null,
+            createdAt: 10,
+            lastUsedAt: 30
+          }]
+        }
+      }
+    },
+    updated: [
+      {
+        league: "Dawn",
+        queryId: "query-2",
+        url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-2",
+        displayName: "Second search",
+        folderId: null,
+        createdAt: 40,
+        lastUsedAt: 40,
+        filterGroups: [{ label: "Type Filters", values: ["Bow"] }]
+      },
+      {
+        id: "new",
+        league: "Dawn",
+        queryId: "query-1",
+        url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+        displayName: "New name",
+        folderId: null,
+        createdAt: 10,
+        lastUsedAt: 30
+      }
+    ]
+  });
+  assert.match(generatedId, /^history-/);
+});
+
 test("imports external link bookmarks into the selected league idempotently", async () => {
   const sandbox = { console, URL };
   vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {

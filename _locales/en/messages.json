@@ -355,7 +355,7 @@
     "message": "Rarity: $1"
   },
   "linkFavoritesTitle": {
-    "message": "Link bookmarks"
+    "message": "Link Bookmarks & History"
   },
   "linkFavoritesLeague": {
     "message": "Bookmarks: $1"
@@ -365,6 +365,36 @@
   },
   "linkFavoritesEmpty": {
     "message": "No saved bookmarks"
+  },
+  "linkHistoryTitle": {
+    "message": "Search history"
+  },
+  "linkHistoryLimit": {
+    "message": "History limit"
+  },
+  "enableLinkHistory": {
+    "message": "Enable search history"
+  },
+  "disableLinkHistory": {
+    "message": "Disable search history"
+  },
+  "linkHistory": {
+    "message": "History"
+  },
+  "openLinkHistory": {
+    "message": "Open search history"
+  },
+  "linkHistoryEmpty": {
+    "message": "No search history"
+  },
+  "linkHistoryUnnamedSearch": {
+    "message": "Search"
+  },
+  "clearLinkHistory": {
+    "message": "Clear history"
+  },
+  "confirmClearLinkHistory": {
+    "message": "Clear $1 history entries?"
   },
   "linkFavoriteUnnamedSearch": {
     "message": "Unnamed search"
@@ -437,6 +467,9 @@
   },
   "linkFavoriteSaved": {
     "message": "Bookmark saved"
+  },
+  "linkFavoriteAlreadySaved": {
+    "message": "Bookmark already saved"
   },
   "linkFavoriteDeleted": {
     "message": "$1 bookmark deletion(s) can be undone"

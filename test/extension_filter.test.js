@@ -1278,6 +1278,66 @@ test("current link favorite uses selected base name for its default name", async
   assert.deepStrictEqual(result, {"context": {"url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1", "league": "Dawn", "queryId": "query-1", "displayName": "Warmonger Bow"}, "categoryName": "Bows", "unnamed": "Unnamed search"});
 });
 
+test("automatic link history names item searches with category and rarity", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getLinkHistoryDisplayName, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageTranslationEnabled: true, pageLanguage: "zh_CN" };
+  hooks.runtime.tradeLocalization = {
+    strings: { "Warmonger Bow": { en: "Warmonger Bow", zh_CN: "狂战者之弓", zh_TW: "狂戰者之弓" } },
+    optionStrings: {
+      Bow: { en: "Bow", zh_CN: "弓", zh_TW: "弓" },
+      Rare: { en: "Rare", zh_CN: "稀有", zh_TW: "稀有" }
+    }
+  };
+  const name = hooks.getLinkHistoryDisplayName({
+    displayName: "Unnamed search",
+    displaySnapshot: { type: "Warmonger Bow", category: "weapon.bow", rarity: "rare" },
+    filterGroups: [{
+      label: "Type Filters",
+      values: ["Item Category: Bow", "Item Rarity: Rare"]
+    }]
+  });
+  const fallback = hooks.getLinkHistoryDisplayName({ displayName: "Unnamed search" });
+  const categoryOnly = hooks.getLinkHistoryDisplayName({
+    displayName: "Unnamed search",
+    filterGroups: [{
+      label: "Type Filters",
+      values: ["Item Category: Bow", "Item Rarity: Rare"]
+    }]
+  });
+  hooks.runtime.state.pageLanguage = "zh_TW_en";
+  const traditional = hooks.getLinkHistoryDisplayName({
+    displayName: "未命名搜尋 (Unnamed search)",
+    displaySnapshot: { type: "Warmonger Bow", category: "weapon.bow", rarity: "rare" },
+    filterGroups: [{
+      label: "類別篩選器 (Type Filters)",
+      values: ["物品類別 (Item Category): 弓 (Bow)", "物品稀有度 (Item Rarity): 稀有 (Rare)"]
+    }]
+  });
+  assert.deepStrictEqual(
+    { name, fallback, categoryOnly, traditional },
+    {
+      name: "狂战者之弓 (弓 稀有)",
+      fallback: "Search",
+      categoryOnly: "弓 稀有",
+      traditional: "狂戰者之弓 (弓 稀有)"
+    }
+  );
+});
+
 test("current link favorite remains available when Trade rerenders its filter DOM", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
@@ -1917,7 +1977,7 @@ test("link favorites render on a league search root without a query id", async (
   };
   hooks.renderLinkFavoritesDrawer();
   const result = structuredClone(hooks.runtime.ui.linkFavoritesList.children.map((child) => child.className));
-  assert.deepStrictEqual(result, ["poe2-marketwright-link-favorite-folder-top-drop-area", "poe2-marketwright-link-favorite-group", "poe2-marketwright-link-favorite-root"]);
+  assert.deepStrictEqual(result, ["poe2-marketwright-link-favorite-folder-top-drop-area", "poe2-marketwright-link-favorite-group", "poe2-marketwright-link-favorite-root", "poe2-marketwright-link-favorite-group poe2-marketwright-link-history-group"]);
 });
 
 test("collapsing all link favorite folders updates every folder", async () => {
@@ -1978,6 +2038,179 @@ test("collapsing all link favorite folders updates every folder", async () => {
   await hooks.setAllLinkFavoriteFoldersCollapsed(true);
   const result = structuredClone(hooks.runtime.state.linkFavorites.leagues.Dawn.folders.map((folder) => folder.collapsed));
   assert.deepStrictEqual(result, [true, true]);
+});
+
+test("link history copies to root without duplicates and can clear the current league", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { saveLinkHistory, setLinkHistoryCollapsed, clearLinkHistory, runtime };\n})();"
+  );
+  const window = {
+    location: {
+      href: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+      pathname: "/trade2/search/poe2/Dawn/query-1"
+    },
+    addEventListener() {},
+    clearTimeout() {},
+    setTimeout() { return 1; }
+  };
+  const sandbox = {
+    window,
+    document: { querySelector() { return null; }, querySelectorAll() { return []; } },
+    location: window.location,
+    console,
+    Element: class {},
+    HTMLInputElement: class {},
+    HTMLTextAreaElement: class {},
+    MutationObserver: class {},
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } },
+    Poe2MarketwrightFavorites: {
+      createFavoriteTools() {
+        return { getLeagueFromTradeUrl() { return "Dawn"; } };
+      },
+      createLinkFavoriteTools() {
+        return {
+          createLinkFavoriteRecord(input) {
+            return { ...input, id: "saved-link", league: "Dawn", queryId: "query-1", folderId: null, createdAt: 99, lastUsedAt: null };
+          },
+          normalizeLinkFavoritesState(state) { return state; }
+        };
+      }
+    }
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = window.__testHooks;
+  hooks.runtime.state = {
+    linkHistoryLimit: 50,
+    linkFavorites: {
+      version: 2,
+      leagues: {
+        Dawn: {
+          folders: [],
+          folderOrder: [],
+          links: [],
+          rootLinkIds: [],
+          folderLinkIds: {},
+          history: [{
+            id: "history-1",
+            league: "Dawn",
+            queryId: "query-1",
+            url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+            displayName: "Bow search",
+            folderId: null,
+            createdAt: 1,
+            lastUsedAt: 2
+          }]
+        }
+      }
+    }
+  };
+  await hooks.saveLinkHistory("history-1");
+  await hooks.saveLinkHistory("history-1");
+  await hooks.setLinkHistoryCollapsed(true);
+  const saved = structuredClone(hooks.runtime.state.linkFavorites.leagues.Dawn);
+  await hooks.clearLinkHistory();
+  const cleared = structuredClone(hooks.runtime.state.linkFavorites.leagues.Dawn);
+  assert.deepStrictEqual(
+    { rootLinkIds: saved.rootLinkIds, links: saved.links, history: saved.history, historyCollapsed: saved.historyCollapsed, clearedHistory: cleared.history },
+    {
+      rootLinkIds: ["saved-link"],
+      links: [{
+        id: "saved-link",
+        league: "Dawn",
+        queryId: "query-1",
+        url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+        displayName: "Bow search",
+        folderId: null,
+        createdAt: 99,
+        lastUsedAt: null
+      }],
+      history: [{
+        id: "history-1",
+        league: "Dawn",
+        queryId: "query-1",
+        url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+        displayName: "Bow search",
+        folderId: null,
+        createdAt: 1,
+        lastUsedAt: 2
+      }],
+      historyCollapsed: true,
+      clearedHistory: []
+    }
+  );
+});
+
+test("search history control opens, focuses, and closes the history folder", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { toggleLinkHistory, runtime };\n})();"
+  );
+  const window = {
+    location: {
+      href: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+      pathname: "/trade2/search/poe2/Dawn/query-1"
+    },
+    addEventListener() {},
+    clearTimeout() {},
+    setTimeout() { return 1; }
+  };
+  const sandbox = {
+    window,
+    document: { querySelector() { return null; }, querySelectorAll() { return []; } },
+    location: window.location,
+    console,
+    Element: class {},
+    HTMLInputElement: class {},
+    HTMLTextAreaElement: class {},
+    MutationObserver: class {},
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } },
+    Poe2MarketwrightFavorites: {
+      createFavoriteTools() {
+        return { getLeagueFromTradeUrl() { return "Dawn"; } };
+      },
+      createLinkFavoriteTools() {
+        return { normalizeLinkFavoritesState(state) { return state; } };
+      }
+    }
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = window.__testHooks;
+  hooks.runtime.state = {
+    linkFavoritesEnabled: true,
+    linkHistoryEnabled: true,
+    linkFavoritesDrawerOpen: false,
+    linkFavorites: {
+      version: 2,
+      leagues: {
+        Dawn: {
+          folders: [],
+          folderOrder: [],
+          links: [],
+          rootLinkIds: [],
+          folderLinkIds: {},
+          historyCollapsed: true,
+          history: []
+        }
+      }
+    }
+  };
+  hooks.runtime.ui = { root: { style: {} } };
+  await hooks.toggleLinkHistory();
+  const opened = structuredClone({
+    historyCollapsed: hooks.runtime.state.linkFavorites.leagues.Dawn.historyCollapsed,
+    drawerOpen: hooks.runtime.state.linkFavoritesDrawerOpen,
+    focused: hooks.runtime.linkHistoryFocus
+  });
+  await hooks.toggleLinkHistory();
+  assert.deepStrictEqual(
+    { opened, closed: hooks.runtime.state.linkFavoritesDrawerOpen },
+    { opened: { historyCollapsed: false, drawerOpen: true, focused: true }, closed: false }
+  );
 });
 
 test("link favorite undo control resides in header feedback", async () => {

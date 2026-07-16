@@ -785,6 +785,86 @@ test("link favorite presentation localizes saved equipment filter labels", async
   assert.deepStrictEqual(result, {"filterGroups": [{"label": "裝備篩選器", "values": ["閃避: 700 -", "符文保護: 100 -"]}]});
 });
 
+test("link favorite tooltip uses the primary Trade language without bilingual copy", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getLinkFavoritePresentation, getCompactLinkFavoritePresentation, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { uiLanguage: "zh_CN", pageLanguage: "zh_TW_en", pageTranslationEnabled: true };
+  hooks.runtime.data = {
+    displayMetadata: {
+      items: {
+        "Warmonger Bow": { en: "Warmonger Bow", zh_CN: "狂战者之弓", zh_TW: "狂戰者之弓" }
+      },
+      stats: {
+        "explicit.stat_life": { en: "+# to maximum Life", zh_CN: "+# 生命上限", zh_TW: "+# 最大生命" }
+      }
+    }
+  };
+  hooks.runtime.tradeLocalization = {
+    strings: {
+      "Item Category": { en: "Item Category", zh_CN: "物品类型", zh_TW: "物品類別" },
+      "Item Rarity": { en: "Item Rarity", zh_CN: "物品稀有度", zh_TW: "物品稀有度" },
+      "Warmonger Bow": { en: "Warmonger Bow", zh_CN: "狂战者之弓", zh_TW: "狂戰者之弓" }
+    },
+    optionStrings: {
+      Bow: { en: "Bow", zh_CN: "弓", zh_TW: "弓" },
+      Rare: { en: "Rare", zh_CN: "稀有", zh_TW: "稀有" }
+    }
+  };
+  const result = structuredClone(hooks.getLinkFavoritePresentation({
+    filterGroups: [
+      {
+        label: "類別篩選器 (Type Filters)",
+        values: ["物品類別 (Item Category): 弓 (Bow)", "物品稀有度 (Item Rarity): 稀有 (Rare)"]
+      },
+      { label: "屬性篩選器 (Stat Filters)", values: ["+# 最大生命 (+# to maximum Life)"] }
+    ],
+    displaySnapshot: {
+      type: "Warmonger Bow",
+      category: "weapon.bow",
+      rarity: "rare",
+      statGroupsVersion: 3,
+      statGroups: [{ type: "and", filters: [{ id: "explicit.stat_life", value: { min: 50 } }] }]
+    }
+  }));
+  assert.deepStrictEqual(result, {
+    filterGroups: [
+      { label: "類別篩選器", values: ["物品類別: 弓", "物品稀有度: 稀有"] },
+      { label: "屬性篩選器", values: ["+# 最大生命"] }
+    ],
+    displaySnapshot: {
+      type: "Warmonger Bow",
+      category: "weapon.bow",
+      rarity: "rare",
+      statGroupsVersion: 3,
+      statGroups: [{ type: "and", filters: [{ id: "explicit.stat_life", value: { min: 50 } }] }]
+    },
+    localizedSnapshot: {
+      type: "狂戰者之弓",
+      category: "弓",
+      rarity: "稀有",
+      stats: [{ id: "explicit.stat_life", text: "+50 最大生命", source: null }],
+      statGroups: [{
+        type: "and",
+        label: "詞綴篩選: 且",
+        filters: [{ id: "explicit.stat_life", text: "+50 最大生命", source: null }]
+      }]
+    }
+  });
+  assert.equal(hooks.getCompactLinkFavoritePresentation(result).tooltipGroups.at(-1).label, "詞綴篩選: 且");
+});
+
 test("compact item favorite tooltip includes context and every modifier", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");

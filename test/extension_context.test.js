@@ -92,6 +92,46 @@ test("global language prefers the saved choice and migrates browser language", a
   });
 });
 
+test("link history settings default safely and accept supported limits", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { loadState };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {
+      storage: {
+        local: {
+          get: async () => ({ poe2Trade2AffixFilterState: {} })
+        }
+      }
+    }
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const defaults = await sandbox.window.__testHooks.loadState();
+  sandbox.chrome.storage.local.get = async () => ({
+    poe2Trade2AffixFilterState: { linkHistoryEnabled: false, linkHistoryLimit: 100 }
+  });
+  const saved = await sandbox.window.__testHooks.loadState();
+  sandbox.chrome.storage.local.get = async () => ({
+    poe2Trade2AffixFilterState: { linkHistoryLimit: 25 }
+  });
+  const invalid = await sandbox.window.__testHooks.loadState();
+  assert.deepStrictEqual(
+    structuredClone({
+      defaults: [defaults.linkHistoryEnabled, defaults.linkHistoryLimit],
+      saved: [saved.linkHistoryEnabled, saved.linkHistoryLimit],
+      invalid: invalid.linkHistoryLimit
+    }),
+    { defaults: [true, 50], saved: [false, 100], invalid: 50 }
+  );
+});
+
 test("page language keeps non-affix Trade copy monolingual without changing extension language", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");

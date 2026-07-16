@@ -643,7 +643,7 @@
     "message": "稀有度：$1"
   },
   "linkFavoritesTitle": {
-    "message": "連結收藏"
+    "message": "連結收藏與歷史"
   },
   "linkFavoritesLeague": {
     "message": "連結收藏：$1"
@@ -653,6 +653,36 @@
   },
   "linkFavoritesEmpty": {
     "message": "暫無儲存的書籤"
+  },
+  "linkHistoryTitle": {
+    "message": "搜尋歷史"
+  },
+  "linkHistoryLimit": {
+    "message": "歷史記錄上限"
+  },
+  "enableLinkHistory": {
+    "message": "啟用搜尋歷史"
+  },
+  "disableLinkHistory": {
+    "message": "關閉搜尋歷史"
+  },
+  "linkHistory": {
+    "message": "歷史"
+  },
+  "openLinkHistory": {
+    "message": "開啟搜尋歷史"
+  },
+  "linkHistoryEmpty": {
+    "message": "暫無搜尋歷史"
+  },
+  "linkHistoryUnnamedSearch": {
+    "message": "搜尋"
+  },
+  "clearLinkHistory": {
+    "message": "清空歷史"
+  },
+  "confirmClearLinkHistory": {
+    "message": "清空 $1 條歷史記錄？"
   },
   "linkFavoriteUnnamedSearch": {
     "message": "未命名搜尋"
@@ -725,6 +755,9 @@
   },
   "linkFavoriteSaved": {
     "message": "書籤已儲存"
+  },
+  "linkFavoriteAlreadySaved": {
+    "message": "書籤已收藏"
   },
   "linkFavoriteDeleted": {
     "message": "可復原 $1 條書籤刪除"

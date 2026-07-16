@@ -388,6 +388,10 @@ h1 {
   grid-template-columns: auto minmax(0, 1fr) auto;
 }
 
+.favorites-panel-history-row {
+  grid-template-columns: minmax(0, 1fr) auto;
+}
+
 .favorites-panel-item-launch,
 .favorites-panel-link-launch {
   display: grid;
@@ -603,6 +607,10 @@ h1 {
   gap: 5px;
   padding: 6px;
   background: rgba(20, 14, 9, 0.46);
+}
+
+.favorites-panel-history > .favorites-panel-folder-header {
+  grid-template-columns: auto minmax(0, 1fr) auto;
 }
 
 .favorites-panel-folder-name {

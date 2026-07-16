@@ -80,6 +80,10 @@
     collapseLinkFavoriteFolder: "Collapse folder",
     collapseAllLinkFavoriteFolders: "Collapse all folders",
     expandAllLinkFavoriteFolders: "Expand all folders",
+    linkHistory: "History",
+    linkHistoryEmpty: "No search history",
+    clearLinkHistory: "Clear history",
+    confirmClearLinkHistory: "Clear $1 history entries?",
     linkFavoriteFolderNameRequired: "Folder name is required"
   };
   const icons = {
@@ -144,6 +148,7 @@
     creatingFolder: false,
     importing: false,
     confirmingFolderId: null,
+    confirmingHistoryClear: false,
     movingLinkId: null,
     drag: null,
     panelHovered: false,
@@ -795,6 +800,13 @@
     }
     root.appendChild(folderList);
     root.appendChild(rootList);
+    if (state.linkHistoryEnabled) {
+      const history = renderHistory(state, query);
+      root.appendChild(history);
+      if (state.focusLinkHistory) {
+        window.setTimeout(() => history.scrollIntoView?.({ block: "start" }), 0);
+      }
+    }
   }
 
   function renderImportForm() {
@@ -897,6 +909,10 @@
   }
 
   function getLinkFavoriteStatGroupTooltipLabel(group) {
+    const localizedLabel = String(group?.label || "").trim();
+    if (localizedLabel) {
+      return localizedLabel;
+    }
     const type = String(group?.type || "and").trim().toLocaleLowerCase().replace(/[\s-]+/g, "_");
     const relation = {
       and: t("favoriteTooltipStatGroupAnd"),
@@ -1221,6 +1237,88 @@
     return row;
   }
 
+  function renderHistoryRow(state, link) {
+    const row = createElement("article", "favorites-panel-link-row favorites-panel-history-row");
+    const launch = createElement("button", "favorites-panel-link-launch");
+    launch.type = "button";
+    launch.setAttribute("aria-label", link.displayName || "");
+    bindLinkFavoriteTooltip(launch, link);
+    launch.appendChild(createElement("span", "favorites-panel-name", link.displayName || ""));
+    const time = Number(link.lastUsedAt || link.createdAt);
+    if (Number.isFinite(time) && time > 0) {
+      launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
+    }
+    const statFilters = getLinkFavoriteStatFilters(link);
+    for (const filter of statFilters.slice(0, 3)) {
+      launch.appendChild(renderLinkFavoriteStatFilter(filter));
+    }
+    const moreCount = Math.max(0, statFilters.length - 3);
+    if (moreCount) {
+      launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
+    }
+    launch.addEventListener("click", () => run("open-history", { linkId: link.id }));
+    const actions = createElement("div", "favorites-panel-row-actions");
+    const save = createIconButton(t("createLinkFavorite"), icons.bookmark);
+    save.disabled = !state.linkFavoritesEnabled;
+    save.addEventListener("click", () => run("save-history", { linkId: link.id }));
+    const remove = createIconButton(t("deleteLinkFavorite"), icons.delete, "favorites-panel-delete");
+    remove.addEventListener("click", () => run("delete-history", { linkId: link.id }));
+    actions.append(save, remove);
+    row.append(launch, actions);
+    return row;
+  }
+
+  function renderHistory(state, query) {
+    const section = createElement("section", "favorites-panel-folder favorites-panel-history");
+    const header = createElement("div", "favorites-panel-folder-header");
+    const collapsed = Boolean(state.linkFavorites?.historyCollapsed);
+    const collapse = createIconButton(
+      t(collapsed ? "expandLinkFavoriteFolder" : "collapseLinkFavoriteFolder"),
+      collapsed ? icons.expand : icons.collapse
+    );
+    collapse.setAttribute("aria-expanded", String(!collapsed));
+    collapse.addEventListener("click", () => run("toggle-history", { collapsed: !collapsed }));
+    const name = createElement("div", "favorites-panel-folder-name", t("linkHistory"));
+    const actions = createElement("div", "favorites-panel-folder-actions");
+    const clear = createIconButton(t("clearLinkHistory"), icons.delete, "favorites-panel-delete");
+    const history = (state.linkFavorites?.history || []).filter((link) => matchesLink(link, query));
+    clear.disabled = history.length === 0;
+    clear.addEventListener("click", () => {
+      local.confirmingHistoryClear = true;
+      render();
+    });
+    actions.append(clear);
+    header.append(collapse, name, actions);
+    section.appendChild(header);
+    if (!collapsed) {
+      const list = createElement("div", "favorites-panel-link-list");
+      if (history.length) {
+        for (const link of history) {
+          list.appendChild(renderHistoryRow(state, link));
+        }
+      } else {
+        list.appendChild(createElement("p", "favorites-panel-empty", t(query ? "favoritesPanelNoLinkMatches" : "linkHistoryEmpty")));
+      }
+      section.appendChild(list);
+    }
+    if (local.confirmingHistoryClear) {
+      const confirm = createElement("div", "favorites-panel-confirm");
+      confirm.appendChild(createElement("span", "", t("confirmClearLinkHistory", (state.linkFavorites?.history || []).length)));
+      const buttons = createElement("div", "favorites-panel-confirm-actions");
+      const cancel = makeTextButton(t("cancelLinkFavoriteFolderDelete"));
+      cancel.addEventListener("click", () => {
+        local.confirmingHistoryClear = false;
+        render();
+      });
+      const remove = makeTextButton(t("clearLinkHistory"), "favorites-panel-confirm-delete");
+      remove.addEventListener("click", () => run("clear-history", { confirm: true }));
+      buttons.append(cancel, remove);
+      confirm.appendChild(buttons);
+      section.appendChild(confirm);
+    }
+    return section;
+  }
+
   function renderFolder(state, folder, links) {
     const section = createElement("section", "favorites-panel-folder");
     const header = createElement("div", "favorites-panel-folder-header");
@@ -1502,6 +1600,9 @@
       await request(command, payload);
       if (command === "delete-folder") {
         local.confirmingFolderId = null;
+      }
+      if (command === "clear-history") {
+        local.confirmingHistoryClear = false;
       }
       if (command === "create-folder") {
         local.creatingFolder = false;
