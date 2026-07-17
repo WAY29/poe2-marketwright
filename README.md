@@ -97,6 +97,20 @@ Stats with Tier support show a `T` button on the left for selecting a Tier direc
 
 Tier mappings are generated from verified PoE2DB modifier ranges and matched by stable Trade stat IDs; ambiguous stats do not show the selector. For modifiers with overlapping ranges, such as added damage, selecting T1 may still return T2 because the filter uses average values rather than full modifier ranges.
 
+### Quick Affix Adding
+
+Click the `+` button to the right of `Add Stat Filter` to enable quick-add mode. After adding a stat normally, the selector immediately reopens with the current search terms preserved, making it easy to add several stats in sequence. Click the button again to turn the mode off.
+
+<p align="center">
+  <img src="assets/image-20260717115014650.png" alt="Quick-add button beside Add Stat Filter" width="92%">
+</p>
+
+Hold `Shift` and left-click a stat suggestion to stage it without immediately adding it to the search. Staged stats remain highlighted; click `Add N staged filters` in the lower-right of the list to add them all to the current stat group.
+
+<p align="center">
+  <img src="assets/image-20260717115231930.png" alt="Staged stats and the batch add button" width="92%">
+</p>
+
 ### Item Favorites
 
 Save an item for later when you cannot buy it yet. With this feature enabled, a favorite button appears below the item icon in each result row. The favorites view lets you return to saved items, create folders, organize entries, and preview their filters and modifiers.
