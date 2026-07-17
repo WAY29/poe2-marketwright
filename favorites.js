@@ -400,6 +400,13 @@
 
     const normalizeName = (value) => String(value || "").replace(/\s+/g, " ").trim();
 
+    const isInactiveLinkFavoriteFilterValue = (value) => {
+      const text = normalizeName(value);
+      const separator = Math.max(text.lastIndexOf(":"), text.lastIndexOf("\uff1a"));
+      const selected = text.slice(separator + 1).replace(/\s*\([^)]*\)\s*/g, "").trim().toLocaleLowerCase();
+      return ["any", "\u4efb\u4f55", "\u4efb\u610f"].includes(selected);
+    };
+
     const normalizeLinkFavoriteFilterGroups = (value) => {
       if (!Array.isArray(value)) {
         return [];
@@ -422,7 +429,7 @@
           }
           const entry = normalizeName(rawValue);
           const key = entry.toLocaleLowerCase();
-          if (!entry || entry.length > 300 || seen.has(key)) {
+          if (!entry || entry.length > 300 || seen.has(key) || isInactiveLinkFavoriteFilterValue(entry)) {
             continue;
           }
           seen.add(key);

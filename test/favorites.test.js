@@ -376,6 +376,42 @@ test("link favorite tools validate and create current trade search records", asy
   assert.deepStrictEqual(result, {"record": {"id": "link-1", "league": "Dawn of the Hunt", "queryId": "query-7", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-7", "displayName": "Warmonger Bow", "folderId": "folder-1", "createdAt": 123, "lastUsedAt": null, "filterGroups": [{"label": "Type Filters", "values": ["Bow", "Rare"]}, {"label": "Stat Filters", "values": ["+# to maximum Life"]}]}, "invalidCode": "invalid_trade_search_url", "realmless": {"url": "https://www.pathofexile.com/trade2/search/Runes%20of%20Aldur/X39m5o8WTP", "league": "Runes of Aldur", "queryId": "X39m5o8WTP"}});
 });
 
+test("link favorites omit inactive Any filter values", () => {
+  const sandbox = { console, URL };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+
+  const tools = sandbox.Poe2MarketwrightFavorites.createLinkFavoriteTools();
+  const filterGroups = [
+    { label: "Type Filters", values: ["Item Category: Any", "Item Rarity: Rare"] },
+    { label: "Other", values: ["Corrupted: \u4efb\u4f55", "Fractured: \u4efb\u4f55 (Any)"] },
+    { label: "Item Requirements", values: ["Item Level: 80 -", "Any Endgame Item"] }
+  ];
+  const saved = tools.createLinkFavoriteRecord({
+    url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+    displayName: "Any test",
+    filterGroups
+  });
+  const history = tools.upsertLinkFavoriteHistory([], {
+    url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-2",
+    displayName: "Any history test",
+    filterGroups
+  }, 10);
+  const result = structuredClone({ saved: saved.filterGroups, history: history[0].filterGroups });
+
+  assert.deepStrictEqual(result, {
+    saved: [
+      { label: "Type Filters", values: ["Item Rarity: Rare"] },
+      { label: "Item Requirements", values: ["Item Level: 80 -", "Any Endgame Item"] }
+    ],
+    history: [
+      { label: "Type Filters", values: ["Item Rarity: Rare"] },
+      { label: "Item Requirements", values: ["Item Level: 80 -", "Any Endgame Item"] }
+    ]
+  });
+});
+
 test("link favorite rejects legacy flat display snapshots", async () => {
   const sandbox = { console, URL };
   vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
