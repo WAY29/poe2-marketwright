@@ -38,6 +38,7 @@ from build_extension_data import (
     build_item_name_selection_map,
     build_page_categories,
     build_trade_stat_index,
+    build_affix_effects,
     build_tier_mappings,
     canonicalize_stat_text,
     extract_rollable_ranges,
@@ -482,6 +483,55 @@ class TradeStatMappingTests(unittest.TestCase):
                         {"tier": 1, "exactMin": 5, "exactMax": 6, "min": 3.1},
                         {"tier": 2, "exactMin": 2, "exactMax": 3},
                     ]
+                }
+            },
+        )
+
+    def test_builds_localized_affix_effect_index_with_conservative_stat_matches(self) -> None:
+        affixes = {
+            "Rings": [
+                {
+                    "affix_group": "normal",
+                    "generation_type": "prefix",
+                    "text_html": "+(10-19) to maximum Life",
+                },
+                {
+                    "affix_group": "essence",
+                    "generation_type": "suffix",
+                    "text_html": "(12-18)% increased Fire Damage",
+                },
+                {
+                    "affix_group": "socketable",
+                    "generation_type": "misc",
+                    "text_html": "+10% to Fire Resistance",
+                },
+                {
+                    "affix_group": "corrupted",
+                    "generation_type": "misc",
+                    "text_html": "+1% to Maximum Chaos Resistance",
+                },
+                {
+                    "affix_group": "normal",
+                    "generation_type": "prefix",
+                    "text_html": "+(5-8) to Strength",
+                },
+            ]
+        }
+        trade_stat_index = {
+            "# to maximum life": {"explicit.stat_life"},
+            "#% increased fire damage": {"explicit.stat_fire_damage"},
+            "#% to fire resistance": {"rune.stat_fire_resistance", "explicit.stat_fire_resistance"},
+            "#% to maximum chaos resistance": {"implicit.stat_max_chaos_resistance"},
+            "# to strength": {"explicit.stat_strength", "explicit.stat_strength_alt"},
+        }
+
+        self.assertEqual(
+            build_affix_effects(affixes, trade_stat_index),
+            {
+                "Rings": {
+                    "prefix": ["explicit.stat_life"],
+                    "suffix": ["explicit.stat_fire_damage"],
+                    "other": ["implicit.stat_max_chaos_resistance", "rune.stat_fire_resistance"],
                 }
             },
         )

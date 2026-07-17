@@ -243,6 +243,21 @@
   "pobCopyError": {
     "message": "Failed"
   },
+  "affixViewerReady": {
+    "message": "View possible modifiers"
+  },
+  "affixViewerPrefix": {
+    "message": "Prefixes"
+  },
+  "affixViewerSuffix": {
+    "message": "Suffixes"
+  },
+  "affixViewerOther": {
+    "message": "Other modifiers"
+  },
+  "affixViewerBasePotential": {
+    "message": "Possible modifiers for $1"
+  },
   "currencyConversionTitle": {
     "message": "Price Conversion"
   },

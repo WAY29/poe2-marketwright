@@ -73,6 +73,7 @@
       "js": [
         "pob-copy.js",
         "favorites.js",
+        "affix-viewer.js",
         "currency-conversion.js",
         "content.js"
       ],

@@ -97,6 +97,13 @@
     not: { en: "NOT", zh_CN: "非", zh_TW: "非" },
     if: { en: "IF", zh_CN: "若", zh_TW: "若" }
   });
+  const AFFIX_VIEWER_PAGE_LABELS = Object.freeze({
+    ready: { en: "View possible modifiers", zh_CN: "查看可能词缀", zh_TW: "查看可能詞綴" },
+    prefix: { en: "Prefixes", zh_CN: "前缀", zh_TW: "前綴" },
+    suffix: { en: "Suffixes", zh_CN: "后缀", zh_TW: "後綴" },
+    other: { en: "Other modifiers", zh_CN: "其他词缀", zh_TW: "其他詞綴" },
+    basePotential: { en: "Possible modifiers for $1", zh_CN: "$1 的可能词缀", zh_TW: "$1 的可能詞綴" }
+  });
   // Keep Trade filter terminology consistent when official data has a missing or legacy translation.
   const TRADE_TERM_LOCALIZATION_OVERRIDES = Object.freeze({
     "type filters": { en: "Type Filters", zh_CN: "类型筛选器", zh_TW: "類別篩選器" },
@@ -705,6 +712,7 @@
     addLocalizedSelectionAliases(localizedAliasMessages);
     runtime.categoryLookupEntries = Object.keys(runtime.categoryAliasToSelection).sort(compareLookupLengthDesc);
     initializeTradeLocalization();
+    initializeAffixViewer();
     mountPanel();
     bindGlobalListeners();
     runAsync(recordCurrentLinkHistory, "record link history");
@@ -1910,6 +1918,32 @@
     runtime.favorites.start();
   }
 
+  function initializeAffixViewer() {
+    const factory = globalThis.Poe2MarketwrightAffixViewer?.createAffixViewerFeature;
+    if (!factory) {
+      return;
+    }
+    runtime.affixViewer = factory({
+      effectsByPage: runtime.data?.affixEffectsByPage || {},
+      getPageId: getAffixViewerPageId,
+      getStatText: (statId) =>
+        getLocalizedDisplayTextForLanguage(
+          getDisplayMetadata().stats?.[statId],
+          statId,
+          getAffixViewerPresentationLanguage()
+        ),
+      getPanelTitle: getAffixViewerPanelTitle,
+      labels: {
+        ready: getAffixViewerLabel("ready"),
+        prefix: getAffixViewerLabel("prefix"),
+        suffix: getAffixViewerLabel("suffix"),
+        other: getAffixViewerLabel("other"),
+        basePotential: getAffixViewerLabel("basePotential")
+      }
+    });
+    runtime.affixViewer.start();
+  }
+
   function initializeCurrencyConversion() {
     const factory = globalThis.Poe2MarketwrightCurrencyConversion?.createCurrencyConversionFeature;
     if (!factory) {
@@ -2728,6 +2762,31 @@
       itemType: FAVORITE_TRADE_CATEGORY_LABELS[category] || category,
       selection: { kind: selection.kind, id: selection.id }
     };
+  }
+
+  function getAffixViewerPageId(item) {
+    const baseName = String(item?.typeLine || item?.baseType || "").trim();
+    const selection = lookupItemNameSelection(normalizeLookupText(baseName));
+    return selection?.kind === "page" && runtime.data?.affixEffectsByPage?.[selection.id] ? selection.id : null;
+  }
+
+  function getAffixViewerPresentationLanguage() {
+    return getPrimaryPageLanguage();
+  }
+
+  function getAffixViewerLabel(key) {
+    const record = AFFIX_VIEWER_PAGE_LABELS[key];
+    return getLocalizedDisplayTextForLanguage(record, record?.en || key, getAffixViewerPresentationLanguage());
+  }
+
+  function getAffixViewerPanelTitle(item) {
+    const baseName = String(item?.typeLine || item?.baseType || "").trim();
+    const displayName = getLocalizedDisplayTextForLanguage(
+      getFavoriteItemRecord(baseName),
+      baseName,
+      getAffixViewerPresentationLanguage()
+    );
+    return getAffixViewerLabel("basePotential").replace("$1", displayName);
   }
 
   function getDisplayMetadata() {
@@ -7835,6 +7894,7 @@
       enabled,
       pobCopyEnabled: Boolean(runtime.state.pobCopyEnabled),
       favoritesEnabled: Boolean(runtime.state.favoritesEnabled),
+      affixViewerEnabled: true,
       currencyConversionEnabled: Boolean(runtime.state.currencyConversionEnabled),
       uiLanguage: runtime.state.uiLanguage,
       pageLanguage: resolvePageLanguage(runtime.state.pageLanguage),
@@ -7851,6 +7911,7 @@
       payload.enabled,
       payload.pobCopyEnabled,
       payload.favoritesEnabled,
+      payload.affixViewerEnabled,
       payload.currencyConversionEnabled,
       payload.uiLanguage,
       payload.pageLanguage,

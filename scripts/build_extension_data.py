@@ -1114,6 +1114,37 @@ def get_tier_trade_stat_group(affix: dict[str, Any]) -> str:
     return ""
 
 
+def get_affix_effect_trade_stat_group(affix: dict[str, Any]) -> str:
+    affix_group = str(affix.get("affix_group") or "").lower()
+    if affix_group == "desecrated":
+        return "desecrated"
+    if affix_group in {"socketable", "bonded"}:
+        return "rune"
+    if affix_group == "corrupted":
+        return "implicit"
+    return "explicit"
+
+
+def build_affix_effects(
+    affixes_by_page: dict[str, list[dict[str, Any]]],
+    trade_stat_index: dict[str, set[str]],
+) -> dict[str, dict[str, list[str]]]:
+    results: dict[str, dict[str, set[str]]] = {}
+    for page_slug, affixes in affixes_by_page.items():
+        groups = {"prefix": set(), "suffix": set(), "other": set()}
+        for affix in affixes:
+            generation_type = str(affix.get("generation_type") or "").lower()
+            display_group = generation_type if generation_type in {"prefix", "suffix"} else "other"
+            stat_group = get_affix_effect_trade_stat_group(affix)
+            for line_html in split_affix_stat_html_lines(affix.get("text_html") or affix.get("text") or ""):
+                stat_ids = get_tier_trade_stat_ids(line_html, trade_stat_index, stat_group)
+                if len(stat_ids) == 1:
+                    groups[display_group].add(next(iter(stat_ids)))
+        if any(groups.values()):
+            results[page_slug] = {group: sorted(stat_ids) for group, stat_ids in groups.items()}
+    return dict(sorted(results.items()))
+
+
 def normalize_tier_minimum(value: float) -> int | float:
     rounded = round(value, 6)
     return int(rounded) if rounded.is_integer() else rounded
@@ -1202,6 +1233,18 @@ def load_tier_mappings(
         for page in index_payload["pages"]
     }
     return build_tier_mappings(affixes_by_page, trade_stat_index)
+
+
+def load_affix_effects(
+    split_dir: Path,
+    trade_stat_index: dict[str, set[str]],
+) -> dict[str, dict[str, list[str]]]:
+    index_payload = json.loads((split_dir / "index.json").read_text(encoding="utf-8"))
+    affixes_by_page = {
+        page["page_slug"]: json.loads((split_dir / page["file"]).read_text(encoding="utf-8")).get("affixes", [])
+        for page in index_payload["pages"]
+    }
+    return build_affix_effects(affixes_by_page, trade_stat_index)
 
 
 def parse_page_html_artifacts(html: str, item_class_code: str | None = None) -> PageHtmlArtifacts:
@@ -3388,6 +3431,7 @@ async def main() -> int:
     )
     artifacts = load_page_artifacts(split_dir, trade_stat_index)
     tier_mappings = load_tier_mappings(split_dir, trade_stat_index)
+    affix_effects_by_page = load_affix_effects(split_dir, trade_stat_index)
     page_html_artifacts_by_slug = await collect_page_html_artifacts(
         [artifact.page_url for artifact in artifacts],
         args.workers,
@@ -3760,6 +3804,7 @@ async def main() -> int:
         "allPatterns": all_patterns,
         "allStatIds": all_stat_ids,
         "tierMappings": tier_mappings,
+        "affixEffectsByPage": affix_effects_by_page,
         "displayMetadata": display_metadata,
         "tradeLocalization": trade_localization,
     }

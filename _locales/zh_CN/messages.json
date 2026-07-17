@@ -531,6 +531,21 @@
   "pobCopyError": {
     "message": "失败"
   },
+  "affixViewerReady": {
+    "message": "查看可能词缀"
+  },
+  "affixViewerPrefix": {
+    "message": "前缀"
+  },
+  "affixViewerSuffix": {
+    "message": "后缀"
+  },
+  "affixViewerOther": {
+    "message": "其他词缀"
+  },
+  "affixViewerBasePotential": {
+    "message": "$1 的可能词缀"
+  },
   "currencyConversionTitle": {
     "message": "报价换算"
   },

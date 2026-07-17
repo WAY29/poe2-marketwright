@@ -4349,6 +4349,10 @@
       "zh_CN": "艾丁的獠牙之遗产",
       "zh_TW": "傳承．埃狄恩的曲牙"
     },
+    "Legacy of Elevore": {
+      "zh_CN": "艾尔弗雷之遗产",
+      "zh_TW": "傳承．愛勒弗"
+    },
     "Legacy of Erian's Cobble": {
       "zh_CN": "阿里安的拼凑之遗产",
       "zh_TW": "傳承．埃里安的鵝卵石"
@@ -23019,6 +23023,10 @@
       "zh_CN": "冻结阈值提高 #%",
       "zh_TW": "增加#%冰凍門檻"
     },
+    "enchant.stat_3791899485": {
+      "zh_CN": "点燃强度提高 #%",
+      "zh_TW": "增加#%點燃幅度"
+    },
     "enchant.stat_3793155082": {
       "zh_CN": "地图内稀有怪物数量提高 #%",
       "zh_TW": "增加#%地圖含有的稀有怪物數量"
@@ -38419,6 +38427,10 @@
       "zh_CN": "配置 寒冰之壁",
       "zh_TW": "配置冰牆"
     },
+    "fractured.stat_2954116742|56016": {
+      "zh_CN": "配置 穿透弹药",
+      "zh_TW": "配置子彈貫穿"
+    },
     "fractured.stat_2954116742|56063": {
       "zh_CN": "配置 延宕恐惧",
       "zh_TW": "配置殘留恐懼"
@@ -41539,6 +41551,10 @@
       "zh_CN": "将你的奉献所承受的 #% 伤害吸纳为生命",
       "zh_TW": "You Recoup #% of Damage taken by your Offerings as Life"
     },
+    "rune.stat_1940865751": {
+      "zh_CN": "附加 # - # 物理伤害",
+      "zh_TW": "附加#至#物理傷害"
+    },
     "rune.stat_1947060170": {
       "zh_CN": "#% 的护甲同样作用于冰霜伤害",
       "zh_TW": "#%的護甲值也會套用至冰冷傷害"
@@ -41626,6 +41642,10 @@
     "rune.stat_2077615515": {
       "zh_CN": "对稀有或传奇敌人的攻击伤害提高 #%",
       "zh_TW": "增加#%對稀有或傳奇敵人的攻擊傷害"
+    },
+    "rune.stat_2091621414": {
+      "zh_CN": "击中造成流血",
+      "zh_TW": "擊中時會造成流血"
     },
     "rune.stat_2100249038": {
       "zh_CN": "羁绊： 生命上限的 #% 转化为能量护盾",
@@ -42036,8 +42056,8 @@
       "zh_TW": "每10最大符文保護+#暈眩門檻"
     },
     "rune.stat_2849118560": {
-      "zh_CN": "羁绊：受到的投射物击中伤害降低 #%",
-      "zh_TW": "命定:減少#%承受來自投射物擊中的傷害"
+      "zh_CN": "羁绊： 受到的 投射物击中伤害降低 #%",
+      "zh_TW": "Bonded: #% reduced Damage taken from Projectile Hits"
     },
     "rune.stat_2854751904": {
       "zh_CN": "在场的友军附加 # - # 攻击闪电伤害",
@@ -42430,6 +42450,10 @@
     "rune.stat_3473409233": {
       "zh_CN": "奔跑时，每秒损失生命上限的 #%",
       "zh_TW": "衝刺時每秒損失#%最大生命"
+    },
+    "rune.stat_3475931631": {
+      "zh_CN": "羁绊： 被格挡的伤害吸纳为魔力",
+      "zh_TW": "Bonded: Damage Blocked is Recouped as Mana"
     },
     "rune.stat_3482326075": {
       "zh_CN": "残片收集距离延长 #%",
@@ -43122,6 +43146,10 @@
     "rune.stat_839375491": {
       "zh_CN": "羁绊： 召唤生物的复活速度加快 #%",
       "zh_TW": "命定: 召喚物的復甦速度加快#%"
+    },
+    "rune.stat_841463428": {
+      "zh_CN": "羁绊：你造成的流血强度提高 #%",
+      "zh_TW": "命定:增加#%你所施加之流血的幅度"
     },
     "rune.stat_851475033": {
       "zh_CN": "羁绊： 若你近期没有使用闪避翻滚，则护甲提高 #%",
@@ -48509,6 +48537,10 @@
       "zh_CN": "深渊石板",
       "zh_TW": "深淵碑牌"
     },
+    "Abyssal Bones": {
+      "zh_CN": "深渊骨骸",
+      "zh_TW": "深淵遺骸"
+    },
     "Abyssal Flail": {
       "zh_CN": "深渊连枷",
       "zh_TW": "深淵鏈錘"
@@ -48720,6 +48752,14 @@
     "Aggravating any Bleeding with this Weapon also Aggravates all Ignites on the target": {
       "zh_CN": "此武器使任意流血变为恶性时还会使目标受到的点燃变为恶性",
       "zh_TW": "以此武器加劇任何流血也會使目標加劇所有點燃"
+    },
+    "Ahn's Citadel": {
+      "zh_CN": "汉恩的城塞",
+      "zh_TW": "漢恩的城塞"
+    },
+    "Ailith's Chimes": {
+      "zh_CN": "艾利丝钟琴",
+      "zh_TW": "艾里絲的管鐘"
     },
     "Akoyan Club": {
       "zh_CN": "阿科扬战棒",
@@ -52405,6 +52445,10 @@
       "zh_CN": "埃曼纳姆的凝视",
       "zh_TW": "阿姆那姆的邪眼"
     },
+    "Amanamu's Tithe": {
+      "zh_CN": "阿曼娜姆的奉纳",
+      "zh_TW": "阿姆那姆的稅賦"
+    },
     "Amber Amulet": {
       "zh_CN": "琥珀项链",
       "zh_TW": "琥珀護身符"
@@ -52689,6 +52733,18 @@
       "zh_CN": "使徒护腿",
       "zh_TW": "使徒護腿"
     },
+    "Arakaali's Lust": {
+      "zh_CN": "阿拉卡力的欲望",
+      "zh_TW": "艾爾卡莉之慾"
+    },
+    "Arbiter's Ignition": {
+      "zh_CN": "仲裁官的点燃",
+      "zh_TW": "仲裁者的燃灼"
+    },
+    "Arbiter's Reach": {
+      "zh_CN": "仲裁官之握",
+      "zh_TW": "仲裁者的延伸"
+    },
     "Arcane Dirk": {
       "zh_CN": "秘术短匕",
       "zh_TW": "奧術短刀"
@@ -52901,6 +52957,10 @@
       "zh_CN": "具有地图首领的区域包含一个额外的保险箱",
       "zh_TW": "具有地圖頭目的地區內含1個額外的保險箱"
     },
+    "Arjun's Medal": {
+      "zh_CN": "阿尔琼的勋章",
+      "zh_TW": "亞瓊的獎章"
+    },
     "Armour": {
       "zh_CN": "护甲",
       "zh_TW": "護甲"
@@ -52976,6 +53036,10 @@
     "Astrid's Creativity": {
       "zh_CN": "阿斯特丽德的创造",
       "zh_TW": "阿斯垂德的創造"
+    },
+    "Atalui's Bloodletting": {
+      "zh_CN": "阿图鲁伊的放血术",
+      "zh_TW": "阿特路伊的出血"
     },
     "Atmohua's Soul Core of Retreat": {
       "zh_CN": "阿特莫瓦的退却灵核",
@@ -53077,6 +53141,18 @@
       "zh_CN": "调谐法杖",
       "zh_TW": "調和法杖"
     },
+    "Atziri's Allure": {
+      "zh_CN": "阿兹里的魅惑",
+      "zh_TW": "阿茲里的魅惑"
+    },
+    "Atziri's Communion": {
+      "zh_CN": "阿兹里的圣礼",
+      "zh_TW": "阿茲里的共融"
+    },
+    "Atziri's Impatience": {
+      "zh_CN": "阿兹里的焦躁",
+      "zh_TW": "阿茲里的不耐"
+    },
     "Augment": {
       "zh_CN": "增幅器",
       "zh_TW": "增幅"
@@ -53084,6 +53160,10 @@
     "Augmentable Sockets": {
       "zh_CN": "增幅器插槽",
       "zh_TW": "可增幅插槽"
+    },
+    "Augments": {
+      "zh_CN": "增幅器",
+      "zh_TW": "增幅"
     },
     "Aura Skills have #% increased Magnitudes": {
       "zh_CN": "光环技能的强度提高 #%",
@@ -53136,6 +53216,10 @@
     "Bandage Wraps": {
       "zh_CN": "绷带裹手",
       "zh_TW": "繃帶裹手"
+    },
+    "Banded Wombgift": {
+      "zh_CN": "束带孕育赠礼",
+      "zh_TW": "捆扎之胎贈"
     },
     "Bandit Hatchet": {
       "zh_CN": "盗匪手斧",
@@ -53256,6 +53340,10 @@
     "Betrayal of Aldur": {
       "zh_CN": "奥杜尔之背叛",
       "zh_TW": "阿德爾的背叛"
+    },
+    "Bhatair's Vengeance": {
+      "zh_CN": "巴蒂尔的复仇",
+      "zh_TW": "瓦特爾的復仇"
     },
     "Bifurcates Critical Hits": {
       "zh_CN": "双重分叉造成暴击",
@@ -53753,6 +53841,10 @@
       "zh_CN": "羁绊： 你身上的流血强度提高 #%",
       "zh_TW": "命定: 增加#%你身上的流血幅度"
     },
+    "Bonded: #% increased Magnitude of Bleeding you inflict": {
+      "zh_CN": "羁绊：你造成的流血强度提高 #%",
+      "zh_TW": "命定:增加#%你所施加之流血的幅度"
+    },
     "Bonded: #% increased Magnitude of Non-Damaging Ailments you inflict": {
       "zh_CN": "羁绊： 你造成的非伤害性异常状态强度提高 #%",
       "zh_TW": "命定: 增加#%你所施加之非傷害型異常狀態的幅度"
@@ -53930,8 +54022,8 @@
       "zh_TW": "命定: #%技能魔力消耗轉換為生命消耗"
     },
     "Bonded: #% reduced Damage taken from Projectile Hits": {
-      "zh_CN": "羁绊：受到的投射物击中伤害降低 #%",
-      "zh_TW": "命定:減少#%承受來自投射物擊中的傷害"
+      "zh_CN": "羁绊： 受到的 投射物击中伤害降低 #%",
+      "zh_TW": "Bonded: #% reduced Damage taken from Projectile Hits"
     },
     "Bonded: #% reduced Shock duration on you": {
       "zh_CN": "羁绊： 你被感电的持续时间降低 #%",
@@ -54052,6 +54144,10 @@
     "Bonded: Curse zones erupt after #% increased delay": {
       "zh_CN": "羁绊： 诅咒区域爆发延迟提高 #%",
       "zh_TW": "命定: 增加#%詛咒區域爆發前延遲"
+    },
+    "Bonded: Damage Blocked is Recouped as Mana": {
+      "zh_CN": "羁绊： 被格挡的伤害吸纳为魔力",
+      "zh_TW": "Bonded: Damage Blocked is Recouped as Mana"
     },
     "Bonded: Damage Penetrates #% Lightning Resistance": {
       "zh_CN": "羁绊： 伤害穿透 #% 的闪电抗性",
@@ -54301,6 +54397,10 @@
       "zh_CN": "分叉战矛",
       "zh_TW": "分支長矛"
     },
+    "Breach": {
+      "zh_CN": "深渊",
+      "zh_TW": "裂痕聯盟"
+    },
     "Breach Hives in Map have an additional wave of Hiveborn Monsters": {
       "zh_CN": "地图中的裂隙巢穴拥有一个额外的裂隙虫群怪物波次",
       "zh_TW": "地圖內的裂痕巢穴擁有額外一波巢裔怪物"
@@ -54344,6 +54444,14 @@
     "Breachlord Sac": {
       "zh_CN": "裂隙领主圣器",
       "zh_TW": "裂痕領主囊腫"
+    },
+    "Breachlord's Amalgam": {
+      "zh_CN": "裂隙领主的融合体",
+      "zh_TW": "裂痕領主的融合"
+    },
+    "Breachlord's Rift": {
+      "zh_CN": "裂隙领主的分歧",
+      "zh_TW": "裂痕領主的裂隙"
     },
     "Breachstone": {
       "zh_CN": "裂隙石",
@@ -54404,6 +54512,10 @@
     "Bronze Greaves": {
       "zh_CN": "青铜胫甲",
       "zh_TW": "青銅脛甲"
+    },
+    "Brutus' Brain": {
+      "zh_CN": "布鲁特斯之脑",
+      "zh_TW": "布魯特斯的腦"
     },
     "Buckled Wraps": {
       "zh_CN": "扣带裹手",
@@ -54681,9 +54793,17 @@
       "zh_CN": "灵猫雕像",
       "zh_TW": "靈貓魔偶"
     },
+    "Catalysts": {
+      "zh_CN": "催化剂",
+      "zh_TW": "催化劑"
+    },
     "Catalysts can be applied to this item": {
       "zh_CN": "该物品可以使用催化剂",
       "zh_TW": "催化劑可使用於此物品"
+    },
+    "Catha's Brilliance": {
+      "zh_CN": "卡莎的光辉",
+      "zh_TW": "凱莎的輝煌"
     },
     "Causes #% increased Stun Buildup": {
       "zh_CN": "造成的晕眩积蓄值提高 #%",
@@ -54852,6 +54972,10 @@
     "Cinquedea": {
       "zh_CN": "五指剑",
       "zh_TW": "五指短劍"
+    },
+    "Cirel's Cultivation": {
+      "zh_CN": "西雷尔的教化",
+      "zh_TW": "西瑞爾的耕植"
     },
     "Citaqualotl's Soul Core of Foulness": {
       "zh_CN": "奇塔夸雷特的腐秽灵核",
@@ -55117,6 +55241,10 @@
       "zh_CN": "腐化之血无法施加于你",
       "zh_TW": "無法對你造成腐化之血"
     },
+    "Corrupted Verisium": {
+      "zh_CN": "腐化维金",
+      "zh_TW": "汙染維里西姆"
+    },
     "Corsair Cap": {
       "zh_CN": "海贼帽",
       "zh_TW": "海盜便帽"
@@ -55349,6 +55477,10 @@
       "zh_CN": "培育瓦尔传奇",
       "zh_TW": "已培育的瓦爾傳奇"
     },
+    "Currency": {
+      "zh_CN": "通货",
+      "zh_TW": "通貨"
+    },
     "Curse Skills have #% increased Cast Speed": {
       "zh_CN": "诅咒技能的施法速度提高 #%",
       "zh_TW": "增加#%詛咒技能的施放速度"
@@ -55452,6 +55584,10 @@
     "Dance With Death": {
       "zh_CN": "与亡共舞",
       "zh_TW": "和死共舞"
+    },
+    "Daresso's Passion": {
+      "zh_CN": "德瑞索的热情",
+      "zh_TW": "德瑞索的熱情"
     },
     "Dark Blade": {
       "zh_CN": "黑暗之锋",
@@ -55557,6 +55693,10 @@
       "zh_CN": "区域内击败的惊悸迷雾怪物提供的奖励进度提高 #%",
       "zh_TW": "增加#%區域中擊殺的譫妄怪物提供的獎勵進度"
     },
+    "Delirium": {
+      "zh_CN": "惊悸迷雾",
+      "zh_TW": "譫妄異域"
+    },
     "Delirium Encounters in Area are #% more likely to spawn Unique Bosses": {
       "zh_CN": "区域内的惊悸迷雾遭遇战生成传奇首领的几率总增 #%",
       "zh_TW": "區域中譫妄遭遇有#%更高可能性生成傳奇頭目"
@@ -55637,6 +55777,10 @@
       "zh_CN": "敏捷",
       "zh_TW": "敏捷"
     },
+    "Dialla's Desire": {
+      "zh_CN": "达拉的渴望",
+      "zh_TW": "達拉的渴望"
+    },
     "Diamond": {
       "zh_CN": "宝钻",
       "zh_TW": "鑽石"
@@ -55689,9 +55833,17 @@
       "zh_CN": "闪避翻滚可穿越敌人",
       "zh_TW": "閃避翻滾可穿過敵人"
     },
+    "Doedre's Undoing": {
+      "zh_CN": "德瑞的毁灭",
+      "zh_TW": "德瑞的毀滅"
+    },
     "Domed Helm": {
       "zh_CN": "圆顶头盔",
       "zh_TW": "圓頂之盔"
+    },
+    "Dominus' Grasp": {
+      "zh_CN": "神主之握",
+      "zh_TW": "神主的掌握"
     },
     "Double Belt": {
       "zh_CN": "双重腰带",
@@ -55808,6 +55960,10 @@
     "Effigial Tower Shield": {
       "zh_CN": "塑像塔盾",
       "zh_TW": "靈像塔盾"
+    },
+    "Einhar's Beastrite": {
+      "zh_CN": "伊恩哈尔的魔物仪式",
+      "zh_TW": "埃哈的野獸儀式"
     },
     "Eldritch Battery": {
       "zh_CN": "异能魔力",
@@ -56141,6 +56297,14 @@
       "zh_CN": "艾许催化剂",
       "zh_TW": "艾許的催化劑"
     },
+    "Esh's Prowess": {
+      "zh_CN": "艾许的骁勇",
+      "zh_TW": "艾許的威能"
+    },
+    "Esh's Radiance": {
+      "zh_CN": "艾许的光辉",
+      "zh_TW": "艾許的光芒"
+    },
     "Essence of Abrasion": {
       "zh_CN": "磨蚀精华",
       "zh_TW": "磨礪精髓"
@@ -56156,10 +56320,6 @@
     "Essence of Command": {
       "zh_CN": "命令精华",
       "zh_TW": "命令精髓"
-    },
-    "Essence of Delirium": {
-      "zh_CN": "谵妄精髓",
-      "zh_TW": "譫妄精髓"
     },
     "Essence of Electricity": {
       "zh_CN": "电光精华",
@@ -56181,21 +56341,9 @@
       "zh_CN": "急速精华",
       "zh_TW": "迅捷精髓"
     },
-    "Essence of Horror": {
-      "zh_CN": "极恐精髓",
-      "zh_TW": "極恐精髓"
-    },
-    "Essence of Hysteria": {
-      "zh_CN": "浮夸精髓",
-      "zh_TW": "浮誇精髓"
-    },
     "Essence of Ice": {
       "zh_CN": "冰霜精华",
       "zh_TW": "寒冰精髓"
-    },
-    "Essence of Insanity": {
-      "zh_CN": "错乱精髓",
-      "zh_TW": "錯亂精髓"
     },
     "Essence of Insulation": {
       "zh_CN": "绝缘精华",
@@ -56240,6 +56388,10 @@
     "Essence of the Mind": {
       "zh_CN": "心灵精华",
       "zh_TW": "心智精髓"
+    },
+    "Essences": {
+      "zh_CN": "精华",
+      "zh_TW": "精髓"
     },
     "Estazunti's Soul Core of Convalescence": {
       "zh_CN": "埃斯塔祖提的康复灵核",
@@ -56352,6 +56504,10 @@
     "Expansive Alloy": {
       "zh_CN": "扩展合金",
       "zh_TW": "延展合金"
+    },
+    "Expedition": {
+      "zh_CN": "先祖秘藏",
+      "zh_TW": "死境探險"
     },
     "Expedition Logbook": {
       "zh_CN": "先祖秘藏日志",
@@ -56621,6 +56777,10 @@
       "zh_CN": "要塞塔盾",
       "zh_TW": "要塞塔盾"
     },
+    "Founders Verisium": {
+      "zh_CN": "起源维金",
+      "zh_TW": "始創維里西姆"
+    },
     "Fountains have #% chance to grant double Sacred Water": {
       "zh_CN": "喷泉有 #% 的几率提供双倍圣水",
       "zh_TW": "噴泉有#%機率賦予兩倍聖水"
@@ -56636,6 +56796,10 @@
     "Fracturing Orb": {
       "zh_CN": "破溃宝珠",
       "zh_TW": "破裂石"
+    },
+    "Fragments": {
+      "zh_CN": "碎片",
+      "zh_TW": "碎片"
     },
     "Frayed Shoes": {
       "zh_CN": "磨损便鞋",
@@ -57000,6 +57164,10 @@
     "Garment": {
       "zh_CN": "华服装束",
       "zh_TW": "服裝"
+    },
+    "Garukhan's Resolve": {
+      "zh_CN": "格鲁坎的决心",
+      "zh_TW": "卡洛翰的決心"
     },
     "Gauze Wraps": {
       "zh_CN": "薄纱裹手",
@@ -58009,6 +58177,10 @@
       "zh_CN": "守护者战矛",
       "zh_TW": "衛者長矛"
     },
+    "Guatelitzi's Ablation": {
+      "zh_CN": "瓜铁雷兹的消融",
+      "zh_TW": "瓜特利斯的消融"
+    },
     "Guatelitzi's Soul Core of Endurance": {
       "zh_CN": "瓜铁雷兹的耐力灵核",
       "zh_TW": "瓜特利斯的的耐久靈魂核心"
@@ -58441,6 +58613,10 @@
       "zh_CN": "小贩外衣",
       "zh_TW": "飼鷹者外衣"
     },
+    "Hayoxi's Fulmination": {
+      "zh_CN": "海幽夏的诛罚",
+      "zh_TW": "荷霖蔡的轟鳴"
+    },
     "Hayoxi's Soul Core of Heatproofing": {
       "zh_CN": "海幽夏的耐热灵核",
       "zh_TW": "荷霖蔡的隔熱靈魂核心"
@@ -58504,6 +58680,10 @@
     "Helmet": {
       "zh_CN": "头盔",
       "zh_TW": "頭盔"
+    },
+    "Her Declaration": {
+      "zh_CN": "她的宣言",
+      "zh_TW": "她的宣告"
     },
     "Herald Skills deal #% increased Damage": {
       "zh_CN": "捷技能造成的伤害提高 #%",
@@ -58720,6 +58900,10 @@
     "Idol of the Sycophant": {
       "zh_CN": "谄媚者之雕像",
       "zh_TW": "奉承魔偶"
+    },
+    "Idols": {
+      "zh_CN": "雕像",
+      "zh_TW": "魔偶"
     },
     "Idols socketed in this item gain the benefits of their Bonded modifiers": {
       "zh_CN": "镶嵌在该物品上的雕像获得其自身的绑定词缀的强化效果",
@@ -59041,6 +59225,10 @@
       "zh_CN": "流浪外衣",
       "zh_TW": "遊歷者外衣"
     },
+    "Ixchel's Torment": {
+      "zh_CN": "伊克切尔的折磨",
+      "zh_TW": "薩雷許的折磨"
+    },
     "Jade Amulet": {
       "zh_CN": "翠玉项链",
       "zh_TW": "翠玉護身符"
@@ -59101,13 +59289,17 @@
       "zh_CN": "卡古兰锻造锤",
       "zh_TW": "卡爾葛鍛造錘"
     },
-    "Kamasa's Orb of Sacrifice": {
-      "zh_CN": "渎神献祭宝珠",
-      "zh_TW": "瀆神奉獻寶珠"
+    "Kalisa's Crescendo": {
+      "zh_CN": "卡莉莎的强音",
+      "zh_TW": "卡莉莎的漸強"
     },
     "Kamasan Tiara": {
       "zh_CN": "卡马萨冠冕",
       "zh_TW": "卡瑪薩頭冠"
+    },
+    "Kaom's Madness": {
+      "zh_CN": "冈姆的疯狂",
+      "zh_TW": "岡姆的癲狂"
     },
     "Katla's Gloom": {
       "zh_CN": "卡塔拉的阴霾",
@@ -59120,6 +59312,10 @@
     "Keth Raiment": {
       "zh_CN": "克斯之衣",
       "zh_TW": "凱斯之衣"
+    },
+    "Khatal's Rejuvenation": {
+      "zh_CN": "卡哈塔的复苏",
+      "zh_TW": "卡塔爾的恢復"
     },
     "Kinetic Ring": {
       "zh_CN": "动能戒指",
@@ -59145,13 +59341,13 @@
       "zh_CN": "克尔的狩猎",
       "zh_TW": "克洛爾的狩獵"
     },
-    "Kopec's Orb of Sacrifice": {
-      "zh_CN": "强固献祭宝珠",
-      "zh_TW": "堅韌奉獻寶珠"
-    },
     "Kris Knife": {
       "zh_CN": "波刃小刀",
       "zh_TW": "波刃刀"
+    },
+    "Kulemak's Dominion": {
+      "zh_CN": "库勒马克的统治",
+      "zh_TW": "骷髏馬克的支配"
     },
     "Kulemak's Invitation": {
       "zh_CN": "库勒马克之邀",
@@ -59160,6 +59356,10 @@
     "Kurgal's Gaze": {
       "zh_CN": "古加尔的凝视",
       "zh_TW": "柯戈的邪眼"
+    },
+    "Kurgal's Leash": {
+      "zh_CN": "古加尔的缰绳",
+      "zh_TW": "柯戈的繩索"
     },
     "Lace Hood": {
       "zh_CN": "花边兜帽",
@@ -59361,9 +59561,17 @@
       "zh_CN": "钻石 继承",
       "zh_TW": "寶鑽之遺"
     },
+    "Legacy of Dionadair": {
+      "zh_CN": "御身守卫之遗产",
+      "zh_TW": "傳承．捍衛者"
+    },
     "Legacy of Duality": {
       "zh_CN": "二元一体之遗产",
       "zh_TW": "傳承．二元性"
+    },
+    "Legacy of Dunkelhalt": {
+      "zh_CN": "黑暗止步之遗产",
+      "zh_TW": "傳承．唐克哈特"
     },
     "Legacy of Dusk Vigil": {
       "zh_CN": "暮色守望之遗产",
@@ -59372,6 +59580,10 @@
     "Legacy of Edyrns Tusks": {
       "zh_CN": "艾丁的獠牙之遗产",
       "zh_TW": "傳承．埃狄恩的曲牙"
+    },
+    "Legacy of Elevore": {
+      "zh_CN": "艾尔弗雷之遗产",
+      "zh_TW": "傳承．愛勒弗"
     },
     "Legacy of Erian's Cobble": {
       "zh_CN": "阿里安的拼凑之遗产",
@@ -59465,6 +59677,10 @@
       "zh_CN": "骤雨之弦之遗产",
       "zh_TW": "傳承．驟雨之弦"
     },
+    "Legacy of Rondel de Ezo": {
+      "zh_CN": "艾佐的诗篇之遗产",
+      "zh_TW": "傳承．隆德爾．德．艾佐"
+    },
     "Legacy of Ruby": {
       "zh_CN": "红玉 继承",
       "zh_TW": "紅玉之遺"
@@ -59504,6 +59720,10 @@
     "Legacy of Svalinn": {
       "zh_CN": "斯瓦林之遗产",
       "zh_TW": "傳承．史瓦林"
+    },
+    "Legacy of The Blood Thorn": {
+      "zh_CN": "血棘之遗产",
+      "zh_TW": "傳承．血棘"
     },
     "Legacy of The Knight-errant": {
       "zh_CN": "豪侠骑士之遗产",
@@ -59564,6 +59784,10 @@
     "Lesser Body Rune": {
       "zh_CN": "次级身躯符文",
       "zh_TW": "低階肉體符文"
+    },
+    "Lesser Charging Rune": {
+      "zh_CN": "次级充能符文",
+      "zh_TW": "低階充能符文"
     },
     "Lesser Desert Rune": {
       "zh_CN": "次级沙漠符文",
@@ -59809,6 +60033,10 @@
       "zh_CN": "击中造成的闪电伤害作用于触电积蓄",
       "zh_TW": "擊中造成的閃電傷害會貢獻至觸電累積"
     },
+    "Lineage Support Gems": {
+      "zh_CN": "血脉辅助宝石",
+      "zh_TW": "血脈輔助寶石"
+    },
     "Linen Belt": {
       "zh_CN": "亚麻腰带",
       "zh_TW": "麻布腰帶"
@@ -59829,17 +60057,13 @@
       "zh_CN": "液化憎恶",
       "zh_TW": "液態厭惡"
     },
-    "Liquid Envy": {
-      "zh_CN": "嫉妒",
-      "zh_TW": "忌妒"
+    "Liquid Emotions": {
+      "zh_CN": "液化情感",
+      "zh_TW": "液態的情感"
     },
     "Liquid Paranoia": {
       "zh_CN": "液化偏执",
       "zh_TW": "液態偏執"
-    },
-    "Liquid Verisium": {
-      "zh_CN": "Liquid Verisium",
-      "zh_TW": "液態維里西姆"
     },
     "Listed": {
       "zh_CN": "已上架",
@@ -60148,6 +60372,10 @@
     "Medved's Crest of the Circle": {
       "zh_CN": "梅德维德的圆环徽记",
       "zh_TW": "梅德偉的圓環之徽"
+    },
+    "Medved's Felling": {
+      "zh_CN": "梅德维德的砍伐",
+      "zh_TW": "梅德偉的殞落"
     },
     "Medved's Saga": {
       "zh_CN": "梅德维德之传说",
@@ -60505,6 +60733,10 @@
       "zh_CN": "月刃匕首",
       "zh_TW": "月之匕首"
     },
+    "Morgana's Tempest": {
+      "zh_CN": "莫甘娜的暴风",
+      "zh_TW": "魔甘娜的風暴"
+    },
     "Morning Star": {
       "zh_CN": "流星锤",
       "zh_TW": "晨星"
@@ -60517,6 +60749,10 @@
       "zh_CN": "流血状态下移动不再承受额外的伤害",
       "zh_TW": "你在流血期間移動時，不會受到額外傷害"
     },
+    "Mutated Verisium": {
+      "zh_CN": "异变维金",
+      "zh_TW": "突變維里西姆"
+    },
     "Mystic Alloy": {
       "zh_CN": "神秘合金",
       "zh_TW": "秘能合金"
@@ -60524,6 +60760,10 @@
     "Mystic Raiment": {
       "zh_CN": "密士之衣",
       "zh_TW": "神秘之衣"
+    },
+    "Mórrigan's Insight": {
+      "zh_CN": "莫丽根的洞察",
+      "zh_TW": "莫里根的洞察"
     },
     "Narrow Hood": {
       "zh_CN": "窄型兜帽",
@@ -61097,9 +61337,21 @@
       "zh_CN": "油蜡外衣",
       "zh_TW": "上油外衣"
     },
+    "Oisín's Oath": {
+      "zh_CN": "奥辛之誓",
+      "zh_TW": "歐辛的誓言"
+    },
+    "Olroth's Conviction": {
+      "zh_CN": "欧罗什的信念",
+      "zh_TW": "奧爾羅斯的信念"
+    },
     "Olroth's Crest of the Sun": {
       "zh_CN": "欧罗什的太阳徽记",
       "zh_TW": "奧爾羅斯的烈陽之徽"
+    },
+    "Olroth's Hubris": {
+      "zh_CN": "欧罗什的傲慢",
+      "zh_TW": "奧爾羅斯的傲慢"
     },
     "Olroth's Reliquary Key": {
       "zh_CN": "欧罗什的圣物厅钥匙",
@@ -61469,6 +61721,10 @@
       "zh_CN": "华饰环甲",
       "zh_TW": "華貴環甲"
     },
+    "Ornate Wombgift": {
+      "zh_CN": "华丽孕育赠礼",
+      "zh_TW": "華麗之胎贈"
+    },
     "Overseer Tablet": {
       "zh_CN": "霸主石板",
       "zh_TW": "總督碑牌"
@@ -61508,6 +61764,10 @@
     "Panther Idol": {
       "zh_CN": "黑豹雕像",
       "zh_TW": "花豹魔偶"
+    },
+    "Paquate's Pact": {
+      "zh_CN": "帕夸特的契约",
+      "zh_TW": "帕科特的協議"
     },
     "Paragon Greathelm": {
       "zh_CN": "典范巨盔",
@@ -62253,6 +62513,10 @@
       "zh_CN": "保护者之弓",
       "zh_TW": "保衛者之弓"
     },
+    "Prototype Seventeen": {
+      "zh_CN": "原型十七",
+      "zh_TW": "十七號原型機"
+    },
     "Pseudo": {
       "zh_CN": "综合",
       "zh_TW": "偽屬性"
@@ -62301,6 +62565,10 @@
       "zh_CN": "劫掠之铠",
       "zh_TW": "俠客鎧甲"
     },
+    "Rakiata's Flow": {
+      "zh_CN": "拉其塔之流",
+      "zh_TW": "萊基亞塔的流動"
+    },
     "Rambler Jacket": {
       "zh_CN": "漫步者外衣",
       "zh_TW": "漫步者外衣"
@@ -62328,6 +62596,10 @@
     "Rare Monsters take #% increased Damage": {
       "zh_CN": "稀有怪物受到的伤害提高 #%",
       "zh_TW": "增加#%稀有怪物承受傷害"
+    },
+    "Ratha's Assault": {
+      "zh_CN": "拉莎的突袭",
+      "zh_TW": "菈妲的強襲"
     },
     "Rattling Sceptre": {
       "zh_CN": "罪孽权杖",
@@ -62613,6 +62885,10 @@
       "zh_CN": "遗物",
       "zh_TW": "古典"
     },
+    "Reliquary Keys": {
+      "zh_CN": "圣物厅钥匙",
+      "zh_TW": "聖物鑰匙"
+    },
     "Reload Time": {
       "zh_CN": "装填时间",
       "zh_TW": "重新載入時間"
@@ -62721,6 +62997,10 @@
       "zh_CN": "对稀有和传奇敌人揭示弱点",
       "zh_TW": "使稀有和傳奇敵人暴露弱點"
     },
+    "Revelatory Wombgift": {
+      "zh_CN": "启示孕育赠礼",
+      "zh_TW": "啟示之胎贈"
+    },
     "Revered Starlit Ore": {
       "zh_CN": "尊崇星辉矿石",
       "zh_TW": "崇敬星耀礦石"
@@ -62761,6 +63041,10 @@
       "zh_CN": "右戒指栏位：法术的投射物无法分叉",
       "zh_TW": "右手戒指欄位：法術的投射物無法分岔"
     },
+    "Rigwald's Ferocity": {
+      "zh_CN": "瑞佛的凶猛",
+      "zh_TW": "瑞佛的狂暴"
+    },
     "Ring": {
       "zh_CN": "戒指",
       "zh_TW": "戒指"
@@ -62784,6 +63068,10 @@
     "Rippled Greatsword": {
       "zh_CN": "波纹巨剑",
       "zh_TW": "波紋巨劍"
+    },
+    "Ritual": {
+      "zh_CN": "S14驱灵赛季",
+      "zh_TW": "祭祀"
     },
     "Ritual Altars in Area allow rerolling Favours an additional time": {
       "zh_CN": "区域中的驱灵祭坛可以额外重置恩典一次",
@@ -62840,6 +63128,10 @@
     "Rolls only the minimum or maximum Damage value for each Damage Type": {
       "zh_CN": "每一种伤害类型只能重置伤害的下限或上限",
       "zh_TW": "每種傷害類型只會骰出最低或最高傷害數值"
+    },
+    "Romira's Requital": {
+      "zh_CN": "罗米拉的报复",
+      "zh_TW": "羅米拉的報復"
     },
     "Rooms are unknown on the Trial Map": {
       "zh_CN": "试炼地图上的房间变为未知",
@@ -65525,6 +65817,10 @@
       "zh_CN": "符文师匠裹布鞋履",
       "zh_TW": "符煉裹腳便鞋"
     },
+    "Runes": {
+      "zh_CN": "符文",
+      "zh_TW": "符文"
+    },
     "Runic Alloy": {
       "zh_CN": "符文合金",
       "zh_TW": "符文合金"
@@ -65547,7 +65843,7 @@
     },
     "Runic Ward": {
       "zh_CN": "符文结界",
-      "zh_TW": "Runic Ward"
+      "zh_TW": "符文保護"
     },
     "Runic Ward Regeneration Rate is doubled": {
       "zh_CN": "符文结界回复速度翻倍",
@@ -65841,6 +66137,10 @@
       "zh_CN": "卖家帐号",
       "zh_TW": "賣家帳號"
     },
+    "Seraph's Heart": {
+      "zh_CN": "炽天使之心",
+      "zh_TW": "神使之心"
+    },
     "Serle's Triumph": {
       "zh_CN": "瑟尔的凯旋",
       "zh_TW": "瑟雷的凱旋"
@@ -65929,6 +66229,10 @@
       "zh_CN": "魔印纹章盾",
       "zh_TW": "符印紋章盾"
     },
+    "Signet Wombgift": {
+      "zh_CN": "印戒孕育赠礼",
+      "zh_TW": "圖章之胎贈"
+    },
     "Silk Robe": {
       "zh_CN": "丝质之袍",
       "zh_TW": "絲質之袍"
@@ -65964,6 +66268,10 @@
     "Sinister Quarterstaff": {
       "zh_CN": "邪恶节杖",
       "zh_TW": "邪惡細杖"
+    },
+    "Sione's Temper": {
+      "zh_CN": "西奥妮的怒火",
+      "zh_TW": "西奧妮的鍛鍊"
     },
     "Siphoning Wand": {
       "zh_CN": "虹吸法杖",
@@ -66605,6 +66913,10 @@
       "zh_CN": "赞提佩的灵核",
       "zh_TW": "善堤比靈魂核心"
     },
+    "Soul Cores": {
+      "zh_CN": "灵核",
+      "zh_TW": "靈魂核心"
+    },
     "Soul Eater": {
       "zh_CN": "噬魂者",
       "zh_TW": "噬魂者"
@@ -66748,6 +67060,10 @@
     "Stalking Spear": {
       "zh_CN": "潜行战矛",
       "zh_TW": "潛獵長矛"
+    },
+    "Starlit Ore": {
+      "zh_CN": "星辉矿石",
+      "zh_TW": "星耀礦石"
     },
     "Staunching Charm": {
       "zh_CN": "止血咒符",
@@ -66897,6 +67213,18 @@
       "zh_CN": "坚固战弩",
       "zh_TW": "堅固十字弓"
     },
+    "Styrn's Anthem": {
+      "zh_CN": "斯泰恩的颂歌",
+      "zh_TW": "斯塔恩的贊歌"
+    },
+    "Styrn's Ferocity": {
+      "zh_CN": "斯泰恩的凶残",
+      "zh_TW": "斯塔恩的暴行"
+    },
+    "Styrn's Mountain": {
+      "zh_CN": "斯泰恩的山岳",
+      "zh_TW": "斯塔恩的山巔"
+    },
     "Suede Bracers": {
       "zh_CN": "绒皮护腕",
       "zh_TW": "麂皮護腕"
@@ -66937,6 +67265,10 @@
       "zh_CN": "石板",
       "zh_TW": "碑牌"
     },
+    "Tacati's Ire": {
+      "zh_CN": "塔卡提之怒",
+      "zh_TW": "特卡蒂的憤怒"
+    },
     "Tacati's Soul Core of Affliction": {
       "zh_CN": "塔卡提的折磨灵核",
       "zh_TW": "特卡蒂的苦痛靈魂核心"
@@ -66964,6 +67296,10 @@
     "Tangmazu's Reliquary Key": {
       "zh_CN": "唐玛祖的圣物厅钥匙",
       "zh_TW": "湯馬祖的寶庫鑰匙"
+    },
+    "Tangmazu's Thurible": {
+      "zh_CN": "唐玛祖的香炉",
+      "zh_TW": "湯馬祖的提爐"
     },
     "Tapestry Relic": {
       "zh_CN": "挂毯遗物",
@@ -67001,6 +67337,10 @@
       "zh_CN": "塔萨里奥胫甲",
       "zh_TW": "塔薩里奧脛甲"
     },
+    "Tasalio's Rhythm": {
+      "zh_CN": "塔萨里奥的律动",
+      "zh_TW": "塔薩里奧的律動"
+    },
     "Tattered Robe": {
       "zh_CN": "破烂长袍",
       "zh_TW": "殘破長袍"
@@ -67008,6 +67348,10 @@
     "Taut Crossbow": {
       "zh_CN": "绷紧战弩",
       "zh_TW": "緊繃十字弓"
+    },
+    "Tawhoa's Tending": {
+      "zh_CN": "塔赫亚的照料",
+      "zh_TW": "塔赫亞的照顧"
     },
     "Tawhoan Greatclub": {
       "zh_CN": "塔赫亚巨棍",
@@ -67024,6 +67368,10 @@
     "Tecrod's Gaze": {
       "zh_CN": "特克罗的凝视",
       "zh_TW": "特克羅德的邪眼"
+    },
+    "Tecrod's Revenge": {
+      "zh_CN": "特克罗的复仇",
+      "zh_TW": "特克羅德的復仇"
     },
     "Tempered Mitts": {
       "zh_CN": "淬炼护手",
@@ -67149,9 +67497,33 @@
       "zh_CN": "秘术溶剂（等级19）",
       "zh_TW": "奇術熔劑（等級19）"
     },
+    "Thaumaturgic Flux (Level 2)": {
+      "zh_CN": "秘术溶剂（等级2）",
+      "zh_TW": "奇術熔劑（等級2）"
+    },
     "Thaumaturgic Flux (Level 20)": {
       "zh_CN": "秘术溶剂（等级20）",
       "zh_TW": "奇術熔劑（等級20）"
+    },
+    "Thaumaturgic Flux (Level 3)": {
+      "zh_CN": "秘术溶剂（等级3）",
+      "zh_TW": "奇術熔劑（等級3）"
+    },
+    "Thaumaturgic Flux (Level 4)": {
+      "zh_CN": "秘术溶剂（等级4）",
+      "zh_TW": "奇術熔劑（等級4）"
+    },
+    "Thaumaturgic Flux (Level 5)": {
+      "zh_CN": "秘术溶剂（等级5）",
+      "zh_TW": "奇術熔劑（等級5）"
+    },
+    "Thaumaturgic Flux (Level 6)": {
+      "zh_CN": "秘术溶剂（等级6）",
+      "zh_TW": "奇術熔劑（等級6）"
+    },
+    "Thaumaturgic Flux (Level 7)": {
+      "zh_CN": "秘术溶剂（等级7）",
+      "zh_TW": "奇術熔劑（等級7）"
     },
     "Thaumaturgic Flux (Level 8)": {
       "zh_CN": "秘术溶剂（等级8）",
@@ -67405,6 +67777,10 @@
       "zh_CN": "部族之面",
       "zh_TW": "部落之面"
     },
+    "Trickster's Shard": {
+      "zh_CN": "欺诈者碎片",
+      "zh_TW": "欺詐者的碎片"
+    },
     "Trigger Decompose every 1.2 metres travelled": {
       "zh_CN": "每移动 1.2 米触发一次降解",
       "zh_TW": "每移動1.2公尺時觸發分解技能"
@@ -67437,9 +67813,17 @@
       "zh_CN": "情比金坚",
       "zh_TW": "可信之情"
     },
+    "Tul's Avalanche": {
+      "zh_CN": "托沃的雪崩",
+      "zh_TW": "托沃的雪崩"
+    },
     "Tul's Catalyst": {
       "zh_CN": "托沃催化剂",
       "zh_TW": "托沃的催化劑"
+    },
+    "Tul's Stillness": {
+      "zh_CN": "托沃的寂静",
+      "zh_TW": "托沃的寧靜"
     },
     "Twice Corrupted": {
       "zh_CN": "双倍腐化",
@@ -67505,9 +67889,29 @@
       "zh_CN": "提扎墨脱的狂暴灵核",
       "zh_TW": "薩摩特的狂暴靈魂核心"
     },
+    "Uhtred's Augury": {
+      "zh_CN": "乌崔德的占卜",
+      "zh_TW": "烏特雷的占卜術"
+    },
+    "Uhtred's Constellation": {
+      "zh_CN": "乌崔德的星图",
+      "zh_TW": "烏特雷的星座"
+    },
     "Uhtred's Crest of the Chalice": {
       "zh_CN": "乌崔德的圣杯徽记",
       "zh_TW": "烏特雷的聖杯之徽"
+    },
+    "Uhtred's Exodus": {
+      "zh_CN": "乌崔德的出走",
+      "zh_TW": "烏特雷的出走"
+    },
+    "Uhtred's Omen": {
+      "zh_CN": "乌崔德的预兆",
+      "zh_TW": "烏特雷的徵兆"
+    },
+    "Uhtred's Rite": {
+      "zh_CN": "乌崔德仪式",
+      "zh_TW": "烏特雷的儀式"
     },
     "Uhtred's Saga": {
       "zh_CN": "乌崔德之传说",
@@ -67549,6 +67953,10 @@
       "zh_CN": "无法被格挡",
       "zh_TW": "無法被格擋"
     },
+    "Uncut Gems": {
+      "zh_CN": "未切割的宝石",
+      "zh_TW": "未切割的寶石"
+    },
     "Uncut Skill Gem": {
       "zh_CN": "未切割的技能宝石",
       "zh_TW": "未切割的技能寶石"
@@ -67557,13 +67965,181 @@
       "zh_CN": "未切割的技能宝石（等级 1）",
       "zh_TW": "未切割的技能寶石（等級 1）"
     },
+    "Uncut Skill Gem (Level 10)": {
+      "zh_CN": "未切割的技能宝石（等级 10）",
+      "zh_TW": "未切割的技能寶石（等級 10）"
+    },
+    "Uncut Skill Gem (Level 11)": {
+      "zh_CN": "未切割的技能宝石（等级 11）",
+      "zh_TW": "未切割的技能寶石（等級 11）"
+    },
+    "Uncut Skill Gem (Level 12)": {
+      "zh_CN": "未切割的技能宝石（等级 12）",
+      "zh_TW": "未切割的技能寶石（等級 12）"
+    },
+    "Uncut Skill Gem (Level 13)": {
+      "zh_CN": "未切割的技能宝石（等级 13）",
+      "zh_TW": "未切割的技能寶石（等級 13）"
+    },
+    "Uncut Skill Gem (Level 14)": {
+      "zh_CN": "未切割的技能宝石（等级 14）",
+      "zh_TW": "未切割的技能寶石（等級 14）"
+    },
+    "Uncut Skill Gem (Level 15)": {
+      "zh_CN": "未切割的技能宝石（等级 15）",
+      "zh_TW": "未切割的技能寶石（等級 15）"
+    },
+    "Uncut Skill Gem (Level 16)": {
+      "zh_CN": "未切割的技能宝石（等级 16）",
+      "zh_TW": "未切割的技能寶石（等級 16）"
+    },
+    "Uncut Skill Gem (Level 17)": {
+      "zh_CN": "未切割的技能宝石（等级 17）",
+      "zh_TW": "未切割的技能寶石（等級 17）"
+    },
+    "Uncut Skill Gem (Level 18)": {
+      "zh_CN": "未切割的技能宝石（等级 18）",
+      "zh_TW": "未切割的技能寶石（等級 18）"
+    },
+    "Uncut Skill Gem (Level 19)": {
+      "zh_CN": "未切割的技能宝石（等级 19）",
+      "zh_TW": "未切割的技能寶石（等級 19）"
+    },
+    "Uncut Skill Gem (Level 2)": {
+      "zh_CN": "未切割的技能宝石（等级 2）",
+      "zh_TW": "未切割的技能寶石（等級 2）"
+    },
+    "Uncut Skill Gem (Level 20)": {
+      "zh_CN": "未切割的技能宝石（等级 20）",
+      "zh_TW": "未切割的技能寶石（等級 20）"
+    },
+    "Uncut Skill Gem (Level 3)": {
+      "zh_CN": "未切割的技能宝石（等级 3）",
+      "zh_TW": "未切割的技能寶石（等級 3）"
+    },
+    "Uncut Skill Gem (Level 4)": {
+      "zh_CN": "未切割的技能宝石（等级 4）",
+      "zh_TW": "未切割的技能寶石（等級 4）"
+    },
+    "Uncut Skill Gem (Level 5)": {
+      "zh_CN": "未切割的技能宝石（等级 5）",
+      "zh_TW": "未切割的技能寶石（等級 5）"
+    },
+    "Uncut Skill Gem (Level 6)": {
+      "zh_CN": "未切割的技能宝石（等级 6）",
+      "zh_TW": "未切割的技能寶石（等級 6）"
+    },
+    "Uncut Skill Gem (Level 7)": {
+      "zh_CN": "未切割的技能宝石（等级 7）",
+      "zh_TW": "未切割的技能寶石（等級 7）"
+    },
+    "Uncut Skill Gem (Level 8)": {
+      "zh_CN": "未切割的技能宝石（等级 8）",
+      "zh_TW": "未切割的技能寶石（等級 8）"
+    },
+    "Uncut Skill Gem (Level 9)": {
+      "zh_CN": "未切割的技能宝石（等级 9）",
+      "zh_TW": "未切割的技能寶石（等級 9）"
+    },
+    "Uncut Skill Gems": {
+      "zh_CN": "未切割的技能宝石",
+      "zh_TW": "未切割的技能寶石"
+    },
     "Uncut Spirit Gem": {
       "zh_CN": "精魂宝石",
       "zh_TW": "精魂寶石"
     },
+    "Uncut Spirit Gem (Level 10)": {
+      "zh_CN": "未切割的精魂宝石（等级 10）",
+      "zh_TW": "未切割的精魂寶石（等級 10）"
+    },
+    "Uncut Spirit Gem (Level 11)": {
+      "zh_CN": "未切割的精魂宝石（等级 11）",
+      "zh_TW": "未切割的精魂寶石（等級 11）"
+    },
+    "Uncut Spirit Gem (Level 12)": {
+      "zh_CN": "未切割的精魂宝石（等级 12）",
+      "zh_TW": "未切割的精魂寶石（等級 12）"
+    },
+    "Uncut Spirit Gem (Level 13)": {
+      "zh_CN": "未切割的精魂宝石（等级 13）",
+      "zh_TW": "未切割的精魂寶石（等級 13）"
+    },
+    "Uncut Spirit Gem (Level 14)": {
+      "zh_CN": "未切割的精魂宝石（等级 14）",
+      "zh_TW": "未切割的精魂寶石（等級 14）"
+    },
+    "Uncut Spirit Gem (Level 15)": {
+      "zh_CN": "未切割的精魂宝石（等级 15）",
+      "zh_TW": "未切割的精魂寶石（等級 15）"
+    },
+    "Uncut Spirit Gem (Level 16)": {
+      "zh_CN": "未切割的精魂宝石（等级 16）",
+      "zh_TW": "未切割的精魂寶石（等級 16）"
+    },
+    "Uncut Spirit Gem (Level 17)": {
+      "zh_CN": "未切割的精魂宝石（等级 17）",
+      "zh_TW": "未切割的精魂寶石（等級 17）"
+    },
+    "Uncut Spirit Gem (Level 18)": {
+      "zh_CN": "未切割的精魂宝石（等级 18）",
+      "zh_TW": "未切割的精魂寶石（等級 18）"
+    },
+    "Uncut Spirit Gem (Level 19)": {
+      "zh_CN": "未切割的精魂宝石（等级 19）",
+      "zh_TW": "未切割的精魂寶石（等級 19）"
+    },
+    "Uncut Spirit Gem (Level 20)": {
+      "zh_CN": "未切割的精魂宝石（等级 20）",
+      "zh_TW": "未切割的精魂寶石（等級 20）"
+    },
+    "Uncut Spirit Gem (Level 4)": {
+      "zh_CN": "未切割的精魂宝石（等级 4）",
+      "zh_TW": "未切割的精魂寶石（等級 4）"
+    },
+    "Uncut Spirit Gem (Level 5)": {
+      "zh_CN": "未切割的精魂宝石（等级 5）",
+      "zh_TW": "未切割的精魂寶石（等級 5）"
+    },
+    "Uncut Spirit Gem (Level 6)": {
+      "zh_CN": "未切割的精魂宝石（等级 6）",
+      "zh_TW": "未切割的精魂寶石（等級 6）"
+    },
+    "Uncut Spirit Gem (Level 7)": {
+      "zh_CN": "未切割的精魂宝石（等级 7）",
+      "zh_TW": "未切割的精魂寶石（等級 7）"
+    },
+    "Uncut Spirit Gem (Level 8)": {
+      "zh_CN": "未切割的精魂宝石（等级 8）",
+      "zh_TW": "未切割的精魂寶石（等級 8）"
+    },
+    "Uncut Spirit Gem (Level 9)": {
+      "zh_CN": "未切割的精魂宝石（等级 9）",
+      "zh_TW": "未切割的精魂寶石（等級 9）"
+    },
     "Uncut Support Gem": {
       "zh_CN": "未切割的辅助宝石",
       "zh_TW": "未切割的輔助寶石"
+    },
+    "Uncut Support Gem (Level 1)": {
+      "zh_CN": "未切割的辅助宝石（等级 1）",
+      "zh_TW": "未切割的輔助寶石（等級 1）"
+    },
+    "Uncut Support Gem (Level 2)": {
+      "zh_CN": "未切割的辅助宝石（等级 2）",
+      "zh_TW": "未切割的輔助寶石（等級 2）"
+    },
+    "Uncut Support Gem (Level 3)": {
+      "zh_CN": "未切割的辅助宝石（等级 3）",
+      "zh_TW": "未切割的輔助寶石（等級 3）"
+    },
+    "Uncut Support Gem (Level 4)": {
+      "zh_CN": "未切割的辅助宝石（等级 4）",
+      "zh_TW": "未切割的輔助寶石（等級 4）"
+    },
+    "Uncut Support Gem (Level 5)": {
+      "zh_CN": "未切割的辅助宝石（等级 5）",
+      "zh_TW": "未切割的輔助寶石（等級 5）"
     },
     "Undead Minions have #% reduced Reservation": {
       "zh_CN": "Undead Minions have #% reduced Reservation",
@@ -67665,6 +68241,10 @@
       "zh_CN": "武罗摩提的弱化灵核",
       "zh_TW": "烏爾摩堤的消減靈魂核心"
     },
+    "Uruk's Smelting": {
+      "zh_CN": "厄罗克的熔炼术",
+      "zh_TW": "厄羅克的鍛鍊"
+    },
     "Used when you are affected by a Slow": {
       "zh_CN": "当你受到减速影响时使用",
       "zh_TW": "當你受到緩速效果影響時使用"
@@ -67737,6 +68317,14 @@
       "zh_CN": "乌尔尼多催化剂",
       "zh_TW": "烏爾尼多的催化劑"
     },
+    "Uul-Netol's Embrace": {
+      "zh_CN": "乌尔尼多的拥抱",
+      "zh_TW": "烏爾尼多的擁抱"
+    },
+    "Vaal": {
+      "zh_CN": "瓦尔",
+      "zh_TW": "瓦爾"
+    },
     "Vaal Arcanist's Infuser": {
       "zh_CN": "瓦尔秘术师注能装置",
       "zh_TW": "瓦爾奧術師的灌注器"
@@ -67800,6 +68388,10 @@
     "Vampiric Blade": {
       "zh_CN": "喋血之刃",
       "zh_TW": "嗜血之刃"
+    },
+    "Varashta's Blessing": {
+      "zh_CN": "瓦拉煞的祝福",
+      "zh_TW": "瓦拉什塔的祝福"
     },
     "Varnished Crossbow": {
       "zh_CN": "浸漆战弩",
@@ -67869,6 +68461,10 @@
       "zh_CN": "邪恶束衣",
       "zh_TW": "惡毒長袍"
     },
+    "Vilenta's Propulsion": {
+      "zh_CN": "薇伦塔之推进",
+      "zh_TW": "范尼達的奮進"
+    },
     "Viper Cap": {
       "zh_CN": "毒蝰帽",
       "zh_TW": "毒蛇便帽"
@@ -67929,9 +68525,21 @@
       "zh_CN": "沃拉娜之传说",
       "zh_TW": "沃拉娜的傳奇"
     },
+    "Vorana's Siege": {
+      "zh_CN": "沃拉娜的围城",
+      "zh_TW": "沃拉娜的圍攻"
+    },
     "Votive Raiment": {
       "zh_CN": "奉愿之衣",
       "zh_TW": "還願之衣"
+    },
+    "Vruun's Aftermath": {
+      "zh_CN": "弗伦的余波",
+      "zh_TW": "弗倫的餘波"
+    },
+    "Vruun's Inevitability": {
+      "zh_CN": "弗伦的必然",
+      "zh_TW": "弗倫的必然"
     },
     "Wand": {
       "zh_CN": "法杖",
@@ -68189,6 +68797,10 @@
       "zh_CN": "引路石阶级",
       "zh_TW": "換界石階級"
     },
+    "Waystones": {
+      "zh_CN": "引路石",
+      "zh_TW": "換界石"
+    },
     "Wayward Crest Shield": {
       "zh_CN": "无定纹章盾",
       "zh_TW": "剛愎紋章盾"
@@ -68361,6 +68973,10 @@
       "zh_CN": "薛斯的圣物厅钥匙",
       "zh_TW": "烈許的寶庫鑰匙"
     },
+    "Xibaqua's Rending": {
+      "zh_CN": "夏巴夸亚的撕裂",
+      "zh_TW": "賽巴昆的撕裂"
+    },
     "Xipocado's Soul Core of Dominion": {
       "zh_CN": "夏波卡多的统御灵核",
       "zh_TW": "賽匹卡托的支配靈魂核心"
@@ -68373,9 +68989,9 @@
       "zh_CN": "索伏催化剂",
       "zh_TW": "索伏的催化劑"
     },
-    "Yaomac's Orb of Sacrifice": {
-      "zh_CN": "残暴献祭宝珠",
-      "zh_TW": "殘酷奉獻寶珠"
+    "Xoph's Pyre": {
+      "zh_CN": "索伏的葬火",
+      "zh_TW": "索伏的燃焰"
     },
     "Yes": {
       "zh_CN": "是",
@@ -68593,21 +69209,37 @@
       "zh_CN": "你的速度不受减速效果影响",
       "zh_TW": "你的速度不受緩速影響"
     },
-    "Yugul's Orb of Sacrifice": {
-      "zh_CN": "皇家献祭宝珠",
-      "zh_TW": "皇家奉獻寶珠"
-    },
     "Zalatl's Soul Core of Insulation": {
       "zh_CN": "扎拉迪的绝缘灵核",
       "zh_TW": "札爾特的絕緣靈魂核心"
+    },
+    "Zarokh's Refrain": {
+      "zh_CN": "扎洛卡的克制",
+      "zh_TW": "澤洛克的克制"
     },
     "Zarokh's Reliquary Key: Against the Darkness": {
       "zh_CN": "扎洛卡的圣物厅钥匙：抗衡黑暗",
       "zh_TW": "澤洛克的寶庫鑰匙：力抗黑暗"
     },
+    "Zarokh's Reliquary Key: Blessed Bonds": {
+      "zh_CN": "扎洛卡的圣物厅钥匙：蒙福的羁绊",
+      "zh_TW": "澤洛克的寶庫鑰匙：祝福之絆"
+    },
+    "Zarokh's Reliquary Key: Sandstorm Visage": {
+      "zh_CN": "扎洛卡的圣物厅钥匙：禁域面容",
+      "zh_TW": "澤洛克的寶庫鑰匙：沙瀑面紗"
+    },
+    "Zarokh's Reliquary Key: Sekhema's Resolve": {
+      "zh_CN": "扎洛卡的圣物厅钥匙：丝克玛的决心",
+      "zh_TW": "澤洛克的寶庫鑰匙：絲克瑪的決意"
+    },
     "Zarokh's Reliquary Key: Temporalis": {
       "zh_CN": "扎洛卡的圣物厅钥匙：时空之肌",
       "zh_TW": "澤洛克的寶庫鑰匙：時空之物"
+    },
+    "Zarokh's Revolt": {
+      "zh_CN": "扎洛卡的反叛",
+      "zh_TW": "澤洛克的反叛"
     },
     "Zarokh, the Temporal deals #% more Damage": {
       "zh_CN": "扎洛卡，时空之灵造成的伤害总增 #%",
@@ -68656,562 +69288,6 @@
     "Zealot Greathammer": {
       "zh_CN": "狂热大锤",
       "zh_TW": "狂熱巨錘"
-    },
-    "Ahn's Citadel": {
-      "zh_CN": "汉恩的城塞",
-      "zh_TW": "漢恩的城塞"
-    },
-    "Ailith's Chimes": {
-      "zh_CN": "艾利丝钟琴",
-      "zh_TW": "艾里絲的管鐘"
-    },
-    "Amanamu's Tithe": {
-      "zh_CN": "阿曼娜姆的奉纳",
-      "zh_TW": "阿姆那姆的稅賦"
-    },
-    "Arakaali's Lust": {
-      "zh_CN": "阿拉卡力的欲望",
-      "zh_TW": "艾爾卡莉之慾"
-    },
-    "Arbiter's Ignition": {
-      "zh_CN": "仲裁官的点燃",
-      "zh_TW": "仲裁者的燃灼"
-    },
-    "Arbiter's Reach": {
-      "zh_CN": "仲裁官之握",
-      "zh_TW": "仲裁者的延伸"
-    },
-    "Arjun's Medal": {
-      "zh_CN": "阿尔琼的勋章",
-      "zh_TW": "亞瓊的獎章"
-    },
-    "Atalui's Bloodletting": {
-      "zh_CN": "阿图鲁伊的放血术",
-      "zh_TW": "阿特路伊的出血"
-    },
-    "Atziri's Allure": {
-      "zh_CN": "阿兹里的魅惑",
-      "zh_TW": "阿茲里的魅惑"
-    },
-    "Atziri's Communion": {
-      "zh_CN": "阿兹里的圣礼",
-      "zh_TW": "阿茲里的共融"
-    },
-    "Atziri's Impatience": {
-      "zh_CN": "阿兹里的焦躁",
-      "zh_TW": "阿茲里的不耐"
-    },
-    "Banded Wombgift": {
-      "zh_CN": "束带孕育赠礼",
-      "zh_TW": "捆扎之胎贈"
-    },
-    "Bhatair's Vengeance": {
-      "zh_CN": "巴蒂尔的复仇",
-      "zh_TW": "瓦特爾的復仇"
-    },
-    "Zarokh's Reliquary Key: Blessed Bonds": {
-      "zh_CN": "扎洛卡的圣物厅钥匙：蒙福的羁绊",
-      "zh_TW": "澤洛克的寶庫鑰匙：祝福之絆"
-    },
-    "Breachlord's Amalgam": {
-      "zh_CN": "裂隙领主的融合体",
-      "zh_TW": "裂痕領主的融合"
-    },
-    "Breachlord's Rift": {
-      "zh_CN": "裂隙领主的分歧",
-      "zh_TW": "裂痕領主的裂隙"
-    },
-    "Brutus' Brain": {
-      "zh_CN": "布鲁特斯之脑",
-      "zh_TW": "布魯特斯的腦"
-    },
-    "Catha's Brilliance": {
-      "zh_CN": "卡莎的光辉",
-      "zh_TW": "凱莎的輝煌"
-    },
-    "Cirel's Cultivation": {
-      "zh_CN": "西雷尔的教化",
-      "zh_TW": "西瑞爾的耕植"
-    },
-    "Corrupted Verisium": {
-      "zh_CN": "腐化维金",
-      "zh_TW": "汙染維里西姆"
-    },
-    "Daresso's Passion": {
-      "zh_CN": "德瑞索的热情",
-      "zh_TW": "德瑞索的熱情"
-    },
-    "Dialla's Desire": {
-      "zh_CN": "达拉的渴望",
-      "zh_TW": "達拉的渴望"
-    },
-    "Doedre's Undoing": {
-      "zh_CN": "德瑞的毁灭",
-      "zh_TW": "德瑞的毀滅"
-    },
-    "Dominus' Grasp": {
-      "zh_CN": "神主之握",
-      "zh_TW": "神主的掌握"
-    },
-    "Einhar's Beastrite": {
-      "zh_CN": "伊恩哈尔的魔物仪式",
-      "zh_TW": "埃哈的野獸儀式"
-    },
-    "Esh's Prowess": {
-      "zh_CN": "艾许的骁勇",
-      "zh_TW": "艾許的威能"
-    },
-    "Esh's Radiance": {
-      "zh_CN": "艾许的光辉",
-      "zh_TW": "艾許的光芒"
-    },
-    "Founders Verisium": {
-      "zh_CN": "起源维金",
-      "zh_TW": "始創維里西姆"
-    },
-    "Garukhan's Resolve": {
-      "zh_CN": "格鲁坎的决心",
-      "zh_TW": "卡洛翰的決心"
-    },
-    "Guatelitzi's Ablation": {
-      "zh_CN": "瓜铁雷兹的消融",
-      "zh_TW": "瓜特利斯的消融"
-    },
-    "Hayoxi's Fulmination": {
-      "zh_CN": "海幽夏的诛罚",
-      "zh_TW": "荷霖蔡的轟鳴"
-    },
-    "Her Declaration": {
-      "zh_CN": "她的宣言",
-      "zh_TW": "她的宣告"
-    },
-    "Ixchel's Torment": {
-      "zh_CN": "伊克切尔的折磨",
-      "zh_TW": "薩雷許的折磨"
-    },
-    "Kalisa's Crescendo": {
-      "zh_CN": "卡莉莎的强音",
-      "zh_TW": "卡莉莎的漸強"
-    },
-    "Kaom's Madness": {
-      "zh_CN": "冈姆的疯狂",
-      "zh_TW": "岡姆的癲狂"
-    },
-    "Khatal's Rejuvenation": {
-      "zh_CN": "卡哈塔的复苏",
-      "zh_TW": "卡塔爾的恢復"
-    },
-    "Kulemak's Dominion": {
-      "zh_CN": "库勒马克的统治",
-      "zh_TW": "骷髏馬克的支配"
-    },
-    "Kurgal's Leash": {
-      "zh_CN": "古加尔的缰绳",
-      "zh_TW": "柯戈的繩索"
-    },
-    "Legacy of Dionadair": {
-      "zh_CN": "御身守卫之遗产",
-      "zh_TW": "傳承．捍衛者"
-    },
-    "Legacy of Dunkelhalt": {
-      "zh_CN": "黑暗止步之遗产",
-      "zh_TW": "傳承．唐克哈特"
-    },
-    "Legacy of Elevore": {
-      "zh_CN": "艾尔弗雷之遗产",
-      "zh_TW": "傳承．愛勒弗"
-    },
-    "Legacy of Rondel de Ezo": {
-      "zh_CN": "艾佐的诗篇之遗产",
-      "zh_TW": "傳承．隆德爾．德．艾佐"
-    },
-    "Legacy of The Blood Thorn": {
-      "zh_CN": "血棘之遗产",
-      "zh_TW": "傳承．血棘"
-    },
-    "Lesser Charging Rune": {
-      "zh_CN": "次级充能符文",
-      "zh_TW": "低階充能符文"
-    },
-    "Medved's Felling": {
-      "zh_CN": "梅德维德的砍伐",
-      "zh_TW": "梅德偉的殞落"
-    },
-    "Morgana's Tempest": {
-      "zh_CN": "莫甘娜的暴风",
-      "zh_TW": "魔甘娜的風暴"
-    },
-    "Mutated Verisium": {
-      "zh_CN": "异变维金",
-      "zh_TW": "突變維里西姆"
-    },
-    "Mórrigan's Insight": {
-      "zh_CN": "莫丽根的洞察",
-      "zh_TW": "莫里根的洞察"
-    },
-    "Oisín's Oath": {
-      "zh_CN": "奥辛之誓",
-      "zh_TW": "歐辛的誓言"
-    },
-    "Olroth's Conviction": {
-      "zh_CN": "欧罗什的信念",
-      "zh_TW": "奧爾羅斯的信念"
-    },
-    "Olroth's Hubris": {
-      "zh_CN": "欧罗什的傲慢",
-      "zh_TW": "奧爾羅斯的傲慢"
-    },
-    "Ornate Wombgift": {
-      "zh_CN": "华丽孕育赠礼",
-      "zh_TW": "華麗之胎贈"
-    },
-    "Paquate's Pact": {
-      "zh_CN": "帕夸特的契约",
-      "zh_TW": "帕科特的協議"
-    },
-    "Prototype Seventeen": {
-      "zh_CN": "原型十七",
-      "zh_TW": "十七號原型機"
-    },
-    "Rakiata's Flow": {
-      "zh_CN": "拉其塔之流",
-      "zh_TW": "萊基亞塔的流動"
-    },
-    "Ratha's Assault": {
-      "zh_CN": "拉莎的突袭",
-      "zh_TW": "菈妲的強襲"
-    },
-    "Revelatory Wombgift": {
-      "zh_CN": "启示孕育赠礼",
-      "zh_TW": "啟示之胎贈"
-    },
-    "Rigwald's Ferocity": {
-      "zh_CN": "瑞佛的凶猛",
-      "zh_TW": "瑞佛的狂暴"
-    },
-    "Romira's Requital": {
-      "zh_CN": "罗米拉的报复",
-      "zh_TW": "羅米拉的報復"
-    },
-    "Zarokh's Reliquary Key: Sandstorm Visage": {
-      "zh_CN": "扎洛卡的圣物厅钥匙：禁域面容",
-      "zh_TW": "澤洛克的寶庫鑰匙：沙瀑面紗"
-    },
-    "Zarokh's Reliquary Key: Sekhema's Resolve": {
-      "zh_CN": "扎洛卡的圣物厅钥匙：丝克玛的决心",
-      "zh_TW": "澤洛克的寶庫鑰匙：絲克瑪的決意"
-    },
-    "Seraph's Heart": {
-      "zh_CN": "炽天使之心",
-      "zh_TW": "神使之心"
-    },
-    "Signet Wombgift": {
-      "zh_CN": "印戒孕育赠礼",
-      "zh_TW": "圖章之胎贈"
-    },
-    "Sione's Temper": {
-      "zh_CN": "西奥妮的怒火",
-      "zh_TW": "西奧妮的鍛鍊"
-    },
-    "Starlit Ore": {
-      "zh_CN": "星辉矿石",
-      "zh_TW": "星耀礦石"
-    },
-    "Styrn's Anthem": {
-      "zh_CN": "斯泰恩的颂歌",
-      "zh_TW": "斯塔恩的贊歌"
-    },
-    "Styrn's Ferocity": {
-      "zh_CN": "斯泰恩的凶残",
-      "zh_TW": "斯塔恩的暴行"
-    },
-    "Styrn's Mountain": {
-      "zh_CN": "斯泰恩的山岳",
-      "zh_TW": "斯塔恩的山巔"
-    },
-    "Tacati's Ire": {
-      "zh_CN": "塔卡提之怒",
-      "zh_TW": "特卡蒂的憤怒"
-    },
-    "Tangmazu's Thurible": {
-      "zh_CN": "唐玛祖的香炉",
-      "zh_TW": "湯馬祖的提爐"
-    },
-    "Tasalio's Rhythm": {
-      "zh_CN": "塔萨里奥的律动",
-      "zh_TW": "塔薩里奧的律動"
-    },
-    "Tawhoa's Tending": {
-      "zh_CN": "塔赫亚的照料",
-      "zh_TW": "塔赫亞的照顧"
-    },
-    "Tecrod's Revenge": {
-      "zh_CN": "特克罗的复仇",
-      "zh_TW": "特克羅德的復仇"
-    },
-    "Thaumaturgic Flux (Level 2)": {
-      "zh_CN": "秘术溶剂（等级2）",
-      "zh_TW": "奇術熔劑（等級2）"
-    },
-    "Thaumaturgic Flux (Level 3)": {
-      "zh_CN": "秘术溶剂（等级3）",
-      "zh_TW": "奇術熔劑（等級3）"
-    },
-    "Thaumaturgic Flux (Level 4)": {
-      "zh_CN": "秘术溶剂（等级4）",
-      "zh_TW": "奇術熔劑（等級4）"
-    },
-    "Thaumaturgic Flux (Level 5)": {
-      "zh_CN": "秘术溶剂（等级5）",
-      "zh_TW": "奇術熔劑（等級5）"
-    },
-    "Thaumaturgic Flux (Level 6)": {
-      "zh_CN": "秘术溶剂（等级6）",
-      "zh_TW": "奇術熔劑（等級6）"
-    },
-    "Thaumaturgic Flux (Level 7)": {
-      "zh_CN": "秘术溶剂（等级7）",
-      "zh_TW": "奇術熔劑（等級7）"
-    },
-    "Trickster's Shard": {
-      "zh_CN": "欺诈者碎片",
-      "zh_TW": "欺詐者的碎片"
-    },
-    "Tul's Avalanche": {
-      "zh_CN": "托沃的雪崩",
-      "zh_TW": "托沃的雪崩"
-    },
-    "Tul's Stillness": {
-      "zh_CN": "托沃的寂静",
-      "zh_TW": "托沃的寧靜"
-    },
-    "Uhtred's Augury": {
-      "zh_CN": "乌崔德的占卜",
-      "zh_TW": "烏特雷的占卜術"
-    },
-    "Uhtred's Constellation": {
-      "zh_CN": "乌崔德的星图",
-      "zh_TW": "烏特雷的星座"
-    },
-    "Uhtred's Exodus": {
-      "zh_CN": "乌崔德的出走",
-      "zh_TW": "烏特雷的出走"
-    },
-    "Uhtred's Omen": {
-      "zh_CN": "乌崔德的预兆",
-      "zh_TW": "烏特雷的徵兆"
-    },
-    "Uhtred's Rite": {
-      "zh_CN": "乌崔德仪式",
-      "zh_TW": "烏特雷的儀式"
-    },
-    "Uncut Skill Gem (Level 10)": {
-      "zh_CN": "未切割的技能宝石（等级 10）",
-      "zh_TW": "未切割的技能寶石（等級 10）"
-    },
-    "Uncut Skill Gem (Level 11)": {
-      "zh_CN": "未切割的技能宝石（等级 11）",
-      "zh_TW": "未切割的技能寶石（等級 11）"
-    },
-    "Uncut Skill Gem (Level 12)": {
-      "zh_CN": "未切割的技能宝石（等级 12）",
-      "zh_TW": "未切割的技能寶石（等級 12）"
-    },
-    "Uncut Skill Gem (Level 13)": {
-      "zh_CN": "未切割的技能宝石（等级 13）",
-      "zh_TW": "未切割的技能寶石（等級 13）"
-    },
-    "Uncut Skill Gem (Level 14)": {
-      "zh_CN": "未切割的技能宝石（等级 14）",
-      "zh_TW": "未切割的技能寶石（等級 14）"
-    },
-    "Uncut Skill Gem (Level 15)": {
-      "zh_CN": "未切割的技能宝石（等级 15）",
-      "zh_TW": "未切割的技能寶石（等級 15）"
-    },
-    "Uncut Skill Gem (Level 16)": {
-      "zh_CN": "未切割的技能宝石（等级 16）",
-      "zh_TW": "未切割的技能寶石（等級 16）"
-    },
-    "Uncut Skill Gem (Level 17)": {
-      "zh_CN": "未切割的技能宝石（等级 17）",
-      "zh_TW": "未切割的技能寶石（等級 17）"
-    },
-    "Uncut Skill Gem (Level 18)": {
-      "zh_CN": "未切割的技能宝石（等级 18）",
-      "zh_TW": "未切割的技能寶石（等級 18）"
-    },
-    "Uncut Skill Gem (Level 19)": {
-      "zh_CN": "未切割的技能宝石（等级 19）",
-      "zh_TW": "未切割的技能寶石（等級 19）"
-    },
-    "Uncut Skill Gem (Level 2)": {
-      "zh_CN": "未切割的技能宝石（等级 2）",
-      "zh_TW": "未切割的技能寶石（等級 2）"
-    },
-    "Uncut Skill Gem (Level 20)": {
-      "zh_CN": "未切割的技能宝石（等级 20）",
-      "zh_TW": "未切割的技能寶石（等級 20）"
-    },
-    "Uncut Skill Gem (Level 3)": {
-      "zh_CN": "未切割的技能宝石（等级 3）",
-      "zh_TW": "未切割的技能寶石（等級 3）"
-    },
-    "Uncut Skill Gem (Level 4)": {
-      "zh_CN": "未切割的技能宝石（等级 4）",
-      "zh_TW": "未切割的技能寶石（等級 4）"
-    },
-    "Uncut Skill Gem (Level 5)": {
-      "zh_CN": "未切割的技能宝石（等级 5）",
-      "zh_TW": "未切割的技能寶石（等級 5）"
-    },
-    "Uncut Skill Gem (Level 6)": {
-      "zh_CN": "未切割的技能宝石（等级 6）",
-      "zh_TW": "未切割的技能寶石（等級 6）"
-    },
-    "Uncut Skill Gem (Level 7)": {
-      "zh_CN": "未切割的技能宝石（等级 7）",
-      "zh_TW": "未切割的技能寶石（等級 7）"
-    },
-    "Uncut Skill Gem (Level 8)": {
-      "zh_CN": "未切割的技能宝石（等级 8）",
-      "zh_TW": "未切割的技能寶石（等級 8）"
-    },
-    "Uncut Skill Gem (Level 9)": {
-      "zh_CN": "未切割的技能宝石（等级 9）",
-      "zh_TW": "未切割的技能寶石（等級 9）"
-    },
-    "Uncut Spirit Gem (Level 10)": {
-      "zh_CN": "未切割的精魂宝石（等级 10）",
-      "zh_TW": "未切割的精魂寶石（等級 10）"
-    },
-    "Uncut Spirit Gem (Level 11)": {
-      "zh_CN": "未切割的精魂宝石（等级 11）",
-      "zh_TW": "未切割的精魂寶石（等級 11）"
-    },
-    "Uncut Spirit Gem (Level 12)": {
-      "zh_CN": "未切割的精魂宝石（等级 12）",
-      "zh_TW": "未切割的精魂寶石（等級 12）"
-    },
-    "Uncut Spirit Gem (Level 13)": {
-      "zh_CN": "未切割的精魂宝石（等级 13）",
-      "zh_TW": "未切割的精魂寶石（等級 13）"
-    },
-    "Uncut Spirit Gem (Level 14)": {
-      "zh_CN": "未切割的精魂宝石（等级 14）",
-      "zh_TW": "未切割的精魂寶石（等級 14）"
-    },
-    "Uncut Spirit Gem (Level 15)": {
-      "zh_CN": "未切割的精魂宝石（等级 15）",
-      "zh_TW": "未切割的精魂寶石（等級 15）"
-    },
-    "Uncut Spirit Gem (Level 16)": {
-      "zh_CN": "未切割的精魂宝石（等级 16）",
-      "zh_TW": "未切割的精魂寶石（等級 16）"
-    },
-    "Uncut Spirit Gem (Level 17)": {
-      "zh_CN": "未切割的精魂宝石（等级 17）",
-      "zh_TW": "未切割的精魂寶石（等級 17）"
-    },
-    "Uncut Spirit Gem (Level 18)": {
-      "zh_CN": "未切割的精魂宝石（等级 18）",
-      "zh_TW": "未切割的精魂寶石（等級 18）"
-    },
-    "Uncut Spirit Gem (Level 19)": {
-      "zh_CN": "未切割的精魂宝石（等级 19）",
-      "zh_TW": "未切割的精魂寶石（等級 19）"
-    },
-    "Uncut Spirit Gem (Level 20)": {
-      "zh_CN": "未切割的精魂宝石（等级 20）",
-      "zh_TW": "未切割的精魂寶石（等級 20）"
-    },
-    "Uncut Spirit Gem (Level 4)": {
-      "zh_CN": "未切割的精魂宝石（等级 4）",
-      "zh_TW": "未切割的精魂寶石（等級 4）"
-    },
-    "Uncut Spirit Gem (Level 5)": {
-      "zh_CN": "未切割的精魂宝石（等级 5）",
-      "zh_TW": "未切割的精魂寶石（等級 5）"
-    },
-    "Uncut Spirit Gem (Level 6)": {
-      "zh_CN": "未切割的精魂宝石（等级 6）",
-      "zh_TW": "未切割的精魂寶石（等級 6）"
-    },
-    "Uncut Spirit Gem (Level 7)": {
-      "zh_CN": "未切割的精魂宝石（等级 7）",
-      "zh_TW": "未切割的精魂寶石（等級 7）"
-    },
-    "Uncut Spirit Gem (Level 8)": {
-      "zh_CN": "未切割的精魂宝石（等级 8）",
-      "zh_TW": "未切割的精魂寶石（等級 8）"
-    },
-    "Uncut Spirit Gem (Level 9)": {
-      "zh_CN": "未切割的精魂宝石（等级 9）",
-      "zh_TW": "未切割的精魂寶石（等級 9）"
-    },
-    "Uncut Support Gem (Level 1)": {
-      "zh_CN": "未切割的辅助宝石（等级 1）",
-      "zh_TW": "未切割的輔助寶石（等級 1）"
-    },
-    "Uncut Support Gem (Level 2)": {
-      "zh_CN": "未切割的辅助宝石（等级 2）",
-      "zh_TW": "未切割的輔助寶石（等級 2）"
-    },
-    "Uncut Support Gem (Level 3)": {
-      "zh_CN": "未切割的辅助宝石（等级 3）",
-      "zh_TW": "未切割的輔助寶石（等級 3）"
-    },
-    "Uncut Support Gem (Level 4)": {
-      "zh_CN": "未切割的辅助宝石（等级 4）",
-      "zh_TW": "未切割的輔助寶石（等級 4）"
-    },
-    "Uncut Support Gem (Level 5)": {
-      "zh_CN": "未切割的辅助宝石（等级 5）",
-      "zh_TW": "未切割的輔助寶石（等級 5）"
-    },
-    "Uruk's Smelting": {
-      "zh_CN": "厄罗克的熔炼术",
-      "zh_TW": "厄羅克的鍛鍊"
-    },
-    "Uul-Netol's Embrace": {
-      "zh_CN": "乌尔尼多的拥抱",
-      "zh_TW": "烏爾尼多的擁抱"
-    },
-    "Varashta's Blessing": {
-      "zh_CN": "瓦拉煞的祝福",
-      "zh_TW": "瓦拉什塔的祝福"
-    },
-    "Vilenta's Propulsion": {
-      "zh_CN": "薇伦塔之推进",
-      "zh_TW": "范尼達的奮進"
-    },
-    "Vorana's Siege": {
-      "zh_CN": "沃拉娜的围城",
-      "zh_TW": "沃拉娜的圍攻"
-    },
-    "Vruun's Aftermath": {
-      "zh_CN": "弗伦的余波",
-      "zh_TW": "弗倫的餘波"
-    },
-    "Vruun's Inevitability": {
-      "zh_CN": "弗伦的必然",
-      "zh_TW": "弗倫的必然"
-    },
-    "Xibaqua's Rending": {
-      "zh_CN": "夏巴夸亚的撕裂",
-      "zh_TW": "賽巴昆的撕裂"
-    },
-    "Xoph's Pyre": {
-      "zh_CN": "索伏的葬火",
-      "zh_TW": "索伏的燃焰"
-    },
-    "Zarokh's Refrain": {
-      "zh_CN": "扎洛卡的克制",
-      "zh_TW": "澤洛克的克制"
-    },
-    "Zarokh's Revolt": {
-      "zh_CN": "扎洛卡的反叛",
-      "zh_TW": "澤洛克的反叛"
     },
     "Zerphi's Infamy": {
       "zh_CN": "泽佛伊的恶名",

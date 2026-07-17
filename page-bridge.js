@@ -18,6 +18,8 @@
   const SEARCH_SNAPSHOT_STORAGE_KEY = "poe2-marketwright:search-snapshot";
   const POB_MESSAGE_SOURCE = "poe2-marketwright-pob-copy";
   const FAVORITES_MESSAGE_SOURCE = "poe2-marketwright-favorites";
+  const AFFIX_VIEWER_MESSAGE_SOURCE = "poe2-marketwright-affix-viewer";
+  const AFFIX_VIEWER_REQUEST_TYPE = "POE2_MARKETWRIGHT_AFFIX_VIEWER_REQUEST";
   const CURRENCY_MESSAGE_SOURCE = "poe2-marketwright-currency-conversion";
   const NUMBER_RE = /([-+]?\d+(?:\.\d+)?)/g;
   const PSEUDO_STAT_GROUP_ID = "pseudo";
@@ -121,6 +123,7 @@
       pobCopyEnabled: false,
       // Capture result details during initial content-script startup. Content state can disable this afterward.
       favoritesEnabled: true,
+      affixViewerEnabled: true,
       currencyConversionEnabled: false,
       pageLanguage: "en",
       pageTranslationEnabled: false,
@@ -149,7 +152,8 @@
     tradeOptionOriginalTexts: new WeakMap(),
     quickAddStaged: new Set(),
     quickAddGroupIndex: null,
-    quickAddCommitClickBound: false
+    quickAddCommitClickBound: false,
+    lastAffixViewerFetch: null
   };
 
   window.addEventListener("message", (event) => {
@@ -186,6 +190,14 @@
 
     if (event.data.type === QUICK_ADD_STAGE_TYPE) {
       stageQuickAddMarkedOption(event.data.payload?.token);
+      return;
+    }
+
+    if (event.data.type === AFFIX_VIEWER_REQUEST_TYPE) {
+      const cached = runtime.lastAffixViewerFetch;
+      if (runtime.lastPayload.affixViewerEnabled && cached) {
+        window.postMessage({ source: AFFIX_VIEWER_MESSAGE_SOURCE, url: cached.url, body: cached.body }, "*");
+      }
       return;
     }
 
@@ -1085,10 +1097,26 @@
       );
     };
 
+    const emitAffixViewer = (url, body) => {
+      if (!runtime.lastPayload.affixViewerEnabled || !url || !String(url).includes("/api/trade2/fetch/")) {
+        return;
+      }
+      window.postMessage(
+        {
+          source: AFFIX_VIEWER_MESSAGE_SOURCE,
+          url: String(url),
+          body: typeof body === "string" ? body : null
+        },
+        "*"
+      );
+    };
+
     const emit = (url, body, searchUrl) => {
+      runtime.lastAffixViewerFetch = { url: String(url), body: typeof body === "string" ? body : null };
       emitCurrencyUpdate(url, body, searchUrl);
       emitPobCopy(url, body);
       emitFavorites(url, body);
+      emitAffixViewer(url, body);
     };
 
     const originalFetch = window.fetch;
@@ -1117,6 +1145,7 @@
           (
             runtime.lastPayload.pobCopyEnabled ||
             runtime.lastPayload.favoritesEnabled ||
+            runtime.lastPayload.affixViewerEnabled ||
             runtime.lastPayload.currencyConversionEnabled
           )
         ) {
@@ -1164,6 +1193,7 @@
               if (
                 runtime.lastPayload.pobCopyEnabled ||
                 runtime.lastPayload.favoritesEnabled ||
+                runtime.lastPayload.affixViewerEnabled ||
                 runtime.lastPayload.currencyConversionEnabled
               ) {
                 try {
