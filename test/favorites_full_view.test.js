@@ -109,6 +109,149 @@ test("sidebar settings default to a left dock with 50 percent idle transparency"
   });
 });
 
+test("favorite tooltip Alt requirement defaults to compact details", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { loadState };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: { storage: { local: { get: async () => ({}) } } }
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const state = await sandbox.window.__testHooks.loadState();
+  assert.deepStrictEqual(structuredClone({
+    favoriteTooltipsRequireAlt: state.favoriteTooltipsRequireAlt
+  }), { favoriteTooltipsRequireAlt: true });
+});
+
+test("favorite tooltip Alt buttons sit before the favorites view switch", () => {
+  const source = fs.readFileSync("content.js", "utf8");
+  assert.ok(source.indexOf("poe2-marketwright-favorites-tooltip-requires-alt") < source.indexOf("poe2-marketwright-favorites-view-mode"));
+  assert.ok(source.indexOf("poe2-marketwright-link-favorites-tooltip-requires-alt") < source.indexOf("poe2-marketwright-link-favorites-view-mode"));
+  assert.ok(!source.includes("poe2-marketwright-favorites-tooltip-toggle-row"));
+  assert.ok(!source.includes("poe2-marketwright-link-favorites-tooltip-toggle-row"));
+});
+
+test("favorite tooltip Alt setting controls hover and summary density in compact and full views", () => {
+  const contentBootstrap = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let contentSource = fs.readFileSync("content.js", "utf8").replace(contentBootstrap, "");
+  contentSource = contentSource.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { shouldShowFavoriteTooltip, shouldShowFavoriteSummary, runtime };\n})();"
+  );
+  const panelBootstrap = "  bindUi();\n  bootstrap();";
+  let panelSource = fs.readFileSync("favorites-panel.js", "utf8").replace(panelBootstrap, "");
+  panelSource = panelSource.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { shouldShowFavoriteTooltip, shouldShowFavoriteSummary, local };\n})();"
+  );
+  const contentSandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console
+  };
+  const panelSandbox = {
+    window: {},
+    document: { querySelector() { return null; } },
+    location: { search: "" },
+    URLSearchParams,
+    console
+  };
+  vm.runInNewContext(contentSource, contentSandbox, { filename: "content.js" });
+  vm.runInNewContext(panelSource, panelSandbox, { filename: "favorites-panel.js" });
+  contentSandbox.window.__testHooks.runtime.state = { favoriteTooltipsRequireAlt: false };
+  panelSandbox.window.__testHooks.local.state = { favoriteTooltipsRequireAlt: false };
+
+  const defaultResult = {
+    compact: {
+      tooltip: contentSandbox.window.__testHooks.shouldShowFavoriteTooltip({ altKey: false }),
+      summary: contentSandbox.window.__testHooks.shouldShowFavoriteSummary()
+    },
+    full: {
+      tooltip: panelSandbox.window.__testHooks.shouldShowFavoriteTooltip({ altKey: false }),
+      summary: panelSandbox.window.__testHooks.shouldShowFavoriteSummary()
+    }
+  };
+  contentSandbox.window.__testHooks.runtime.state.favoriteTooltipsRequireAlt = true;
+  panelSandbox.window.__testHooks.local.state.favoriteTooltipsRequireAlt = true;
+  const enabledResult = {
+    compact: {
+      tooltip: [
+        contentSandbox.window.__testHooks.shouldShowFavoriteTooltip({ altKey: false }),
+        contentSandbox.window.__testHooks.shouldShowFavoriteTooltip({ altKey: true })
+      ],
+      summary: contentSandbox.window.__testHooks.shouldShowFavoriteSummary()
+    },
+    full: {
+      tooltip: [
+        panelSandbox.window.__testHooks.shouldShowFavoriteTooltip({ altKey: false }),
+        panelSandbox.window.__testHooks.shouldShowFavoriteTooltip({ altKey: true })
+      ],
+      summary: panelSandbox.window.__testHooks.shouldShowFavoriteSummary()
+    }
+  };
+  assert.deepStrictEqual(structuredClone({ defaultResult, enabledResult }), {
+    defaultResult: {
+      compact: { tooltip: true, summary: true },
+      full: { tooltip: true, summary: true }
+    },
+    enabledResult: {
+      compact: { tooltip: [false, true], summary: false },
+      full: { tooltip: [false, true], summary: false }
+    }
+  });
+});
+
+test("pressing Alt while hovering schedules favorite tooltips in compact and full views", () => {
+  const contentBootstrap = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let contentSource = fs.readFileSync("content.js", "utf8").replace(contentBootstrap, "");
+  contentSource = contentSource.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { showCompactLinkFavoriteTooltipOnAltKey, runtime };\n})();"
+  );
+  const panelBootstrap = "  bindUi();\n  bootstrap();";
+  let panelSource = fs.readFileSync("favorites-panel.js", "utf8").replace(panelBootstrap, "");
+  panelSource = panelSource.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { showLinkFavoriteTooltipOnAltKey, local };\n})();"
+  );
+  const compactTimers = [];
+  const fullTimers = [];
+  const contentSandbox = {
+    window: { addEventListener() {}, clearTimeout() {}, setTimeout(callback, delay) { compactTimers.push(delay); return 1; } },
+    document: {},
+    location: { pathname: "/trade2" },
+    console
+  };
+  const panelSandbox = {
+    window: { clearTimeout() {}, setTimeout(callback, delay) { fullTimers.push(delay); return 1; } },
+    document: { querySelector() { return null; } },
+    location: { search: "" },
+    URLSearchParams,
+    console
+  };
+  vm.runInNewContext(contentSource, contentSandbox, { filename: "content.js" });
+  vm.runInNewContext(panelSource, panelSandbox, { filename: "favorites-panel.js" });
+  const compact = contentSandbox.window.__testHooks;
+  const full = panelSandbox.window.__testHooks;
+  compact.runtime.state = { favoriteTooltipsRequireAlt: true };
+  compact.runtime.compactLinkFavoriteTooltipHover = { anchor: {}, presentation: {} };
+  full.local.state = { favoriteTooltipsRequireAlt: true };
+  full.local.linkFavoriteTooltipHover = { anchor: {}, link: {} };
+
+  compact.showCompactLinkFavoriteTooltipOnAltKey({ key: "Alt", altKey: true });
+  full.showLinkFavoriteTooltipOnAltKey({ key: "Alt", altKey: true });
+
+  assert.deepStrictEqual({ compactTimers, fullTimers }, { compactTimers: [420], fullTimers: [420] });
+});
+
 test("sidebar setting mirrors the full view and applies idle opacity only to sidebar surfaces", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");

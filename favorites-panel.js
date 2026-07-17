@@ -155,7 +155,8 @@
     tooltipShowTimer: null,
     tooltipHideTimer: null,
     tooltipDismissTimer: null,
-    tooltipPointer: null
+    tooltipPointer: null,
+    linkFavoriteTooltipHover: null
   };
 
   function t(key, substitutions = []) {
@@ -503,13 +504,15 @@
       if (Number.isFinite(time) && time > 0) {
         launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
       }
-      const visibleMods = (favorite.mods || []).slice(0, 3);
-      for (const mod of visibleMods) {
-        launch.appendChild(renderLinkFavoriteStat(getFavoriteModifierPresentation(mod)));
-      }
-      const moreCount = Math.max(0, (favorite.mods || []).length - visibleMods.length);
-      if (moreCount) {
-        launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
+      if (shouldShowFavoriteSummary()) {
+        const visibleMods = (favorite.mods || []).slice(0, 3);
+        for (const mod of visibleMods) {
+          launch.appendChild(renderLinkFavoriteStat(getFavoriteModifierPresentation(mod)));
+        }
+        const moreCount = Math.max(0, (favorite.mods || []).length - visibleMods.length);
+        if (moreCount) {
+          launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
+        }
       }
     }
     const actions = createElement("div", "favorites-panel-row-actions");
@@ -1141,11 +1144,25 @@
     });
   }
 
+  function shouldShowFavoriteTooltip(event) {
+    return !local.state?.favoriteTooltipsRequireAlt || event?.altKey === true;
+  }
+
+  function shouldShowFavoriteSummary() {
+    return !local.state?.favoriteTooltipsRequireAlt;
+  }
+
   function scheduleLinkFavoriteTooltipShow(anchor, link, event) {
+    if (!shouldShowFavoriteTooltip(event)) {
+      hideLinkFavoriteTooltip();
+      return;
+    }
     clearLinkFavoriteTooltipShowTimer();
     clearLinkFavoriteTooltipHideTimer();
     clearLinkFavoriteTooltipDismissTimer();
-    local.tooltipPointer = { x: event.clientX, y: event.clientY };
+    if (Number.isFinite(event?.clientX) && Number.isFinite(event?.clientY)) {
+      local.tooltipPointer = { x: event.clientX, y: event.clientY };
+    }
     local.tooltipShowTimer = window.setTimeout(() => {
       local.tooltipShowTimer = null;
       showLinkFavoriteTooltip(anchor, link);
@@ -1157,16 +1174,39 @@
       return;
     }
     anchor.setAttribute("aria-describedby", "favorites-panel-tooltip");
-    anchor.addEventListener("pointerenter", (event) => scheduleLinkFavoriteTooltipShow(anchor, link, event));
+    anchor.addEventListener("pointerenter", (event) => {
+      local.linkFavoriteTooltipHover = { anchor, link };
+      scheduleLinkFavoriteTooltipShow(anchor, link, event);
+    });
     anchor.addEventListener("pointermove", (event) => {
       local.tooltipPointer = { x: event.clientX, y: event.clientY };
+      local.linkFavoriteTooltipHover = { anchor, link };
+      if (!shouldShowFavoriteTooltip(event)) {
+        hideLinkFavoriteTooltip();
+      } else if (local.state?.favoriteTooltipsRequireAlt && ui.tooltip?.hidden) {
+        scheduleLinkFavoriteTooltipShow(anchor, link, event);
+      }
     });
-    anchor.addEventListener("pointerleave", scheduleLinkFavoriteTooltipHide);
+    anchor.addEventListener("pointerleave", () => {
+      if (local.linkFavoriteTooltipHover?.anchor === anchor) {
+        local.linkFavoriteTooltipHover = null;
+      }
+      scheduleLinkFavoriteTooltipHide();
+    });
     anchor.addEventListener("focus", () => {
       local.tooltipPointer = null;
-      showLinkFavoriteTooltip(anchor, link);
+      if (!local.state?.favoriteTooltipsRequireAlt) {
+        showLinkFavoriteTooltip(anchor, link);
+      }
     });
     anchor.addEventListener("blur", hideLinkFavoriteTooltip);
+  }
+
+  function showLinkFavoriteTooltipOnAltKey(event) {
+    const hover = local.linkFavoriteTooltipHover;
+    if (event.key === "Alt" && hover) {
+      scheduleLinkFavoriteTooltipShow(hover.anchor, hover.link, event);
+    }
   }
 
   function renderLinkRow(state, link) {
@@ -1187,13 +1227,15 @@
       if (Number.isFinite(time) && time > 0) {
         launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
       }
-      const statFilters = getLinkFavoriteStatFilters(link);
-      for (const filter of statFilters.slice(0, 3)) {
-        launch.appendChild(renderLinkFavoriteStatFilter(filter));
-      }
-      const moreCount = Math.max(0, statFilters.length - 3);
-      if (moreCount) {
-        launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
+      if (shouldShowFavoriteSummary()) {
+        const statFilters = getLinkFavoriteStatFilters(link);
+        for (const filter of statFilters.slice(0, 3)) {
+          launch.appendChild(renderLinkFavoriteStatFilter(filter));
+        }
+        const moreCount = Math.max(0, statFilters.length - 3);
+        if (moreCount) {
+          launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
+        }
       }
       launch.addEventListener("click", () => run("open-link", { linkId: link.id }));
     }
@@ -1248,13 +1290,15 @@
     if (Number.isFinite(time) && time > 0) {
       launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
     }
-    const statFilters = getLinkFavoriteStatFilters(link);
-    for (const filter of statFilters.slice(0, 3)) {
-      launch.appendChild(renderLinkFavoriteStatFilter(filter));
-    }
-    const moreCount = Math.max(0, statFilters.length - 3);
-    if (moreCount) {
-      launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
+    if (shouldShowFavoriteSummary()) {
+      const statFilters = getLinkFavoriteStatFilters(link);
+      for (const filter of statFilters.slice(0, 3)) {
+        launch.appendChild(renderLinkFavoriteStatFilter(filter));
+      }
+      const moreCount = Math.max(0, statFilters.length - 3);
+      if (moreCount) {
+        launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
+      }
     }
     launch.addEventListener("click", () => run("open-history", { linkId: link.id }));
     const actions = createElement("div", "favorites-panel-row-actions");
@@ -1651,6 +1695,13 @@
     });
     window.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
+        hideLinkFavoriteTooltip();
+      } else {
+        showLinkFavoriteTooltipOnAltKey(event);
+      }
+    });
+    window.addEventListener("keyup", (event) => {
+      if (event.key === "Alt") {
         hideLinkFavoriteTooltip();
       }
     });

@@ -372,6 +372,12 @@
   "linkHistoryLimit": {
     "message": "History limit"
   },
+  "enableFavoriteTooltipsRequireAlt": {
+    "message": "Use compact favorite details with Alt tooltips"
+  },
+  "disableFavoriteTooltipsRequireAlt": {
+    "message": "Show favorite summaries and hover tooltips"
+  },
   "enableLinkHistory": {
     "message": "Enable search history"
   },

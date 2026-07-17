@@ -660,6 +660,12 @@
   "linkHistoryLimit": {
     "message": "歷史記錄上限"
   },
+  "enableFavoriteTooltipsRequireAlt": {
+    "message": "啟用精簡詳情，按住 Alt 顯示收藏提示"
+  },
+  "disableFavoriteTooltipsRequireAlt": {
+    "message": "顯示收藏詞綴摘要和懸停提示"
+  },
   "enableLinkHistory": {
     "message": "啟用搜尋歷史"
   },

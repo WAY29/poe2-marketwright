@@ -216,7 +216,8 @@
     box-shadow 160ms ease;
 }
 
-.poe2-marketwright-favorites-view-mode {
+.poe2-marketwright-favorites-view-mode,
+.poe2-marketwright-favorites-tooltip-requires-alt {
   display: inline-flex;
   position: relative;
   z-index: 1;
@@ -242,11 +243,31 @@
   fill: currentColor;
 }
 
+.poe2-marketwright-favorites-tooltip-requires-alt svg {
+  width: 13px;
+  height: 13px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.2;
+}
+
 .poe2-marketwright-favorites-view-mode:hover,
-.poe2-marketwright-favorites-view-mode:focus-visible {
+.poe2-marketwright-favorites-view-mode:focus-visible,
+.poe2-marketwright-favorites-tooltip-requires-alt:hover,
+.poe2-marketwright-favorites-tooltip-requires-alt:focus-visible {
   border-color: #d0a45c;
   filter: brightness(1.08);
   outline: none;
+}
+
+.poe2-marketwright-favorites-tooltip-requires-alt[aria-pressed="true"] {
+  color: #1a1208;
+  background-color: #c2944c;
+  background-image:
+    linear-gradient(180deg, rgba(255, 236, 190, 0.88), rgba(196, 140, 55, 0.92)),
+    var(--mw-tex-btn-on);
 }
 
 .poe2-trade2-affix-filter-collapsed .poe2-trade2-affix-filter-panel {
@@ -1431,11 +1452,16 @@
 
 .poe2-marketwright-favorites-feature {
   position: relative;
-  display: flex;
-  align-items: center;
-  min-height: 35px;
+  display: grid;
   padding: 0;
-  border-color: rgba(144, 101, 48, 0.86);
+  border-color: rgba(130, 91, 46, 0.86);
+}
+
+.poe2-marketwright-favorites-main {
+  position: relative;
+  display: flex;
+  min-height: 35px;
+  align-items: center;
 }
 
 .poe2-marketwright-favorites-disclosure {
@@ -1444,7 +1470,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 7px 48px 7px 7px;
+  padding: 7px 94px 7px 7px;
   border: 0;
   color: inherit;
   background: transparent;
@@ -1467,10 +1493,15 @@
 
 .poe2-marketwright-favorites-feature .poe2-marketwright-favorites-view-mode,
 .poe2-marketwright-link-favorites-feature .poe2-marketwright-favorites-view-mode {
+  margin: 7px 0 7px 5px;
+}
+
+.poe2-marketwright-favorites-main > .poe2-marketwright-favorites-tooltip-requires-alt,
+.poe2-marketwright-link-favorites-main > .poe2-marketwright-favorites-tooltip-requires-alt {
   margin: 7px 0 7px auto;
 }
 
-.poe2-marketwright-favorites-feature .poe2-trade2-affix-filter-feature-toggle {
+.poe2-marketwright-favorites-main > .poe2-trade2-affix-filter-feature-toggle {
   position: relative;
   z-index: 1;
   margin: 7px 7px 7px 5px;
@@ -1496,7 +1527,7 @@
   display: flex;
   align-items: center;
   width: 100%;
-  padding: 7px 48px 7px 7px;
+  padding: 7px 94px 7px 7px;
   border: 0;
   color: inherit;
   background: transparent;
@@ -1558,7 +1589,10 @@
 
 .poe2-marketwright-link-history-toggle-row .poe2-trade2-affix-filter-field-label,
 .poe2-marketwright-link-history-limit-field .poe2-trade2-affix-filter-field-label {
+  min-width: 0;
   margin: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
   white-space: nowrap;
 }
 
