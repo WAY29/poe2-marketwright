@@ -31,6 +31,7 @@ jobs:
           cp background.js dist/poe2-marketwright/
           cp pob-copy.js dist/poe2-marketwright/
           cp favorites.js dist/poe2-marketwright/
+          cp affix-viewer.js dist/poe2-marketwright/
           cp currency-conversion.js dist/poe2-marketwright/
           cp content.js dist/poe2-marketwright/
           cp content.css dist/poe2-marketwright/
