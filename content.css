@@ -2131,7 +2131,6 @@
 
 .poe2-marketwright-tier-control {
   position: relative;
-  z-index: 12;
   display: table-cell;
   width: 32px;
   height: 30px;
@@ -2139,7 +2138,7 @@
 }
 
 .poe2-marketwright-tier-control-open {
-  z-index: 14;
+  z-index: 6;
 }
 
 .poe2-marketwright-tier-trigger {
@@ -2180,7 +2179,6 @@
   position: absolute;
   top: 32px;
   left: 0;
-  z-index: 13;
   display: none;
   width: 260px;
   max-width: calc(100vw - 16px);

@@ -5,12 +5,16 @@ const fs = require("node:fs");
 const vm = require("node:vm");
 const { test } = require("node:test");
 
-test("open Tier selector stacks above adjacent Tier controls", () => {
+test("only an open Tier selector stacks above native affix selectors", () => {
   const styles = fs.readFileSync("content.css", "utf8");
 
+  assert.doesNotMatch(
+    styles,
+    /\.poe2-marketwright-tier-control\s*\{[^}]*z-index:/
+  );
   assert.match(
     styles,
-    /\.poe2-marketwright-tier-control-open\s*\{\s*z-index:\s*14;/
+    /\.poe2-marketwright-tier-control-open\s*\{\s*z-index:\s*6;/
   );
 });
 
