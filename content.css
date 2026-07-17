@@ -1,8 +1,7 @@
 /* Shared dark ARPG tokens — charcoal / rust / aged gold / ivory; error red only.
    :root covers page-injected result-row controls (tier / PoB / currency). */
 :root,
-#poe2-trade2-affix-filter-root,
-#poe2-marketwright-favorites-panel-frame {
+#poe2-trade2-affix-filter-root {
   --mw-bg: #0c0a08;
   --mw-bg-panel: #12100c;
   --mw-bg-raised: #1a1510;
@@ -68,20 +67,17 @@
 }
 
 /* dark ARPG scrollbars — only inside extension chrome */
-#poe2-trade2-affix-filter-root *,
-#poe2-marketwright-favorites-panel-frame * {
+#poe2-trade2-affix-filter-root * {
   scrollbar-width: thin;
   scrollbar-color: var(--mw-scroll-thumb) var(--mw-scroll-track);
 }
 
-#poe2-trade2-affix-filter-root ::-webkit-scrollbar,
-#poe2-marketwright-favorites-panel-frame ::-webkit-scrollbar {
+#poe2-trade2-affix-filter-root ::-webkit-scrollbar {
   width: 8px;
   height: 8px;
 }
 
-#poe2-trade2-affix-filter-root ::-webkit-scrollbar-track,
-#poe2-marketwright-favorites-panel-frame ::-webkit-scrollbar-track {
+#poe2-trade2-affix-filter-root ::-webkit-scrollbar-track {
   background:
     linear-gradient(90deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.15)),
     var(--mw-scroll-track);
@@ -89,8 +85,7 @@
   box-shadow: inset 0 0 4px rgba(0, 0, 0, 0.55);
 }
 
-#poe2-trade2-affix-filter-root ::-webkit-scrollbar-thumb,
-#poe2-marketwright-favorites-panel-frame ::-webkit-scrollbar-thumb {
+#poe2-trade2-affix-filter-root ::-webkit-scrollbar-thumb {
   background:
     linear-gradient(180deg, rgba(210, 170, 95, 0.35), rgba(0, 0, 0, 0.25)),
     var(--mw-scroll-thumb);
@@ -101,64 +96,20 @@
     inset 0 -1px 0 rgba(0, 0, 0, 0.4);
 }
 
-#poe2-trade2-affix-filter-root ::-webkit-scrollbar-thumb:hover,
-#poe2-marketwright-favorites-panel-frame ::-webkit-scrollbar-thumb:hover {
+#poe2-trade2-affix-filter-root ::-webkit-scrollbar-thumb:hover {
   background:
     linear-gradient(180deg, rgba(230, 190, 110, 0.4), rgba(0, 0, 0, 0.2)),
     var(--mw-scroll-thumb-hover);
   border-color: var(--mw-gold);
 }
 
-#poe2-trade2-affix-filter-root ::-webkit-scrollbar-corner,
-#poe2-marketwright-favorites-panel-frame ::-webkit-scrollbar-corner {
+#poe2-trade2-affix-filter-root ::-webkit-scrollbar-corner {
   background: var(--mw-scroll-track);
 }
 
 #poe2-trade2-affix-filter-root.poe2-marketwright-sidebar-right {
   right: 14px;
   left: auto;
-}
-
-#poe2-marketwright-favorites-panel-frame {
-  position: fixed !important;
-  z-index: 2147483647 !important;
-  top: 0 !important;
-  right: auto !important;
-  bottom: auto !important;
-  left: 0 !important;
-  display: block !important;
-  width: min(360px, 30vw) !important;
-  min-width: 0 !important;
-  max-width: none !important;
-  height: 100vh !important;
-  min-height: 0 !important;
-  max-height: none !important;
-  margin: 0 !important;
-  padding: 0 !important;
-  border: 0 !important;
-  background: var(--mw-bg) !important;
-  box-shadow: 10px 0 28px rgba(0, 0, 0, 0.58) !important;
-  transition: opacity 160ms ease;
-}
-
-#poe2-marketwright-favorites-panel-frame.poe2-marketwright-sidebar-right {
-  right: 0 !important;
-  left: auto !important;
-  box-shadow: -10px 0 28px rgba(0, 0, 0, 0.58) !important;
-}
-
-#poe2-marketwright-favorites-panel-frame[hidden] {
-  display: none !important;
-}
-
-#poe2-trade2-affix-filter-root.poe2-marketwright-favorites-full-view-open {
-  right: auto !important;
-  left: calc(min(360px, 30vw) + 14px) !important;
-}
-
-#poe2-trade2-affix-filter-root.poe2-marketwright-sidebar-right.poe2-marketwright-favorites-full-view-open {
-  right: calc(min(360px, 30vw) + 14px) !important;
-  left: auto !important;
 }
 
 #poe2-trade2-affix-filter-root.poe2-trade2-affix-filter-collapsed {
@@ -174,18 +125,7 @@
   left: auto;
 }
 
-#poe2-trade2-affix-filter-root.poe2-trade2-affix-filter-collapsed.poe2-marketwright-favorites-full-view-open {
-  right: auto !important;
-  left: calc(min(360px, 30vw) + 14px) !important;
-}
-
-#poe2-trade2-affix-filter-root.poe2-trade2-affix-filter-collapsed.poe2-marketwright-sidebar-right.poe2-marketwright-favorites-full-view-open {
-  right: calc(min(360px, 30vw) + 14px) !important;
-  left: auto !important;
-}
-
-#poe2-trade2-affix-filter-root.poe2-marketwright-idle,
-#poe2-marketwright-favorites-panel-frame.poe2-marketwright-idle {
+#poe2-trade2-affix-filter-root.poe2-marketwright-idle {
   opacity: var(--poe2-marketwright-idle-opacity, 0.5);
 }
 

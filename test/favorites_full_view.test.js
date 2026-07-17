@@ -252,7 +252,7 @@ test("pressing Alt while hovering schedules favorite tooltips in compact and ful
   assert.deepStrictEqual({ compactTimers, fullTimers }, { compactTimers: [420], fullTimers: [420] });
 });
 
-test("sidebar setting mirrors the full view and applies idle opacity only to sidebar surfaces", async () => {
+test("sidebar setting applies idle opacity only to the page sidebar", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
   source = source.replace(
@@ -271,7 +271,6 @@ test("sidebar setting mirrors the full view and applies idle opacity only to sid
     setProperty(name, value) { this.values[name] = value; }
   });
   const root = { classList: classList(), style: style() };
-  const frame = { classList: classList(), style: style() };
   const sidebarPositionOptions = ["left", "right"].map((position) => ({
     dataset: { sidebarPosition: position },
     classList: classList(),
@@ -294,28 +293,22 @@ test("sidebar setting mirrors the full view and applies idle opacity only to sid
     idleTransparencyEnabled: true,
     idleTransparency: 50
   };
-  hooks.runtime.ui = { root, favoritesPanelFrame: frame, sidebarPositionOptions };
+  hooks.runtime.ui = { root, sidebarPositionOptions };
   await hooks.setSidebarPosition("right");
   hooks.applyIdleTransparency();
   const result = structuredClone({
     sidebarPosition: hooks.runtime.state.sidebarPosition,
     rightChecked: sidebarPositionOptions[1].attributes["aria-checked"],
     rootDockedRight: root.classList.has("poe2-marketwright-sidebar-right"),
-    frameDockedRight: frame.classList.has("poe2-marketwright-sidebar-right"),
     rootIdle: root.classList.has("poe2-marketwright-idle"),
-    frameIdle: frame.classList.has("poe2-marketwright-idle"),
-    rootOpacity: root.style.values["--poe2-marketwright-idle-opacity"],
-    frameOpacity: frame.style.values["--poe2-marketwright-idle-opacity"]
+    rootOpacity: root.style.values["--poe2-marketwright-idle-opacity"]
   });
   assert.deepStrictEqual(result, {
     sidebarPosition: "right",
     rightChecked: "true",
     rootDockedRight: true,
-    frameDockedRight: true,
     rootIdle: true,
-    frameIdle: true,
-    rootOpacity: "0.5",
-    frameOpacity: "0.5"
+    rootOpacity: "0.5"
   });
 });
 
@@ -338,7 +331,6 @@ test("idle transparency stays off during favorite drag and rename", async () => 
     setProperty(name, value) { this.values[name] = value; }
   });
   const root = { classList: classList(), style: style() };
-  const frame = { classList: classList(), style: style() };
   const renameInput = {
     classList: {
       contains(name) {
@@ -359,9 +351,8 @@ test("idle transparency stays off during favorite drag and rename", async () => 
     idleTransparencyEnabled: true,
     idleTransparency: 50
   };
-  hooks.runtime.ui = { root, favoritesPanelFrame: frame };
+  hooks.runtime.ui = { root };
   hooks.runtime.sidebarHovered = false;
-  hooks.runtime.favoritesPanelHovered = false;
 
   hooks.runtime.linkFavoriteDrag = { kind: "link", id: "link-1" };
   hooks.applyIdleTransparency();
@@ -429,34 +420,81 @@ test("background relays panel requests only to the registered trade tab", async 
   assert.deepStrictEqual(result["tabMessages"], [{"tabId": 37, "message": {"type": "favorites-panel-command", "sessionId": "panel-session-1", "command": "get-state", "payload": undefined}}]);
 });
 
-test("full view toggles only the current document panel", async () => {
+test("background configures the native panel for the registered trade tab", async () => {
+  let messageListener;
+  const sessionValues = new Map();
+  const sidePanelOptions = [];
+  const openedPanels = [];
+  const closedPanels = [];
+  const sandbox = {
+    chrome: {
+      runtime: {
+        id: "extension-id",
+        onMessage: { addListener(listener) { messageListener = listener; } }
+      },
+      storage: {
+        session: {
+          async get(key) { return { [key]: sessionValues.get(key) }; },
+          async set(values) { for (const [key, value] of Object.entries(values)) sessionValues.set(key, value); }
+        }
+      },
+      sidePanel: {
+        async setOptions(options) { sidePanelOptions.push(options); },
+        async open(options) { openedPanels.push(options); },
+        async close(options) { closedPanels.push(options); }
+      }
+    },
+    fetch() { throw new Error("unexpected fetch"); },
+    console
+  };
+  vm.runInNewContext(fs.readFileSync("background.js", "utf8"), sandbox, { filename: "background.js" });
+  const send = (message, sender) => new Promise((resolve) => messageListener(message, sender, resolve));
+  const registration = await send(
+    { type: "favorites-panel-register", sessionId: "native-panel-1" },
+    { id: "extension-id", tab: { id: 37 } }
+  );
+  const opened = await send(
+    { type: "favorites-panel-open", sessionId: "native-panel-1" },
+    { id: "extension-id", tab: { id: 37 } }
+  );
+  const closed = await send(
+    { type: "favorites-panel-close", sessionId: "native-panel-1" },
+    { id: "extension-id", tab: { id: 37 } }
+  );
+  assert.deepStrictEqual(structuredClone({ registration, opened, closed, sidePanelOptions, openedPanels, closedPanels }), {
+    registration: { ok: true },
+    opened: { ok: true },
+    closed: { ok: true },
+    sidePanelOptions: [{
+      tabId: 37,
+      enabled: true,
+      path: "favorites-panel.html?session=native-panel-1"
+    }],
+    openedPanels: [{ tabId: 37 }],
+    closedPanels: [{ tabId: 37 }]
+  });
+});
+
+test("full view opens and closes the native panel for the current document", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
   source = source.replace(
     /\n\}\)\(\);\s*$/,
     "\n  window.__testHooks = { setFavoritesViewMode, setFavoritesPanelOpen, runtime };\n})();"
   );
-  const panelFrame = {
-    hidden: true,
-    attributes: {},
-    setAttribute(name, value) { this.attributes[name] = value; }
-  };
-  const documentClasses = new Set();
+  const nativePanelRequests = [];
   const sandbox = {
     window: { addEventListener() {}, innerWidth: 1440, innerHeight: 900 },
-    document: {
-      documentElement: {
-        classList: {
-          toggle(name, enabled) {
-            if (enabled) documentClasses.add(name);
-            else documentClasses.delete(name);
-          }
-        }
-      }
-    },
+    document: {},
     location: { pathname: "/trade2", href: "https://www.pathofexile.com/trade2/search/poe2/Runes/query-1" },
     console,
     chrome: {
+      runtime: {
+        sendMessage(message) {
+          nativePanelRequests.push(message);
+          return Promise.resolve({ ok: true });
+        }
+      },
       storage: { local: { get: async () => ({}), set: async () => {} } }
     }
   };
@@ -471,33 +509,42 @@ test("full view toggles only the current document panel", async () => {
     favoritesEnabled: true,
     linkFavoritesEnabled: true
   };
-  hooks.runtime.ui = {
-    root: { classList: { toggle() {} } },
-    favoritesPanelFrame: panelFrame
-  };
+  hooks.runtime.favoritesPanelSessionId = "native-panel-1";
+  hooks.runtime.ui = { root: { classList: { toggle() {} } } };
   await hooks.setFavoritesViewMode("full");
-  const hiddenAfterModeChange = panelFrame.hidden;
   await hooks.setFavoritesPanelOpen(true, "items");
-  const visibleAfterOpen = !panelFrame.hidden && panelFrame.attributes["aria-hidden"] === "false";
-  const documentLayoutUnchanged = !documentClasses.has("poe2-marketwright-favorites-full-view-open");
   await hooks.setFavoritesPanelOpen(false, "items");
-  const result = structuredClone({ hiddenAfterModeChange, visibleAfterOpen, documentLayoutUnchanged, hiddenAfterClose: panelFrame.hidden });
-  assert.deepStrictEqual(result, {"hiddenAfterModeChange": true, "visibleAfterOpen": true, "documentLayoutUnchanged": true, "hiddenAfterClose": true});
+  assert.deepStrictEqual(
+    structuredClone(nativePanelRequests.filter(({ type }) =>
+      type === "favorites-panel-open" || type === "favorites-panel-close"
+    )),
+    [
+      { type: "favorites-panel-open", sessionId: "native-panel-1" },
+      { type: "favorites-panel-close", sessionId: "native-panel-1" }
+    ]
+  );
 });
 
-test("clicking the open full view section closes the side panel", async () => {
+test("clicking the open full view section reopens the native panel", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
   source = source.replace(
     /\n\}\)\(\);\s*$/,
     "\n  window.__testHooks = { toggleFavoritesView, runtime };\n})();"
   );
+  const nativePanelRequests = [];
   const sandbox = {
     window: { addEventListener() {}, innerWidth: 1440, innerHeight: 900 },
     document: {},
     location: { pathname: "/trade2", href: "https://www.pathofexile.com/trade2/search/poe2/Runes/query-1" },
     console,
     chrome: {
+      runtime: {
+        sendMessage(message) {
+          nativePanelRequests.push(message);
+          return Promise.resolve({ ok: true });
+        }
+      },
       storage: { local: { get: async () => ({}), set: async () => {} } }
     }
   };
@@ -512,9 +559,13 @@ test("clicking the open full view section closes the side panel", async () => {
     favoritesEnabled: true,
     linkFavoritesEnabled: true
   };
+  hooks.runtime.favoritesPanelSessionId = "native-panel-1";
   await hooks.toggleFavoritesView("items");
-  const result = structuredClone({ state: hooks.runtime.state });
-  assert.equal(result["state"]["favoritesPanelOpen"], false);
+  assert.deepStrictEqual(
+    structuredClone(nativePanelRequests.filter(({ type }) => type === "favorites-panel-open")),
+    [{ type: "favorites-panel-open", sessionId: "native-panel-1" }]
+  );
+  assert.equal(hooks.runtime.state.favoritesPanelOpen, true);
 });
 
 test("saving a link captures active advanced filter groups", async () => {

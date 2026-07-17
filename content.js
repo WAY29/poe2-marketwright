@@ -458,7 +458,7 @@
     language: "Language",
     tradePageLanguage: "Trade page language",
     tradePageTranslation: "Trade page translation",
-    sidebarPosition: "Sidebar position",
+    sidebarPosition: "UI position",
     sidebarPositionLeft: "Left",
     sidebarPositionRight: "Right",
     idleTransparency: "Idle transparency",
@@ -1257,18 +1257,7 @@
     applyUiTextureUrls(document.documentElement);
     document.documentElement.appendChild(root);
 
-    const favoritesPanelFrame = document.createElement("iframe");
-    favoritesPanelFrame.id = "poe2-marketwright-favorites-panel-frame";
-    favoritesPanelFrame.title = t("favoritesFullViewTitle");
-    favoritesPanelFrame.hidden = true;
-    favoritesPanelFrame.setAttribute("aria-hidden", "true");
-    favoritesPanelFrame.src = chrome.runtime.getURL(
-      `favorites-panel.html?session=${encodeURIComponent(getFavoritesPanelSessionId())}`
-    );
-    document.documentElement.appendChild(favoritesPanelFrame);
-
     runtime.ui.root = root;
-    runtime.ui.favoritesPanelFrame = favoritesPanelFrame;
     runtime.ui.compactLinkFavoriteTooltip = compactLinkFavoriteTooltip;
     compactLinkFavoriteTooltip.addEventListener("pointerenter", clearCompactLinkFavoriteTooltipHideTimer);
     compactLinkFavoriteTooltip.addEventListener("pointerleave", scheduleCompactLinkFavoriteTooltipHide);
@@ -1836,7 +1825,6 @@
     const selection = runtime.state.selection;
     populateSelectionOptions(runtime.ui.selection);
     runtime.ui.selection.value = selection;
-    runtime.ui.favoritesPanelFrame.title = t("favoritesFullViewTitle");
     runtime.pobCopy?.setLabels?.({
       ready: t("pobCopyReady"),
       loading: t("pobCopyLoading"),
@@ -2029,17 +2017,6 @@
   }
 
   function applyFavoritesView() {
-    const visible = getFavoritesViewMode() === "full" && runtime.state.favoritesPanelOpen;
-    const frame = runtime.ui?.favoritesPanelFrame;
-    if (frame) {
-      frame.hidden = !visible;
-      frame.setAttribute("aria-hidden", String(!visible));
-    }
-    if (!visible) {
-      runtime.favoritesPanelHovered = false;
-      updateIdleTransparencyState();
-    }
-    runtime.ui?.root?.classList?.toggle("poe2-marketwright-favorites-full-view-open", visible);
     applyFavoritesDrawerState();
     applyLinkFavoritesDrawerState();
     updateFavoritesViewModeButton();
@@ -2048,7 +2025,6 @@
   function applySidebarPosition() {
     const right = getSidebarPosition() === "right";
     runtime.ui?.root?.classList?.toggle("poe2-marketwright-sidebar-right", right);
-    runtime.ui?.favoritesPanelFrame?.classList?.toggle("poe2-marketwright-sidebar-right", right);
   }
 
   function bindIdleTransparency() {
@@ -2062,25 +2038,11 @@
     root.addEventListener("focusout", () => {
       window.setTimeout?.(updateIdleTransparencyState, 0);
     });
-    window.addEventListener("message", (event) => {
-      if (
-        event.source !== runtime.ui?.favoritesPanelFrame?.contentWindow ||
-        event.data?.type !== "poe2-marketwright-favorites-panel-hover"
-      ) {
-        return;
-      }
-      setFavoritesPanelHovered(event.data.hovered === true);
-    });
     applyIdleTransparency();
   }
 
   function setSidebarHovered(hovered) {
     runtime.sidebarHovered = Boolean(hovered);
-    updateIdleTransparencyState();
-  }
-
-  function setFavoritesPanelHovered(hovered) {
-    runtime.favoritesPanelHovered = Boolean(hovered);
     updateIdleTransparencyState();
   }
 
@@ -2097,7 +2059,6 @@
     window.clearTimeout?.(runtime.idleTransparencyTimer);
     if (
       runtime.sidebarHovered ||
-      runtime.favoritesPanelHovered ||
       isIdleTransparencySuppressed() ||
       !isIdleTransparencyEnabled()
     ) {
@@ -2115,14 +2076,25 @@
     const idle = Boolean(
       isIdleTransparencyEnabled() &&
         !runtime.sidebarHovered &&
-        !runtime.favoritesPanelHovered &&
         !isIdleTransparencySuppressed()
     );
     const opacity = String(normalizeIdleTransparency(runtime.state.idleTransparency) / 100);
-    for (const element of [runtime.ui?.root, runtime.ui?.favoritesPanelFrame]) {
-      element?.classList?.toggle("poe2-marketwright-idle", idle);
-      element?.style?.setProperty("--poe2-marketwright-idle-opacity", opacity);
+    runtime.ui?.root?.classList?.toggle("poe2-marketwright-idle", idle);
+    runtime.ui?.root?.style?.setProperty("--poe2-marketwright-idle-opacity", opacity);
+  }
+
+  function setNativeFavoritesPanelOpen(open) {
+    if (!chrome.runtime?.sendMessage || !runtime.favoritesPanelSessionId) {
+      return;
     }
+    chrome.runtime.sendMessage({
+      type: open ? "favorites-panel-open" : "favorites-panel-close",
+      sessionId: runtime.favoritesPanelSessionId
+    }).catch((error) => {
+      if (!isExtensionContextInvalidated(error)) {
+        console.debug("[PoE2 Marketwright] unable to change native favorites panel", error);
+      }
+    });
   }
 
   async function setFavoritesViewMode(mode) {
@@ -2141,6 +2113,9 @@
     runtime.state.favoritesDrawerOpen = nextMode === "compact" && wasOpen && tab === "items";
     runtime.state.linkFavoritesDrawerOpen = nextMode === "compact" && wasOpen && tab === "links";
     const shouldOpen = nextMode === "full" && wasOpen;
+    if (shouldOpen || nextMode === "compact") {
+      setNativeFavoritesPanelOpen(shouldOpen);
+    }
     runtime.state.favoritesPanelOpen = shouldOpen;
     applyFavoritesView();
     renderFavoriteDrawer();
@@ -2152,8 +2127,7 @@
   async function toggleFavoritesView(tab) {
     const nextTab = tab === "links" ? "links" : "items";
     if (getFavoritesViewMode() === "full") {
-      const shouldOpen = !runtime.state.favoritesPanelOpen || getFavoritesPanelTab() !== nextTab;
-      await setFavoritesPanelOpen(shouldOpen, nextTab);
+      await setFavoritesPanelOpen(true, nextTab);
       return;
     }
     if (nextTab === "items") {
@@ -2163,7 +2137,10 @@
     await setLinkFavoritesDrawerOpen(!runtime.state.linkFavoritesDrawerOpen);
   }
 
-  async function setFavoritesPanelOpen(open, tab = getFavoritesPanelTab()) {
+  async function setFavoritesPanelOpen(open, tab = getFavoritesPanelTab(), syncNativePanel = true) {
+    if (syncNativePanel) {
+      setNativeFavoritesPanelOpen(open);
+    }
     runtime.state.favoritesPanelTab = tab === "links" ? "links" : "items";
     runtime.state.favoritesPanelOpen = Boolean(open);
     runtime.state.favoritesDrawerOpen = false;
@@ -2383,6 +2360,10 @@
       return;
     }
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+      if (message?.type === "favorites-panel-closed" && sender?.id === chrome.runtime.id) {
+        setFavoritesPanelOpen(false, getFavoritesPanelTab(), false).catch(() => {});
+        return;
+      }
       if (
         message?.type !== "favorites-panel-command" ||
         message.sessionId !== runtime.favoritesPanelSessionId ||

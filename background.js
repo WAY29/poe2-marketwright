@@ -15,6 +15,16 @@
 
   const getFavoritesPanelSessionKey = (sessionId) => `${FAVORITES_PANEL_SESSION_PREFIX}${sessionId}`;
 
+  const getFavoritesPanelPath = (sessionId) =>
+    `favorites-panel.html?session=${encodeURIComponent(sessionId)}`;
+
+  const configureFavoritesPanel = (tabId, sessionId) =>
+    chrome.sidePanel?.setOptions?.({
+      tabId,
+      enabled: true,
+      path: getFavoritesPanelPath(sessionId)
+    }) || Promise.resolve();
+
   const isExtensionSender = (sender) => sender?.id === chrome.runtime.id;
 
   const normalizeEnglishUrl = (input) => {
@@ -114,9 +124,37 @@
         sendResponse({ ok: false, error: "invalid_panel_registration" });
         return;
       }
-      chrome.storage.session
-        .set({ [getFavoritesPanelSessionKey(sessionId)]: { tabId } })
+      Promise.all([
+        chrome.storage.session.set({ [getFavoritesPanelSessionKey(sessionId)]: { tabId } }),
+        configureFavoritesPanel(tabId, sessionId)
+      ])
         .then(() => sendResponse({ ok: true }))
+        .catch((error) => sendResponse({ ok: false, error: error?.message || String(error) }));
+      return true;
+    }
+
+    if (message.type === "favorites-panel-open" || message.type === "favorites-panel-close") {
+      const sessionId = normalizeFavoritesPanelSessionId(message.sessionId);
+      const tabId = sender?.tab?.id;
+      if (!isExtensionSender(sender) || !sessionId || !Number.isInteger(tabId)) {
+        sendResponse({ ok: false, error: "invalid_panel_request" });
+        return;
+      }
+      if (message.type === "favorites-panel-open") {
+        Promise.resolve(chrome.sidePanel?.open?.({ tabId }))
+          .then(() => sendResponse({ ok: true }))
+          .catch((error) => sendResponse({ ok: false, error: error?.message || String(error) }));
+        return true;
+      }
+      chrome.storage.session
+        .get(getFavoritesPanelSessionKey(sessionId))
+        .then((stored) => {
+          if (stored?.[getFavoritesPanelSessionKey(sessionId)]?.tabId !== tabId) {
+            return { ok: false, error: "unknown_panel_session" };
+          }
+          return Promise.resolve(chrome.sidePanel?.close?.({ tabId })).then(() => ({ ok: true }));
+        })
+        .then(sendResponse)
         .catch((error) => sendResponse({ ok: false, error: error?.message || String(error) }));
       return true;
     }
@@ -232,6 +270,16 @@
           sendResponse({ ok: false, error: error.message || String(error), details });
         });
       return true;
+    }
+  });
+
+  chrome.runtime.onInstalled?.addListener(() => {
+    chrome.sidePanel?.setOptions?.({ enabled: false }).catch(() => {});
+  });
+
+  chrome.sidePanel?.onClosed?.addListener(({ tabId }) => {
+    if (Number.isInteger(tabId)) {
+      chrome.tabs.sendMessage(tabId, { type: "favorites-panel-closed" }).catch(() => {});
     }
   });
 })();

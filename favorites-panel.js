@@ -151,7 +151,6 @@
     confirmingHistoryClear: false,
     movingLinkId: null,
     drag: null,
-    panelHovered: false,
     tooltipShowTimer: null,
     tooltipHideTimer: null,
     tooltipDismissTimer: null,
@@ -541,7 +540,6 @@
         event.preventDefault();
         event.stopPropagation();
         local.editing = { kind: "favorite", id: favorite.signature };
-        notifyParentHover();
         render();
       });
       const move = createIconButton(t("moveFavorite"), icons.move);
@@ -580,7 +578,6 @@
     const rename = createIconButton(t("renameFavoriteFolder"), icons.edit);
     rename.addEventListener("click", () => {
       local.editing = { kind: "favorite-folder", id: folder.id };
-      notifyParentHover();
       render();
     });
     const remove = createIconButton(t("deleteFavoriteFolder"), icons.delete, "favorites-panel-delete");
@@ -633,7 +630,6 @@
     let finished = false;
     const finishEditing = () => {
       local.editing = null;
-      notifyParentHover();
     };
     const commit = () => {
       if (finished) {
@@ -1263,7 +1259,6 @@
       const rename = createIconButton(t("renameLinkFavorite"), icons.edit);
       rename.addEventListener("click", () => {
         local.editing = { kind: "link", id: link.id };
-        notifyParentHover();
         render();
       });
       const move = createIconButton(t("moveLinkFavorite"), icons.move);
@@ -1388,7 +1383,6 @@
     const rename = createIconButton(t("renameLinkFavoriteFolder"), icons.edit);
     rename.addEventListener("click", () => {
       local.editing = { kind: "folder", id: folder.id };
-      notifyParentHover();
       render();
     });
     const remove = createIconButton(t("deleteLinkFavoriteFolder"), icons.delete, "favorites-panel-delete");
@@ -1438,14 +1432,12 @@
         event.dataTransfer.setData("text/plain", JSON.stringify(source));
       }
       element.classList.add("favorites-panel-dragging");
-      notifyParentHover();
     });
     element.addEventListener("dragend", () => {
       local.drag = null;
       ui.content?.classList.remove("favorites-panel-drag-active", `favorites-panel-dragging-${source.kind}`);
       element.classList.remove("favorites-panel-dragging");
       clearDragStyles();
-      notifyParentHover();
     });
   }
 
@@ -1669,15 +1661,6 @@
     }
   }
 
-  function notifyParentHover() {
-    const parent = window.parent;
-    if (!parent || parent === window || typeof parent.postMessage !== "function") {
-      return;
-    }
-    const hovered = Boolean(local.panelHovered || local.drag || local.editing);
-    parent.postMessage({ type: "poe2-marketwright-favorites-panel-hover", hovered }, "*");
-  }
-
   function bindUi() {
     ui.itemsTab.addEventListener("click", () => run("select-tab", { tab: "items" }));
     ui.linksTab.addEventListener("click", () => run("select-tab", { tab: "links" }));
@@ -1685,14 +1668,6 @@
     ui.close.addEventListener("click", () => run("close-panel"));
     ui.tooltip?.addEventListener("pointerenter", clearLinkFavoriteTooltipHideTimer);
     ui.tooltip?.addEventListener("pointerleave", scheduleLinkFavoriteTooltipHide);
-    document.documentElement.addEventListener("pointerenter", () => {
-      local.panelHovered = true;
-      notifyParentHover();
-    });
-    document.documentElement.addEventListener("pointerleave", () => {
-      local.panelHovered = false;
-      notifyParentHover();
-    });
     window.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
         hideLinkFavoriteTooltip();
