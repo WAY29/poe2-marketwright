@@ -70,6 +70,11 @@
   const BRIDGE_READY_TYPE = "POE2_MARKETWRIGHT_READY";
   const BRIDGE_STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
   const BRIDGE_SEARCH_SNAPSHOT_TYPE = "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT";
+  const BRIDGE_QUICK_ADD_COMMIT_TYPE = "POE2_MARKETWRIGHT_QUICK_ADD_COMMIT";
+  const BRIDGE_QUICK_ADD_RESET_TYPE = "POE2_MARKETWRIGHT_QUICK_ADD_RESET";
+  const BRIDGE_QUICK_ADD_STAGE_TYPE = "POE2_MARKETWRIGHT_QUICK_ADD_STAGE";
+  const BRIDGE_QUICK_ADD_STATE_TYPE = "POE2_MARKETWRIGHT_QUICK_ADD_STATE";
+  const BRIDGE_QUICK_ADD_COMMITTED_TYPE = "POE2_MARKETWRIGHT_QUICK_ADD_COMMITTED";
   const LINK_FAVORITE_STAT_GROUPS_VERSION = 3;
   const TRADE_ROOT_SELECTOR = "#trade";
   const NATIVE_TRADE_CACHE_KEYS = [
@@ -420,6 +425,12 @@
     ".vs__dropdown-menu",
     ".dropdown-menu"
   ].join(",");
+  const STAT_FILTER_ADD_MULTISELECT_SELECTOR =
+    "#trade .filter-group > .filter-group-body > .filter.filter-padded .multiselect.filter-select-mutate";
+  const STAT_FILTER_ADD_INPUT_SELECTOR = `${STAT_FILTER_ADD_MULTISELECT_SELECTOR} input.multiselect__input`;
+  const QUICK_ADD_TOGGLE_CLASS = "poe2-marketwright-quick-add-toggle";
+  const QUICK_ADD_STAGED_ATTRIBUTE = "data-poe2-marketwright-quick-add-staged";
+  const QUICK_ADD_STAGE_ATTRIBUTE = "data-poe2-marketwright-quick-add-stage";
   const I18N_FALLBACKS = {
     actionTitle: "PoE2 Marketwright",
     autoDetect: "Auto detect",
@@ -433,6 +444,9 @@
     selectionSourceAuto: "Auto",
     selectionSourceManual: "Manual",
     statsText: "Available $1 / Keep $2 / Ignore $3",
+    enableQuickAdd: "Enable quick add",
+    disableQuickAdd: "Disable quick add",
+    quickAddCommit: "Add $1 staged filters",
     tierSelectorLabel: "Tier",
     tierFeatureTitle: "Tier selection",
     tierMode: "Tier mode",
@@ -655,6 +669,15 @@
     compactLinkFavoriteTooltipPointer: null,
     compactLinkFavoriteTooltipHover: null,
     favoritesPanelSessionId: null,
+    quickAdd: {
+      active: false,
+      target: null,
+      group: null,
+      query: "",
+      reopenTimer: null,
+      stagedCount: 0,
+      stageSequence: 0
+    },
     ui: {}
   };
 
@@ -1842,6 +1865,7 @@
     renderFavoriteDrawer();
     renderLinkFavoritesDrawer();
     publishFavoritesPanelState();
+    refreshQuickAddControls();
     scheduleRefresh();
   }
 
@@ -6005,6 +6029,7 @@
     bindFavoritesPanelMessages();
     bindTradeControlListeners();
     bindTradeInteractionListeners();
+    bindQuickAddListeners();
     startSelectionPolling();
 
     const observer = new MutationObserver(() => {
@@ -6046,6 +6071,303 @@
         true
       );
     }
+  }
+
+  function bindQuickAddListeners() {
+    document.addEventListener(
+      "focusin",
+      (event) => {
+        handleQuickAddFocus(getQuickAddInput(event.target));
+      },
+      true
+    );
+    document.addEventListener(
+      "input",
+      (event) => {
+        updateQuickAddQuery(getQuickAddInput(event.target));
+      },
+      true
+    );
+    document.addEventListener(
+      "click",
+      (event) => {
+        const input = getQuickAddOptionInput(event.target);
+        if (event.shiftKey) {
+          if (stageQuickAddSelection(input, event.target)) {
+            event.preventDefault();
+            event.stopImmediatePropagation();
+          }
+          return;
+        }
+        captureQuickAddSelection(input);
+      },
+      true
+    );
+    document.addEventListener(
+      "keydown",
+      (event) => {
+        handleQuickAddKeydown(event);
+      },
+      true
+    );
+  }
+
+  function refreshQuickAddControls() {
+    if (!document.querySelectorAll) {
+      return;
+    }
+
+    const quickAdd = runtime.quickAdd;
+    if (quickAdd.active && quickAdd.group) {
+      const input = findQuickAddInput(quickAdd.group);
+      if (input) {
+        quickAdd.target = input;
+      }
+    }
+
+    for (const input of document.querySelectorAll(STAT_FILTER_ADD_INPUT_SELECTOR)) {
+      installQuickAddControl(input);
+    }
+    updateQuickAddControls();
+    renderQuickAddCommitControl();
+  }
+
+  function installQuickAddControl(input) {
+    const host = input.parentElement;
+    if (!host || host.querySelector(`.${QUICK_ADD_TOGGLE_CLASS}`)) {
+      return;
+    }
+
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = QUICK_ADD_TOGGLE_CLASS;
+    button.textContent = "+";
+    button.addEventListener("pointerdown", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+    button.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      toggleQuickAdd(getQuickAddInput(host.querySelector("input.multiselect__input")));
+    });
+    host.classList.add("poe2-marketwright-quick-add-host");
+    host.appendChild(button);
+  }
+
+  function updateQuickAddControls() {
+    for (const button of document.querySelectorAll?.(`.${QUICK_ADD_TOGGLE_CLASS}`) || []) {
+      const input = button.parentElement?.querySelector("input.multiselect__input");
+      const active = Boolean(runtime.quickAdd.active && runtime.quickAdd.target === input);
+      const label = t(active ? "disableQuickAdd" : "enableQuickAdd");
+      button.setAttribute("aria-pressed", String(active));
+      button.setAttribute("aria-label", label);
+      button.title = label;
+    }
+  }
+
+  function renderQuickAddCommitControl() {
+    for (const control of document.querySelectorAll?.(".poe2-marketwright-quick-add-batch-control") || []) {
+      control.remove();
+    }
+    const quickAdd = runtime.quickAdd;
+    const root = quickAdd.active && quickAdd.stagedCount > 0
+      ? quickAdd.target?.closest(STAT_FILTER_ADD_MULTISELECT_SELECTOR)
+      : null;
+    const wrapper = root?.querySelector(".multiselect__content-wrapper");
+    if (!wrapper) {
+      return;
+    }
+    const control = document.createElement("div");
+    control.className = "poe2-marketwright-quick-add-batch-control";
+    const button = document.createElement("button");
+    button.type = "button";
+    button.textContent = t("quickAddCommit", quickAdd.stagedCount);
+    control.appendChild(button);
+    wrapper.appendChild(control);
+  }
+
+  function getQuickAddInput(target) {
+    const input = target instanceof HTMLInputElement ? target : null;
+    return input?.matches(STAT_FILTER_ADD_INPUT_SELECTOR) ? input : null;
+  }
+
+  function getQuickAddOptionInput(target) {
+    if (!(target instanceof Element)) {
+      return null;
+    }
+    const option = target.closest(".multiselect__option");
+    if (option?.classList.contains("multiselect__option--disabled") || option?.getAttribute("aria-disabled") === "true") {
+      return null;
+    }
+    return getQuickAddInput(option?.closest(STAT_FILTER_ADD_MULTISELECT_SELECTOR)?.querySelector("input.multiselect__input"));
+  }
+
+  function findQuickAddInput(group) {
+    const input = group?.querySelector?.(STAT_FILTER_ADD_INPUT_SELECTOR);
+    return getQuickAddInput(input);
+  }
+
+  function enableQuickAdd(input) {
+    if (!input) {
+      return;
+    }
+    resetQuickAddStagedStats();
+    runtime.quickAdd.active = true;
+    setQuickAddTarget(input, input.value);
+  }
+
+  function toggleQuickAdd(input) {
+    if (!input) {
+      return false;
+    }
+    if (runtime.quickAdd.active && runtime.quickAdd.target === input) {
+      disableQuickAdd();
+      return false;
+    }
+    enableQuickAdd(input);
+    input.focus();
+    input.click();
+    return true;
+  }
+
+  function disableQuickAdd() {
+    const quickAdd = runtime.quickAdd;
+    if (quickAdd.reopenTimer !== null) {
+      clearTimeout(quickAdd.reopenTimer);
+    }
+    quickAdd.active = false;
+    quickAdd.target = null;
+    quickAdd.group = null;
+    quickAdd.query = "";
+    quickAdd.reopenTimer = null;
+    resetQuickAddStagedStats();
+    updateQuickAddControls();
+  }
+
+  function setQuickAddTarget(input, query) {
+    const group = input?.closest(".filter-group");
+    if (!group) {
+      disableQuickAdd();
+      return;
+    }
+    runtime.quickAdd.target = input;
+    runtime.quickAdd.group = group;
+    runtime.quickAdd.query = String(query || "");
+    updateQuickAddControls();
+  }
+
+  function handleQuickAddFocus(input) {
+    if (runtime.quickAdd.active && input && runtime.quickAdd.target !== input) {
+      resetQuickAddStagedStats();
+      setQuickAddTarget(input, input.value);
+    }
+  }
+
+  function updateQuickAddQuery(input) {
+    if (
+      runtime.quickAdd.active &&
+      runtime.quickAdd.reopenTimer === null &&
+      runtime.quickAdd.target === input
+    ) {
+      runtime.quickAdd.query = input.value;
+    }
+  }
+
+  function handleQuickAddKeydown(event) {
+    if (!runtime.quickAdd.active) {
+      return false;
+    }
+    if (event.key === "Escape") {
+      disableQuickAdd();
+      return true;
+    }
+    if (event.key === "Enter") {
+      return captureQuickAddSelection(getQuickAddInput(event.target));
+    }
+    return false;
+  }
+
+  function captureQuickAddSelection(input) {
+    const quickAdd = runtime.quickAdd;
+    if (!quickAdd.active || quickAdd.target !== input) {
+      return false;
+    }
+    if (quickAdd.reopenTimer !== null) {
+      return true;
+    }
+    quickAdd.query = input.value;
+    queueQuickAddReopen();
+    return true;
+  }
+
+  function stageQuickAddSelection(input, target) {
+    const quickAdd = runtime.quickAdd;
+    if (!quickAdd.active || quickAdd.target !== input || !(target instanceof Element)) {
+      return false;
+    }
+    const option = target.closest(".multiselect__option");
+    if (!option) {
+      return false;
+    }
+    if (option.getAttribute(QUICK_ADD_STAGED_ATTRIBUTE) === "true") {
+      option.removeAttribute(QUICK_ADD_STAGED_ATTRIBUTE);
+    } else {
+      option.setAttribute(QUICK_ADD_STAGED_ATTRIBUTE, "true");
+    }
+    const token = `quick-add-stage-${++quickAdd.stageSequence}`;
+    option.setAttribute(QUICK_ADD_STAGE_ATTRIBUTE, token);
+    window.postMessage(
+      { source: BRIDGE_SOURCE, type: BRIDGE_QUICK_ADD_STAGE_TYPE, payload: { token } },
+      "*"
+    );
+    return true;
+  }
+
+  function queueQuickAddReopen() {
+    const quickAdd = runtime.quickAdd;
+    if (quickAdd.reopenTimer !== null) {
+      return;
+    }
+    quickAdd.reopenTimer = window.setTimeout(() => {
+      quickAdd.reopenTimer = null;
+      reopenQuickAddInput();
+    }, 0);
+  }
+
+  function resetQuickAddStagedStats() {
+    runtime.quickAdd.stagedCount = 0;
+    window.postMessage({ source: BRIDGE_SOURCE, type: BRIDGE_QUICK_ADD_RESET_TYPE }, "*");
+  }
+
+  function commitQuickAddStagedStats() {
+    if (!runtime.quickAdd.active || runtime.quickAdd.stagedCount < 1) {
+      return;
+    }
+    window.postMessage({ source: BRIDGE_SOURCE, type: BRIDGE_QUICK_ADD_COMMIT_TYPE }, "*");
+  }
+
+  function reopenQuickAddInput() {
+    const quickAdd = runtime.quickAdd;
+    if (!quickAdd.active) {
+      return;
+    }
+    const input = findQuickAddInput(quickAdd.group);
+    if (!input) {
+      return;
+    }
+    quickAdd.target = input;
+    const query = quickAdd.query;
+    input.focus();
+    input.click();
+    const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+    if (setter) {
+      setter.call(input, query);
+    } else {
+      input.value = query;
+    }
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    updateQuickAddControls();
   }
 
   function isTradeSelectionEventTarget(target) {
@@ -6161,6 +6483,7 @@
       observeSelectionTarget(target);
     }
 
+    refreshQuickAddControls();
     scheduleRefresh();
   }
 
@@ -6197,6 +6520,18 @@
           return;
         }
         scheduleRefresh();
+        return;
+      }
+
+      if (event.data.type === BRIDGE_QUICK_ADD_STATE_TYPE) {
+        runtime.quickAdd.stagedCount = Math.max(0, Number(event.data.payload?.count) || 0);
+        refreshQuickAddControls();
+        return;
+      }
+
+      if (event.data.type === BRIDGE_QUICK_ADD_COMMITTED_TYPE) {
+        runtime.quickAdd.stagedCount = 0;
+        queueQuickAddReopen();
         return;
       }
 

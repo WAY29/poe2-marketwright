@@ -354,6 +354,15 @@
   "toggleOff": {
     "message": "关"
   },
+  "enableQuickAdd": {
+    "message": "启用快速添加"
+  },
+  "disableQuickAdd": {
+    "message": "关闭快速添加"
+  },
+  "quickAddCommit": {
+    "message": "添加 $1 个暂存词缀"
+  },
   "tierSelectorLabel": {
     "message": "词缀等级"
   },

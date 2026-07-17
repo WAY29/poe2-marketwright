@@ -10,6 +10,11 @@
   const READY_TYPE = "POE2_MARKETWRIGHT_READY";
   const STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
   const SEARCH_SNAPSHOT_TYPE = "POE2_MARKETWRIGHT_SEARCH_SNAPSHOT";
+  const QUICK_ADD_COMMIT_TYPE = "POE2_MARKETWRIGHT_QUICK_ADD_COMMIT";
+  const QUICK_ADD_RESET_TYPE = "POE2_MARKETWRIGHT_QUICK_ADD_RESET";
+  const QUICK_ADD_STAGE_TYPE = "POE2_MARKETWRIGHT_QUICK_ADD_STAGE";
+  const QUICK_ADD_STATE_TYPE = "POE2_MARKETWRIGHT_QUICK_ADD_STATE";
+  const QUICK_ADD_COMMITTED_TYPE = "POE2_MARKETWRIGHT_QUICK_ADD_COMMITTED";
   const SEARCH_SNAPSHOT_STORAGE_KEY = "poe2-marketwright:search-snapshot";
   const POB_MESSAGE_SOURCE = "poe2-marketwright-pob-copy";
   const FAVORITES_MESSAGE_SOURCE = "poe2-marketwright-favorites";
@@ -102,6 +107,11 @@
   const TIER_CONTROL_OPEN_CLASS = "poe2-marketwright-tier-control-open";
   const TIER_TRIGGER_CLASS = "poe2-marketwright-tier-trigger";
   const TIER_SELECT_CLASS = "poe2-marketwright-tier-select";
+  const QUICK_ADD_STAGED_ATTRIBUTE = "data-poe2-marketwright-quick-add-staged";
+  const QUICK_ADD_STAGE_ATTRIBUTE = "data-poe2-marketwright-quick-add-stage";
+  const QUICK_ADD_ROOT_SELECTOR =
+    "#trade .filter-group > .filter-group-body > .filter.filter-padded .multiselect.filter-select-mutate";
+  const QUICK_ADD_COMMIT_BUTTON_SELECTOR = ".poe2-marketwright-quick-add-batch-control button";
 
   const runtime = {
     app: null,
@@ -136,7 +146,10 @@
     tierOutsidePointerBound: false,
     tierObserver: null,
     tierRefreshTimer: null,
-    tradeOptionOriginalTexts: new WeakMap()
+    tradeOptionOriginalTexts: new WeakMap(),
+    quickAddStaged: new Set(),
+    quickAddGroupIndex: null,
+    quickAddCommitClickBound: false
   };
 
   window.addEventListener("message", (event) => {
@@ -158,6 +171,21 @@
       }
       installTierControls();
       scheduleTierControlRefresh();
+      return;
+    }
+
+    if (event.data.type === QUICK_ADD_COMMIT_TYPE) {
+      commitQuickAddStagedStats();
+      return;
+    }
+
+    if (event.data.type === QUICK_ADD_RESET_TYPE) {
+      resetQuickAddStagedStats();
+      return;
+    }
+
+    if (event.data.type === QUICK_ADD_STAGE_TYPE) {
+      stageQuickAddMarkedOption(event.data.payload?.token);
       return;
     }
 
@@ -195,6 +223,7 @@
     }
 
     runtime.app = app;
+    installQuickAddBatchCommitHandler();
     if (!runtime.originalKnownStats) {
       runtime.originalKnownStats = cloneKnownStats(staticData.knownStats);
     }
@@ -344,6 +373,146 @@
       }
     }
     return null;
+  }
+
+  function stageQuickAddMarkedOption(token) {
+    if (typeof token !== "string" || !token) {
+      return false;
+    }
+    const option = Array.from(window.document?.querySelectorAll?.(".multiselect__option") || []).find(
+      (element) => element.getAttribute(QUICK_ADD_STAGE_ATTRIBUTE) === token
+    );
+    if (!option) {
+      return false;
+    }
+    option.removeAttribute(QUICK_ADD_STAGE_ATTRIBUTE);
+    const root = option.closest(QUICK_ADD_ROOT_SELECTOR);
+    const statId = root ? getQuickAddOptionStatId(root, option) : "";
+    if (!statId) {
+      return false;
+    }
+    return toggleQuickAddStagedStat(root, statId);
+  }
+
+  function installQuickAddBatchCommitHandler() {
+    const document = window.document;
+    if (!document?.addEventListener || runtime.quickAddCommitClickBound) {
+      return;
+    }
+    document.addEventListener("pointerdown", handleQuickAddBatchCommit, true);
+    runtime.quickAddCommitClickBound = true;
+    logQuickAdd("batch button pointerdown listener installed");
+  }
+
+  function handleQuickAddBatchCommit(event) {
+    if (!(event.target instanceof Element) || !event.target.closest(QUICK_ADD_COMMIT_BUTTON_SELECTOR)) {
+      return;
+    }
+    logQuickAdd("batch button clicked", {
+      stagedCount: runtime.quickAddStaged.size,
+      groupIndex: runtime.quickAddGroupIndex,
+      hasStore: Boolean(runtime.app?.$store)
+    });
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    commitQuickAddStagedStats();
+  }
+
+  function getQuickAddOptionStatId(root, option) {
+    const component = getVueComponentFromElement(root);
+    const row = option.closest(".multiselect__element");
+    const list = component?.$refs?.list;
+    const rows = list?.querySelector?.(".multiselect__content")?.children || list?.children;
+    const index = rows ? Array.prototype.indexOf.call(rows, row) : -1;
+    const id = String(component?.filteredOptions?.[index]?.id || "");
+    return FILTERABLE_STAT_ID_RE.test(id) ? id : "";
+  }
+
+  function toggleQuickAddStagedStat(root, statId) {
+    const group = getQuickAddGroupIndex(root);
+    if (group === null) {
+      logQuickAdd("stage rejected: no stat group", { statId });
+      return false;
+    }
+    runtime.quickAddGroupIndex = group;
+    const staged = runtime.quickAddStaged;
+    if (staged.has(statId)) {
+      staged.delete(statId);
+    } else {
+      staged.add(statId);
+    }
+    renderQuickAddStagedStats(root);
+    notifyQuickAddState();
+    logQuickAdd("stage updated", { statId, stagedCount: staged.size, groupIndex: group });
+    return true;
+  }
+
+  function renderQuickAddStagedStats(root) {
+    for (const option of root.querySelectorAll?.(".multiselect__option") || []) {
+      const staged = runtime.quickAddStaged.has(getQuickAddOptionStatId(root, option));
+      if (staged) {
+        option.setAttribute(QUICK_ADD_STAGED_ATTRIBUTE, "true");
+      } else {
+        option.removeAttribute(QUICK_ADD_STAGED_ATTRIBUTE);
+      }
+    }
+  }
+
+  function getQuickAddGroupIndex(root) {
+    for (let component = getVueComponentFromElement(root); component; component = component.$parent) {
+      const group = component.group;
+      if (Number.isInteger(group?.id) && typeof component.selectFilter === "function") {
+        return group.id;
+      }
+    }
+    return null;
+  }
+
+  function commitQuickAddStagedStats() {
+    const staged = runtime.quickAddStaged;
+    const group = runtime.quickAddGroupIndex;
+    if (!staged.size || group === null || !runtime.app?.$store) {
+      logQuickAdd("batch commit skipped", {
+        stagedCount: staged.size,
+        groupIndex: group,
+        hasStore: Boolean(runtime.app?.$store)
+      });
+      return;
+    }
+    const ids = Array.from(staged);
+    logQuickAdd("batch commit started", { ids, groupIndex: group });
+    try {
+      for (const id of ids) {
+        runtime.app.$store.commit("setStatFilter", { group, value: { id } });
+      }
+      runtime.app.$root?.save?.(true);
+    } catch (error) {
+      console.error("[poe2-marketwright quick-add] batch commit failed", error);
+      return;
+    }
+    resetQuickAddStagedStats();
+    logQuickAdd("batch commit completed", { ids, groupIndex: group });
+    window.postMessage({ source: SOURCE, type: QUICK_ADD_COMMITTED_TYPE }, "*");
+  }
+
+  function resetQuickAddStagedStats() {
+    for (const option of window.document?.querySelectorAll?.(`[${QUICK_ADD_STAGED_ATTRIBUTE}="true"]`) || []) {
+      option.removeAttribute(QUICK_ADD_STAGED_ATTRIBUTE);
+    }
+    runtime.quickAddStaged.clear();
+    runtime.quickAddGroupIndex = null;
+    window.postMessage({ source: SOURCE, type: QUICK_ADD_STATE_TYPE, payload: { count: 0 } }, "*");
+  }
+
+  function notifyQuickAddState() {
+    window.postMessage(
+      { source: SOURCE, type: QUICK_ADD_STATE_TYPE, payload: { count: runtime.quickAddStaged.size } },
+      "*"
+    );
+  }
+
+  function logQuickAdd(message, detail) {
+    console.info("[poe2-marketwright quick-add] " + message, detail || "");
   }
 
   function installTierControls() {

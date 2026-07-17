@@ -14,6 +14,19 @@ test("open Tier selector stacks above adjacent Tier controls", () => {
   );
 });
 
+test("staged quick-add options retain their appearance while hovered", () => {
+  const styles = fs.readFileSync("content.css", "utf8");
+
+  assert.match(
+    styles,
+    /\.multiselect \.multiselect__option\[data-poe2-marketwright-quick-add-staged=['"]true['"]\]\.multiselect__option--highlight/
+  );
+  assert.match(
+    styles,
+    /\.multiselect__option\[data-poe2-marketwright-quick-add-staged=['"]true['"]\]\s*\{[\s\S]*background-color:\s*rgba\(142, 98, 42, 0\.34\) !important;/
+  );
+});
+
 test("page bridge applies native multi-token search only to item and stat selectors", () => {
   const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
   let source = fs
@@ -222,6 +235,194 @@ test("page bridge localizes Trade status, price, and league options", () => {
   assert.deepStrictEqual(restoredCurrencies, ["Exalted Orb", "Chaos Orb", "Divine Orb"]);
 });
 
+test("page bridge commits staged quick-add stats to the current stat group", () => {
+  const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
+  let source = fs
+    .readFileSync("page-bridge.js", "utf8")
+    .replace(bootstrapCall, "")
+    .replace(
+      /\n\}\)\(\);\s*$/,
+      "\n  window.__testHooks = { toggleQuickAddStagedStat, commitQuickAddStagedStats, handleQuickAddBatchCommit, installQuickAddBatchCommitHandler, runtime };\n})();"
+    );
+  const commits = [];
+  const messages = [];
+  const listeners = [];
+  class FakeElement {
+    closest(selector) {
+      return selector === ".poe2-marketwright-quick-add-batch-control button" ? this : null;
+    }
+  }
+  const statGroup = { group: { id: 2 }, selectFilter() {} };
+  const root = {
+    __vue__: { $parent: statGroup },
+    querySelectorAll() {
+      return [];
+    }
+  };
+  const sandbox = {
+    window: {
+      addEventListener() {},
+      postMessage(message) {
+        messages.push(message);
+      },
+      document: {
+        addEventListener(type, listener) {
+          listeners.push({ type, listener });
+        },
+        querySelector() {
+          return root;
+        }
+      }
+    },
+    Element: FakeElement,
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.app = {
+    $store: {
+      commit(type, payload) {
+        commits.push({ type, payload });
+      }
+    },
+    $root: {
+      save(dirty) {
+        commits.push({ type: "save", dirty });
+      }
+    }
+  };
+  hooks.installQuickAddBatchCommitHandler();
+  assert.equal(listeners.at(-1).type, "pointerdown");
+  hooks.toggleQuickAddStagedStat(root, "explicit.stat_life");
+  hooks.toggleQuickAddStagedStat(root, "explicit.stat_fire_resistance");
+  hooks.commitQuickAddStagedStats();
+
+  assert.deepStrictEqual(structuredClone(commits), [
+    { type: "setStatFilter", payload: { group: 2, value: { id: "explicit.stat_life" } } },
+    { type: "setStatFilter", payload: { group: 2, value: { id: "explicit.stat_fire_resistance" } } },
+    { type: "save", dirty: true }
+  ]);
+  assert.equal(messages.at(-1).type, "POE2_MARKETWRIGHT_QUICK_ADD_COMMITTED");
+
+  commits.length = 0;
+  hooks.toggleQuickAddStagedStat(root, "explicit.stat_life");
+  const event = {
+    target: new FakeElement(),
+    preventDefault() {
+      this.prevented = true;
+    },
+    stopImmediatePropagation() {
+      this.stopped = true;
+    }
+  };
+  hooks.handleQuickAddBatchCommit(event);
+  assert.equal(event.prevented, true);
+  assert.equal(event.stopped, true);
+  assert.deepEqual(structuredClone(commits), [
+    { type: "setStatFilter", payload: { group: 2, value: { id: "explicit.stat_life" } } },
+    { type: "save", dirty: true }
+  ]);
+});
+
+test("page bridge stages a content-marked stat option without an active root marker", () => {
+  const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
+  let source = fs
+    .readFileSync("page-bridge.js", "utf8")
+    .replace(bootstrapCall, "")
+    .replace(
+      /\n\}\)\(\);\s*$/,
+      "\n  window.__testHooks = { stageQuickAddMarkedOption, runtime };\n})();"
+    );
+  class FakeElement {
+    constructor(parent = null) {
+      this.parentElement = parent;
+      this.classes = new Set();
+      this.attributes = {};
+      this.classList = {
+        contains: (name) => this.classes.has(name),
+        toggle: (name, enabled) => {
+          if (enabled) {
+            this.classes.add(name);
+          } else {
+            this.classes.delete(name);
+          }
+        }
+      };
+    }
+
+    getAttribute(name) {
+      return this.attributes[name] || null;
+    }
+
+    removeAttribute(name) {
+      delete this.attributes[name];
+    }
+
+    setAttribute(name, value) {
+      this.attributes[name] = value;
+    }
+
+    closest(selector) {
+      for (let current = this; current; current = current.parentElement) {
+        if (selector.startsWith(".") && current.classes.has(selector.slice(1))) {
+          return current;
+        }
+        if (selector.includes("filter-group-body") && current === root) {
+          return current;
+        }
+      }
+      return null;
+    }
+  }
+  const messages = [];
+  const root = new FakeElement();
+  const labelRow = new FakeElement(root);
+  labelRow.classes.add("multiselect__element");
+  const row = new FakeElement(root);
+  row.classes.add("multiselect__element");
+  const option = new FakeElement(row);
+  option.classes.add("multiselect__option");
+  option.attributes["data-poe2-marketwright-quick-add-stage"] = "test-stage";
+  const statGroup = { group: { id: 2 }, selectFilter() {} };
+  root.__vue__ = {
+    $parent: statGroup,
+    filteredOptions: [{ $isLabel: true }, { id: "explicit.stat_life" }],
+    $refs: {
+      list: {
+        querySelector(selector) {
+          return selector === ".multiselect__content" ? { children: [labelRow, row] } : null;
+        }
+      }
+    }
+  };
+  root.querySelectorAll = () => [option];
+  const sandbox = {
+    window: {
+      addEventListener() {},
+      postMessage(message) {
+        messages.push(message);
+      },
+      document: {
+        querySelectorAll() {
+          return [option];
+        }
+      }
+    },
+    Element: FakeElement,
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
+
+  assert.equal(sandbox.window.__testHooks.stageQuickAddMarkedOption("test-stage"), true);
+  assert.equal(option.attributes["data-poe2-marketwright-quick-add-stage"], undefined);
+  assert.equal(option.attributes["data-poe2-marketwright-quick-add-staged"], "true");
+  assert.deepEqual(structuredClone(messages.at(-1)), {
+    source: "poe2-marketwright",
+    type: "POE2_MARKETWRIGHT_QUICK_ADD_STATE",
+    payload: { count: 1 }
+  });
+});
+
 test("page bridge inserts a Tier selector for a Vue stat filter and updates min", () => {
   const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
   let source = fs
@@ -285,6 +486,10 @@ test("page bridge inserts a Tier selector for a Vue stat filter and updates min"
 
     setAttribute(name, value) {
       this.attributes[name] = value;
+    }
+
+    getAttribute(name) {
+      return this.attributes[name] || null;
     }
 
     dispatchEvent(event) {
@@ -437,6 +642,202 @@ test("page bridge inserts a Tier selector for a Vue stat filter and updates min"
   select.dispatchEvent(new FakeEvent("change"));
   assert.equal(input.value, "20.6");
   assert.equal(maxInput.value, "25.5");
+});
+
+test("quick add restores the native stat input and follows the active stat group", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { bindQuickAddListeners, enableQuickAdd, toggleQuickAdd, captureQuickAddSelection, handleQuickAddFocus, handleQuickAddKeydown, updateQuickAddQuery, runtime };\n})();"
+  );
+
+  class FakeEvent {
+    constructor(type, options = {}) {
+      this.type = type;
+      this.bubbles = options.bubbles;
+    }
+  }
+
+  class FakeGroup {
+    constructor() {
+      this.input = null;
+    }
+
+    querySelector() {
+      return this.input;
+    }
+  }
+
+  class FakeInput {
+    constructor(group, value = "") {
+      this.group = group;
+      this.value = value;
+      this.events = [];
+      this.attributes = {};
+      this.classes = new Set();
+      this.classList = {
+        contains: (name) => this.classes.has(name),
+        toggle: (name, enabled) => {
+          if (enabled) {
+            this.classes.add(name);
+          } else {
+            this.classes.delete(name);
+          }
+        }
+      };
+      this.focusCount = 0;
+      this.clickCount = 0;
+    }
+
+    closest(selector) {
+      if (selector === ".filter-group") {
+        return this.group;
+      }
+      if (selector === ".multiselect.filter-select-mutate") {
+        return {};
+      }
+      if (selector === ".multiselect__option") {
+        return this.option ? this : null;
+      }
+      if (selector.includes("filter-group-body")) {
+        return this.multiselect || null;
+      }
+      return null;
+    }
+
+    setAttribute(name, value) {
+      this.attributes[name] = value;
+    }
+
+    getAttribute(name) {
+      return this.attributes[name] || null;
+    }
+
+    matches() {
+      return true;
+    }
+
+    focus() {
+      this.focusCount += 1;
+    }
+
+    click() {
+      this.clickCount += 1;
+      this.value = "";
+    }
+
+    dispatchEvent(event) {
+      this.events.push(event.type);
+      return true;
+    }
+  }
+
+  const timers = [];
+  const documentListeners = new Map();
+  const messages = [];
+  const groupA = new FakeGroup();
+  const groupB = new FakeGroup();
+  const inputA = new FakeInput(groupA, "maximum life");
+  const inputB = new FakeInput(groupB, "fire resistance");
+  groupA.input = inputA;
+  groupB.input = inputB;
+  const sandbox = {
+    window: {
+      addEventListener() {},
+      clearTimeout() {},
+      postMessage(message) {
+        messages.push(message);
+      },
+      getComputedStyle() {
+        return { display: "block", visibility: "visible", opacity: "1" };
+      },
+      setTimeout(callback) {
+        timers.push(callback);
+        return timers.length;
+      }
+    },
+    document: {
+      addEventListener(type, listener) {
+        documentListeners.set(type, listener);
+      },
+      querySelectorAll() {
+        return [];
+      }
+    },
+    Event: FakeEvent,
+    clearTimeout() {},
+    location: { pathname: "/trade2" },
+    console,
+    Element: FakeInput,
+    HTMLInputElement: FakeInput,
+    HTMLTextAreaElement: class extends FakeInput {},
+    MutationObserver: class {},
+    chrome: {}
+  };
+
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.bindQuickAddListeners();
+  assert.equal(documentListeners.has("click"), true);
+  assert.equal(documentListeners.has("mousedown"), false);
+
+  hooks.enableQuickAdd(inputA);
+  assert.equal(hooks.runtime.quickAdd.active, true);
+  assert.equal(hooks.runtime.quickAdd.target, inputA);
+  messages.length = 0;
+  const option = new FakeInput(groupA);
+  option.option = true;
+  option.multiselect = { querySelector() { return inputA; } };
+  const shiftClick = {
+    shiftKey: true,
+    target: option,
+    preventDefault() {
+      this.prevented = true;
+    },
+    stopImmediatePropagation() {
+      this.stopped = true;
+    }
+  };
+  documentListeners.get("click")(shiftClick);
+  assert.equal(shiftClick.prevented, true);
+  assert.equal(shiftClick.stopped, true);
+  assert.equal(option.attributes["data-poe2-marketwright-quick-add-staged"], "true");
+  assert.equal(option.attributes["data-poe2-marketwright-quick-add-stage"], "quick-add-stage-1");
+  assert.deepEqual(structuredClone(messages.at(-1)), {
+    source: "poe2-marketwright",
+    type: "POE2_MARKETWRIGHT_QUICK_ADD_STAGE",
+    payload: { token: "quick-add-stage-1" }
+  });
+  hooks.runtime.quickAdd.stagedCount = 1;
+  messages.length = 0;
+  documentListeners.get("click")({ shiftKey: false, target: option });
+  assert.equal(messages.length, 0);
+  assert.equal(hooks.captureQuickAddSelection(inputA), true);
+  inputA.value = "";
+  hooks.updateQuickAddQuery(inputA);
+  assert.equal(hooks.runtime.quickAdd.query, "maximum life");
+  assert.equal(hooks.captureQuickAddSelection(inputA), true);
+
+  const replacement = new FakeInput(groupA);
+  groupA.input = replacement;
+  timers.shift()();
+  assert.equal(replacement.value, "maximum life");
+  assert.deepEqual(replacement.events, ["input"]);
+  assert.equal(replacement.focusCount, 1);
+  assert.equal(replacement.clickCount, 1);
+  assert.equal(hooks.runtime.quickAdd.target, replacement);
+
+  hooks.handleQuickAddFocus(inputB);
+  assert.equal(hooks.runtime.quickAdd.target, inputB);
+  assert.equal(hooks.captureQuickAddSelection(replacement), false);
+  assert.equal(hooks.captureQuickAddSelection(inputB), true);
+
+  hooks.handleQuickAddKeydown({ key: "Escape" });
+  assert.equal(hooks.runtime.quickAdd.active, false);
+  hooks.enableQuickAdd(replacement);
+  assert.equal(hooks.toggleQuickAdd(replacement), false);
+  assert.equal(hooks.runtime.quickAdd.active, false);
 });
 
 test("page bridge hides unmatched known stats but keeps related pseudo", async () => {

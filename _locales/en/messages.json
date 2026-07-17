@@ -66,6 +66,15 @@
   "toggleOff": {
     "message": "OFF"
   },
+  "enableQuickAdd": {
+    "message": "Enable quick add"
+  },
+  "disableQuickAdd": {
+    "message": "Disable quick add"
+  },
+  "quickAddCommit": {
+    "message": "Add $1 staged filters"
+  },
   "tierSelectorLabel": {
     "message": "Tier"
   },

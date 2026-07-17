@@ -354,6 +354,15 @@
   "toggleOff": {
     "message": "關"
   },
+  "enableQuickAdd": {
+    "message": "啟用快速新增"
+  },
+  "disableQuickAdd": {
+    "message": "關閉快速新增"
+  },
+  "quickAddCommit": {
+    "message": "新增 $1 個暫存詞綴"
+  },
   "tierSelectorLabel": {
     "message": "詞綴階級"
   },
