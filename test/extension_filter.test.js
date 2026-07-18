@@ -1335,7 +1335,7 @@ test("content filter does not keep pseudo for incidental token overlap", async (
   assert.equal(result["explicitOtherHidden"], true);
 });
 
-test("content auto detect overrides special map items", async () => {
+test("content auto detects expedition logbooks without map affixes", async () => {
 
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
@@ -1376,17 +1376,17 @@ test("content auto detect overrides special map items", async () => {
       "expedition logbook": "Expedition_Tablet"
     },
     itemNameToSelection: {
-      "expedition logbook": { kind: "logical", id: "Maps" },
-      "探险日志": { kind: "logical", id: "Maps" },
-      "探險日誌": { kind: "logical", id: "Maps" }
+      "expedition logbook": { kind: "page", id: "Expedition_Logbook" },
+      "先祖秘藏日志": { kind: "page", id: "Expedition_Logbook" },
+      "探險日誌": { kind: "page", id: "Expedition_Logbook" }
     },
-    logicalCategories: {
-      Maps: { pageSlugs: ["Expedition_Tablet"] }
+    pageCategories: {
+      Expedition_Logbook: { allowedPatterns: [], allowedStatIds: [] }
     }
   };
   hooks.runtime.itemLookupEntries = [
     "expedition logbook",
-    "探险日志",
+    "先祖秘藏日志",
     "探險日誌"
   ];
   hooks.runtime.categoryAliasToSelection = {
@@ -1400,14 +1400,14 @@ test("content auto detect overrides special map items", async () => {
   });
 
   const result = structuredClone({
-    simplifiedLogbook: detectItem("探险日志"),
+    simplifiedLogbook: detectItem("先祖秘藏日志"),
     traditionalLogbook: detectItem("探險日誌"),
     englishLogbook: detectItem("Expedition Logbook"),
     expeditionTablet: detectItem("探险碑牌")
   });
-  assert.deepStrictEqual(result["simplifiedLogbook"], {"kind": "logical", "id": "Maps", "source": "item", "match": "探险日志"});
-  assert.deepStrictEqual(result["traditionalLogbook"], {"kind": "logical", "id": "Maps", "source": "item", "match": "探險日誌"});
-  assert.deepStrictEqual(result["englishLogbook"], {"kind": "logical", "id": "Maps", "source": "item", "match": "expedition logbook"});
+  assert.deepStrictEqual(result["simplifiedLogbook"], {"kind": "page", "id": "Expedition_Logbook", "source": "item", "match": "先祖秘藏日志"});
+  assert.deepStrictEqual(result["traditionalLogbook"], {"kind": "page", "id": "Expedition_Logbook", "source": "item", "match": "探險日誌"});
+  assert.deepStrictEqual(result["englishLogbook"], {"kind": "page", "id": "Expedition_Logbook", "source": "item", "match": "expedition logbook"});
   assert.deepStrictEqual(result["expeditionTablet"], {"kind": "page", "id": "Expedition_Tablet", "source": "item", "match": "探险碑牌"});
 });
 

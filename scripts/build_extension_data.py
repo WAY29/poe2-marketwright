@@ -93,12 +93,6 @@ TRADE_STAT_LOCALIZATION_PAGE_SLUGS = ("Keystone",)
 # paths. They supplement only Trade stat IDs that both regional APIs leave in
 # English.
 TRADE_STAT_LOCALIZATION_MOD_PAGE_SLUGS = ("Runes", "One_Hand_Axes", "Flails")
-# The page title uses a different but semantically equivalent Taiwanese term.
-# Keep the user-approved Trade spelling after the upstream page identity is
-# verified through its English, simplified, and traditional titles.
-TRADE_STAT_LOCALIZATION_OVERRIDES = {
-    "Dance With Death": {"zh_TW": "和死共舞"},
-}
 TRADE_ITEM_PREFIX_LOCALIZATIONS = {
     "Runeforged ": {"zh_CN": "符锻", "zh_TW": "符鍛"},
 }
@@ -251,9 +245,6 @@ EXTRA_PAGE_ITEM_NAMES = {
     "Waystones_mid_tier": [f"Waystone (Tier {tier})" for tier in range(6, 11)],
     "Waystones_top_tier": [f"Waystone (Tier {tier})" for tier in range(11, 17)],
 }
-PAGE_ITEM_NAME_CLASS_FILTERS = {
-    "Charms": "UtilityFlask",
-}
 EXTRA_PAGE_ALLOWED_TRADE_STAT_TEXTS = {
     "Charms": [
         "#% increased Duration (Charm)",
@@ -263,9 +254,16 @@ EXTRA_PAGE_ALLOWED_TRADE_STAT_TEXTS = {
         "Charms gain # charge per Second",
     ],
 }
-LOCALIZED_ITEM_NAME_SELECTION_OVERRIDES = {
-    "探险日志": {"kind": "logical", "id": "Maps"},
-    "探險日誌": {"kind": "logical", "id": "Maps"},
+EXACT_ITEM_CATEGORY_SPECS = {
+    "Expedition_Logbook": {
+        "label": "Expedition Logbook",
+        "itemNames": ["Expedition Logbook"],
+    },
+}
+EXACT_TRADE_ITEM_SELECTIONS = {
+    item_name.lower(): {"kind": "page", "id": category_id}
+    for category_id, spec in EXACT_ITEM_CATEGORY_SPECS.items()
+    for item_name in spec["itemNames"]
 }
 TABLET_PAGE_SLUGS = [
     "Breach_Tablet",
@@ -418,6 +416,7 @@ class PageArtifacts:
     allowed_patterns: list[str]
     allowed_stat_ids: list[str]
     item_names: list[str]
+    item_class_code: str | None = None
 
 
 @dataclass
@@ -2011,7 +2010,6 @@ def apply_verified_poe2db_stat_localizations(
     verified_english_names: dict[str, str],
     simplified_names: dict[str, str],
     traditional_names: dict[str, str],
-    overrides: dict[str, dict[str, str]] | None = None,
 ) -> int:
     """Fill only dual-locale stat gaps from a PoE2DB page verified in all locales."""
 
@@ -2029,9 +2027,8 @@ def apply_verified_poe2db_stat_localizations(
         traditional = str(traditional_names.get(english) or "").strip()
         if not simplified or not traditional:
             continue
-        override = (overrides or {}).get(english) or {}
-        record["zh_CN"] = str(override.get("zh_CN") or simplified).strip()
-        record["zh_TW"] = str(override.get("zh_TW") or traditional).strip()
+        record["zh_CN"] = simplified
+        record["zh_TW"] = traditional
         applied += 1
     return applied
 
@@ -2411,21 +2408,6 @@ def merge_extra_artifacts(*artifacts_by_slug: dict[str, list[str]]) -> dict[str,
     return {page_slug: sorted(values) for page_slug, values in merged.items()}
 
 
-async def fetch_page_item_names(page_url: str, item_class_code: str | None = None) -> list[str]:
-    async with build_async_client(max_connections=1) as client:
-        html = await fetch_text(client, page_url)
-    return parse_page_html_artifacts(html, item_class_code).item_names
-
-
-async def collect_item_names(page_urls: list[str], workers: int) -> dict[str, list[str]]:
-    page_artifacts_by_slug = await collect_page_html_artifacts(
-        page_urls,
-        workers,
-        PAGE_ITEM_NAME_CLASS_FILTERS,
-    )
-    return {slug: page_artifacts.item_names for slug, page_artifacts in page_artifacts_by_slug.items()}
-
-
 async def collect_page_html_artifacts(
     page_urls: list[str],
     workers: int,
@@ -2556,6 +2538,21 @@ def add_verified_unique_item_localized_selection_aliases(
             existing_type = unique_item_type_by_name.get(localized_key)
             if existing_type in (None, unique_item_type):
                 unique_item_type_by_name[localized_key] = unique_item_type
+
+
+def add_exact_item_localized_selection_aliases(
+    item_name_to_selection: dict[str, dict[str, str]],
+    item_localizations: dict[str, dict[str, str]],
+) -> None:
+    """Add verified regional names for exact item categories."""
+
+    for category_id, spec in EXACT_ITEM_CATEGORY_SPECS.items():
+        selection = {"kind": "page", "id": category_id}
+        for english in spec["itemNames"]:
+            for localized in (item_localizations.get(english) or {}).values():
+                localized_key = normalize_lookup_text(localized)
+                if localized_key and item_name_to_selection.get(localized_key) in (None, selection):
+                    item_name_to_selection[localized_key] = selection
 
 
 def collect_base_item_mod_stat_artifacts(
@@ -2937,6 +2934,7 @@ def load_page_artifacts(split_dir: Path, trade_stat_index: dict[str, set[str]]) 
                 allowed_patterns=sorted(patterns),
                 allowed_stat_ids=sorted(stat_ids),
                 item_names=[],
+                item_class_code=str(page.get("item_class_code") or "").strip() or None,
             )
         )
     return artifacts
@@ -3022,6 +3020,16 @@ def build_page_categories(
                 ]
             ),
         }
+    for category_id, spec in EXACT_ITEM_CATEGORY_SPECS.items():
+        page_categories[category_id] = {
+            "label": spec["label"],
+            "pageGroup": None,
+            "pageUrl": "",
+            "allowedPatterns": [],
+            "allowedStatIds": [],
+            "itemNames": list(spec["itemNames"]),
+            "aliases": [spec["label"]],
+        }
     return page_categories
 
 
@@ -3096,9 +3104,6 @@ def build_item_name_selection_map(
                 continue
             for item_name in trade_item_lookup_names(entry):
                 item_name_to_selection.setdefault(normalize_lookup_text(item_name), selection)
-
-    for item_name, selection in LOCALIZED_ITEM_NAME_SELECTION_OVERRIDES.items():
-        item_name_to_selection[normalize_lookup_text(item_name)] = selection
 
     return item_name_to_selection
 
@@ -3178,6 +3183,8 @@ def select_trade_item_entry(
     page_lookup: dict[str, str],
 ) -> dict[str, str] | None:
     item_type = normalize_lookup_text(entry.get("type") or "")
+    if exact_selection := EXACT_TRADE_ITEM_SELECTIONS.get(item_type):
+        return exact_selection
     page_slug = page_lookup.get(item_type)
     if page_slug:
         return {"kind": "page", "id": page_slug}
@@ -3452,7 +3459,7 @@ async def main() -> int:
     page_html_artifacts_by_slug = await collect_page_html_artifacts(
         [artifact.page_url for artifact in artifacts],
         args.workers,
-        PAGE_ITEM_NAME_CLASS_FILTERS,
+        {artifact.page_slug: artifact.item_class_code for artifact in artifacts if artifact.item_class_code},
         args.poe2db_batch_size,
         args.poe2db_batch_delay_seconds,
     )
@@ -3572,7 +3579,6 @@ async def main() -> int:
         verified_keystone_names,
         keystone_simplified_names,
         keystone_traditional_names,
-        TRADE_STAT_LOCALIZATION_OVERRIDES,
     )
     modifier_localizations = build_verified_poe2db_stat_mod_localizations(
         display_metadata["stats"],
@@ -3633,6 +3639,7 @@ async def main() -> int:
         display_metadata["items"],
         TRADE_ITEM_PREFIX_LOCALIZATIONS,
     )
+    add_exact_item_localized_selection_aliases(item_name_to_selection, display_metadata["items"])
     trade_item_display_names = build_trade_item_display_names(trade_items_payload)
     (
         supplemental_english_item_names,

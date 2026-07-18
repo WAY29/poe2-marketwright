@@ -17,6 +17,9 @@
   "selectionGroupExactBases": {
     "message": "Exact bases"
   },
+  "selectionPage_Expedition_Logbook": {
+    "message": "Expedition Logbook"
+  },
   "collapsePanel": {
     "message": "Collapse panel"
   },

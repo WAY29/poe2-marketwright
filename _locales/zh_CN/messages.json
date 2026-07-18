@@ -187,6 +187,9 @@
   "selectionPage_Expedition_Tablet": {
     "message": "探险碑牌"
   },
+  "selectionPage_Expedition_Logbook": {
+    "message": "先祖秘藏日志"
+  },
   "selectionPage_Flails": {
     "message": "连枷"
   },

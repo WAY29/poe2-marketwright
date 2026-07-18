@@ -36,6 +36,7 @@ from build_extension_data import (
     build_trade_skill_stat_index,
     build_item_name_map,
     build_item_name_selection_map,
+    add_exact_item_localized_selection_aliases,
     build_page_categories,
     build_trade_stat_index,
     build_affix_effects,
@@ -963,7 +964,6 @@ class TradeStatMappingTests(unittest.TestCase):
             {"Ancestral Bond": "Ancestral Bond", "Dance With Death": "Dance With Death"},
             {"Ancestral Bond": "先祖魂约", "Dance With Death": "与亡共舞"},
             {"Ancestral Bond": "先祖魂約", "Dance With Death": "與死共舞"},
-            {"Dance With Death": {"zh_TW": "和死共舞"}},
         )
 
         self.assertEqual(applied, 2)
@@ -977,7 +977,7 @@ class TradeStatMappingTests(unittest.TestCase):
         self.assertEqual(stats["explicit.dance"], {
             "en": "Dance With Death",
             "zh_CN": "与亡共舞",
-            "zh_TW": "和死共舞",
+            "zh_TW": "與死共舞",
         })
 
     def test_composes_verified_runeforged_item_names_without_overwriting_official_names(self) -> None:
@@ -1665,7 +1665,7 @@ class TradeStatMappingTests(unittest.TestCase):
         self.assertEqual(item_name_to_selection["waystone (tier 11)"], {"kind": "page", "id": "Waystones_top_tier"})
         self.assertEqual(item_name_to_selection["waystone (tier 16)"], {"kind": "page", "id": "Waystones_top_tier"})
 
-    def test_official_trade_items_drive_item_name_selections(self) -> None:
+    def test_official_trade_items_keep_expedition_logbooks_out_of_map_affixes(self) -> None:
         artifacts = [
             PageArtifacts(
                 page_slug="Expedition_Tablet",
@@ -1718,8 +1718,20 @@ class TradeStatMappingTests(unittest.TestCase):
             ],
         }
         item_name_to_selection = build_item_name_selection_map(trade_items_payload, page_categories)
+        add_exact_item_localized_selection_aliases(
+            item_name_to_selection,
+            {
+                "Expedition Logbook": {
+                    "en": "Expedition Logbook",
+                    "zh_CN": "先祖秘藏日志",
+                    "zh_TW": "探險日誌",
+                }
+            },
+        )
         item_name_to_page = build_item_name_map(page_categories, item_name_to_selection)
 
+        self.assertEqual(page_categories["Expedition_Logbook"]["allowedPatterns"], [])
+        self.assertEqual(page_categories["Expedition_Logbook"]["allowedStatIds"], [])
         self.assertNotIn("expedition tablet", item_name_to_page)
         self.assertNotIn("expedition logbook", item_name_to_page)
         self.assertNotIn("serle's triumph", item_name_to_page)
@@ -1729,7 +1741,7 @@ class TradeStatMappingTests(unittest.TestCase):
         )
         self.assertEqual(
             item_name_to_selection["expedition logbook"],
-            {"kind": "logical", "id": "Maps"},
+            {"kind": "page", "id": "Expedition_Logbook"},
         )
         self.assertEqual(
             item_name_to_selection["waystone (tier 1)"],
@@ -1745,13 +1757,14 @@ class TradeStatMappingTests(unittest.TestCase):
         )
         self.assertNotIn("clear skies", item_name_to_selection)
         self.assertEqual(
-            item_name_to_selection["探险日志"],
-            {"kind": "logical", "id": "Maps"},
+            item_name_to_selection["先祖秘藏日志"],
+            {"kind": "page", "id": "Expedition_Logbook"},
         )
         self.assertEqual(
             item_name_to_selection["探險日誌"],
-            {"kind": "logical", "id": "Maps"},
+            {"kind": "page", "id": "Expedition_Logbook"},
         )
+        self.assertNotIn("探险日志", item_name_to_selection)
 
     def test_prefers_page_labels_and_rejects_ambiguous_page_item_names(self) -> None:
         page_categories = build_page_categories(
@@ -1864,6 +1877,7 @@ class TradeStatMappingTests(unittest.TestCase):
 
             [charms] = load_page_artifacts(split_dir, trade_stat_index)
 
+        self.assertEqual(charms.item_class_code, "UtilityFlask")
         self.assertIn("#% increased Duration (Charm)", charms.allowed_patterns)
         self.assertIn("#% reduced Charm Charges used", charms.allowed_patterns)
         self.assertIn("#% increased Charm Charges gained", charms.allowed_patterns)
