@@ -48,6 +48,7 @@ from build_extension_data import (
     load_page_artifacts,
     load_unique_item_page_cache,
     map_granted_skill_names_to_trade_stats,
+    map_affix_to_trade_stat_ids,
     map_affix_text_to_trade_stat_ids,
     map_trade_stat_texts_to_trade_stat_ids,
     parse_page_html_artifacts,
@@ -2151,6 +2152,65 @@ class TradeStatMappingTests(unittest.TestCase):
             ["Passives in Radius can be Allocated without being connected to your tree"],
         )
         self.assertEqual(stat_ids, ["explicit.stat_radius_passives"])
+
+    def test_maps_poe2db_tablet_gold_in_map_to_trade_area_stat(self) -> None:
+        trade_stats_payload = {
+            "result": [
+                {
+                    "id": "explicit",
+                    "entries": [
+                        {
+                            "id": "explicit.stat_gold_found_in_area",
+                            "text": "#% increased Gold found in this Area",
+                        }
+                    ],
+                }
+            ]
+        }
+
+        patterns, stat_ids = map_affix_text_to_trade_stat_ids(
+            "<span class='mod-value'>(25-35)</span>% increased Gold found in Map",
+            build_trade_stat_index(trade_stats_payload),
+        )
+
+        self.assertEqual(patterns, ["#% increased Gold found in Map"])
+        self.assertEqual(stat_ids, ["explicit.stat_gold_found_in_area"])
+
+    def test_maps_verified_tablet_modifier_sources_to_trade_stats(self) -> None:
+        source_stat_ids = {
+            "TowerAdditionalShrine1": ["explicit.stat_1468737867", "explicit.stat_2017682521"],
+            "TowerAdditionalStrongbox1": ["explicit.stat_2017682521", "explicit.stat_3240183538"],
+            "TowerAdditionalEssence1": ["explicit.stat_395808938"],
+            "TowerRareChestCount1": ["explicit.stat_231864447"],
+            "TowerAdditionalStoneCircle": ["explicit.stat_2839545956"],
+            "TowerBreachAdditionalRares": ["explicit.stat_3762913035"],
+            "TowerDeliriumFogPersistence": ["explicit.stat_3350944114"],
+            "TowerRitualRerollCostIncrease": ["explicit.stat_2282052746"],
+            "TowerRitualDeferCostIncrease": ["explicit.stat_1345835998"],
+            "TowerRitualAdditionalReroll": ["explicit.stat_120737942"],
+            "TowerMapBossAdditionalShrine": ["explicit.stat_3042527515"],
+            "TowerMapBossAdditionalEssence": ["explicit.stat_2162684861"],
+        }
+        trade_stats_payload = {
+            "result": [
+                {
+                    "id": "explicit",
+                    "entries": [
+                        {"id": stat_id, "text": stat_id}
+                        for stat_ids in source_stat_ids.values()
+                        for stat_id in stat_ids
+                    ],
+                }
+            ]
+        }
+        trade_stat_index = build_trade_stat_index(trade_stats_payload)
+
+        for source, expected_stat_ids in source_stat_ids.items():
+            _, stat_ids = map_affix_to_trade_stat_ids(
+                {"text": "Unmatched tablet modifier", "hover": f"?s=Data\\Mods/{source}"},
+                trade_stat_index,
+            )
+            self.assertEqual(stat_ids, expected_stat_ids)
 
     def test_expands_passive_skill_placeholder_to_official_keystone_variants(self) -> None:
         trade_stats_payload = {

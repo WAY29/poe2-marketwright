@@ -256,6 +256,21 @@ EXTRA_PAGE_ALLOWED_TRADE_STAT_TEXTS = {
         "Charms gain # charge per Second",
     ],
 }
+# Trade renamed these modifier texts; the PoE2DB source path remains stable.
+POE2DB_TABLET_SOURCE_TRADE_STAT_IDS = {
+    "Data\\Mods\\TowerAdditionalShrine1": ["explicit.stat_1468737867", "explicit.stat_2017682521"],
+    "Data\\Mods\\TowerAdditionalStrongbox1": ["explicit.stat_2017682521", "explicit.stat_3240183538"],
+    "Data\\Mods\\TowerAdditionalEssence1": ["explicit.stat_395808938"],
+    "Data\\Mods\\TowerRareChestCount1": ["explicit.stat_231864447"],
+    "Data\\Mods\\TowerAdditionalStoneCircle": ["explicit.stat_2839545956"],
+    "Data\\Mods\\TowerBreachAdditionalRares": ["explicit.stat_3762913035"],
+    "Data\\Mods\\TowerDeliriumFogPersistence": ["explicit.stat_3350944114"],
+    "Data\\Mods\\TowerRitualRerollCostIncrease": ["explicit.stat_2282052746"],
+    "Data\\Mods\\TowerRitualDeferCostIncrease": ["explicit.stat_1345835998"],
+    "Data\\Mods\\TowerRitualAdditionalReroll": ["explicit.stat_120737942"],
+    "Data\\Mods\\TowerMapBossAdditionalShrine": ["explicit.stat_3042527515"],
+    "Data\\Mods\\TowerMapBossAdditionalEssence": ["explicit.stat_2162684861"],
+}
 EXACT_ITEM_CATEGORY_SPECS = {
     "Expedition_Logbook": {
         "label": "Expedition Logbook",
@@ -941,6 +956,7 @@ def poe2db_trade_stat_templates(text: str) -> list[str]:
     return dedupe_preserve_order(
         [
             pattern,
+            pattern.replace(" found in Map", " found in this Area"),
             POE2DB_PASSIVE_SKILL_RE.sub("[Passive Skill]", pattern),
             POE2DB_MAGES_LEGACY_RE.sub("Legacy of [Mages Legacy]", pattern),
         ]
@@ -1100,10 +1116,15 @@ def extract_rollable_minimums(text_html: str) -> list[float]:
     return [minimum for minimum, _ in extract_rollable_ranges(text_html)]
 
 
-def get_affix_tier_source(affix: dict[str, Any]) -> tuple[str, int] | None:
+def get_affix_source(affix: dict[str, Any]) -> str:
     source = str(affix.get("code") or "").strip()
     if not source:
         source = unquote(str(affix.get("hover") or "").strip()).removeprefix("?s=")
+    return source.replace("/", "\\")
+
+
+def get_affix_tier_source(affix: dict[str, Any]) -> tuple[str, int] | None:
+    source = get_affix_source(affix)
     match = TIER_SOURCE_RE.match(source)
     if not match:
         return None
@@ -2308,9 +2329,27 @@ def map_affix_text_to_trade_stat_ids(text_html: str, trade_stat_index: dict[str,
         if not pattern:
             continue
         patterns.append(pattern)
-        for key in trade_stat_lookup_keys(pattern):
-            stat_ids.update(trade_stat_index.get(key, set()))
+        for template in poe2db_trade_stat_templates(line):
+            for key in trade_stat_lookup_keys(template):
+                stat_ids.update(trade_stat_index.get(key, set()))
     return patterns, sorted(stat_ids)
+
+
+def map_affix_to_trade_stat_ids(
+    affix: dict[str, Any], trade_stat_index: dict[str, set[str]]
+) -> tuple[list[str], list[str]]:
+    patterns, stat_ids = map_affix_text_to_trade_stat_ids(
+        affix.get("text_html") or affix.get("text", ""), trade_stat_index
+    )
+    known_stat_ids = {stat_id for ids in trade_stat_index.values() for stat_id in ids}
+    stat_ids = sorted(
+        set(stat_ids).union(
+            stat_id
+            for stat_id in POE2DB_TABLET_SOURCE_TRADE_STAT_IDS.get(get_affix_source(affix), [])
+            if stat_id in known_stat_ids
+        )
+    )
+    return patterns, stat_ids
 
 
 def map_trade_stat_texts_to_trade_stat_ids(
@@ -2945,10 +2984,7 @@ def load_page_artifacts(split_dir: Path, trade_stat_index: dict[str, set[str]]) 
         patterns: set[str] = set()
         stat_ids: set[str] = set()
         for affix in page_payload["affixes"]:
-            affix_patterns, affix_stat_ids = map_affix_text_to_trade_stat_ids(
-                affix.get("text_html") or affix.get("text", ""),
-                trade_stat_index,
-            )
+            affix_patterns, affix_stat_ids = map_affix_to_trade_stat_ids(affix, trade_stat_index)
             patterns.update(affix_patterns)
             stat_ids.update(affix_stat_ids)
         extra_patterns, extra_stat_ids = map_trade_stat_texts_to_trade_stat_ids(
