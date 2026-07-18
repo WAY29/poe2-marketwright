@@ -1336,6 +1336,48 @@ test("full item delete feedback precedes the favorite list", async () => {
   assert.deepStrictEqual(result, ["favorites-panel-toolbar", "favorites-panel-feedback", "favorites-panel-list", "favorites-panel-link-list favorites-panel-root"]);
 });
 
+test("full link folder input follows the last existing folder", () => {
+  let source = fs.readFileSync("favorites-panel.js", "utf8");
+  source = source.replace("  bindUi();\n  bootstrap();", "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { local, renderLinkResults };\n})();"
+  );
+  class Node {
+    constructor() { this.children = []; this.className = ""; this.dataset = {}; }
+    appendChild(child) { this.children.push(child); return child; }
+    append(...children) { children.forEach((child) => this.appendChild(child)); }
+    replaceChildren(...children) { this.children = children; }
+    addEventListener() {}
+    setAttribute() {}
+    focus() {}
+  }
+  const sandbox = {
+    window: { setTimeout() {} },
+    document: { createElement() { return new Node(); }, querySelector() { return null; } },
+    location: { search: "" },
+    URLSearchParams,
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "favorites-panel.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.local.creatingFolder = true;
+  const root = new Node();
+  hooks.renderLinkResults({
+    linkFavoritesEnabled: true,
+    linkFavorites: {
+      folders: [{ id: "folder-1", name: "First", collapsed: true }],
+      links: [],
+      folderLinkIds: {},
+      rootLinkIds: []
+    }
+  }, root);
+  assert.deepStrictEqual(
+    structuredClone(root.children[0].children.map((child) => child.className)),
+    ["favorites-panel-folder-top-drop-area", "favorites-panel-folder", "favorites-panel-folder-input"]
+  );
+});
+
 test("compact item tooltip omits a base type that is already the title", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");

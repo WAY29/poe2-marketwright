@@ -730,39 +730,6 @@
       root.appendChild(renderImportForm());
       return;
     }
-    if (local.creatingFolder) {
-      const input = createElement("input", "favorites-panel-folder-input");
-      input.type = "text";
-      input.placeholder = t("createLinkFavoriteFolder");
-      input.setAttribute("aria-label", t("createLinkFavoriteFolder"));
-      let cancelled = false;
-      input.addEventListener("keydown", (event) => {
-        if (event.key === "Enter") {
-          event.preventDefault();
-          input.blur();
-        }
-        if (event.key === "Escape") {
-          cancelled = true;
-          local.creatingFolder = false;
-          render();
-        }
-      });
-      input.addEventListener(
-        "blur",
-        () => {
-          local.creatingFolder = false;
-          if (cancelled || !input.value.trim()) {
-            render();
-            return;
-          }
-          run("create-folder", { name: input.value });
-        },
-        { once: true }
-      );
-      root.appendChild(input);
-      window.setTimeout(() => input.focus(), 0);
-    }
-
     const query = local.linkSearch.trim().toLocaleLowerCase();
     const rootLinks = getLinksForFolder(state, null).filter((link) => matchesLink(link, query));
     const rootList = createElement("div", "favorites-panel-link-list favorites-panel-root");
@@ -796,6 +763,38 @@
     }
     if (!visibleFolderCount && query && !rootLinks.length) {
       folderList.appendChild(createElement("p", "favorites-panel-empty", t("favoritesPanelNoLinkMatches")));
+    }
+    if (local.creatingFolder) {
+      const input = createElement("input", "favorites-panel-folder-input");
+      input.type = "text";
+      input.placeholder = t("createLinkFavoriteFolder");
+      input.setAttribute("aria-label", t("createLinkFavoriteFolder"));
+      let cancelled = false;
+      input.addEventListener("keydown", (event) => {
+        if (event.key === "Enter") {
+          event.preventDefault();
+          input.blur();
+        }
+        if (event.key === "Escape") {
+          cancelled = true;
+          local.creatingFolder = false;
+          render();
+        }
+      });
+      input.addEventListener(
+        "blur",
+        () => {
+          local.creatingFolder = false;
+          if (cancelled || !input.value.trim()) {
+            render();
+            return;
+          }
+          run("create-folder", { name: input.value });
+        },
+        { once: true }
+      );
+      folderList.appendChild(input);
+      window.setTimeout(() => input.focus(), 0);
     }
     root.appendChild(folderList);
     root.appendChild(rootList);

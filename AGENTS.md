@@ -84,6 +84,10 @@ git diff --check
 
 Use the smallest relevant test while iterating, then run the full suite before delivery. Reload the unpacked extension and refresh the trade page to manually verify UI and page-context changes.
 
+## Git Commits
+
+- Use Conventional Commits: `<type>(<scope>): <summary>`.
+
 ## Release Packaging
 
 - Before creating a release tag, build the extension into a temporary directory and validate the packaged `manifest.json`, not only the source tree.
