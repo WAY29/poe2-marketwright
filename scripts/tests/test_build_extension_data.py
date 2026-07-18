@@ -2050,6 +2050,29 @@ class TradeStatMappingTests(unittest.TestCase):
             ["explicit.stat_spirit_boar", "explicit.stat_spirit_serpent"],
         )
 
+    def test_expands_mages_legacy_placeholder_to_trade_variants(self) -> None:
+        trade_stats_payload = {
+            "result": [
+                {
+                    "id": "explicit",
+                    "entries": [
+                        {"id": "explicit.stat_legacy|1", "text": "Legacy of Amethyst"},
+                        {"id": "explicit.stat_legacy|2", "text": "Legacy of Basalt"},
+                    ],
+                }
+            ]
+        }
+
+        patterns, stat_ids = map_trade_stat_texts_to_trade_stat_ids(
+            ["Legacy of Mages Legacy"],
+            build_trade_stat_index(trade_stats_payload),
+            build_trade_stat_records(trade_stats_payload),
+            include_unmatched_patterns=False,
+        )
+
+        self.assertTrue({"Legacy of Amethyst", "Legacy of Basalt"}.issubset(patterns))
+        self.assertEqual(stat_ids, ["explicit.stat_legacy|1", "explicit.stat_legacy|2"])
+
     def test_maps_verified_poe2db_unique_item_stat_template_to_trade_stat(self) -> None:
         trade_stats_payload = {
             "result": [

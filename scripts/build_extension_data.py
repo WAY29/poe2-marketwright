@@ -114,6 +114,7 @@ TRADE_FILTER_TEXT_OVERRIDES = {
 }
 TRADE_STAT_WILDCARD_PLACEHOLDERS = {
     "azmeri spirit",
+    "mages legacy",
     "passive skill",
 }
 POE2DB_REDUNDANT_PASSIVE_SKILL_RE = re.compile(
@@ -121,6 +122,7 @@ POE2DB_REDUNDANT_PASSIVE_SKILL_RE = re.compile(
     re.IGNORECASE,
 )
 POE2DB_PASSIVE_SKILL_RE = re.compile(r"\bpassive skills?\b", re.IGNORECASE)
+POE2DB_MAGES_LEGACY_RE = re.compile(r"\bLegacy of Mages Legacy\b", re.IGNORECASE)
 POE2DB_RANDOM_KEYSTONE_PASSIVE_SKILL_RE = re.compile(
     r"^random # keystone passive skills?(?: \[#,#\])?$",
     re.IGNORECASE,
@@ -940,6 +942,7 @@ def poe2db_trade_stat_templates(text: str) -> list[str]:
         [
             pattern,
             POE2DB_PASSIVE_SKILL_RE.sub("[Passive Skill]", pattern),
+            POE2DB_MAGES_LEGACY_RE.sub("Legacy of [Mages Legacy]", pattern),
         ]
     )
 
