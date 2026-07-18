@@ -536,6 +536,110 @@ class TradeStatMappingTests(unittest.TestCase):
             },
         )
 
+    def test_uses_local_trade_stats_for_local_affixes(self) -> None:
+        affixes = {
+            "Boots_dex": [
+                {
+                    "affix_group": "normal",
+                    "generation_type": "prefix",
+                    "hover": "?s=Data%5CMods%5CLocalIncreasedEvasionRating1",
+                    "text_html": "+(11-18) to Evasion Rating",
+                },
+                {
+                    "affix_group": "normal",
+                    "generation_type": "prefix",
+                    "hover": "?s=Data%5CMods%5CLocalIncreasedEvasionRatingPercent1",
+                    "text_html": "(15-26)% increased Evasion Rating",
+                },
+            ]
+        }
+        trade_stat_index = {
+            "# to evasion rating": {"explicit.stat_global_evasion"},
+            "# to evasion rating (local)": {"explicit.stat_local_evasion"},
+            "#% increased evasion rating": {"explicit.stat_global_evasion_percent"},
+            "#% increased evasion rating (local)": {"explicit.stat_local_evasion_percent"},
+        }
+
+        self.assertEqual(
+            build_affix_effects(affixes, trade_stat_index),
+            {
+                "Boots_dex": {
+                    "prefix": ["explicit.stat_local_evasion", "explicit.stat_local_evasion_percent"],
+                    "suffix": [],
+                    "other": [],
+                }
+            },
+        )
+
+    def test_falls_back_when_local_affixes_have_no_local_trade_stat(self) -> None:
+        affixes = {
+            "Boots_dex": [
+                {
+                    "affix_group": "normal",
+                    "generation_type": "prefix",
+                    "hover": "?s=Data%5CMods%5CLocalIncreasedEvasionRating1",
+                    "text_html": "+(11-18) to Evasion Rating",
+                }
+            ]
+        }
+
+        self.assertEqual(
+            build_affix_effects(affixes, {"# to evasion rating": {"explicit.stat_global_evasion"}}),
+            {
+                "Boots_dex": {
+                    "prefix": ["explicit.stat_global_evasion"],
+                    "suffix": [],
+                    "other": [],
+                }
+            },
+        )
+
+    def test_rejects_ambiguous_fallback_for_local_affixes(self) -> None:
+        affixes = {
+            "Boots_dex": [
+                {
+                    "affix_group": "normal",
+                    "generation_type": "prefix",
+                    "hover": "?s=Data%5CMods%5CLocalIncreasedEvasionRating1",
+                    "text_html": "+(11-18) to Evasion Rating",
+                }
+            ]
+        }
+
+        self.assertEqual(
+            build_affix_effects(
+                affixes,
+                {"# to evasion rating": {"explicit.stat_global_evasion", "explicit.stat_other_evasion"}},
+            ),
+            {},
+        )
+
+    def test_builds_local_tiers_for_local_affixes(self) -> None:
+        def affix(rank: int, values: tuple[int, int]) -> dict[str, object]:
+            return {
+                "affix_group": "normal",
+                "hover": f"?s=Data%5CMods%5CLocalIncreasedEvasionRating{rank}",
+                "text_html": f"<span class='mod-value'>+({values[0]}-{values[1]})</span> to Evasion Rating",
+            }
+
+        self.assertEqual(
+            build_tier_mappings(
+                {"Boots_dex": [affix(1, (11, 18)), affix(2, (19, 46))]},
+                {
+                    "# to evasion rating": {"explicit.stat_global_evasion"},
+                    "# to evasion rating (local)": {"explicit.stat_local_evasion"},
+                },
+            ),
+            {
+                "Boots_dex": {
+                    "explicit.stat_local_evasion": [
+                        {"tier": 1, "exactMin": 19, "exactMax": 46, "min": 18.1},
+                        {"tier": 2, "exactMin": 11, "exactMax": 18},
+                    ]
+                }
+            },
+        )
+
     def test_requires_an_exact_trade_stat_for_semantic_suffixes(self) -> None:
         def affix(code: str, values: tuple[int, int]) -> dict[str, object]:
             return {

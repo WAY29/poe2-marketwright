@@ -21,12 +21,20 @@ test("groups category effects and conservatively normalizes current item stat so
   };
   const item = {
     rarity: "Rare",
-    explicitMods: [{ hash: "explicit.stat_life" }],
+    explicitMods: [{ hash: "explicit.stat_life" }, { description: "96% increased Evasion Rating (Local)" }],
     fracturedMods: [{ hash: "fractured.stat_strength" }],
     craftedMods: ["+20 to maximum Life"],
     runeMods: [{ hash: "rune.stat_fire_resistance" }],
     implicitMods: [{ hash: "implicit.stat_max_chaos_resistance" }],
-    extended: { hashes: { crafted: [["crafted.stat_life", null]] } }
+    extended: {
+      hashes: {
+        crafted: [["crafted.stat_life", null]],
+        explicit: [
+          ["explicit.stat_life", [0]],
+          ["explicit.stat_124859000", [1]]
+        ]
+      }
+    }
   };
 
   const result = structuredClone({
@@ -48,6 +56,7 @@ test("groups category effects and conservatively normalizes current item stat so
       { id: "other", statIds: ["implicit.stat_max_chaos_resistance", "rune.stat_fire_resistance"] }
     ],
     matched: [
+      "explicit.stat_124859000",
       "explicit.stat_life",
       "explicit.stat_strength",
       "rune.stat_fire_resistance"
@@ -55,6 +64,23 @@ test("groups category effects and conservatively normalizes current item stat so
     uniqueMatched: ["rune.stat_fire_resistance"],
     domMatched: ["explicit.stat_life"]
   });
+});
+
+test("matches a desecrated modifier against its ordinary stat counterpart", () => {
+  const sandbox = { console };
+  vm.runInNewContext(fs.readFileSync("affix-viewer.js", "utf8"), sandbox, {
+    filename: "affix-viewer.js"
+  });
+
+  const tools = sandbox.Poe2MarketwrightAffixViewer.createAffixViewerTools();
+  const result = Array.from(
+    tools.getMatchedEffectIds({
+      rarity: "Rare",
+      desecratedMods: [{ hash: "desecrated.stat_53045048" }]
+    })
+  ).sort();
+
+  assert.deepStrictEqual(result, ["desecrated.stat_53045048", "explicit.stat_53045048"]);
 });
 
 test("positions an affix panel above its trigger when below would overflow the viewport", () => {

@@ -25,19 +25,23 @@
     return hashes.find((entry) => Array.isArray(entry?.[1]) && entry[1].includes(index))?.[0] || hashes[index]?.[0] || null;
   }
 
-  function normalizeEffectStatId(hash, rarity) {
+  function normalizeEffectStatIds(hash, rarity) {
     const [source, bareId] = String(hash || "").split(".", 2);
     if (!source || !bareId) {
-      return null;
+      return [];
     }
     if (["explicit", "fractured", "crafted"].includes(source)) {
-      return String(rarity || "").toLowerCase() === "unique" ? null : `explicit.${bareId}`;
+      return String(rarity || "").toLowerCase() === "unique" ? [] : [`explicit.${bareId}`];
+    }
+    if (source === "desecrated") {
+      // Desecrated variants retain the ordinary modifier's bare stat ID.
+      return [`desecrated.${bareId}`, `explicit.${bareId}`];
     }
     // Trade uses the same implicit stat IDs for base implicits and corruptions.
-    if (["desecrated", "rune"].includes(source)) {
-      return `${source}.${bareId}`;
+    if (source === "rune") {
+      return [`rune.${bareId}`];
     }
-    return null;
+    return [];
   }
 
   function createAffixViewerTools() {
@@ -56,21 +60,14 @@
           continue;
         }
         modifiers.forEach((modifier, index) => {
-          const statId = normalizeEffectStatId(
-            modifier && typeof modifier === "object" ? modifier.hash : getExtendedModifierHash(item, sourceKey, index),
-            item?.rarity
+          normalizeEffectStatIds(modifier?.hash || getExtendedModifierHash(item, sourceKey, index), item?.rarity).forEach(
+            (statId) => matched.add(statId)
           );
-          if (statId) {
-            matched.add(statId);
-          }
         });
       }
       row?.querySelectorAll?.('[data-field^="stat."]').forEach((element) => {
         const hash = String(element.getAttribute("data-field") || "").slice("stat.".length);
-        const statId = normalizeEffectStatId(hash, item?.rarity);
-        if (statId) {
-          matched.add(statId);
-        }
+        normalizeEffectStatIds(hash, item?.rarity).forEach((statId) => matched.add(statId));
       });
       return matched;
     };

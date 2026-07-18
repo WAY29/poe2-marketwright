@@ -998,11 +998,13 @@ def split_affix_stat_html_lines(text_html: str) -> list[str]:
     return [line for line in text.splitlines() if strip_html(line)]
 
 
-def tier_trade_stat_lookup_variants(text_html: str) -> list[set[str]]:
+def tier_trade_stat_lookup_variants(text_html: str, require_local: bool = False) -> list[set[str]]:
     pattern = canonicalize_stat_text(text_html)
     variants = [pattern]
     if pattern.startswith(("+", "-")):
         variants.append(pattern[1:])
+    if require_local:
+        variants = [f"{variant} (Local)" for variant in variants]
 
     lookup_variants: list[set[str]] = []
     for variant in variants:
@@ -1016,16 +1018,21 @@ def get_tier_trade_stat_ids(
     text_html: str,
     trade_stat_index: dict[str, set[str]],
     stat_group: str,
+    require_local: bool = False,
 ) -> set[str]:
-    for keys in tier_trade_stat_lookup_variants(text_html):
-        stat_ids = {
-            stat_id
-            for key in keys
-            for stat_id in trade_stat_index.get(key, set())
-            if stat_id.startswith(f"{stat_group}.")
-        }
-        if stat_ids:
-            return stat_ids
+    variant_groups = [tier_trade_stat_lookup_variants(text_html)]
+    if require_local:
+        variant_groups.insert(0, tier_trade_stat_lookup_variants(text_html, require_local=True))
+    for variants in variant_groups:
+        for keys in variants:
+            stat_ids = {
+                stat_id
+                for key in keys
+                for stat_id in trade_stat_index.get(key, set())
+                if stat_id.startswith(f"{stat_group}.")
+            }
+            if stat_ids:
+                return stat_ids
     return set()
 
 
@@ -1101,6 +1108,12 @@ def get_affix_tier_source(affix: dict[str, Any]) -> tuple[str, int] | None:
     return match.group(1), int(match.group(2))
 
 
+def is_local_affix(affix: dict[str, Any]) -> bool:
+    source = str(affix.get("code") or affix.get("hover") or "")
+    source = unquote(source).removeprefix("?s=")
+    return any(segment.lower().startswith("local") for segment in re.split(r"[\\\\/]", source))
+
+
 def get_tier_trade_stat_group(affix: dict[str, Any]) -> str:
     affix_group = str(affix.get("affix_group") or "").lower()
     if affix_group == "normal":
@@ -1137,7 +1150,9 @@ def build_affix_effects(
             display_group = generation_type if generation_type in {"prefix", "suffix"} else "other"
             stat_group = get_affix_effect_trade_stat_group(affix)
             for line_html in split_affix_stat_html_lines(affix.get("text_html") or affix.get("text") or ""):
-                stat_ids = get_tier_trade_stat_ids(line_html, trade_stat_index, stat_group)
+                stat_ids = get_tier_trade_stat_ids(
+                    line_html, trade_stat_index, stat_group, require_local=is_local_affix(affix)
+                )
                 if len(stat_ids) == 1:
                     groups[display_group].add(next(iter(stat_ids)))
         if any(groups.values()):
@@ -1171,7 +1186,9 @@ def build_tier_mappings(
                 ranges = extract_rollable_ranges(line_html)
                 if not ranges:
                     continue
-                stat_ids = get_tier_trade_stat_ids(line_html, trade_stat_index, stat_group)
+                stat_ids = get_tier_trade_stat_ids(
+                    line_html, trade_stat_index, stat_group, require_local=is_local_affix(affix)
+                )
                 if len(stat_ids) != 1:
                     continue
                 stat_id = next(iter(stat_ids))
