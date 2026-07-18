@@ -475,6 +475,40 @@ test("background configures the native panel for the registered trade tab", asyn
   });
 });
 
+test("background keeps the native panel for trade navigation and disables it elsewhere", async () => {
+  let navigationListener;
+  const sidePanelOptions = [];
+  const sandbox = {
+    chrome: {
+      runtime: {
+        id: "extension-id",
+        onMessage: { addListener() {} }
+      },
+      sidePanel: {
+        async setOptions(options) { sidePanelOptions.push(options); }
+      },
+      tabs: {
+        onUpdated: { addListener(listener) { navigationListener = listener; } }
+      }
+    },
+    fetch() { throw new Error("unexpected fetch"); },
+    console
+  };
+  vm.runInNewContext(fs.readFileSync("background.js", "utf8"), sandbox, { filename: "background.js" });
+  navigationListener(37, {
+    status: "loading",
+    url: "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur"
+  });
+  navigationListener(38, { status: "loading", url: "https://www.pathofexile.com/account/view-profile" });
+  navigationListener(39, { status: "loading" });
+  await Promise.resolve();
+
+  assert.deepStrictEqual(structuredClone(sidePanelOptions), [
+    { tabId: 38, enabled: false },
+    { tabId: 39, enabled: false }
+  ]);
+});
+
 test("full view opens and closes the native panel for the current document", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");

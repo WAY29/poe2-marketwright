@@ -26,6 +26,8 @@
     }) || Promise.resolve();
 
   const isExtensionSender = (sender) => sender?.id === chrome.runtime.id;
+  const isTradePageUrl = (url) =>
+    typeof url === "string" && /^https:\/\/(?:[^/]+\.)?pathofexile\.com\/trade2(?:[/?#]|$)/.test(url);
 
   const normalizeEnglishUrl = (input) => {
     let url;
@@ -275,6 +277,12 @@
 
   chrome.runtime.onInstalled?.addListener(() => {
     chrome.sidePanel?.setOptions?.({ enabled: false }).catch(() => {});
+  });
+
+  chrome.tabs?.onUpdated?.addListener((tabId, changeInfo, tab) => {
+    if ((changeInfo.status === "loading" || changeInfo.url) && !isTradePageUrl(changeInfo.url || tab?.url)) {
+      chrome.sidePanel?.setOptions?.({ tabId, enabled: false }).catch(() => {});
+    }
   });
 
   chrome.sidePanel?.onClosed?.addListener(({ tabId }) => {
