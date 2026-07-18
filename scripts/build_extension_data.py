@@ -2452,6 +2452,7 @@ def map_item_mod_texts_to_trade_stats(
     trade_stat_index: dict[str, set[str]],
     trade_stat_records: list[TradeStatRecord],
     verified_keystone_names: set[str] | None = None,
+    trade_skill_stat_index: dict[str, set[tuple[str, str]]] | None = None,
 ) -> tuple[list[str], list[str]]:
     _, stat_ids = map_trade_stat_texts_to_trade_stat_ids(
         item_mod_texts,
@@ -2460,8 +2461,15 @@ def map_item_mod_texts_to_trade_stats(
         include_unmatched_patterns=False,
         verified_keystone_names=verified_keystone_names,
     )
-    patterns = sorted({record.pattern for record in trade_stat_records if record.stat_id in stat_ids})
-    return patterns, stat_ids
+    patterns = {record.pattern for record in trade_stat_records if record.stat_id in stat_ids}
+    if trade_skill_stat_index:
+        skill_patterns, skill_stat_ids = map_granted_skill_names_to_trade_stats(
+            [skill for text in item_mod_texts if (skill := extract_granted_skill_name(text))],
+            trade_skill_stat_index,
+        )
+        patterns.update(skill_patterns)
+        stat_ids = sorted(set(stat_ids).union(skill_stat_ids))
+    return sorted(patterns), stat_ids
 
 
 def build_unique_item_type_artifacts(
@@ -2470,6 +2478,7 @@ def build_unique_item_type_artifacts(
     trade_stat_index: dict[str, set[str]],
     trade_stat_records: list[TradeStatRecord],
     verified_keystone_names: set[str] | None = None,
+    trade_skill_stat_index: dict[str, set[tuple[str, str]]] | None = None,
 ) -> tuple[dict[str, str], dict[str, dict[str, list[str]]]]:
     """Union verified unique stats by the official Trade base type."""
 
@@ -2498,6 +2507,7 @@ def build_unique_item_type_artifacts(
             trade_stat_index,
             trade_stat_records,
             verified_keystone_names,
+            trade_skill_stat_index,
         )
         patterns_by_type.setdefault(item_type, set()).update(patterns)
         stat_ids_by_type.setdefault(item_type, set()).update(stat_ids)
@@ -2589,6 +2599,7 @@ async def collect_unique_item_stat_artifacts(
     cache_path: Path | None = None,
     force: bool = False,
     verified_keystone_names: set[str] | None = None,
+    trade_skill_stat_index: dict[str, set[tuple[str, str]]] | None = None,
 ) -> tuple[dict[str, list[str]], dict[str, list[str]]]:
     semaphore = asyncio.Semaphore(max(1, workers))
     patterns_by_page: dict[str, set[str]] = {}
@@ -2610,6 +2621,13 @@ async def collect_unique_item_stat_artifacts(
             include_unmatched_patterns=False,
             verified_keystone_names=verified_keystone_names,
         )
+        if trade_skill_stat_index:
+            skill_patterns, skill_stat_ids = map_granted_skill_names_to_trade_stats(
+                [skill for text in item_mod_texts if (skill := extract_granted_skill_name(text))],
+                trade_skill_stat_index,
+            )
+            patterns = sorted(set(patterns).union(skill_patterns))
+            stat_ids = sorted(set(stat_ids).union(skill_stat_ids))
         for page_slug in page_categories_by_item_slug[item_slug]:
             patterns_by_page.setdefault(page_slug, set()).update(patterns)
             stat_ids_by_page.setdefault(page_slug, set()).update(stat_ids)
@@ -2701,16 +2719,27 @@ async def collect_poe2db_unique_item_pages(
 
     def has_fields(page: dict[str, Any], locale: str) -> bool:
         fields = page.get(locale) or {}
-        return bool(str(fields.get("name") or "").strip() and str(fields.get("type") or "").strip())
+        has_item_fields = bool(str(fields.get("name") or "").strip() and str(fields.get("type") or "").strip())
+        return has_item_fields and (
+            locale != "us"
+            or (
+                isinstance(fields.get("itemModTexts"), list)
+                and fields.get("itemModTextsVersion") == UNIQUE_ITEM_MOD_TEXTS_CACHE_VERSION
+            )
+        )
 
     async with build_async_client(max_connections=max(1, workers)) as client:
-        async def fetch_page(slug: str, locale: str) -> tuple[str, str, dict[str, str]]:
+        async def fetch_page(slug: str, locale: str) -> tuple[str, str, dict[str, Any]]:
             url = f"https://poe2db.tw/{locale}/{slug}"
             for attempt in range(3):
                 try:
                     async with semaphore:
                         html = await fetch_text(client, url)
-                    return slug, locale, parse_poe2db_unique_item_fields(html)
+                    fields = parse_poe2db_unique_item_fields(html)
+                    if locale == "us":
+                        fields["itemModTexts"] = parse_page_html_artifacts(html).item_mod_texts
+                        fields["itemModTextsVersion"] = UNIQUE_ITEM_MOD_TEXTS_CACHE_VERSION
+                    return slug, locale, fields
                 except Exception as error:
                     if attempt == 2:
                         print(f"[build_extension_data] failed to fetch unique item page {url}: {error}", file=sys.stderr)
@@ -3493,6 +3522,15 @@ async def main() -> int:
         merge_extra_artifacts(granted_skill_patterns_by_slug, base_item_mod_patterns_by_slug),
         merge_extra_artifacts(granted_skill_stat_ids_by_slug, base_item_mod_stat_ids_by_slug),
     )
+    unique_item_pages = await collect_poe2db_unique_item_pages(
+        trade_items_payload,
+        args.localized_item_workers,
+        args.poe2db_batch_size,
+        args.poe2db_batch_delay_seconds,
+        unique_item_page_cache,
+        unique_item_cache_path,
+        args.force,
+    )
     unique_item_patterns_by_slug, unique_item_stat_ids_by_slug = await collect_unique_item_stat_artifacts(
         build_unique_item_names_by_page(trade_items_payload, base_page_categories),
         trade_stat_index,
@@ -3504,6 +3542,7 @@ async def main() -> int:
         unique_item_cache_path,
         args.force,
         verified_keystone_names=set(verified_keystone_names),
+        trade_skill_stat_index=trade_skill_stat_index,
     )
     unique_item_type_by_name, unique_item_type_artifacts = build_unique_item_type_artifacts(
         trade_items_payload,
@@ -3511,6 +3550,7 @@ async def main() -> int:
         trade_stat_index,
         trade_stat_records,
         set(verified_keystone_names),
+        trade_skill_stat_index,
     )
     extra_allowed_patterns_by_slug = merge_extra_artifacts(
         granted_skill_patterns_by_slug,
@@ -3698,15 +3738,7 @@ async def main() -> int:
     )
     unique_item_localizations, unique_item_localization_report = build_verified_unique_trade_item_localizations(
         trade_items_payload,
-        await collect_poe2db_unique_item_pages(
-            trade_items_payload,
-            args.localized_item_workers,
-            args.poe2db_batch_size,
-            args.poe2db_batch_delay_seconds,
-            unique_item_page_cache,
-            unique_item_cache_path,
-            args.force,
-        ),
+        unique_item_pages,
         display_metadata["items"],
     )
     print(

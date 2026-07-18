@@ -260,7 +260,7 @@ class TradeStatMappingTests(unittest.TestCase):
                     "us": {
                         "name": "From Nothing",
                         "type": "Diamond",
-                        "itemModTexts": [],
+                        "itemModTexts": ["Grants Skill: Parry"],
                         "itemModTextsVersion": 2,
                     },
                     "cn": {"name": "无根之源", "type": "宝钻"},
@@ -285,12 +285,61 @@ class TradeStatMappingTests(unittest.TestCase):
 
         pages = asyncio.run(collect_poe2db_unique_item_pages(payload, 1, cache=cache))
         patterns, stat_ids = asyncio.run(
-            collect_unique_item_stat_artifacts({"Jewels": ["From Nothing"]}, {}, [], 1, cache=cache)
+            collect_unique_item_stat_artifacts(
+                {"Jewels": ["From Nothing"]},
+                {},
+                [],
+                1,
+                cache=cache,
+                trade_skill_stat_index={"parry": {("Grants Skill: Level # Parry", "skill.parry")}},
+            )
         )
 
         self.assertEqual(pages["From_Nothing"]["cn"]["name"], "无根之源")
-        self.assertEqual(patterns, {"Jewels": []})
-        self.assertEqual(stat_ids, {"Jewels": []})
+        self.assertEqual(patterns, {"Jewels": ["Grants Skill: Level # Parry"]})
+        self.assertEqual(stat_ids, {"Jewels": ["skill.parry"]})
+
+    @patch("build_extension_data.fetch_text")
+    @patch("build_extension_data.build_async_client")
+    def test_collects_unique_item_mod_texts_with_english_page_fields(
+        self, build_async_client: object, fetch_text: object
+    ) -> None:
+        class Client:
+            async def __aenter__(self) -> "Client":
+                return self
+
+            async def __aexit__(self, *args: object) -> None:
+                return None
+
+        async def fetch_page(_: object, url: str) -> str:
+            return (
+                '<span class="lc">From Nothing</span><span class="lc">Diamond</span>'
+                + ('<div class="explicitMod">Grants Skill: Parry</div>' if "/us/" in url else "")
+            )
+
+        build_async_client.return_value = Client()
+        fetch_text.side_effect = fetch_page
+        payload = {
+            "result": [
+                {
+                    "entries": [
+                        {
+                            "type": "Diamond",
+                            "text": "From Nothing Diamond",
+                            "name": "From Nothing",
+                            "flags": {"unique": True},
+                        }
+                    ]
+                }
+            ]
+        }
+
+        pages = asyncio.run(
+            collect_poe2db_unique_item_pages(payload, 1, batch_delay_seconds=0, cache={"version": 1, "pages": {}})
+        )
+
+        self.assertEqual(pages["From_Nothing"]["us"]["itemModTexts"], ["Grants Skill: Parry"])
+        self.assertEqual(pages["From_Nothing"]["us"]["itemModTextsVersion"], 2)
 
     def test_persists_verified_unique_item_page_cache(self) -> None:
         with TemporaryDirectory() as directory:
@@ -2201,6 +2250,15 @@ class TradeStatMappingTests(unittest.TestCase):
                             "text": "Other Diamond Modifier",
                         },
                     ],
+                },
+                {
+                    "id": "skill",
+                    "entries": [
+                        {
+                            "id": "skill.parry",
+                            "text": "Grants Skill: Level # Parry",
+                        },
+                    ],
                 }
             ]
         }
@@ -2211,7 +2269,8 @@ class TradeStatMappingTests(unittest.TestCase):
                     "us": {
                         "itemModTextsVersion": 2,
                         "itemModTexts": [
-                            "Passives in Radius of Passive Skills can be Allocated without being connected to your tree"
+                            "Passives in Radius of Passive Skills can be Allocated without being connected to your tree",
+                            "Grants Skill: Parry",
                         ],
                     }
                 },
@@ -2247,13 +2306,15 @@ class TradeStatMappingTests(unittest.TestCase):
             cache,
             build_trade_stat_index(trade_stats_payload),
             build_trade_stat_records(trade_stats_payload),
+            trade_skill_stat_index=build_trade_skill_stat_index(trade_stats_payload),
         )
 
         self.assertEqual(aliases["from nothing diamond"], "diamond")
         self.assertEqual(
             artifacts["diamond"]["allowedStatIds"],
-            ["explicit.stat_other_diamond", "explicit.stat_radius_passives"],
+            ["explicit.stat_other_diamond", "explicit.stat_radius_passives", "skill.parry"],
         )
+        self.assertIn("Grants Skill: Level # Parry", artifacts["diamond"]["allowedPatterns"])
 
     def test_adds_verified_localized_unique_names_to_selection_and_type_indexes(self) -> None:
         selections = {
