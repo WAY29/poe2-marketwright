@@ -477,6 +477,7 @@ test("background configures the native panel for the registered trade tab", asyn
 
 test("background keeps the native panel for trade navigation and disables it elsewhere", async () => {
   let navigationListener;
+  let activationListener;
   const sidePanelOptions = [];
   const sandbox = {
     chrome: {
@@ -488,7 +489,16 @@ test("background keeps the native panel for trade navigation and disables it els
         async setOptions(options) { sidePanelOptions.push(options); }
       },
       tabs: {
-        onUpdated: { addListener(listener) { navigationListener = listener; } }
+        onUpdated: { addListener(listener) { navigationListener = listener; } },
+        onActivated: { addListener(listener) { activationListener = listener; } },
+        async get(tabId) {
+          return {
+            id: tabId,
+            url: tabId === 40
+              ? "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur"
+              : "https://www.pathofexile.com/account/view-profile"
+          };
+        }
       }
     },
     fetch() { throw new Error("unexpected fetch"); },
@@ -501,11 +511,15 @@ test("background keeps the native panel for trade navigation and disables it els
   });
   navigationListener(38, { status: "loading", url: "https://www.pathofexile.com/account/view-profile" });
   navigationListener(39, { status: "loading" });
+  activationListener({ tabId: 40 });
+  activationListener({ tabId: 41 });
+  await Promise.resolve();
   await Promise.resolve();
 
   assert.deepStrictEqual(structuredClone(sidePanelOptions), [
     { tabId: 38, enabled: false },
-    { tabId: 39, enabled: false }
+    { tabId: 39, enabled: false },
+    { tabId: 41, enabled: false }
   ]);
 });
 

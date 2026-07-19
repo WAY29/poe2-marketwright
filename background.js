@@ -285,6 +285,14 @@
     }
   });
 
+  chrome.tabs?.onActivated?.addListener(({ tabId }) => {
+    chrome.tabs.get(tabId).then((tab) => {
+      if (!isTradePageUrl(tab?.url)) {
+        return chrome.sidePanel?.setOptions?.({ tabId, enabled: false });
+      }
+    }).catch(() => {});
+  });
+
   chrome.sidePanel?.onClosed?.addListener(({ tabId }) => {
     if (Number.isInteger(tabId)) {
       chrome.tabs.sendMessage(tabId, { type: "favorites-panel-closed" }).catch(() => {});
