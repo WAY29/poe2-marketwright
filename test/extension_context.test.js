@@ -454,6 +454,70 @@ test("Trade result affix display uses one localized line and a separate English 
   });
 });
 
+test("Trade result localization follows the item's actual reduced modifier direction", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getTradeStatDisplay, storeTradeResultModifierDescriptions, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageLanguage: "zh_TW_en", pageTranslationEnabled: true };
+  hooks.runtime.tradeStatsById = new Map([
+    [
+      "explicit.stat_2282052746",
+      {
+        id: "explicit.stat_2282052746",
+        en: "Rerolling Favours at Ritual Altars in Area costs #% increased Tribute",
+        zh_CN: "区域内在驱灵祭坛重置恩典消耗的贡品提高 #%",
+        zh_TW: "增加#%在區域中祭祀神壇重骰恩惠的貢禮消耗"
+      }
+    ]
+  ]);
+  hooks.storeTradeResultModifierDescriptions({
+    result: [
+      {
+        id: "item-1",
+        item: {
+          explicitMods: [
+            {
+              hash: "stat.explicit.stat_2282052746",
+              description: "Rerolling Favours at Ritual Altars in Area costs 28% reduced Tribute"
+            }
+          ]
+        }
+      }
+    ]
+  });
+  const statElement = {
+    closest(selector) {
+      if (selector === "[data-field^='stat.']") {
+        return { getAttribute: () => "stat.explicit.stat_2282052746" };
+      }
+      if (selector === "[data-id]") {
+        return { getAttribute: () => "item-1" };
+      }
+      return null;
+    }
+  };
+  const display = hooks.getTradeStatDisplay(
+    "Rerolling Favours at Ritual Altars in Area costs 28% increased Tribute",
+    statElement
+  );
+  assert.deepStrictEqual(structuredClone(display), {
+    primary: "減少28%在區域中祭祀神壇重骰恩惠的貢禮消耗",
+    english: "Rerolling Favours at Ritual Altars in Area costs 28% reduced Tribute"
+  });
+});
+
 test("Trade stat render text remains stable after the bilingual result is inserted", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");

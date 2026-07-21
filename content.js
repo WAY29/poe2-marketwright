@@ -65,6 +65,7 @@
     skill: "favoriteModifierSourceSkill"
   });
   const BRIDGE_SOURCE = "poe2-marketwright";
+  const AFFIX_VIEWER_MESSAGE_SOURCE = "poe2-marketwright-affix-viewer";
   const BRIDGE_UPDATE_TYPE = "POE2_MARKETWRIGHT_UPDATE";
   const BRIDGE_TIER_UPDATE_TYPE = "POE2_MARKETWRIGHT_TIER_UPDATE";
   const BRIDGE_READY_TYPE = "POE2_MARKETWRIGHT_READY";
@@ -628,6 +629,7 @@
     tradeLocalization: null,
     tradeStatTemplates: new Map(),
     tradeStatsById: new Map(),
+    tradeResultModifierDescriptions: new Map(),
     tradeSearchRecords: { items: [], stats: [], categories: [] },
     tradeLocalizationObserver: null,
     tradeLocalizationTimer: null,
@@ -6014,7 +6016,11 @@
   }
 
   function getTradeStatDisplay(text, element = null) {
-    const localized = getLocalizedTradeStatTemplate(text, getTradeStatRecordForElement(element));
+    const localized = getLocalizedTradeStatTemplate(
+      text,
+      getTradeStatRecordForElement(element),
+      getTradeResultModifierDescription(element)
+    );
     if (!localized) {
       return null;
     }
@@ -6031,15 +6037,22 @@
     };
   }
 
-  function getLocalizedTradeStatTemplate(text, record = null) {
+  function getLocalizedTradeStatTemplate(text, record = null, actualDescription = null) {
     const template = record || runtime.tradeStatTemplates.get(normalizeStatKey(text));
     if (!template) {
       return null;
     }
+    const expectedDirection = getTradeStatDirection(template.en);
+    const actualDirection = getTradeStatDirection(actualDescription);
     const values = String(text).match(NUMBER_RE) || [];
     let index = 0;
     const format = (language) => {
-      const target = String(template[language] || template.en || "");
+      const target = localizeTradeStatDirection(
+        String(template[language] || template.en || ""),
+        expectedDirection,
+        actualDirection,
+        language
+      );
       return target.replace(/#/g, (placeholder, offset) => {
         const value = values[index++] || placeholder;
         return target[offset - 1] === "+" ? value.replace(/^\+/, "") : value;
@@ -6058,6 +6071,67 @@
       en: english,
       [locale]: localized
     };
+  }
+
+  function storeTradeResultModifierDescriptions(data) {
+    if (!Array.isArray(data?.result)) {
+      return;
+    }
+    for (const entry of data.result) {
+      const itemId = String(entry?.id || "").trim();
+      if (!itemId || !entry?.item || typeof entry.item !== "object") {
+        continue;
+      }
+      const descriptions = new Map();
+      for (const modifiers of Object.values(entry.item)) {
+        if (!Array.isArray(modifiers)) {
+          continue;
+        }
+        for (const modifier of modifiers) {
+          const statId = String(modifier?.hash || "").replace(/^stat\./, "").trim();
+          const description = String(modifier?.description || "").trim();
+          if (statId && description) {
+            descriptions.set(statId, description);
+          }
+        }
+      }
+      if (descriptions.size) {
+        runtime.tradeResultModifierDescriptions.set(itemId, descriptions);
+      }
+    }
+    if (document.documentElement && isPageTranslationEnabled()) {
+      scheduleTradeLocalizationRefresh();
+    }
+  }
+
+  function getTradeResultModifierDescription(element) {
+    const statElement = element?.closest?.("[data-field^='stat.']");
+    const statId = String(statElement?.getAttribute?.("data-field") || "").slice("stat.".length);
+    const itemId = String(element?.closest?.("[data-id]")?.getAttribute?.("data-id") || "").trim();
+    return runtime.tradeResultModifierDescriptions.get(itemId)?.get(statId) || null;
+  }
+
+  function getTradeStatDirection(text) {
+    const directions = new Set();
+    for (const match of String(text || "").matchAll(/\b(increased|reduced|more|less)\b/gi)) {
+      directions.add(["increased", "more"].includes(match[1].toLowerCase()) ? "increase" : "reduce");
+    }
+    return directions.size === 1 ? directions.values().next().value : null;
+  }
+
+  function localizeTradeStatDirection(text, expectedDirection, actualDirection, language) {
+    if (!expectedDirection || !actualDirection || expectedDirection === actualDirection) {
+      return text;
+    }
+    if (language === "en") {
+      const expected = expectedDirection === "increase" ? /\b(?:increased|more)\b/i : /\b(?:reduced|less)\b/i;
+      return text.replace(expected, actualDirection === "increase" ? "increased" : "reduced");
+    }
+    const replacements = language === "zh_CN"
+      ? [["总增", "总降"], ["提高", "降低"], ["增加", "减少"], ["更多", "更少"], ["更高", "更低"]]
+      : [["增加", "減少"], ["提高", "降低"], ["更多", "更少"], ["更高", "更低"]];
+    const pairs = actualDirection === "reduce" ? replacements : replacements.map(([left, right]) => [right, left]);
+    return pairs.reduce((localized, [from, to]) => localized.replaceAll(from, to), text);
   }
 
   function isPageTranslationEnabled() {
@@ -6550,7 +6624,20 @@
 
   function bindPageBridgeMessages() {
     window.addEventListener("message", (event) => {
-      if (event.source !== window || event.data?.source !== BRIDGE_SOURCE) {
+      if (event.source !== window) {
+        return;
+      }
+      if (event.data?.source === AFFIX_VIEWER_MESSAGE_SOURCE) {
+        if (typeof event.data.body === "string") {
+          try {
+            storeTradeResultModifierDescriptions(JSON.parse(event.data.body));
+          } catch (error) {
+            // Ignore a malformed result payload without disrupting Trade.
+          }
+        }
+        return;
+      }
+      if (event.data?.source !== BRIDGE_SOURCE) {
         return;
       }
 
