@@ -479,6 +479,7 @@ test("background keeps the native panel for trade navigation and disables it els
   let navigationListener;
   let activationListener;
   const sidePanelOptions = [];
+  const closedPanels = [];
   const sandbox = {
     chrome: {
       runtime: {
@@ -486,6 +487,7 @@ test("background keeps the native panel for trade navigation and disables it els
         onMessage: { addListener() {} }
       },
       sidePanel: {
+        async close(options) { closedPanels.push(options); },
         async setOptions(options) { sidePanelOptions.push(options); }
       },
       tabs: {
@@ -513,13 +515,17 @@ test("background keeps the native panel for trade navigation and disables it els
   navigationListener(39, { status: "loading" });
   activationListener({ tabId: 40 });
   activationListener({ tabId: 41 });
-  await Promise.resolve();
-  await Promise.resolve();
+  await new Promise((resolve) => setImmediate(resolve));
 
   assert.deepStrictEqual(structuredClone(sidePanelOptions), [
     { tabId: 38, enabled: false },
     { tabId: 39, enabled: false },
     { tabId: 41, enabled: false }
+  ]);
+  assert.deepStrictEqual(structuredClone(closedPanels), [
+    { tabId: 38 },
+    { tabId: 39 },
+    { tabId: 41 }
   ]);
 });
 

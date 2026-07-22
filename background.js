@@ -25,6 +25,15 @@
       path: getFavoritesPanelPath(sessionId)
     }) || Promise.resolve();
 
+  const disableFavoritesPanel = async (tabId) => {
+    try {
+      await chrome.sidePanel?.close?.({ tabId });
+    } catch (error) {
+      // A panel may already be closed while the tab is navigating.
+    }
+    return chrome.sidePanel?.setOptions?.({ tabId, enabled: false });
+  };
+
   const isExtensionSender = (sender) => sender?.id === chrome.runtime.id;
   const isTradePageUrl = (url) =>
     typeof url === "string" && /^https:\/\/(?:[^/]+\.)?pathofexile\.com\/trade2(?:[/?#]|$)/.test(url);
@@ -281,14 +290,14 @@
 
   chrome.tabs?.onUpdated?.addListener((tabId, changeInfo, tab) => {
     if ((changeInfo.status === "loading" || changeInfo.url) && !isTradePageUrl(changeInfo.url || tab?.url)) {
-      chrome.sidePanel?.setOptions?.({ tabId, enabled: false }).catch(() => {});
+      disableFavoritesPanel(tabId).catch(() => {});
     }
   });
 
   chrome.tabs?.onActivated?.addListener(({ tabId }) => {
     chrome.tabs.get(tabId).then((tab) => {
       if (!isTradePageUrl(tab?.url)) {
-        return chrome.sidePanel?.setOptions?.({ tabId, enabled: false });
+        return disableFavoritesPanel(tabId);
       }
     }).catch(() => {});
   });
