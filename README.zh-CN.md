@@ -133,12 +133,19 @@ Tier 映射由已验证的 PoE2DB 词缀范围生成，并按官方 Trade 稳定
 
 ### PoB 复制按钮
 
-想确认一件装备是否提升角色时，点击结果行物品图标下方的 `复制到 PoB`，扩展会将物品文本复制到剪贴板，方便导入 Path of Building 的 Create Custom。
+想确认一件装备是否能对角色有提升时，点击结果行物品图标下方的 `复制到 PoB`，扩展会将物品文本复制到剪贴板，方便导入 Path of Building 的 Create Custom。
 
 <p align="center">
   <img src="assets/pob-copy-button.png" alt="结果行中的复制到 PoB 按钮" width="35%">
   <img src="assets/pob-create-custom.png" alt="Path of Building 中的 Create Custom 导入" width="56%">
 </p>
+### 查看物品可能拥有的词缀
+
+想快捷查看物品拥有的词缀,点击结果行物品图标下方的`查看可能词缀`,即可快捷查看物品可能拥有的词缀(数据来源POB,仅供参考,以游戏实际内容为准)
+
+![image-20260725072221087](./assets/image-20260725072221087.png)
+
+
 
 ### 报价换算
 

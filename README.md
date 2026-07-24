@@ -141,6 +141,12 @@ To check whether an item improves your character, click `Copy to PoB` below the 
   <img src="assets/pob-create-custom.png" alt="Path of Building Create Custom import" width="56%">
 </p>
 
+### View Possible Item Affixes
+
+To quickly view the affixes an item can have, click `View Possible Affixes` below the result-row item icon. The data comes from Path of Building and is for reference only; the in-game data is authoritative.
+
+![Possible item affixes](assets/image-20260725072221087.png)
+
 ### Price Conversion
 
 When a search uses an "equivalent to Exalted Orb" buyout, results can include Chaos, Exalted, and Divine Orb prices. Fixed `~price` and `~b/o` listings show `E`, `C`, and `D` conversion controls for faster comparison.
