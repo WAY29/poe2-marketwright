@@ -1686,16 +1686,48 @@
     });
   }
 
+  function renderUnavailableShell() {
+    if (!ui.title) {
+      return;
+    }
+    ui.title.textContent = t("favoritesFullViewTitle");
+    ui.league.textContent = "";
+    ui.compact.title = t("openFavoritesCompactView");
+    ui.compact.setAttribute("aria-label", ui.compact.title);
+    ui.close.title = t("closeFavoritesFullView");
+    ui.close.setAttribute("aria-label", ui.close.title);
+    ui.itemsTab.textContent = t("favoritesPanelItems");
+    ui.linksTab.textContent = t("favoritesPanelLinks");
+    ui.content.replaceChildren(createElement("p", "favorites-panel-unavailable", t("favoritesPanelUnavailable")));
+  }
+
+  async function abandonOrphanPanel() {
+    renderUnavailableShell();
+    try {
+      await chrome.runtime.sendMessage({
+        type: "favorites-panel-detach",
+        sessionId
+      });
+    } catch (error) {
+      // Background may already have discarded the session with the trade tab.
+    }
+  }
+
   async function bootstrap(attempt = 0) {
     if (!/^[a-zA-Z0-9_-]{8,128}$/.test(sessionId)) {
+      // default_path / stale panel without a session: never leave the raw empty shell.
+      await abandonOrphanPanel();
       return;
     }
     try {
       await request("get-state");
     } catch (error) {
-      if (attempt < 4 && String(error?.message || "") === "unknown_panel_session") {
-        window.setTimeout(() => bootstrap(attempt + 1), 160 * (attempt + 1));
+      // Content script can take longer than a single tick after trade navigation; retry broadly.
+      if (attempt < 8) {
+        window.setTimeout(() => bootstrap(attempt + 1), 200 * (attempt + 1));
+        return;
       }
+      await abandonOrphanPanel();
     }
   }
 

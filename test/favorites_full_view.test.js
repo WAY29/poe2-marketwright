@@ -466,6 +466,12 @@ test("background configures the native panel for the registered trade tab", asyn
     opened: { ok: true },
     closed: { ok: true },
     sidePanelOptions: [{
+      enabled: false
+    }, {
+      tabId: 37,
+      enabled: true,
+      path: "favorites-panel.html?session=native-panel-1"
+    }, {
       tabId: 37,
       enabled: true,
       path: "favorites-panel.html?session=native-panel-1"
@@ -513,20 +519,150 @@ test("background keeps the native panel for trade navigation and disables it els
   });
   navigationListener(38, { status: "loading", url: "https://www.pathofexile.com/account/view-profile" });
   navigationListener(39, { status: "loading" });
+  navigationListener(42, {
+    status: "complete",
+    url: undefined
+  }, { id: 42, url: "https://www.pathofexile.com/account/view-profile" });
   activationListener({ tabId: 40 });
   activationListener({ tabId: 41 });
   await new Promise((resolve) => setImmediate(resolve));
 
   assert.deepStrictEqual(structuredClone(sidePanelOptions), [
+    { enabled: false },
     { tabId: 38, enabled: false },
     { tabId: 39, enabled: false },
+    { tabId: 42, enabled: false },
     { tabId: 41, enabled: false }
   ]);
   assert.deepStrictEqual(structuredClone(closedPanels), [
     { tabId: 38 },
     { tabId: 39 },
+    { tabId: 42 },
     { tabId: 41 }
   ]);
+});
+
+test("background close keeps the panel enabled so it can reopen", async () => {
+  let messageListener;
+  const sessionValues = new Map();
+  const sidePanelOptions = [];
+  const closedPanels = [];
+  const sandbox = {
+    chrome: {
+      runtime: {
+        id: "extension-id",
+        onMessage: { addListener(listener) { messageListener = listener; } }
+      },
+      storage: {
+        session: {
+          async get(key) { return { [key]: sessionValues.get(key) }; },
+          async set(values) { for (const [key, value] of Object.entries(values)) sessionValues.set(key, value); }
+        }
+      },
+      sidePanel: {
+        async setOptions(options) { sidePanelOptions.push(options); },
+        async open() {},
+        async close(options) { closedPanels.push(options); }
+      }
+    },
+    fetch() { throw new Error("unexpected fetch"); },
+    console
+  };
+  vm.runInNewContext(fs.readFileSync("background.js", "utf8"), sandbox, { filename: "background.js" });
+  const send = (message, sender) => new Promise((resolve) => messageListener(message, sender, resolve));
+  await send({ type: "favorites-panel-register", sessionId: "reopen-panel-1" }, { id: "extension-id", tab: { id: 55 } });
+  await send({ type: "favorites-panel-close", sessionId: "reopen-panel-1" }, { id: "extension-id", tab: { id: 55 } });
+  await send(
+    { type: "favorites-panel-close", sessionId: "reopen-panel-1", disable: true },
+    { id: "extension-id", tab: { id: 55 } }
+  );
+  assert.deepStrictEqual(structuredClone(closedPanels), [{ tabId: 55 }, { tabId: 55 }]);
+  assert.deepStrictEqual(
+    structuredClone(sidePanelOptions.filter((options) => options.tabId === 55)),
+    [
+      { tabId: 55, enabled: true, path: "favorites-panel.html?session=reopen-panel-1" },
+      { tabId: 55, enabled: false }
+    ]
+  );
+});
+
+test("background detaches orphan side panels without a live trade tab", async () => {
+  let messageListener;
+  const sessionValues = new Map();
+  const sidePanelOptions = [];
+  const closedPanels = [];
+  const sandbox = {
+    chrome: {
+      runtime: {
+        id: "extension-id",
+        onMessage: { addListener(listener) { messageListener = listener; } }
+      },
+      storage: {
+        session: {
+          async get(key) { return { [key]: sessionValues.get(key) }; },
+          async set(values) { for (const [key, value] of Object.entries(values)) sessionValues.set(key, value); }
+        }
+      },
+      sidePanel: {
+        async close(options) { closedPanels.push(options); },
+        async setOptions(options) { sidePanelOptions.push(options); }
+      },
+      tabs: {
+        async query() { return [{ id: 77, url: "https://www.pathofexile.com/account" }]; }
+      }
+    },
+    fetch() { throw new Error("unexpected fetch"); },
+    console
+  };
+  vm.runInNewContext(fs.readFileSync("background.js", "utf8"), sandbox, { filename: "background.js" });
+  const send = (message, sender) => new Promise((resolve) => messageListener(message, sender, resolve));
+  const detached = await send({ type: "favorites-panel-detach", sessionId: "" }, { id: "extension-id" });
+  assert.deepStrictEqual(structuredClone(detached), { ok: true });
+  assert.deepStrictEqual(structuredClone(closedPanels), [{ tabId: 77 }]);
+  assert.ok(sidePanelOptions.some((options) => options.tabId === 77 && options.enabled === false));
+});
+
+test("trade page unload closes the native panel", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { bindFavoritesPanelMessages, runtime };\n})();"
+  );
+  const nativePanelRequests = [];
+  const listeners = {};
+  const sandbox = {
+    window: {
+      addEventListener(type, handler) {
+        listeners[type] = handler;
+      },
+      innerWidth: 1440,
+      innerHeight: 900
+    },
+    document: {},
+    location: { pathname: "/trade2", href: "https://www.pathofexile.com/trade2/search/poe2/Runes/query-1" },
+    console,
+    chrome: {
+      runtime: {
+        id: "extension-id",
+        onMessage: { addListener() {} },
+        sendMessage(message) {
+          nativePanelRequests.push(message);
+          return Promise.resolve({ ok: true });
+        }
+      },
+      storage: { local: { get: async () => ({}), set: async () => {} } }
+    }
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.favoritesPanelSessionId = "native-panel-unload";
+  hooks.bindFavoritesPanelMessages();
+  listeners.pagehide();
+  assert.deepStrictEqual(
+    structuredClone(nativePanelRequests.filter(({ type }) => type === "favorites-panel-close")),
+    [{ type: "favorites-panel-close", sessionId: "native-panel-unload", disable: true }]
+  );
 });
 
 test("full view opens and closes the native panel for the current document", async () => {

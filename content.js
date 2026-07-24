@@ -699,6 +699,12 @@
     initializeFavorites();
     initializeCurrencyConversion();
     bindPageBridgeMessages();
+    // Bind/register before the 12MB data load so an already-open side panel can attach.
+    bindFavoritesPanelMessages();
+    await registerFavoritesPanelSession();
+    if (runtime.state.favoritesPanelOpen && getFavoritesViewMode() === "full") {
+      setNativeFavoritesPanelOpen(true);
+    }
 
     runtime.data = await loadData();
     runtime.allPatterns = new Set((runtime.data.allPatterns || []).map(normalizeStatKey).filter(Boolean));
@@ -1026,16 +1032,46 @@
     return EXTENSION_CONTEXT_INVALIDATED_RE.test(String(error?.message || error || ""));
   }
 
+  function formatErrorMessage(error) {
+    if (error == null) {
+      return "unknown_error";
+    }
+    if (typeof error === "string" && error) {
+      return error;
+    }
+    if (typeof error?.message === "string" && error.message) {
+      return error.message;
+    }
+    if (error?.message != null && typeof error.message !== "string") {
+      try {
+        return JSON.stringify(error.message);
+      } catch (stringifyError) {
+        // Fall through.
+      }
+    }
+    try {
+      const json = JSON.stringify(error);
+      if (json && json !== "{}") {
+        return json;
+      }
+    } catch (stringifyError) {
+      // Fall through.
+    }
+    const fallback = String(error);
+    return fallback === "[object Object]" ? "unknown_object_error" : fallback;
+  }
+
   function handleAsyncError(error, operation) {
     if (isExtensionContextInvalidated(error)) {
       return;
     }
-    const message = error?.message || String(error);
+    const message = formatErrorMessage(error);
     console.error(`[PoE2 Marketwright] ${operation} failed: ${message}`, {
       error,
       message,
       stack: error?.stack || null,
       code: error?.code || null,
+      name: error?.name || null,
       requestedLeague: error?.requestedLeague || error?.details?.requestedLeague || null,
       searchUrl: error?.searchUrl || error?.details?.searchUrl || null,
       details: error?.details || null
@@ -2392,9 +2428,27 @@
   }
 
   function bindFavoritesPanelMessages() {
-    if (!chrome.runtime?.onMessage) {
+    if (!chrome.runtime?.onMessage || runtime.favoritesPanelMessageBound) {
       return;
     }
+    runtime.favoritesPanelMessageBound = true;
+    // Leaving the trade document must not race tabs.onUpdated; disable immediately on unload.
+    // Trade→trade reloads re-enable via register and re-open from saved favoritesPanelOpen.
+    const disableNativePanelOnUnload = () => {
+      if (!chrome.runtime?.sendMessage || !runtime.favoritesPanelSessionId) {
+        return;
+      }
+      try {
+        chrome.runtime.sendMessage({
+          type: "favorites-panel-close",
+          sessionId: runtime.favoritesPanelSessionId,
+          disable: true
+        });
+      } catch (error) {
+        // Extension context may already be gone with the document.
+      }
+    };
+    window.addEventListener("pagehide", disableNativePanelOnUnload);
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message?.type === "favorites-panel-closed" && sender?.id === chrome.runtime.id) {
         setFavoritesPanelOpen(false, getFavoritesPanelTab(), false).catch(() => {});

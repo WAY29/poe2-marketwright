@@ -25,18 +25,77 @@
       path: getFavoritesPanelPath(sessionId)
     }) || Promise.resolve();
 
-  const disableFavoritesPanel = async (tabId) => {
+  // Visibility close only. Keep enabled so the user can reopen on the same trade tab.
+  const closeFavoritesPanel = async (tabId) => {
+    if (!Number.isInteger(tabId)) {
+      return;
+    }
     try {
       await chrome.sidePanel?.close?.({ tabId });
     } catch (error) {
-      // A panel may already be closed while the tab is navigating.
+      // Already closed, or close() unavailable on older Chrome.
     }
-    return chrome.sidePanel?.setOptions?.({ tabId, enabled: false });
+  };
+
+  // Leave-trade cleanup: close and prevent the empty default_path shell from staying available.
+  const disableFavoritesPanel = async (tabId) => {
+    if (!Number.isInteger(tabId)) {
+      return;
+    }
+    await closeFavoritesPanel(tabId);
+    try {
+      await chrome.sidePanel?.setOptions?.({ tabId, enabled: false });
+    } catch (error) {
+      // Tab may be gone mid-navigation.
+    }
+  };
+
+  const formatErrorMessage = (error) => {
+    if (error == null) {
+      return "unknown_error";
+    }
+    if (typeof error === "string" && error) {
+      return error;
+    }
+    if (typeof error?.message === "string" && error.message) {
+      return error.message;
+    }
+    try {
+      const json = JSON.stringify(error);
+      if (json && json !== "{}") {
+        return json;
+      }
+    } catch (stringifyError) {
+      // Fall through.
+    }
+    return String(error);
+  };
+
+  const resolvePanelTabId = async (sessionId, senderTabId) => {
+    if (Number.isInteger(senderTabId)) {
+      return senderTabId;
+    }
+    if (!sessionId) {
+      return null;
+    }
+    const key = getFavoritesPanelSessionKey(sessionId);
+    const stored = await chrome.storage.session.get(key);
+    const tabId = stored?.[key]?.tabId;
+    return Number.isInteger(tabId) ? tabId : null;
   };
 
   const isExtensionSender = (sender) => sender?.id === chrome.runtime.id;
   const isTradePageUrl = (url) =>
     typeof url === "string" && /^https:\/\/(?:[^/]+\.)?pathofexile\.com\/trade2(?:[/?#]|$)/.test(url);
+
+  const shouldDisablePanelForTabUpdate = (changeInfo, tab) => {
+    if (!(changeInfo.status === "loading" || changeInfo.status === "complete" || changeInfo.url)) {
+      return false;
+    }
+    // Prefer the navigation target URL; fall back to the tab URL only when Chrome omitted changeInfo.url.
+    const url = changeInfo.url || tab?.url;
+    return !isTradePageUrl(url);
+  };
 
   const normalizeEnglishUrl = (input) => {
     let url;
@@ -140,33 +199,69 @@
         configureFavoritesPanel(tabId, sessionId)
       ])
         .then(() => sendResponse({ ok: true }))
-        .catch((error) => sendResponse({ ok: false, error: error?.message || String(error) }));
+        .catch((error) => sendResponse({ ok: false, error: formatErrorMessage(error) }));
+      return true;
+    }
+
+    // Side panel page can detach itself when it has no live trade session/tab.
+    if (message.type === "favorites-panel-detach") {
+      if (!isExtensionSender(sender)) {
+        sendResponse({ ok: false, error: "invalid_panel_request" });
+        return;
+      }
+      const sessionId = normalizeFavoritesPanelSessionId(message.sessionId);
+      Promise.resolve()
+        .then(async () => {
+          let tabId = await resolvePanelTabId(sessionId, sender?.tab?.id);
+          if (!Number.isInteger(tabId) && chrome.tabs?.query) {
+            const tabs = await chrome.tabs.query({ active: true, lastFocusedWindow: true });
+            tabId = tabs?.[0]?.id;
+          }
+          if (!Number.isInteger(tabId)) {
+            return { ok: false, error: "panel_tab_unavailable" };
+          }
+          await disableFavoritesPanel(tabId);
+          return { ok: true };
+        })
+        .then(sendResponse)
+        .catch((error) => sendResponse({ ok: false, error: formatErrorMessage(error) }));
       return true;
     }
 
     if (message.type === "favorites-panel-open" || message.type === "favorites-panel-close") {
       const sessionId = normalizeFavoritesPanelSessionId(message.sessionId);
-      const tabId = sender?.tab?.id;
-      if (!isExtensionSender(sender) || !sessionId || !Number.isInteger(tabId)) {
+      if (!isExtensionSender(sender) || !sessionId) {
         sendResponse({ ok: false, error: "invalid_panel_request" });
         return;
       }
       if (message.type === "favorites-panel-open") {
+        const tabId = sender?.tab?.id;
+        if (!Number.isInteger(tabId)) {
+          sendResponse({ ok: false, error: "invalid_panel_request" });
+          return;
+        }
+        // open() must stay in the user-gesture turn; do not await setOptions first.
+        void configureFavoritesPanel(tabId, sessionId);
         Promise.resolve(chrome.sidePanel?.open?.({ tabId }))
           .then(() => sendResponse({ ok: true }))
-          .catch((error) => sendResponse({ ok: false, error: error?.message || String(error) }));
+          .catch((error) => sendResponse({ ok: false, error: formatErrorMessage(error) }));
         return true;
       }
-      chrome.storage.session
-        .get(getFavoritesPanelSessionKey(sessionId))
-        .then((stored) => {
-          if (stored?.[getFavoritesPanelSessionKey(sessionId)]?.tabId !== tabId) {
+      resolvePanelTabId(sessionId, sender?.tab?.id)
+        .then(async (tabId) => {
+          if (!Number.isInteger(tabId)) {
             return { ok: false, error: "unknown_panel_session" };
           }
-          return Promise.resolve(chrome.sidePanel?.close?.({ tabId })).then(() => ({ ok: true }));
+          // pagehide/leave-trade sends disable:true; user close only hides the panel.
+          if (message.disable) {
+            await disableFavoritesPanel(tabId);
+          } else {
+            await closeFavoritesPanel(tabId);
+          }
+          return { ok: true };
         })
         .then(sendResponse)
-        .catch((error) => sendResponse({ ok: false, error: error?.message || String(error) }));
+        .catch((error) => sendResponse({ ok: false, error: formatErrorMessage(error) }));
       return true;
     }
 
@@ -179,11 +274,16 @@
       }
       chrome.storage.session
         .get(getFavoritesPanelSessionKey(sessionId))
-        .then((stored) => {
+        .then(async (stored) => {
           const tabId = stored?.[getFavoritesPanelSessionKey(sessionId)]?.tabId;
           if (!Number.isInteger(tabId)) {
-            sendResponse({ ok: false, error: "unknown_panel_session" });
-            return null;
+            return { ok: false, error: "unknown_panel_session" };
+          }
+          // Handle close here so the panel X still works if the trade tab is dead.
+          if (command === "close-panel") {
+            await closeFavoritesPanel(tabId);
+            chrome.tabs.sendMessage(tabId, { type: "favorites-panel-closed" }).catch(() => {});
+            return { ok: true };
           }
           return chrome.tabs.sendMessage(tabId, {
             type: "favorites-panel-command",
@@ -195,7 +295,7 @@
         .then((response) => {
           sendResponse(response || { ok: false, error: "panel_tab_unavailable" });
         })
-        .catch((error) => sendResponse({ ok: false, error: error?.message || String(error) }));
+        .catch((error) => sendResponse({ ok: false, error: formatErrorMessage(error) }));
       return true;
     }
 
@@ -284,12 +384,14 @@
     }
   });
 
+  // default_path keeps the panel available until disabled. Re-assert on every worker start.
+  Promise.resolve(chrome.sidePanel?.setOptions?.({ enabled: false })).catch(() => {});
   chrome.runtime.onInstalled?.addListener(() => {
-    chrome.sidePanel?.setOptions?.({ enabled: false }).catch(() => {});
+    Promise.resolve(chrome.sidePanel?.setOptions?.({ enabled: false })).catch(() => {});
   });
 
   chrome.tabs?.onUpdated?.addListener((tabId, changeInfo, tab) => {
-    if ((changeInfo.status === "loading" || changeInfo.url) && !isTradePageUrl(changeInfo.url || tab?.url)) {
+    if (shouldDisablePanelForTabUpdate(changeInfo, tab)) {
       disableFavoritesPanel(tabId).catch(() => {});
     }
   });
@@ -302,8 +404,13 @@
     }).catch(() => {});
   });
 
+  chrome.tabs?.onRemoved?.addListener((tabId) => {
+    disableFavoritesPanel(tabId).catch(() => {});
+  });
+
   chrome.sidePanel?.onClosed?.addListener(({ tabId }) => {
     if (Number.isInteger(tabId)) {
+      // Do not disable here: the user may reopen on the same trade tab.
       chrome.tabs.sendMessage(tabId, { type: "favorites-panel-closed" }).catch(() => {});
     }
   });
