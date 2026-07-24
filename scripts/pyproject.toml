@@ -1,6 +1,6 @@
 [project]
 name = "poe2-marketwright-scripts"
-version = "1.14.4"
+version = "1.14.5"
 description = "Scripts and data tooling for PoE2 Marketwright"
 requires-python = ">=3.10"
 dependencies = [
