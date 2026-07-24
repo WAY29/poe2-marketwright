@@ -155,7 +155,7 @@ Tier 映射由已验证的 PoE2DB 词缀范围生成，并按官方 Trade 稳定
 
 ### 前置条件
 
-- 可加载扩展的 Chrome 或 Chromium 浏览器。
+- 可加载扩展的 Chrome、Chromium 或 Microsoft Edge。
 
 ### 安装发布包
 
@@ -163,17 +163,40 @@ Tier 映射由已验证的 PoE2DB 词缀范围生成，并按官方 Trade 稳定
 
 1. 在 [GitHub Releases](https://github.com/WAY29/poe2-marketwright/releases) 下载最新 zip 文件。
 2. 将 zip 解压到本地目录。
-3. 打开 `chrome://extensions`。
-4. 开启右上角的 `Developer mode`。
-5. 点击 `Load unpacked`。
-6. 选择刚才解压出的目录。
+
+#### Chrome / Chromium
+
+1. 打开 `chrome://extensions`。
+2. 开启右上角的 `Developer mode`。
+3. 点击 `Load unpacked`。
+4. 选择刚才解压出的目录。
+
+#### Microsoft Edge
+
+参考：[在 Microsoft Edge 中旁加载扩展](https://learn.microsoft.com/zh-cn/microsoft-edge/extensions/getting-started/extension-sideloading)。
+
+1. 打开 `edge://extensions`，或点击**扩展** → **管理扩展**。
+2. 开启 **开发人员模式**。
+3. 点击 **加载解压缩的扩展**（`Load unpacked`）。
+4. 选择解压后的目录（目录内应包含 `manifest.json`）。
+5. 打开官方市集页面；若扩展界面未出现，刷新页面。
 
 ### 从源码加载
+
+#### Chrome / Chromium
 
 1. 打开 `chrome://extensions`。
 2. 开启右上角的 `Developer mode`。
 3. 点击 `Load unpacked`。
 4. 选择此仓库根目录。
+
+#### Microsoft Edge
+
+1. 打开 `edge://extensions`，或点击**扩展** → **管理扩展**。
+2. 开启 **开发人员模式**。
+3. 点击 **加载解压缩的扩展**（`Load unpacked`）。
+4. 选择此仓库根目录。
+5. 修改代码后，在扩展卡片上点击 **重新加载**，再刷新市集页面。
 
 <a id="data"></a>
 ## 数据与本地化

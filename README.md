@@ -156,7 +156,7 @@ Rates come from Poe2Scout for the active Trade league. They can be delayed and s
 
 ### Prerequisites
 
-- A Chrome or Chromium browser that can load extensions.
+- Chrome, Chromium, or Microsoft Edge (they all load Manifest V3 extensions).
 
 ### Install a Release
 
@@ -164,17 +164,40 @@ The recommended approach is to download a built package from [GitHub Releases](h
 
 1. Download the latest zip from [GitHub Releases](https://github.com/WAY29/poe2-marketwright/releases).
 2. Extract the zip to a local directory.
-3. Open `chrome://extensions`.
-4. Enable `Developer mode` in the upper-right corner.
-5. Select `Load unpacked`.
-6. Select the extracted directory.
+
+#### Chrome / Chromium
+
+1. Open `chrome://extensions`.
+2. Enable `Developer mode` in the upper-right corner.
+3. Select `Load unpacked`.
+4. Select the extracted directory.
+
+#### Microsoft Edge
+
+See [Microsoft Edge: sideload an extension](https://learn.microsoft.com/microsoft-edge/extensions/getting-started/extension-sideloading).
+
+1. Open `edge://extensions`, or open **Extensions** → **Manage extensions**.
+2. Enable `Developer mode`.
+3. Select `Load unpacked`.
+4. Select the extracted directory (the folder that contains `manifest.json`).
+5. Open the official Trade page and refresh if the extension UI does not appear yet.
 
 ### Load from Source
+
+#### Chrome / Chromium
 
 1. Open `chrome://extensions`.
 2. Enable `Developer mode` in the upper-right corner.
 3. Select `Load unpacked`.
 4. Select this repository's root directory.
+
+#### Microsoft Edge
+
+1. Open `edge://extensions`, or open **Extensions** → **Manage extensions**.
+2. Enable `Developer mode`.
+3. Select `Load unpacked`.
+4. Select this repository's root directory.
+5. After code changes, click **Reload** on the extension card, then refresh the Trade page.
 
 <a id="data"></a>
 ## Data and Localization
