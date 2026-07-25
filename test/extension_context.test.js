@@ -518,6 +518,81 @@ test("Trade result localization follows the item's actual reduced modifier direc
   });
 });
 
+test("Trade result localizes allocated passive titles and effects inside its item popup", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getTradeResultPassiveSkillDisplay, storeTradeResultModifierDescriptions, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageLanguage: "zh_TW_en", pageTranslationEnabled: true };
+  hooks.runtime.tradeLocalization = {
+    passiveSkills: {
+      "20511": {
+        en: {
+          name: "Cremating Cries",
+          effects: ["Empowered Attacks Gain 15% of Physical Damage as Extra Fire Damage"]
+        },
+        zh_TW: {
+          name: "火化嚎叫",
+          effects: ["強化攻擊獲得等同於物理傷害 15% 的額外火焰傷害"]
+        }
+      }
+    }
+  };
+  hooks.storeTradeResultModifierDescriptions({
+    result: [
+      {
+        id: "item-1",
+        item: {
+          explicitMods: [
+            { hash: "stat.explicit.stat_2954116742|20511", description: "Allocates Cremating Cries" }
+          ]
+        }
+      }
+    ]
+  });
+  const passiveElement = {
+    closest(selector) {
+      if (selector === ".item-popup, .itemPopupContainer") return {};
+      if (selector === "[data-id]") return { getAttribute: () => "item-1" };
+      return null;
+    }
+  };
+  const unrelatedElement = {
+    closest(selector) {
+      return selector === "[data-id]" ? { getAttribute: () => "item-1" } : null;
+    }
+  };
+  assert.deepStrictEqual(
+    structuredClone({
+      title: hooks.getTradeResultPassiveSkillDisplay("Cremating Cries", passiveElement),
+      effect: hooks.getTradeResultPassiveSkillDisplay(
+        "Empowered Attacks Gain 15% of Physical Damage as Extra Fire Damage",
+        passiveElement
+      ),
+      unrelated: hooks.getTradeResultPassiveSkillDisplay("Cremating Cries", unrelatedElement)
+    }),
+    {
+      title: { primary: "火化嚎叫", english: "Cremating Cries" },
+      effect: {
+        primary: "強化攻擊獲得等同於物理傷害 15% 的額外火焰傷害",
+        english: "Empowered Attacks Gain 15% of Physical Damage as Extra Fire Damage"
+      },
+      unrelated: null
+    }
+  );
+});
+
 test("Trade stat render text remains stable after the bilingual result is inserted", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");

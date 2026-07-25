@@ -4449,6 +4449,10 @@
       "zh_CN": "斯瓦林之遗产",
       "zh_TW": "傳承．史瓦林"
     },
+    "Legacy of The Blood Thorn": {
+      "zh_CN": "血棘之遗产",
+      "zh_TW": "傳承．血棘"
+    },
     "Legacy of The Knight-errant": {
       "zh_CN": "豪侠骑士之遗产",
       "zh_TW": "傳承．漂泊騎士"
@@ -35743,6 +35747,10 @@
       "zh_CN": "弓类攻击的命中值提高 #%",
       "zh_TW": "使用弓類武器時增加#%命中值"
     },
+    "fractured.stat_1713927892": {
+      "zh_CN": "元素技能上限 #",
+      "zh_TW": "元素技能的上限#"
+    },
     "fractured.stat_1714706956": {
       "zh_CN": "#% increased Magic Pack Size",
       "zh_TW": "增加#%魔法怪物群大小"
@@ -37451,6 +37459,10 @@
       "zh_CN": "配置 风暴周期",
       "zh_TW": "配置風暴浪潮"
     },
+    "fractured.stat_2954116742|33852": {
+      "zh_CN": "配置 霜雪疾风",
+      "zh_TW": "配置冽風"
+    },
     "fractured.stat_2954116742|33887": {
       "zh_CN": "配置 全弹发射",
       "zh_TW": "配置全面齊射"
@@ -38655,6 +38667,10 @@
       "zh_CN": "配置 魔武双修",
       "zh_TW": "配置均衡"
     },
+    "fractured.stat_2954116742|61444": {
+      "zh_CN": "配置 凋零咏唱",
+      "zh_TW": "配置懸念"
+    },
     "fractured.stat_2954116742|61601": {
       "zh_CN": "配置 真实之击",
       "zh_TW": "配置真實之擊"
@@ -39242,6 +39258,10 @@
     "fractured.stat_3374165039": {
       "zh_CN": "你的图腾放置速度提高 #%",
       "zh_TW": "增加#%圖騰設置速度"
+    },
+    "fractured.stat_3376488707": {
+      "zh_CN": "玩家的抗性上限 #%",
+      "zh_TW": "玩家#%最大抗性"
     },
     "fractured.stat_3377888098": {
       "zh_CN": "技能效果持续时间提高 #%",
@@ -41693,7 +41713,7 @@
     },
     "rune.stat_2211478554": {
       "zh_CN": "若你可以获得狂怒球，则在场的友军直接获得相应的能量球",
-      "zh_TW": "If you would gain a Frenzy Charge, Allies in your Presence gain that Charge instead"
+      "zh_TW": "如果你會獲得一顆狂怒球，改為由你存在中的友方獲得該能量球"
     },
     "rune.stat_2223678961": {
       "zh_CN": "该装备附加 # - # 基础混沌伤害",
@@ -42157,7 +42177,7 @@
     },
     "rune.stat_2959554008": {
       "zh_CN": "羁绊： 若你近期消耗过狂怒球，闪避值提高 #%",
-      "zh_TW": "Bonded: #% increased Evasion Rating if you've consumed a Frenzy Charge Recently"
+      "zh_TW": "命定: 若你近期有消耗一顆狂怒球，增加#%閃避值"
     },
     "rune.stat_2968503605": {
       "zh_CN": "易燃强度提高 #%",
@@ -42558,6 +42578,10 @@
     "rune.stat_3678845069": {
       "zh_CN": "使用该武器攻击时有 #% 的几率造成曝露",
       "zh_TW": "此武器的攻擊有#%機率造成曝曬"
+    },
+    "rune.stat_368025119": {
+      "zh_CN": "Bonded: Attacks have #% chance to cause Bleeding",
+      "zh_TW": "命定: 攻擊有#%機率造成流血"
     },
     "rune.stat_3695891184": {
       "zh_CN": "每击败一名敌人获得 # 点生命",
@@ -53771,7 +53795,7 @@
     },
     "Bonded: #% increased Evasion Rating if you've consumed a Frenzy Charge Recently": {
       "zh_CN": "羁绊： 若你近期消耗过狂怒球，闪避值提高 #%",
-      "zh_TW": "Bonded: #% increased Evasion Rating if you've consumed a Frenzy Charge Recently"
+      "zh_TW": "命定: 若你近期有消耗一顆狂怒球，增加#%閃避值"
     },
     "Bonded: #% increased Exposure Effect": {
       "zh_CN": "羁绊： 曝露效果提高 #%",
@@ -54104,6 +54128,10 @@
     "Bonded: Archon recovery period expires #% faster": {
       "zh_CN": "羁绊： 执政官间隔期的消减速度加快 #%",
       "zh_TW": "命定: 統治者增益效果恢復期加快#%"
+    },
+    "Bonded: Attacks have #% chance to cause Bleeding": {
+      "zh_CN": "Bonded: Attacks have #% chance to cause Bleeding",
+      "zh_TW": "命定: 攻擊有#%機率造成流血"
     },
     "Bonded: Attacks have #% to Critical Hit Chance": {
       "zh_CN": "羁绊： 攻击的暴击率 #%",
@@ -58919,7 +58947,7 @@
     },
     "If you would gain a Frenzy Charge, Allies in your Presence gain that Charge instead": {
       "zh_CN": "若你可以获得狂怒球，则在场的友军直接获得相应的能量球",
-      "zh_TW": "If you would gain a Frenzy Charge, Allies in your Presence gain that Charge instead"
+      "zh_TW": "如果你會獲得一顆狂怒球，改為由你存在中的友方獲得該能量球"
     },
     "If you would gain a Power Charge, Allies in your Presence gain that Charge instead": {
       "zh_CN": "若你可以获得暴击球，则在场的友军直接获得相应的能量球",

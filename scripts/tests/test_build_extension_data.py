@@ -55,7 +55,9 @@ from build_extension_data import (
     parse_poe2db_item_title,
     parse_poe2db_unique_item_fields,
     parse_poe2db_item_name_slugs,
+    parse_poe2db_passive_skill_page,
     parse_poe2db_stat_source_records,
+    build_verified_poe2db_passive_skill_localizations,
     build_verified_poe2db_stat_mod_localizations,
     apply_verified_poe2db_stat_localizations,
     apply_verified_item_prefix_localizations,
@@ -466,6 +468,78 @@ class TradeStatMappingTests(unittest.TestCase):
                 '<span class="lc">From Nothing</span><span class="lc">Diamond</span>'
             ),
             {"name": "From Nothing", "type": "Diamond"},
+        )
+
+    def test_parses_passive_skill_name_effects_and_stable_hash(self) -> None:
+        page = """
+          <a data-hover="?s=Data%5CPassiveSkills%2F99999">Unrelated tree node</a>
+          <div class="itemName typeLine"><span class="lc">Cremating Cries</span></div>
+          <div class="implicitMod">Empowered Attacks Gain 15% of Physical Damage as Extra Fire Damage</div>
+          <div class="implicitMod">10% increased Fire Damage</div>
+          <tr><td>PassiveSkillsHash</td><td>20511</td></tr>
+        """
+        self.assertEqual(
+            parse_poe2db_passive_skill_page(page),
+            {
+                "hash": "20511",
+                "name": "Cremating Cries",
+                "effects": [
+                    "Empowered Attacks Gain 15% of Physical Damage as Extra Fire Damage",
+                    "10% increased Fire Damage",
+                ],
+            },
+        )
+
+    def test_selects_the_passive_card_matching_the_requested_hash_on_a_name_collision_page(self) -> None:
+        page = """
+          <div id="skill" class="tab-pane"><div class="itemName typeLine"><span class="lc">Apocalypse</span></div>
+          <div class="implicitMod">Wrong skill effect</div></div>
+          <div data-tabid="skill"><tr><td>PassiveSkillsHash</td><td>111</td></tr></div>
+          <div id="passive" class="tab-pane"><div class="itemName typeLine"><span class="lc">Apocalypse</span></div>
+          <div class="implicitMod">30% reduced Damage</div></div>
+          <div data-tabid="passive"><tr><td>PassiveSkillsHash</td><td>38398</td></tr></div>
+        """
+        self.assertEqual(
+            parse_poe2db_passive_skill_page(page, "38398"),
+            {"hash": "38398", "name": "Apocalypse", "effects": ["30% reduced Damage"]},
+        )
+
+    def test_accepts_passive_localizations_only_when_official_hash_and_name_match(self) -> None:
+        pages = {
+            "us": {
+                "20511": {
+                    "hash": "20511",
+                    "name": "Cremating Cries",
+                    "effects": ["Empowered Attacks Gain 15% of Physical Damage as Extra Fire Damage"],
+                }
+            },
+            "cn": {
+                "20511": {
+                    "hash": "20511",
+                    "name": "焚化战吼",
+                    "effects": ["被强化攻击获得额外火焰伤害，其数值等同于物理伤害的 15%"],
+                }
+            },
+            "tw": {
+                "20511": {
+                    "hash": "20511",
+                    "name": "火化嚎叫",
+                    "effects": ["強化攻擊獲得等同於物理傷害 15% 的額外火焰傷害"],
+                }
+            },
+        }
+        self.assertEqual(
+            build_verified_poe2db_passive_skill_localizations(
+                {"explicit.stat_2954116742|20511": "Allocates Cremating Cries"},
+                pages,
+            ),
+            {
+                "20511": {
+                    "en": {"name": "Cremating Cries", "effects": ["Empowered Attacks Gain 15% of Physical Damage as Extra Fire Damage"]},
+                    "zh_CN": {"name": "焚化战吼", "effects": ["被强化攻击获得额外火焰伤害，其数值等同于物理伤害的 15%"]},
+                    "zh_TW": {"name": "火化嚎叫", "effects": ["強化攻擊獲得等同於物理傷害 15% 的額外火焰傷害"]},
+                }
+            },
         )
 
     def test_ignores_fixed_numbers_when_extracting_rollable_minimums(self) -> None:

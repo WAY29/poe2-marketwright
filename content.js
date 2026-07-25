@@ -630,6 +630,7 @@
     tradeStatTemplates: new Map(),
     tradeStatsById: new Map(),
     tradeResultModifierDescriptions: new Map(),
+    tradeResultPassiveSkills: new Map(),
     tradeSearchRecords: { items: [], stats: [], categories: [] },
     tradeLocalizationObserver: null,
     tradeLocalizationTimer: null,
@@ -6106,6 +6107,10 @@
   }
 
   function getTradeStatDisplay(text, element = null) {
+    const passiveSkillDisplay = getTradeResultPassiveSkillDisplay(text, element);
+    if (passiveSkillDisplay) {
+      return passiveSkillDisplay;
+    }
     const localized = getLocalizedTradeStatTemplate(
       text,
       getTradeStatRecordForElement(element),
@@ -6125,6 +6130,55 @@
       primary,
       english: language.endsWith("_en") && primary !== english ? english : null
     };
+  }
+
+  function getTradeResultPassiveSkillDisplay(text, element) {
+    if (!element?.closest?.(".item-popup, .itemPopupContainer")) {
+      return null;
+    }
+    const itemId = String(element.closest("[data-id]")?.getAttribute?.("data-id") || "").trim();
+    const passiveHashes = runtime.tradeResultPassiveSkills.get(itemId);
+    const source = normalizeLookupText(text);
+    if (!source || !passiveHashes?.size) {
+      return null;
+    }
+    for (const passiveHash of passiveHashes) {
+      const passive = runtime.tradeLocalization?.passiveSkills?.[passiveHash];
+      const english = passive?.en;
+      if (!english) {
+        continue;
+      }
+      let localized = null;
+      if (normalizeLookupText(english.name) === source) {
+        localized = {
+          en: english.name,
+          zh_CN: passive.zh_CN?.name,
+          zh_TW: passive.zh_TW?.name
+        };
+      } else {
+        const effectIndex = (english.effects || []).findIndex((effect) => normalizeLookupText(effect) === source);
+        if (effectIndex >= 0) {
+          localized = {
+            en: english.effects[effectIndex],
+            zh_CN: passive.zh_CN?.effects?.[effectIndex],
+            zh_TW: passive.zh_TW?.effects?.[effectIndex]
+          };
+        }
+      }
+      if (!localized) {
+        continue;
+      }
+      const language = resolvePageLanguage(runtime.state.pageLanguage);
+      if (language === "en") {
+        return { primary: localized.en, english: null };
+      }
+      const primary = String(localized[getMessageLocale(language)] || localized.en || text);
+      return {
+        primary,
+        english: language.endsWith("_en") && primary !== localized.en ? localized.en : null
+      };
+    }
+    return null;
   }
 
   function getLocalizedTradeStatTemplate(text, record = null, actualDescription = null) {
@@ -6173,6 +6227,7 @@
         continue;
       }
       const descriptions = new Map();
+      const passiveHashes = new Set();
       for (const modifiers of Object.values(entry.item)) {
         if (!Array.isArray(modifiers)) {
           continue;
@@ -6182,11 +6237,24 @@
           const description = String(modifier?.description || "").trim();
           if (statId && description) {
             descriptions.set(statId, description);
+            const passiveHash = statId.match(/\|(\d+)$/)?.[1];
+            if (
+              passiveHash &&
+              /^Allocates\s+/i.test(description) &&
+              runtime.tradeLocalization?.passiveSkills?.[passiveHash]
+            ) {
+              passiveHashes.add(passiveHash);
+            }
           }
         }
       }
       if (descriptions.size) {
         runtime.tradeResultModifierDescriptions.set(itemId, descriptions);
+      }
+      if (passiveHashes.size) {
+        runtime.tradeResultPassiveSkills.set(itemId, passiveHashes);
+      } else {
+        runtime.tradeResultPassiveSkills.delete(itemId);
       }
     }
     if (document.documentElement && isPageTranslationEnabled()) {

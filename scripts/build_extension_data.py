@@ -53,6 +53,7 @@ DEFAULT_POE2DB_BATCH_SIZE = 10
 DEFAULT_POE2DB_BATCH_DELAY_SECONDS = 5.0
 UNIQUE_ITEM_PAGE_CACHE_VERSION = 1
 UNIQUE_ITEM_MOD_TEXTS_CACHE_VERSION = 2
+PASSIVE_SKILL_PAGE_CACHE_VERSION = 3
 TRADE_ITEM_LOCALIZATION_PAGE_SLUGS = (
     "Stackable_Currency",
     "Augment",
@@ -650,6 +651,61 @@ class Poe2dbUniqueItemFieldsParser(HTMLParser):
             self.current_text.append(data)
 
 
+class Poe2dbPassiveSkillParser(HTMLParser):
+    """Read a passive node's title and displayed effects from its PoE2DB page."""
+
+    def __init__(self) -> None:
+        super().__init__()
+        self.capture_name_depth = 0
+        self.capture_effect_depth = 0
+        self.current_name: list[str] = []
+        self.current_effect: list[str] = []
+        self.name = ""
+        self.effects: list[str] = []
+
+    def handle_starttag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        class_tokens = (dict(attrs).get("class") or "").split()
+        if self.capture_name_depth > 0:
+            if tag not in HTML_VOID_TAGS:
+                self.capture_name_depth += 1
+        elif tag == "div" and {"itemName", "typeLine"}.issubset(class_tokens) and not self.name:
+            self.capture_name_depth = 1
+            self.current_name = []
+
+        if self.capture_effect_depth > 0:
+            if tag == "br":
+                self.current_effect.append(" ")
+            if tag not in HTML_VOID_TAGS:
+                self.capture_effect_depth += 1
+        elif tag == "div" and "implicitMod" in class_tokens:
+            self.capture_effect_depth = 1
+            self.current_effect = []
+
+    def handle_startendtag(self, tag: str, attrs: list[tuple[str, str | None]]) -> None:
+        if tag == "br" and self.capture_effect_depth > 0:
+            self.current_effect.append(" ")
+
+    def handle_endtag(self, tag: str) -> None:
+        if self.capture_name_depth > 0:
+            self.capture_name_depth -= 1
+            if self.capture_name_depth == 0:
+                self.name = WHITESPACE_RE.sub(" ", "".join(self.current_name)).strip()
+                self.current_name = []
+        if self.capture_effect_depth > 0:
+            self.capture_effect_depth -= 1
+            if self.capture_effect_depth == 0:
+                effect = WHITESPACE_RE.sub(" ", "".join(self.current_effect)).strip()
+                if effect:
+                    self.effects.append(effect)
+                self.current_effect = []
+
+    def handle_data(self, data: str) -> None:
+        if self.capture_name_depth > 0:
+            self.current_name.append(data)
+        if self.capture_effect_depth > 0:
+            self.current_effect.append(data)
+
+
 class Poe2dbStatSourceParser(HTMLParser):
     """Parse localized item modifiers keyed by their stable PoE2DB source path."""
 
@@ -744,6 +800,84 @@ def parse_poe2db_unique_item_fields(html: str) -> dict[str, str]:
     if len(parser.fields) != 2:
         return {}
     return {"name": parser.fields[0], "type": parser.fields[1]}
+
+
+def parse_poe2db_passive_skill_page(html: str, expected_hash: str = "") -> dict[str, Any]:
+    source = str(html or "")
+    passive_hash = ""
+    popup_html = source
+    for match in re.finditer(
+        r"<div\s+id=(?P<id_quote>['\"])(?P<tab>[^'\"]+)(?P=id_quote)[^>]*"
+        r"\bclass=(?P<class_quote>['\"])[^'\"]*\btab-pane\b[^'\"]*(?P=class_quote)[^>]*>"
+        r"(?P<popup>.*?)<div[^>]*\bdata-tabid=(?P<tab_quote>['\"])(?P=tab)(?P=tab_quote)[^>]*>"
+        r".*?PassiveSkillsHash\s*</td>\s*<td>\s*(?P<hash>\d+)",
+        source,
+        re.IGNORECASE | re.DOTALL,
+    ):
+        if not expected_hash or match["hash"] == expected_hash:
+            passive_hash = match["hash"]
+            popup_html = match["popup"]
+            break
+    if not passive_hash:
+        hash_match = re.search(
+            r"PassiveSkillsHash\s*</td>\s*<td>\s*(\d+)",
+            source,
+            re.IGNORECASE,
+        )
+        if not hash_match:
+            hash_match = re.search(r"PassiveSkills(?:%2F|/)(\d+)", source, re.IGNORECASE)
+        passive_hash = hash_match.group(1) if hash_match else ""
+    if expected_hash and passive_hash != expected_hash:
+        return {}
+    parser = Poe2dbPassiveSkillParser()
+    parser.feed(popup_html)
+    if not passive_hash or not parser.name or not parser.effects:
+        return {}
+    return {"hash": passive_hash, "name": parser.name, "effects": list(dict.fromkeys(parser.effects))}
+
+
+def build_verified_poe2db_passive_skill_localizations(
+    trade_stat_texts: dict[str, str],
+    pages_by_locale: dict[str, dict[str, dict[str, Any]]],
+) -> dict[str, dict[str, dict[str, Any]]]:
+    """Join passive pages to official allocation stats through PassiveSkillsHash."""
+
+    candidates = {
+        passive_hash: (spec["name"], spec["slug"])
+        for passive_hash, spec in collect_trade_allocated_passive_skill_specs(trade_stat_texts).items()
+    }
+
+    localized: dict[str, dict[str, dict[str, Any]]] = {}
+    for passive_hash, (english_name, _slug) in sorted(candidates.items()):
+        records = {locale: (pages_by_locale.get(locale, {}).get(passive_hash) or {}) for locale in ("us", "cn", "tw")}
+        english = records["us"]
+        if (
+            str(english.get("hash") or "") != passive_hash
+            or normalize_lookup_text(str(english.get("name") or "")) != normalize_lookup_text(english_name)
+        ):
+            continue
+        if any(not str(records[locale].get("name") or "").strip() or not records[locale].get("effects") for locale in records):
+            continue
+        localized[passive_hash] = {
+            "en": {"name": english["name"], "effects": list(english["effects"])},
+            "zh_CN": {"name": records["cn"]["name"], "effects": list(records["cn"]["effects"])},
+            "zh_TW": {"name": records["tw"]["name"], "effects": list(records["tw"]["effects"])},
+        }
+    return localized
+
+
+def collect_trade_allocated_passive_skill_specs(trade_stat_texts: dict[str, str]) -> dict[str, dict[str, str]]:
+    specs: dict[str, dict[str, str]] = {}
+    for stat_id, text in trade_stat_texts.items():
+        name_match = re.match(r"^Allocates\s+(.+?)\s*$", str(text or ""), re.IGNORECASE)
+        hash_match = re.search(r"\|(\d+)$", str(stat_id or ""))
+        if not name_match or not hash_match:
+            continue
+        name = name_match.group(1).strip()
+        slug = poe2db_item_slug(name)
+        if name and slug:
+            specs.setdefault(hash_match.group(1), {"name": name, "slug": slug})
+    return specs
 
 
 def poe2db_stat_source_identity(record: Poe2dbStatSourceRecord) -> tuple[str, str, str, str, tuple[str, ...]]:
@@ -2442,6 +2576,101 @@ def write_unique_item_page_cache(path: Path, cache: dict[str, Any]) -> None:
     path.write_text(json.dumps(cache, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
 
 
+def load_passive_skill_page_cache(path: Path) -> dict[str, Any]:
+    try:
+        cache = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError):
+        return {"version": PASSIVE_SKILL_PAGE_CACHE_VERSION, "pages": {}}
+    if (
+        not isinstance(cache, dict)
+        or cache.get("version") != PASSIVE_SKILL_PAGE_CACHE_VERSION
+        or not isinstance(cache.get("pages"), dict)
+    ):
+        return {"version": PASSIVE_SKILL_PAGE_CACHE_VERSION, "pages": {}}
+    return cache
+
+
+def write_passive_skill_page_cache(path: Path, cache: dict[str, Any]) -> None:
+    path.parent.mkdir(parents=True, exist_ok=True)
+    path.write_text(json.dumps(cache, ensure_ascii=False, indent=2, sort_keys=True) + "\n", encoding="utf-8")
+
+
+async def collect_poe2db_passive_skill_pages(
+    trade_stat_texts: dict[str, str],
+    workers: int,
+    batch_size: int = DEFAULT_POE2DB_BATCH_SIZE,
+    batch_delay_seconds: float = DEFAULT_POE2DB_BATCH_DELAY_SECONDS,
+    cache: dict[str, Any] | None = None,
+    cache_path: Path | None = None,
+    force: bool = False,
+) -> dict[str, dict[str, dict[str, Any]]]:
+    """Fetch localized passive pages referenced by official allocation stats."""
+
+    specs = collect_trade_allocated_passive_skill_specs(trade_stat_texts)
+    passive_hashes = sorted(specs)
+    cache = cache if cache is not None else {"version": PASSIVE_SKILL_PAGE_CACHE_VERSION, "pages": {}}
+    cached_pages = cache["pages"]
+    semaphore = asyncio.Semaphore(max(1, workers))
+
+    def has_current_page(passive_hash: str, locale: str) -> bool:
+        page = (cached_pages.get(passive_hash) or {}).get(locale) or {}
+        return bool(
+            str(page.get("hash") or "").strip() == passive_hash
+            and str(page.get("name") or "").strip()
+            and isinstance(page.get("effects"), list)
+            and page["effects"]
+        )
+
+    missing_locales_by_hash = {
+        passive_hash: tuple(
+            locale for locale in ("us", "cn", "tw") if force or not has_current_page(passive_hash, locale)
+        )
+        for passive_hash in passive_hashes
+    }
+    missing_hashes = [passive_hash for passive_hash, locales in missing_locales_by_hash.items() if locales]
+
+    async with build_async_client(max_connections=max(1, workers)) as client:
+        async def fetch_page(passive_hash: str, locale: str) -> tuple[str, str, dict[str, Any]]:
+            slug = specs[passive_hash]["slug"]
+            url = f"https://poe2db.tw/{locale}/{slug}"
+            for attempt in range(3):
+                try:
+                    async with semaphore:
+                        return passive_hash, locale, parse_poe2db_passive_skill_page(
+                            await fetch_text(client, url),
+                            passive_hash,
+                        )
+                except Exception as error:
+                    if attempt == 2:
+                        print(f"[build_extension_data] failed to fetch passive skill page {url}: {error}", file=sys.stderr)
+                        return passive_hash, locale, {}
+                    await asyncio.sleep(attempt + 1)
+
+        batches = split_into_batches(missing_hashes, batch_size)
+        for index, hash_batch in enumerate(batches):
+            for passive_hash, locale, page in await asyncio.gather(
+                *(
+                    fetch_page(passive_hash, locale)
+                    for passive_hash in hash_batch
+                    for locale in missing_locales_by_hash[passive_hash]
+                )
+            ):
+                if page:
+                    cached_pages.setdefault(passive_hash, {})[locale] = page
+            if cache_path:
+                write_passive_skill_page_cache(cache_path, cache)
+            if index + 1 < len(batches):
+                await asyncio.sleep(batch_delay_seconds)
+
+    return {
+        locale: {
+            passive_hash: (cached_pages.get(passive_hash) or {}).get(locale, {})
+            for passive_hash in passive_hashes
+        }
+        for locale in ("us", "cn", "tw")
+    }
+
+
 def merge_extra_artifacts(*artifacts_by_slug: dict[str, list[str]]) -> dict[str, list[str]]:
     merged: dict[str, set[str]] = {}
     for artifacts in artifacts_by_slug:
@@ -3437,9 +3666,14 @@ async def main() -> int:
         help="Persistent cache for verified unique-item pages.",
     )
     parser.add_argument(
+        "--poe2db-passive-skill-cache",
+        default=str(REPO_ROOT / "build/poe2db-passive-skill-pages.json"),
+        help="Persistent cache for verified localized passive-skill pages.",
+    )
+    parser.add_argument(
         "--force",
         action="store_true",
-        help="Ignore cached unique-item pages and fetch them again.",
+        help="Ignore cached PoE2DB pages and fetch them again.",
     )
     parser.add_argument(
         "--localized-item-cache",
@@ -3471,10 +3705,16 @@ async def main() -> int:
 
     split_dir = Path(args.split_dir)
     unique_item_cache_path = Path(args.poe2db_unique_cache)
+    passive_skill_cache_path = Path(args.poe2db_passive_skill_cache)
     unique_item_page_cache = (
         {"version": UNIQUE_ITEM_PAGE_CACHE_VERSION, "pages": {}}
         if args.force
         else load_unique_item_page_cache(unique_item_cache_path)
+    )
+    passive_skill_page_cache = (
+        {"version": PASSIVE_SKILL_PAGE_CACHE_VERSION, "pages": {}}
+        if args.force
+        else load_passive_skill_page_cache(passive_skill_cache_path)
     )
     trade_stats_payload = await fetch_trade_stats(args.trade_stats_url)
     trade_items_payload = await fetch_trade_items(args.trade_items_url)
@@ -3510,12 +3750,25 @@ async def main() -> int:
     trade_stat_index = build_trade_stat_index(trade_stats_payload)
     trade_stat_records = build_trade_stat_records(trade_stats_payload)
     trade_skill_stat_index = build_trade_skill_stat_index(trade_stats_payload)
+    trade_stat_texts = build_trade_stat_text_map(trade_stats_payload)
+    passive_skill_localizations = build_verified_poe2db_passive_skill_localizations(
+        trade_stat_texts,
+        await collect_poe2db_passive_skill_pages(
+            trade_stat_texts,
+            args.localized_item_workers,
+            args.poe2db_batch_size,
+            args.poe2db_batch_delay_seconds,
+            passive_skill_page_cache,
+            passive_skill_cache_path,
+            args.force,
+        ),
+    )
     (
         verified_keystone_names,
         keystone_simplified_names,
         keystone_traditional_names,
     ) = await collect_localized_item_names(
-        sorted(set(build_trade_stat_text_map(trade_stats_payload).values())),
+        sorted(set(trade_stat_texts.values())),
         [f"{POE2DB_ITEM_ROOT_URL}{page_slug}" for page_slug in TRADE_STAT_LOCALIZATION_PAGE_SLUGS],
         args.localized_item_workers,
         allow_item_page_fallback=False,
@@ -3814,6 +4067,7 @@ async def main() -> int:
     )
     trade_localization["filterOptions"] = filter_option_localizations
     trade_localization["leagueOptions"] = league_option_localizations
+    trade_localization["passiveSkills"] = passive_skill_localizations
     trade_localization["optionStrings"] = build_trade_option_text_localizations(
         filters_payload,
         filter_option_localizations,
@@ -3831,7 +4085,7 @@ async def main() -> int:
     )
     trade_localization["uniqueItemCoverage"] = unique_item_localization_report["coverage"]
     output = {
-        "version": 6,
+        "version": 7,
         "generatedAt": datetime.now(timezone.utc).isoformat(),
         "source": "https://poe2db.tw/us/Modifiers",
         "tradeStatsSource": args.trade_stats_url,
@@ -3849,6 +4103,7 @@ async def main() -> int:
                 }
                 for page_slug in TRADE_STAT_LOCALIZATION_MOD_PAGE_SLUGS
             },
+            "poe2dbPassiveSkills": "https://poe2db.tw/{locale}/{slug}",
         },
         "displayItemMetadataSources": {
             "zh_CN": args.zh_cn_trade_items_url,
@@ -3886,6 +4141,7 @@ async def main() -> int:
                 for category_id, page_slug in TRADE_CATEGORY_LOCALIZATION_PAGE_SLUGS.items()
             },
             "poe2dbUniqueItems": "https://poe2db.tw/{locale}/{slug}",
+            "poe2dbPassiveSkills": "https://poe2db.tw/{locale}/{slug}",
         },
         "tradeItemsSource": args.trade_items_url,
         "pageCategories": page_categories,
