@@ -593,6 +593,112 @@ test("Trade result localizes allocated passive titles and effects inside its ite
   );
 });
 
+test("Trade result localizes split Trial token popup properties", () => {
+  class FakeElement {
+    constructor(children = [], trialProperty = false) {
+      this.nodeType = 1;
+      this.childNodes = children;
+      this.trialProperty = trialProperty;
+    }
+
+    matches(selector) {
+      return this.trialProperty && selector === ".item-popup__property";
+    }
+
+    querySelectorAll() {
+      const descendants = [];
+      const visit = (element) => {
+        for (const child of element.childNodes || []) {
+          if (child.nodeType !== 1) continue;
+          descendants.push(child);
+          visit(child);
+        }
+      };
+      visit(this);
+      return descendants;
+    }
+  }
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { localizeTrialTokenProperty, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageLanguage: "zh_TW", pageTranslationEnabled: true };
+  hooks.runtime.tradeLocalization = {
+    strings: {
+      "Has Hare Foot": { en: "Has Hare Foot", zh_CN: "使用 野兔之足", zh_TW: "使用 腳兔" },
+      "Has Worn Sandals": { en: "Has Worn Sandals", zh_CN: "使用 破烂凉鞋", zh_TW: "使用 磨損涼鞋" }
+    }
+  };
+  const text = (nodeValue) => ({ nodeType: 3, nodeValue });
+  const waterLabel = text("Sacred Water: ");
+  const boonLabel = text("Minor Boons");
+  const boonName = text("Hare Foot");
+  const unknownBoonName = text("Unknown Boon");
+  const afflictionLabel = text("Minor Afflictions");
+  const afflictionName = text("Worn Sandals");
+  const water = new FakeElement([
+    new FakeElement([waterLabel, new FakeElement([text("626")])])
+  ], true);
+  const boons = new FakeElement([
+    new FakeElement([
+      new FakeElement([boonLabel]),
+      text(": "),
+      new FakeElement([boonName]),
+      text(", "),
+      new FakeElement([unknownBoonName])
+    ])
+  ], true);
+  const afflictions = new FakeElement([
+    new FakeElement([
+      new FakeElement([afflictionLabel]),
+      text(": "),
+      new FakeElement([afflictionName])
+    ])
+  ], true);
+
+  assert.equal(hooks.localizeTrialTokenProperty(water), true);
+  assert.equal(hooks.localizeTrialTokenProperty(boons), true);
+  assert.equal(hooks.localizeTrialTokenProperty(afflictions), true);
+  assert.deepStrictEqual(
+    structuredClone({
+      water: waterLabel.nodeValue,
+      boonLabel: boonLabel.nodeValue,
+      boonName: boonName.nodeValue,
+      unknownBoonName: unknownBoonName.nodeValue,
+      afflictionLabel: afflictionLabel.nodeValue,
+      afflictionName: afflictionName.nodeValue
+    }),
+    {
+      water: "神聖之水: ",
+      boonLabel: "次要恩惠",
+      boonName: "腳兔",
+      unknownBoonName: "Unknown Boon",
+      afflictionLabel: "次要苦痛",
+      afflictionName: "磨損涼鞋"
+    }
+  );
+
+  hooks.runtime.state.pageLanguage = "en";
+  hooks.localizeTrialTokenProperty(water);
+  hooks.localizeTrialTokenProperty(boons);
+  hooks.localizeTrialTokenProperty(afflictions);
+  assert.deepStrictEqual(
+    structuredClone({ water: waterLabel.nodeValue, boonLabel: boonLabel.nodeValue, boonName: boonName.nodeValue }),
+    { water: "Sacred Water: ", boonLabel: "Minor Boons", boonName: "Hare Foot" }
+  );
+});
+
 test("Trade stat render text remains stable after the bilingual result is inserted", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");

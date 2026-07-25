@@ -167,6 +167,16 @@
       zh_TW: "篩選你希望能同時配置的詞綴。\n使用較低的 `min` 值以配對部分結果。"
     }
   });
+  // PoE2DB supplies these Trial of the Sekhemas terms; Trade's static API omits them.
+  const TRIAL_TOKEN_SUMMARY_LABELS = Object.freeze({
+    "Minor Boons": { en: "Minor Boons", zh_CN: "次要恩赐", zh_TW: "次要恩惠" },
+    "Major Boons": { en: "Major Boons", zh_CN: "主要恩赐", zh_TW: "主要恩惠" },
+    "Minor Afflictions": { en: "Minor Afflictions", zh_CN: "次要痛苦", zh_TW: "次要苦痛" },
+    "Major Afflictions": { en: "Major Afflictions", zh_CN: "主要痛苦", zh_TW: "主要苦痛" }
+  });
+  const TRIAL_TOKEN_TERMS = Object.freeze({
+    "Sacred Water": { en: "Sacred Water", zh_CN: "圣水", zh_TW: "神聖之水" }
+  });
   const ITEM_SEARCH_ROOT_SELECTOR =
     "#trade .top .search-panel > .search-bar:not(.search-advanced) .search-left .multiselect.search-select";
   const ITEM_SEARCH_INPUT_SELECTOR = `${ITEM_SEARCH_ROOT_SELECTOR} input.multiselect__input`;
@@ -5921,6 +5931,9 @@
       if (current.nodeType !== 1 || isExcludedTradeLocalizationElement(current, options)) {
         return;
       }
+      if (current.matches?.(".item-popup__property") && localizeTrialTokenProperty(current)) {
+        return;
+      }
       if (current.matches?.("[data-field^='stat.']")) {
         localizeTradeStatElement(current);
         return;
@@ -6082,6 +6095,75 @@
       zh_CN: `加权总和 ${version}`,
       zh_TW: `加權總和 ${version}`
     };
+  }
+
+  function localizeTrialTokenProperty(element) {
+    if (!element?.matches?.(".item-popup__property")) {
+      return false;
+    }
+    const textNodes = [];
+    for (const span of element.querySelectorAll?.("span") || []) {
+      for (const node of span.childNodes || []) {
+        if (node.nodeType === 3) {
+          textNodes.push(node);
+        }
+      }
+    }
+    const labelNode = textNodes.find((node) => {
+      const label = getTrialTokenNodeSource(node).trim().replace(/:\s*$/, "");
+      return TRIAL_TOKEN_SUMMARY_LABELS[label] || TRIAL_TOKEN_TERMS[label];
+    });
+    if (!labelNode) {
+      return false;
+    }
+    const sourceLabel = getTrialTokenNodeSource(labelNode);
+    const suffix = sourceLabel.match(/:\s*$/)?.[0] || "";
+    const label = sourceLabel.slice(0, sourceLabel.length - suffix.length).trim();
+    const labelRecord = TRIAL_TOKEN_SUMMARY_LABELS[label] || TRIAL_TOKEN_TERMS[label];
+    localizeTrialTokenTextNode(labelNode, () =>
+      `${getLocalizedTradePageText(labelRecord, label, false)}${suffix}`
+    );
+    if (!TRIAL_TOKEN_SUMMARY_LABELS[label]) {
+      return true;
+    }
+    const strings = runtime.tradeLocalization?.strings || {};
+    for (const node of textNodes) {
+      if (node === labelNode) {
+        continue;
+      }
+      localizeTrialTokenTextNode(node, (source) => {
+        const match = source.match(/^(\s*)(.*?)(\s*)$/s);
+        const record = strings[`Has ${match?.[2] || ""}`];
+        if (!record) {
+          return source;
+        }
+        const localized = getLocalizedTradePageText(record, match[2], false)
+          .replace(/^(?:Has|使用|拥有|擁有)\s*/, "") || match[2];
+        return `${match[1]}${localized}${match[3]}`;
+      });
+    }
+    return true;
+  }
+
+  function getTrialTokenNodeSource(node) {
+    let source = node[TRADE_LOCALIZATION_SOURCE_KEY] ?? node.nodeValue ?? "";
+    if (
+      node[TRADE_LOCALIZATION_RENDER_KEY] !== undefined &&
+      node.nodeValue !== node[TRADE_LOCALIZATION_RENDER_KEY]
+    ) {
+      source = node.nodeValue ?? "";
+    }
+    node[TRADE_LOCALIZATION_SOURCE_KEY] = source;
+    return source;
+  }
+
+  function localizeTrialTokenTextNode(node, localize) {
+    const source = getTrialTokenNodeSource(node);
+    const localized = isPageTranslationEnabled() ? localize(source) : source;
+    if (localized !== node.nodeValue) {
+      node.nodeValue = localized;
+    }
+    node[TRADE_LOCALIZATION_RENDER_KEY] = localized;
   }
 
   function getTradeStatRecordForElement(element) {
