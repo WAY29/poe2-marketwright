@@ -777,6 +777,9 @@
   "deleteLinkFavorite": {
     "message": "删除书签"
   },
+  "replaceLinkFavorite": {
+    "message": "替换为当前搜索"
+  },
   "moveLinkFavoriteToRoot": {
     "message": "最外层"
   },

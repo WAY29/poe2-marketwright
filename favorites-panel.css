@@ -202,6 +202,11 @@ h1 {
   gap: 4px;
 }
 
+.favorites-panel-folder-actions {
+  position: relative;
+  z-index: 1;
+}
+
 .favorites-panel-icon-button,
 .favorites-panel-action-button,
 .favorites-panel-tab,
@@ -618,6 +623,26 @@ h1 {
   gap: 5px;
   padding: 6px;
   background: rgba(20, 14, 9, 0.46);
+  cursor: pointer;
+}
+
+.favorites-panel-folder-header:hover {
+  background: rgba(94, 63, 30, 0.6);
+  box-shadow: inset 0 0 0 1px rgba(208, 164, 92, 0.58);
+}
+
+.favorites-panel-link-row:not(.favorites-panel-item-row):not(.favorites-panel-history-row) .favorites-panel-row-actions {
+  gap: 2px;
+}
+
+.favorites-panel-link-row:not(.favorites-panel-item-row):not(.favorites-panel-history-row) .favorites-panel-action-button {
+  width: 20px;
+  height: 20px;
+}
+
+.favorites-panel-link-row:not(.favorites-panel-item-row):not(.favorites-panel-history-row) .favorites-panel-action-button svg {
+  width: 12px;
+  height: 12px;
 }
 
 .favorites-panel-history > .favorites-panel-folder-header {

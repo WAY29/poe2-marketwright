@@ -414,7 +414,7 @@ test("background relays panel requests only to the registered trade tab", async 
     { id: "extension-id" }
   );
   const result = structuredClone({ registration, relayed, rejected, tabMessages });
-  assert.deepStrictEqual(result["registration"], {"ok": true});
+  assert.deepStrictEqual(result["registration"], {"ok": true, "sessionId": "panel-session-1"});
   assert.deepStrictEqual(result["relayed"], {"ok": true, "state": {"favoritesViewMode": "full"}});
   assert.deepStrictEqual(result["rejected"], {"ok": false, "error": "unknown_panel_session"});
   assert.deepStrictEqual(result["tabMessages"], [{"tabId": 37, "message": {"type": "favorites-panel-command", "sessionId": "panel-session-1", "command": "get-state", "payload": undefined}}]);
@@ -462,7 +462,7 @@ test("background configures the native panel for the registered trade tab", asyn
     { id: "extension-id", tab: { id: 37 } }
   );
   assert.deepStrictEqual(structuredClone({ registration, opened, closed, sidePanelOptions, openedPanels, closedPanels }), {
-    registration: { ok: true },
+    registration: { ok: true, sessionId: "native-panel-1" },
     opened: { ok: true },
     closed: { ok: true },
     sidePanelOptions: [{
@@ -471,13 +471,84 @@ test("background configures the native panel for the registered trade tab", asyn
       tabId: 37,
       enabled: true,
       path: "favorites-panel.html?session=native-panel-1"
-    }, {
-      tabId: 37,
-      enabled: true,
-      path: "favorites-panel.html?session=native-panel-1"
     }],
     openedPanels: [{ tabId: 37 }],
     closedPanels: [{ tabId: 37 }]
+  });
+});
+
+test("background reuses a trade tab panel session without changing its path", async () => {
+  let messageListener;
+  const sessionValues = new Map();
+  const sidePanelOptions = [];
+  const sandbox = {
+    chrome: {
+      runtime: {
+        id: "extension-id",
+        onMessage: { addListener(listener) { messageListener = listener; } }
+      },
+      storage: {
+        session: {
+          async get(key) { return { [key]: sessionValues.get(key) }; },
+          async set(values) { for (const [key, value] of Object.entries(values)) sessionValues.set(key, value); }
+        }
+      },
+      sidePanel: {
+        async setOptions(options) { sidePanelOptions.push(options); }
+      }
+    },
+    fetch() { throw new Error("unexpected fetch"); },
+    console
+  };
+  vm.runInNewContext(fs.readFileSync("background.js", "utf8"), sandbox, { filename: "background.js" });
+  const send = (message, sender) => new Promise((resolve) => messageListener(message, sender, resolve));
+  const first = await send(
+    { type: "favorites-panel-register", sessionId: "stable-panel-1" },
+    { id: "extension-id", tab: { id: 88 } }
+  );
+  const afterNavigation = await send(
+    { type: "favorites-panel-register", sessionId: "new-document-panel-2" },
+    { id: "extension-id", tab: { id: 88 } }
+  );
+  assert.deepStrictEqual(structuredClone({ first, afterNavigation, sidePanelOptions }), {
+    first: { ok: true, sessionId: "stable-panel-1" },
+    afterNavigation: { ok: true, sessionId: "stable-panel-1" },
+    sidePanelOptions: [
+      { enabled: false },
+      { tabId: 88, enabled: true, path: "favorites-panel.html?session=stable-panel-1" }
+    ]
+  });
+});
+
+test("content adopts the stable panel session returned by background", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { registerFavoritesPanelSession, runtime };\n})();"
+  );
+  const messages = [];
+  const sandbox = {
+    window: {},
+    document: {},
+    location: { pathname: "/trade2", href: "https://www.pathofexile.com/trade2/search/poe2/Runes/query-1" },
+    crypto: { randomUUID() { return "new-document-session"; } },
+    chrome: {
+      runtime: {
+        async sendMessage(message) {
+          messages.push(message);
+          return { ok: true, sessionId: "stable-tab-session" };
+        }
+      }
+    },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  await hooks.registerFavoritesPanelSession();
+  assert.deepStrictEqual(structuredClone({ messages, sessionId: hooks.runtime.favoritesPanelSessionId }), {
+    messages: [{ type: "favorites-panel-register", sessionId: "favorites-new-document-session" }],
+    sessionId: "stable-tab-session"
   });
 });
 
@@ -622,7 +693,7 @@ test("background detaches orphan side panels without a live trade tab", async ()
   assert.ok(sidePanelOptions.some((options) => options.tabId === 77 && options.enabled === false));
 });
 
-test("trade page unload closes the native panel", async () => {
+test("trade page unload leaves native panel cleanup to background navigation", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
   source = source.replace(
@@ -658,11 +729,8 @@ test("trade page unload closes the native panel", async () => {
   const hooks = sandbox.window.__testHooks;
   hooks.runtime.favoritesPanelSessionId = "native-panel-unload";
   hooks.bindFavoritesPanelMessages();
-  listeners.pagehide();
-  assert.deepStrictEqual(
-    structuredClone(nativePanelRequests.filter(({ type }) => type === "favorites-panel-close")),
-    [{ type: "favorites-panel-close", sessionId: "native-panel-unload", disable: true }]
-  );
+  assert.equal(listeners.pagehide, undefined);
+  assert.deepStrictEqual(structuredClone(nativePanelRequests), []);
 });
 
 test("full view opens and closes the native panel for the current document", async () => {

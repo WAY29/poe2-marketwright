@@ -59,6 +59,7 @@
     renameLinkFavorite: "Rename bookmark",
     moveLinkFavorite: "Move bookmark",
     deleteLinkFavorite: "Delete bookmark",
+    replaceLinkFavorite: "Replace with current search",
     renameLinkFavoriteFolder: "Rename folder",
     deleteLinkFavoriteFolder: "Delete folder",
     createLinkFavorite: "Save current search",
@@ -90,6 +91,7 @@
     edit: "M2.5 11.8V14h2.2l6.5-6.5-2.2-2.2-6.5 6.5zm10.2-6.2a.9.9 0 0 0 0-1.3L11.3 2.9a.9.9 0 0 0-1.3 0L9 4l2.2 2.2 1.5-1.5z",
     delete: "M4 4.5h8l-.6 9H4.6l-.6-9zm2-2h4l.6 1H13v1.5H3V3.5h2.4L6 2.5zm1 4v5h1.5v-5H7zm2.5 0v5H11v-5H9.5z",
     move: "M3 4h6V2l4 3-4 3V6H3V4zm10 8H7v2l-4-3 4-3v2h6v2z",
+    replace: "M11.77 4.23C10.8 3.27 9.47 2.67 8 2.67 5.05 2.67 2.67 5.05 2.67 8S5.05 13.33 8 13.33c2.49 0 4.56-1.7 5.15-4H11.77c-.55 1.55-2.03 2.67-3.77 2.67-2.21 0-4-1.79-4-4s1.79-4 4-4c1.11 0 2.09.46 2.81 1.19L8.67 7.33h4.67V2.67l-1.57 1.56z",
     bookmark: "M4 1.75h8a1 1 0 0 1 1 1v11.1l-5-2.85-5 2.85V2.75a1 1 0 0 1 1-1z",
     folderAdd: "M1.75 4.25h4l1.2 1.5h7.3v7.5H1.75v-9zm9.5 3v2h-2v1.5h2v2h1.5v-2h2V9.25h-2v-2h-1.5z",
     import: "M7.25 1.5h1.5v6.1l2.1-2.1 1.05 1.05L8 10.25 4.2 6.55l1.05-1.05 2 2V1.5zm-5.5 9.2h12.5v3.8H1.75v-3.8zm1.5 1.5v.8h9.5v-.8h-9.5z",
@@ -213,6 +215,10 @@
     button.setAttribute("aria-label", title);
     button.innerHTML = `<svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="${icon}"></path></svg>`;
     return button;
+  }
+
+  function shouldToggleFolderFromHeader(event) {
+    return !event.target?.closest?.("button, input, select, textarea, a, label");
   }
 
   function makeTextButton(text, className = "") {
@@ -564,6 +570,11 @@
     const header = createElement("div", "favorites-panel-folder-header");
     setDropTarget(header, { kind: "favorite-folder", id: folder.id });
     setGroupDropTarget(header, folder.id, "favorite");
+    header.addEventListener("click", (event) => {
+      if (shouldToggleFolderFromHeader(event)) {
+        run("toggle-favorite-folder", { folderId: folder.id, collapsed: !folder.collapsed });
+      }
+    });
     const drag = createIconButton(t("reorderFavoriteFolder"), icons.drag, "favorites-panel-drag-handle");
     setDragSource(drag, { kind: "favorite-folder", id: folder.id });
     const collapse = createIconButton(
@@ -1255,6 +1266,12 @@
       actions.appendChild(select);
       window.setTimeout(() => select.focus(), 0);
     } else {
+      const replace = createIconButton(
+        state.canSaveCurrentLink ? t("replaceLinkFavorite") : t("createLinkFavoriteUnavailable"),
+        icons.replace
+      );
+      replace.disabled = !state.canSaveCurrentLink || !state.linkFavoritesEnabled;
+      replace.addEventListener("click", () => run("replace-link", { linkId: link.id }));
       const rename = createIconButton(t("renameLinkFavorite"), icons.edit);
       rename.addEventListener("click", () => {
         local.editing = { kind: "link", id: link.id };
@@ -1267,7 +1284,7 @@
       });
       const remove = createIconButton(t("deleteLinkFavorite"), icons.delete, "favorites-panel-delete");
       remove.addEventListener("click", () => run("delete-link", { linkId: link.id }));
-      actions.append(rename, move, remove);
+      actions.append(replace, rename, move, remove);
     }
     row.append(drag, launch, actions);
     return row;
@@ -1362,6 +1379,11 @@
     const header = createElement("div", "favorites-panel-folder-header");
     setDropTarget(header, { kind: "folder", id: folder.id });
     setGroupDropTarget(header, folder.id);
+    header.addEventListener("click", (event) => {
+      if (shouldToggleFolderFromHeader(event)) {
+        run("toggle-folder", { folderId: folder.id, collapsed: !folder.collapsed });
+      }
+    });
     const drag = createIconButton(t("reorderLinkFavoriteFolder"), icons.drag, "favorites-panel-drag-handle");
     setDragSource(drag, { kind: "folder", id: folder.id });
     const collapse = createIconButton(

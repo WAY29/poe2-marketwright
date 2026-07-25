@@ -489,6 +489,9 @@
   "deleteLinkFavorite": {
     "message": "Delete bookmark"
   },
+  "replaceLinkFavorite": {
+    "message": "Replace with current search"
+  },
   "moveLinkFavoriteToRoot": {
     "message": "Top level"
   },

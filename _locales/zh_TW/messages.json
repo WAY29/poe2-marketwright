@@ -777,6 +777,9 @@
   "deleteLinkFavorite": {
     "message": "刪除書籤"
   },
+  "replaceLinkFavorite": {
+    "message": "替換為目前搜尋"
+  },
   "moveLinkFavoriteToRoot": {
     "message": "最外層"
   },

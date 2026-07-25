@@ -2694,3 +2694,107 @@ test("favorites disclosure uses the full feature row and keeps its switch indepe
   });
   assert.deepStrictEqual(result, {"hasDisclosure": true, "hasLegacyArrow": false, "enabled": {"expanded": "true", "disabled": false, "openClass": true}, "disabled": true});
 });
+
+test("folder header toggles only when the click is outside its controls", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { shouldToggleFavoriteFolderFromHeader };\n})();"
+  );
+  const sandbox = { window: { addEventListener() {} }, document: {}, location: { pathname: "/trade2" }, console };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const shouldToggle = sandbox.window.__testHooks.shouldToggleFavoriteFolderFromHeader;
+  const result = [
+    shouldToggle({ target: { closest() { return null; } } }),
+    shouldToggle({ target: { closest() { return {}; } } }),
+    shouldToggle({ target: null })
+  ];
+  assert.deepStrictEqual(result, [true, false, true]);
+});
+
+test("replacing a link favorite preserves its position and identity", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { replaceLinkFavoriteWithCurrent, runtime };\n})();"
+  );
+  const window = {
+    location: {
+      href: "https://www.pathofexile.com/trade2/search/poe2/Dawn/current-query",
+      pathname: "/trade2/search/poe2/Dawn/current-query"
+    },
+    addEventListener() {},
+    clearTimeout() {},
+    setTimeout() { return 1; }
+  };
+  const sandbox = {
+    window,
+    document: { querySelector() { return null; }, querySelectorAll() { return []; } },
+    location: window.location,
+    console,
+    Element: class {},
+    HTMLInputElement: class {},
+    HTMLTextAreaElement: class {},
+    MutationObserver: class {},
+    chrome: { storage: { local: { get: async () => ({}), set: async () => {} } } },
+    Poe2MarketwrightFavorites: {
+      createFavoriteTools() {
+        return { getLeagueFromTradeUrl() { return "Dawn"; } };
+      },
+      createLinkFavoriteTools() {
+        return {
+          validateTradeSearchUrl(url) { return { url, league: "Dawn", queryId: "current-query" }; },
+          createLinkFavoriteRecord(input) {
+            return { ...input, league: "Dawn", queryId: "current-query", lastUsedAt: null };
+          },
+          normalizeLinkFavoritesState(state) { return state; }
+        };
+      }
+    }
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = window.__testHooks;
+  hooks.runtime.state = {
+    linkFavorites: {
+      version: 2,
+      leagues: {
+        Dawn: {
+          folders: [{ id: "bows", name: "Bows", collapsed: false }],
+          folderOrder: ["bows"],
+          links: [{
+            id: "pinned-link",
+            league: "Dawn",
+            queryId: "old-query",
+            url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/old-query",
+            displayName: "Pinned Bow",
+            folderId: "bows",
+            createdAt: 123,
+            lastUsedAt: null
+          }],
+          rootLinkIds: [],
+          folderLinkIds: { bows: ["pinned-link"] }
+        }
+      }
+    }
+  };
+  await hooks.replaceLinkFavoriteWithCurrent("pinned-link");
+  const league = structuredClone(hooks.runtime.state.linkFavorites.leagues.Dawn);
+  assert.deepStrictEqual(league, {
+    folders: [{ id: "bows", name: "Bows", collapsed: false }],
+    folderOrder: ["bows"],
+    links: [{
+      id: "pinned-link",
+      league: "Dawn",
+      queryId: "current-query",
+      url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/current-query",
+      displayName: "Pinned Bow",
+      folderId: "bows",
+      createdAt: 123,
+      lastUsedAt: null
+    }],
+    rootLinkIds: [],
+    folderLinkIds: { bows: ["pinned-link"] }
+  });
+});

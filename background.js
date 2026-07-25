@@ -3,6 +3,7 @@
   const POE2SCOUT_API_ORIGIN = "https://api.poe2scout.com";
   const POE2SCOUT_CACHE_TTL_MS = 60 * 1000;
   const FAVORITES_PANEL_SESSION_PREFIX = "poe2-marketwright:favorites-panel:";
+  const FAVORITES_PANEL_TAB_SESSION_PREFIX = "poe2-marketwright:favorites-panel-tab:";
   const poe2ScoutCache = new Map();
 
   const normalizeFavoritesPanelSessionId = (value) => {
@@ -14,6 +15,8 @@
   };
 
   const getFavoritesPanelSessionKey = (sessionId) => `${FAVORITES_PANEL_SESSION_PREFIX}${sessionId}`;
+
+  const getFavoritesPanelTabSessionKey = (tabId) => `${FAVORITES_PANEL_TAB_SESSION_PREFIX}${tabId}`;
 
   const getFavoritesPanelPath = (sessionId) =>
     `favorites-panel.html?session=${encodeURIComponent(sessionId)}`;
@@ -47,6 +50,16 @@
       await chrome.sidePanel?.setOptions?.({ tabId, enabled: false });
     } catch (error) {
       // Tab may be gone mid-navigation.
+    }
+    const tabSessionKey = getFavoritesPanelTabSessionKey(tabId);
+    try {
+      const stored = await chrome.storage?.session?.get?.(tabSessionKey);
+      const session = stored?.[tabSessionKey];
+      if (session) {
+        await chrome.storage.session.set({ [tabSessionKey]: { ...session, enabled: false } });
+      }
+    } catch (error) {
+      // Session storage can be unavailable while the service worker is stopping.
     }
   };
 
@@ -194,11 +207,23 @@
         sendResponse({ ok: false, error: "invalid_panel_registration" });
         return;
       }
-      Promise.all([
-        chrome.storage.session.set({ [getFavoritesPanelSessionKey(sessionId)]: { tabId } }),
-        configureFavoritesPanel(tabId, sessionId)
-      ])
-        .then(() => sendResponse({ ok: true }))
+      const tabSessionKey = getFavoritesPanelTabSessionKey(tabId);
+      chrome.storage.session
+        .get(tabSessionKey)
+        .then(async (stored) => {
+          const existing = stored?.[tabSessionKey];
+          const stableSessionId = normalizeFavoritesPanelSessionId(existing?.sessionId) || sessionId;
+          const needsConfiguration = stableSessionId === sessionId || existing?.enabled !== true;
+          await chrome.storage.session.set({
+            [getFavoritesPanelSessionKey(stableSessionId)]: { tabId },
+            [tabSessionKey]: { sessionId: stableSessionId, enabled: true }
+          });
+          if (needsConfiguration) {
+            await configureFavoritesPanel(tabId, stableSessionId);
+          }
+          return { ok: true, sessionId: stableSessionId };
+        })
+        .then(sendResponse)
         .catch((error) => sendResponse({ ok: false, error: formatErrorMessage(error) }));
       return true;
     }
@@ -240,8 +265,6 @@
           sendResponse({ ok: false, error: "invalid_panel_request" });
           return;
         }
-        // open() must stay in the user-gesture turn; do not await setOptions first.
-        void configureFavoritesPanel(tabId, sessionId);
         Promise.resolve(chrome.sidePanel?.open?.({ tabId }))
           .then(() => sendResponse({ ok: true }))
           .catch((error) => sendResponse({ ok: false, error: formatErrorMessage(error) }));

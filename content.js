@@ -2077,10 +2077,14 @@
       return;
     }
     try {
-      await chrome.runtime.sendMessage({
+      const response = await chrome.runtime.sendMessage({
         type: "favorites-panel-register",
         sessionId: getFavoritesPanelSessionId()
       });
+      const stableSessionId = String(response?.sessionId || "");
+      if (/^[a-zA-Z0-9_-]{8,128}$/.test(stableSessionId)) {
+        runtime.favoritesPanelSessionId = stableSessionId;
+      }
     } catch (error) {
       if (!isExtensionContextInvalidated(error)) {
         console.debug("[PoE2 Marketwright] unable to register favorites panel", error);
@@ -2386,6 +2390,9 @@
       case "rename-link":
         await renameLinkFavorite(payload.linkId, payload.name);
         break;
+      case "replace-link":
+        await replaceLinkFavoriteWithCurrent(payload.linkId);
+        break;
       case "move-link":
         await moveLinkFavorite(payload.linkId, payload.folderId || null, payload.targetId || null, payload.placeAfter !== false);
         break;
@@ -2432,23 +2439,6 @@
       return;
     }
     runtime.favoritesPanelMessageBound = true;
-    // Leaving the trade document must not race tabs.onUpdated; disable immediately on unload.
-    // Trade→trade reloads re-enable via register and re-open from saved favoritesPanelOpen.
-    const disableNativePanelOnUnload = () => {
-      if (!chrome.runtime?.sendMessage || !runtime.favoritesPanelSessionId) {
-        return;
-      }
-      try {
-        chrome.runtime.sendMessage({
-          type: "favorites-panel-close",
-          sessionId: runtime.favoritesPanelSessionId,
-          disable: true
-        });
-      } catch (error) {
-        // Extension context may already be gone with the document.
-      }
-    };
-    window.addEventListener("pagehide", disableNativePanelOnUnload);
     chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       if (message?.type === "favorites-panel-closed" && sender?.id === chrome.runtime.id) {
         setFavoritesPanelOpen(false, getFavoritesPanelTab(), false).catch(() => {});
@@ -3104,6 +3094,10 @@
     return button;
   }
 
+  function shouldToggleFavoriteFolderFromHeader(event) {
+    return !event.target?.closest?.("button, input, select, textarea, a, label");
+  }
+
   function buildFavoriteTooltip(favorite) {
     const lines = [
       t("favoriteTooltipRarity", String(favorite.rarity || "").toUpperCase()),
@@ -3347,6 +3341,11 @@
     setLinkFavoriteGroupDropTarget(header, folder.id, "favorite");
     header.appendChild(createLinkFavoriteDragHandle(t("reorderFavoriteFolder"), { kind: "favorite-folder", id: folder.id }));
     const collapsed = Boolean(folder.collapsed);
+    header.addEventListener("click", (event) => {
+      if (shouldToggleFavoriteFolderFromHeader(event)) {
+        runAsync(() => setFavoriteFolderCollapsed(folder.id, !collapsed), "toggle favorite folder");
+      }
+    });
     const collapse = createFavoriteIconButton("poe2-marketwright-link-favorite-collapse", t(collapsed ? "expandFavoriteFolder" : "collapseFavoriteFolder"), collapsed ? "M3.2 2.5 8 7.3l4.8-4.8v2.15L8 9.45 3.2 4.65V2.5zm0 6.05L8 13.35l4.8-4.8v2.15L8 15.5 3.2 10.7V8.55z" : "M3.2 13.5 8 8.7l4.8 4.8v-2.15L8 6.55 3.2 11.35v2.15zm0-6.05L8 2.65l4.8 4.8V5.3L8 .5 3.2 5.3v2.15z");
     collapse.setAttribute("aria-expanded", String(!collapsed));
     collapse.addEventListener("click", () => runAsync(() => setFavoriteFolderCollapsed(folder.id, !collapsed), "toggle favorite folder"));
@@ -3934,6 +3933,30 @@
     getLinkFavoriteLinkIds(leagueState, folderId).push(record.id);
     await replaceLinkFavorites(next);
     showLinkFavoriteFeedback("linkFavoriteSaved");
+  }
+
+  async function replaceLinkFavoriteWithCurrent(linkId) {
+    const context = getCurrentLinkFavoriteContext();
+    const tools = getLinkFavoriteTools();
+    if (!context || !tools) {
+      showLinkFavoriteFeedback("createLinkFavoriteUnavailable", [], "error");
+      return;
+    }
+    const next = cloneLinkFavoritesState();
+    const leagueState = getLinkFavoriteLeagueState(next, context.league);
+    const link = getLinkFavoriteLink(leagueState, linkId);
+    if (!link) {
+      return;
+    }
+    const replacement = tools.createLinkFavoriteRecord({
+      ...context,
+      id: link.id,
+      displayName: link.displayName,
+      folderId: link.folderId,
+      createdAt: link.createdAt
+    });
+    leagueState.links = leagueState.links.map((entry) => entry.id === linkId ? replacement : entry);
+    await replaceLinkFavorites(next);
   }
 
   function isLinkHistoryEnabled() {
@@ -4947,6 +4970,14 @@
 
     const actions = document.createElement("div");
     actions.className = "poe2-marketwright-link-favorite-actions";
+    const canReplace = runtime.state.linkFavoritesEnabled && Boolean(getCurrentLinkFavoriteContext());
+    const replaceButton = createLinkFavoriteIconButton(
+      "poe2-marketwright-link-favorite-action",
+      t(canReplace ? "replaceLinkFavorite" : "createLinkFavoriteUnavailable"),
+      "M11.77 4.23C10.8 3.27 9.47 2.67 8 2.67 5.05 2.67 2.67 5.05 2.67 8S5.05 13.33 8 13.33c2.49 0 4.56-1.7 5.15-4H11.77c-.55 1.55-2.03 2.67-3.77 2.67-2.21 0-4-1.79-4-4s1.79-4 4-4c1.11 0 2.09.46 2.81 1.19L8.67 7.33h4.67V2.67l-1.57 1.56z"
+    );
+    replaceButton.disabled = !canReplace;
+    replaceButton.addEventListener("click", () => runAsync(() => replaceLinkFavoriteWithCurrent(link.id), "replace link favorite"));
     const renameButton = createLinkFavoriteIconButton(
       "poe2-marketwright-link-favorite-action",
       t("renameLinkFavorite"),
@@ -4968,7 +4999,7 @@
       "M4 4.5h8l-.6 9H4.6l-.6-9zm2-2h4l.6 1H13v1.5H3V3.5h2.4L6 2.5zm1 4v5h1.5v-5H7zm2.5 0v5H11v-5H9.5z"
     );
     deleteButton.addEventListener("click", () => runAsync(() => deleteLinkFavorite(link.id), "delete link favorite"));
-    actions.append(renameButton, moveButton, deleteButton);
+    actions.append(replaceButton, renameButton, moveButton, deleteButton);
     row.append(dragHandle, launch, actions);
     return row;
   }
@@ -5113,6 +5144,11 @@
     const header = document.createElement("div");
     header.className = "poe2-marketwright-link-favorite-group-header";
     const collapsed = Boolean(folder.collapsed);
+    header.addEventListener("click", (event) => {
+      if (shouldToggleFavoriteFolderFromHeader(event)) {
+        runAsync(() => setLinkFavoriteFolderCollapsed(folder.id, !collapsed), "toggle link favorite folder");
+      }
+    });
 
     const dragHandle = createLinkFavoriteDragHandle(t("reorderLinkFavoriteFolder"), { kind: "folder", id: folder.id });
     header.appendChild(dragHandle);

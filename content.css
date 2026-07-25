@@ -741,6 +741,13 @@
     var(--mw-tex-metal);
   background-size: auto, 128px 128px;
   box-shadow: inset 2px 0 0 rgba(191, 139, 65, 0.72);
+  cursor: pointer;
+}
+
+.poe2-marketwright-link-favorite-group-header > .poe2-marketwright-link-favorite-actions,
+.poe2-marketwright-link-favorite-group-header > .poe2-marketwright-link-favorite-action {
+  position: relative;
+  z-index: 1;
 }
 
 .poe2-marketwright-link-favorite-group-name {
@@ -798,6 +805,12 @@
     linear-gradient(180deg, rgba(153, 108, 50, 0.22), rgba(40, 28, 16, 0.45)),
     var(--mw-tex-metal);
   background-size: auto, 128px 128px;
+}
+
+.poe2-marketwright-link-favorite-group-header:hover {
+  box-shadow:
+    inset 2px 0 0 rgba(231, 185, 99, 0.96),
+    inset 0 0 0 1px rgba(208, 164, 92, 0.58);
 }
 
 .poe2-marketwright-link-favorite-launch {
@@ -989,6 +1002,20 @@
   align-items: center;
   gap: 2px;
   padding: 4px 5px 4px 0;
+}
+
+.poe2-marketwright-link-favorite-row:not(.poe2-marketwright-favorite-row):not(.poe2-marketwright-link-history-row) .poe2-marketwright-link-favorite-actions {
+  gap: 0;
+}
+
+.poe2-marketwright-link-favorite-row:not(.poe2-marketwright-favorite-row):not(.poe2-marketwright-link-history-row) .poe2-marketwright-link-favorite-action {
+  width: 16px;
+  height: 16px;
+}
+
+.poe2-marketwright-link-favorite-row:not(.poe2-marketwright-favorite-row):not(.poe2-marketwright-link-history-row) .poe2-marketwright-link-favorite-action svg {
+  width: 10px;
+  height: 10px;
 }
 
 .poe2-marketwright-link-favorite-action,
