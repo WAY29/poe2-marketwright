@@ -24,6 +24,7 @@ from build_extension_data import (
     build_display_metadata,
     build_trade_stat_group_records,
     build_item_display_metadata,
+    build_trade_item_group_display_names,
     build_trade_localization_metadata,
     build_trade_stat_records,
     build_trade_stat_universe,
@@ -1607,6 +1608,32 @@ class TradeStatMappingTests(unittest.TestCase):
                 '<a class="whiteitem Bow" href="Rider_Bow"><img alt="Rider Bow"></a>'
             ),
             {"rider bow": ("Rider Bow", "Rider_Bow")},
+        )
+
+    def test_extracts_gem_item_slugs_from_category_links(self) -> None:
+        self.assertEqual(
+            parse_poe2db_item_name_slugs(
+                '<a class="gemitem" href="/us/Ghost_Dance">Ghost Dance</a>'
+                '<a class="gemitem" href="/tw/Ghost_Dance">鬼魂之舞</a>'
+            ),
+            {
+                "ghost dance": ("Ghost Dance", "Ghost_Dance"),
+                "鬼魂之舞": ("鬼魂之舞", "Ghost_Dance"),
+            },
+        )
+
+    def test_collects_trade_item_names_from_one_group(self) -> None:
+        self.assertEqual(
+            build_trade_item_group_display_names(
+                {
+                    "result": [
+                        {"id": "gem", "entries": [{"type": "Ghost Dance"}, {"text": "Archmage"}]},
+                        {"id": "weapon", "entries": [{"type": "Archmage"}, {"type": "Bow"}]},
+                    ]
+                },
+                "gem",
+            ),
+            ["Archmage", "Ghost Dance"],
         )
 
     def test_builds_display_metadata_from_exact_and_safe_bare_stat_matches(self) -> None:

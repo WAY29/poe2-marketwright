@@ -40,6 +40,7 @@
       return payload;
     }
     const items = config.items || {};
+    const strings = config.strings || {};
     return {
       ...payload,
       result: payload.result.map((group) => ({
@@ -50,9 +51,11 @@
               const englishType = String(entry?.type || "");
               // A flagged entry is a named item. Its base type must not become
               // its display name, but a verified name translation is safe.
-              const localized = (entry?.flags ? items[englishText] : items[englishText] || items[englishType])?.[
-                config.locale
-              ];
+              const localized = (
+                entry?.flags
+                  ? items[englishText]
+                  : items[englishText] || items[englishType] || strings[englishText || englishType]
+              )?.[config.locale];
               const english = englishText || englishType;
               const text = getLocalizedText(english, localized, config.bilingual === true);
               return localized && text !== englishText ? { ...entry, text } : entry;

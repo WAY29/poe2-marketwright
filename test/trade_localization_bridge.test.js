@@ -30,6 +30,7 @@ test("native item bridge renders bilingual labels without changing English item 
           { type: "Gold Ring" },
           { type: "Gold Ring", text: "Andvarius Gold Ring", flags: { unique: true } },
           { type: "Diamond", text: "From Nothing Diamond", flags: { unique: true } },
+          { type: "Uncut Skill Gem (Level 10)" },
           { type: "Unknown Ring", text: "Unknown Ring", flags: { unique: true } },
           { type: "Unknown Ring" }
         ]
@@ -43,7 +44,8 @@ test("native item bridge renders bilingual labels without changing English item 
     items: {
       "Gold Ring": { zh_CN: "金环", zh_TW: "金環" },
       "From Nothing Diamond": { zh_CN: "无根之源 宝钻", zh_TW: "從無到有 鑽石" }
-    }
+    },
+    strings: { "Uncut Skill Gem (Level 10)": { zh_CN: "未切割的技能宝石（等级 10）", zh_TW: "未切割的技能寶石（等級 10）" } }
   });
   const disabled = sandbox.window.__testHooks.localizeTradeItemsPayload(payload, {
     enabled: false,
@@ -63,6 +65,7 @@ test("native item bridge renders bilingual labels without changing English item 
           { type: "Gold Ring", text: "金環 (Gold Ring)" },
           { type: "Gold Ring", text: "Andvarius Gold Ring", flags: { unique: true } },
           { type: "Diamond", text: "從無到有 鑽石 (From Nothing Diamond)", flags: { unique: true } },
+          { type: "Uncut Skill Gem (Level 10)", text: "未切割的技能寶石（等級 10） (Uncut Skill Gem (Level 10))" },
           { type: "Unknown Ring", text: "Unknown Ring", flags: { unique: true } },
           { type: "Unknown Ring" }
         ]

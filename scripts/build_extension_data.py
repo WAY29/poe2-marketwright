@@ -1021,6 +1021,7 @@ class Poe2dbItemLinkParser(HTMLParser):
         hover_source = str(attrs_dict.get("data-hover") or "")
         if (
             "whiteitem" not in classes
+            and "gemitem" not in classes
             and "BaseItemTypes" not in hover_source
             and not (self.include_passive_skills and "PassiveSkills" in classes)
         ):
@@ -3498,10 +3499,18 @@ def trade_item_lookup_names(entry: dict[str, Any]) -> list[str]:
 
 
 def build_trade_item_display_names(trade_items_payload: dict[str, Any]) -> list[str]:
+    return build_trade_item_group_display_names(trade_items_payload)
+
+
+def build_trade_item_group_display_names(
+    trade_items_payload: dict[str, Any],
+    group_id: str | None = None,
+) -> list[str]:
     return sorted(
         {
             item_name
             for group in trade_items_payload.get("result", [])
+            if group_id is None or group.get("id") == group_id
             for entry in group.get("entries", [])
             if isinstance(entry, dict)
             for item_name in trade_item_lookup_names(entry)
@@ -3952,6 +3961,11 @@ async def main() -> int:
             + "\n",
             encoding="utf-8",
         )
+        cached_item_names = {
+            "us": english_item_names,
+            "cn": simplified_item_names,
+            "tw": traditional_item_names,
+        }
     # The requested names originate from the official English item payload, so
     # they remain valid even when PoE2DB has no individual item page for them.
     english_item_names = {name: name for name in favorite_item_display_names}
@@ -3996,6 +4010,47 @@ async def main() -> int:
     )
     for item_name, record in supplemental_item_display_metadata["items"].items():
         display_metadata["items"].setdefault(item_name, record)
+
+    gem_item_display_names = build_trade_item_group_display_names(trade_items_payload, "gem")
+    gem_item_cache = cached_item_names or {"us": {}, "cn": {}, "tw": {}}
+    for locale in ("us", "cn", "tw"):
+        gem_item_cache.setdefault(locale, {})
+    gem_names_to_fetch = (
+        gem_item_display_names
+        if args.refresh_localized_items
+        else [
+            name
+            for name in gem_item_display_names
+            if gem_item_cache["us"].get(name) != name
+            or not gem_item_cache["cn"].get(name)
+            or not gem_item_cache["tw"].get(name)
+        ]
+    )
+    if gem_names_to_fetch:
+        # Regional Trade gem entries have no stable IDs and their catalogues
+        # differ, so verify each PoE2DB page's English title before using it.
+        gem_english_names, gem_simplified_names, gem_traditional_names = await collect_localized_item_names(
+            gem_names_to_fetch,
+            [f"{POE2DB_ITEM_ROOT_URL}{page_slug}" for page_slug in TRADE_ITEM_LOCALIZATION_PAGE_SLUGS],
+            args.localized_item_workers,
+        )
+        gem_item_cache["us"].update(gem_english_names)
+        gem_item_cache["cn"].update(gem_simplified_names)
+        gem_item_cache["tw"].update(gem_traditional_names)
+        item_cache_path.parent.mkdir(parents=True, exist_ok=True)
+        item_cache_path.write_text(
+            json.dumps(gem_item_cache, ensure_ascii=False, indent=2) + "\n",
+            encoding="utf-8",
+        )
+    gem_item_display_metadata = build_item_display_metadata(
+        gem_item_display_names,
+        gem_item_cache["us"],
+        gem_item_cache["cn"],
+        gem_item_cache["tw"],
+        minimum_coverage=0,
+    )
+    for item_name, record in gem_item_display_metadata["items"].items():
+        display_metadata["items"].setdefault(item_name, record)
     display_metadata["coverage"] = {
         "stats": display_metadata["coverage"],
         "items": {
@@ -4010,6 +4065,7 @@ async def main() -> int:
                     6,
                 ),
             },
+            "gems": gem_item_display_metadata["coverage"],
         },
     }
     trade_filter_page_titles = await collect_trade_filter_page_titles(args.localized_item_workers)
