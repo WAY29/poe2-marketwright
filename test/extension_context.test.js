@@ -1074,7 +1074,7 @@ test("trade localization reaches nested native labels but leaves excluded conten
 test("gem item tooltips localize stable property labels and generated level details", () => {
   class FakeElement {
     closest(selector) {
-      return selector === ".itemPopupContainer.gemPopup" ? this : null;
+      return selector === ".gemPopup" ? this : null;
     }
   }
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
@@ -1100,7 +1100,8 @@ test("gem item tooltips localize stable property labels and generated level deta
       Persistent: { en: "Persistent", zh_TW: "持續" },
       Quality: { en: "Quality", zh_TW: "品質" },
       Reservation: { en: "Reservation", zh_TW: "保留" },
-      Requires: { en: "Requires", zh_TW: "需求" }
+      Requires: { en: "Requires", zh_TW: "需求" },
+      Spirit: { en: "Spirit", zh_TW: "精魂" }
     }
   };
   const gemPopup = new FakeElement();
@@ -1109,13 +1110,15 @@ test("gem item tooltips localize stable property labels and generated level deta
     [
       hooks.getLocalizedTradeText("Buff", gemPopup),
       hooks.getLocalizedTradeText("Persistent", gemPopup),
+      hooks.getLocalizedTradeText("Buff, Persistent", gemPopup),
       hooks.getLocalizedTradeText("Quality: ", gemPopup),
       hooks.getLocalizedTradeText("Reservation: ", gemPopup),
+      hooks.getLocalizedTradeText("30 Spirit", gemPopup),
       hooks.getLocalizedTradeText("Requires ", gemPopup),
       hooks.getLocalizedTradeText("20 Levels from Gem (Max)", gemPopup),
       hooks.getLocalizedTradeText("+1 Level from Corruption", gemPopup)
     ],
-    ["增益效果", "持續", "品質: ", "保留: ", "需求 ", "透過寶石 20 等（最高）", "腐化等級 +1"]
+    ["增益效果", "持續", "增益效果, 持續", "品質: ", "保留: ", "30 精魂", "需求 ", "透過寶石 20 等（最高）", "腐化等級 +1"]
   );
 
   hooks.runtime.state.pageLanguage = "zh_CN";
@@ -1124,19 +1127,22 @@ test("gem item tooltips localize stable property labels and generated level deta
     Persistent: { en: "Persistent", zh_CN: "永久性" },
     Quality: { en: "Quality", zh_CN: "品质" },
     Reservation: { en: "Reservation", zh_CN: "保留" },
-    Requires: { en: "Requires", zh_CN: "需求" }
+    Requires: { en: "Requires", zh_CN: "需求" },
+    Spirit: { en: "Spirit", zh_CN: "精魂" }
   };
   assert.deepStrictEqual(
     [
       hooks.getLocalizedTradeText("Buff", gemPopup),
       hooks.getLocalizedTradeText("Persistent", gemPopup),
+      hooks.getLocalizedTradeText("Buff, Persistent", gemPopup),
       hooks.getLocalizedTradeText("Quality: ", gemPopup),
       hooks.getLocalizedTradeText("Reservation: ", gemPopup),
+      hooks.getLocalizedTradeText("30 Spirit", gemPopup),
       hooks.getLocalizedTradeText("Requires ", gemPopup),
       hooks.getLocalizedTradeText("20 Levels from Gem (Max)", gemPopup),
       hooks.getLocalizedTradeText("+1 Level from Corruption", gemPopup)
     ],
-    ["增益", "永久性", "品质: ", "保留: ", "需求 ", "通过宝石 20 等（最高）", "腐化等级 +1"]
+    ["增益", "永久性", "增益, 永久性", "品质: ", "保留: ", "30 精魂", "需求 ", "通过宝石 20 等（最高）", "腐化等级 +1"]
   );
 });
 

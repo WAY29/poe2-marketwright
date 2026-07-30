@@ -6094,7 +6094,7 @@
   }
 
   function getLocalizedGemTooltipText(text, element) {
-    if (!element?.closest?.(".itemPopupContainer.gemPopup")) {
+    if (!element?.closest?.(".gemPopup")) {
       return null;
     }
     const language = resolvePageLanguage(runtime.state.pageLanguage);
@@ -6114,6 +6114,17 @@
       return locale === "zh_CN"
         ? `腐化等级 ${corruptionLevel[1]}`
         : `腐化等級 ${corruptionLevel[1]}`;
+    }
+    const terms = text.split(", ");
+    const localizedTerms = terms.map((term) => runtime.tradeLocalization.strings?.[term] ||
+      runtime.tradeLocalization.clientStrings?.[term]);
+    if (localizedTerms.every(Boolean)) {
+      return localizedTerms.map((term, index) => getLocalizedTradePageText(term, terms[index], false)).join(", ");
+    }
+    const spirit = text.match(/^(\d+(?:\.\d+)?\s+)Spirit$/);
+    const spiritRecord = runtime.tradeLocalization.strings?.Spirit || runtime.tradeLocalization.clientStrings?.Spirit;
+    if (spirit && spiritRecord) {
+      return `${spirit[1]}${getLocalizedTradePageText(spiritRecord, "Spirit", false)}`;
     }
     return null;
   }
