@@ -8344,7 +8344,9 @@
           tierEnabled,
           tierMode,
           tierPageLabels: pageLabels,
-          tierLabel: t("tierSelectorLabel", [], "Tier")
+          tierLabel: t("tierSelectorLabel", [], "Tier"),
+          corruptedGemLevelLabel: t("corruptedGemLevelLabel", [], "Corrupted +1 Final Gem Level"),
+          corruptedGemLevelInvalid: t("corruptedGemLevelInvalid", [], "Enter a whole number from 2 to 21")
         }
       },
       "*"

@@ -2349,6 +2349,15 @@
   background: #3d2e1a;
 }
 
+.poe2-marketwright-corrupted-gem-level-control .poe2-marketwright-corrupted-gem-level-input.poe2-marketwright-corrupted-gem-level-invalid {
+  border-color: #9e4436;
+  color: #f1c5b8;
+}
+
+.poe2-marketwright-corrupted-gem-level-spacer {
+  visibility: hidden;
+}
+
 @keyframes poe2-marketwright-currency-spin {
   to {
     transform: rotate(360deg);

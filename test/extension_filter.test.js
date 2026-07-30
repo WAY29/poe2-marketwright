@@ -648,6 +648,89 @@ test("page bridge inserts a Tier selector for a Vue stat filter and updates min"
   assert.equal(maxInput.value, "25.5");
 });
 
+test("corrupted +1 gem level preset writes the native proxy filters", () => {
+  const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
+  let source = fs
+    .readFileSync("page-bridge.js", "utf8")
+    .replace(bootstrapCall, "")
+    .replace(
+      /\n\}\)\(\);\s*$/,
+      "\n  window.__testHooks = { createCorruptedGemLevelControl, getCorruptedGemLevelPreset, applyCorruptedGemLevelPreset, runtime };\n})();"
+    );
+  const updates = [];
+  const group = {
+    group: { id: "misc_filters" },
+    updateFilter(index, value) {
+      updates.push({ group: this.group.id, index, value });
+    }
+  };
+  const requirementsGroup = {
+    group: { id: "req_filters" },
+    updateFilter(index, value) {
+      updates.push({ group: this.group.id, index, value });
+    }
+  };
+  const gemLevel = { filter: { id: "gem_level" }, index: 0, $parent: group };
+  const corrupted = { filter: { id: "corrupted" }, index: 1, $parent: group };
+  const requirementsLevel = { filter: { id: "lvl" }, index: 0, $parent: requirementsGroup };
+  let saves = 0;
+  const sandbox = {
+    window: { addEventListener() {}, postMessage() {}, document: {} },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.app = {
+    $children: [gemLevel, corrupted, requirementsLevel],
+    $root: { save() { saves += 1; } }
+  };
+  const document = {
+    createElement(tagName) {
+      return {
+        tagName,
+        children: [],
+        attributes: {},
+        append(...children) {
+          this.children.push(...children);
+        },
+        appendChild(child) {
+          this.children.push(child);
+        },
+        addEventListener() {},
+        setAttribute(name, value) {
+          this.attributes[name] = value;
+        }
+      };
+    }
+  };
+  const control = hooks.createCorruptedGemLevelControl(document);
+  const body = control.children[0];
+  assert.equal(body.tagName, "span");
+  assert.equal(body.className, "filter-body");
+  assert.equal(body.children[0].tagName, "div");
+  assert.equal(body.children[0].className, "filter-title");
+  assert.equal(body.children[1].className, "sep");
+  assert.equal(body.children[2].className, "form-control minmax poe2-marketwright-corrupted-gem-level-input");
+  assert.equal(body.children[3].className, "sep");
+  assert.equal(body.children[4].className, "form-control minmax poe2-marketwright-corrupted-gem-level-spacer");
+
+  const preset = structuredClone(hooks.getCorruptedGemLevelPreset(19));
+  assert.deepStrictEqual(preset, {
+    gemLevel: { min: 19, max: 19 },
+    requirementsLevel: { min: null, max: 78 },
+    corrupted: { option: "true" }
+  });
+  assert.equal(hooks.getCorruptedGemLevelPreset(1), null);
+  assert.equal(hooks.getCorruptedGemLevelPreset(22), null);
+  assert.equal(hooks.applyCorruptedGemLevelPreset(preset), true);
+  assert.deepStrictEqual(updates, [
+    { group: "misc_filters", index: 0, value: { min: 19, max: 19 } },
+    { group: "req_filters", index: 0, value: { min: null, max: 78 } },
+    { group: "misc_filters", index: 1, value: { option: "true" } }
+  ]);
+  assert.equal(saves, 1);
+});
+
 test("quick add restores the native stat input and follows the active stat group", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");

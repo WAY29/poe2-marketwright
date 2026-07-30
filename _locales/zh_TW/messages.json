@@ -369,6 +369,12 @@
   "tierSelectorLabel": {
     "message": "詞綴階級"
   },
+  "corruptedGemLevelLabel": {
+    "message": "腐化 +1 最終寶石等級"
+  },
+  "corruptedGemLevelInvalid": {
+    "message": "請輸入 2 至 21 的整數"
+  },
   "tierFeatureTitle": {
     "message": "詞綴階級選擇"
   },

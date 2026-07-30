@@ -369,6 +369,12 @@
   "tierSelectorLabel": {
     "message": "词缀等级"
   },
+  "corruptedGemLevelLabel": {
+    "message": "腐化 +1 最终宝石等级"
+  },
+  "corruptedGemLevelInvalid": {
+    "message": "请输入 2 至 21 的整数"
+  },
   "tierFeatureTitle": {
     "message": "词缀等级选择"
   },

@@ -233,7 +233,9 @@ test("Tier bridge sends mappings with its first update and the active category",
     tierEnabled: true,
     tierMode: "minimum",
     tierPageLabels: { Rings: "Rings" },
-    tierLabel: "Tier"
+    tierLabel: "Tier",
+    corruptedGemLevelLabel: "Corrupted +1 Final Gem Level",
+    corruptedGemLevelInvalid: "Enter a whole number from 2 to 21"
   });
 });
 

@@ -81,6 +81,12 @@
   "tierSelectorLabel": {
     "message": "Tier"
   },
+  "corruptedGemLevelLabel": {
+    "message": "Corrupted +1 Final Gem Level"
+  },
+  "corruptedGemLevelInvalid": {
+    "message": "Enter a whole number from 2 to 21"
+  },
   "tierFeatureTitle": {
     "message": "Tier Selection"
   },

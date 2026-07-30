@@ -109,6 +109,10 @@
   const TIER_CONTROL_OPEN_CLASS = "poe2-marketwright-tier-control-open";
   const TIER_TRIGGER_CLASS = "poe2-marketwright-tier-trigger";
   const TIER_SELECT_CLASS = "poe2-marketwright-tier-select";
+  const CORRUPTED_GEM_LEVEL_CONTROL_CLASS = "poe2-marketwright-corrupted-gem-level-control";
+  const CORRUPTED_GEM_LEVEL_INPUT_CLASS = "poe2-marketwright-corrupted-gem-level-input";
+  const CORRUPTED_GEM_LEVEL_SESSION_KEY = "poe2-marketwright:corrupted-gem-final-level";
+  const GEM_LEVEL_REQUIREMENTS = Object.freeze([1, 3, 6, 10, 14, 18, 22, 26, 31, 36, 41, 46, 52, 58, 64, 66, 72, 78, 84, 90]);
   const QUICK_ADD_STAGED_ATTRIBUTE = "data-poe2-marketwright-quick-add-staged";
   const QUICK_ADD_STAGE_ATTRIBUTE = "data-poe2-marketwright-quick-add-stage";
   const QUICK_ADD_ROOT_SELECTOR =
@@ -149,6 +153,9 @@
     tierOutsidePointerBound: false,
     tierObserver: null,
     tierRefreshTimer: null,
+    corruptedGemLevelLabel: "Corrupted +1 Final Gem Level",
+    corruptedGemLevelInvalid: "Enter a whole number from 2 to 21",
+    corruptedGemLevelClearStatePatched: false,
     tradeOptionOriginalTexts: new WeakMap(),
     quickAddStaged: new Set(),
     quickAddGroupIndex: null,
@@ -172,6 +179,12 @@
       runtime.tierMode = payload.tierMode === "exact" ? "exact" : "minimum";
       if (typeof payload.tierLabel === "string" && payload.tierLabel) {
         runtime.tierLabel = payload.tierLabel;
+      }
+      if (typeof payload.corruptedGemLevelLabel === "string" && payload.corruptedGemLevelLabel) {
+        runtime.corruptedGemLevelLabel = payload.corruptedGemLevelLabel;
+      }
+      if (typeof payload.corruptedGemLevelInvalid === "string" && payload.corruptedGemLevelInvalid) {
+        runtime.corruptedGemLevelInvalid = payload.corruptedGemLevelInvalid;
       }
       installTierControls();
       scheduleTierControlRefresh();
@@ -584,6 +597,173 @@
       const control = existing || createTierControl(document, filterElement, minInput);
       renderTierControl(control, minInput, maxInput, options);
     }
+    refreshCorruptedGemLevelControl();
+  }
+
+  function refreshCorruptedGemLevelControl() {
+    const gemLevelComponent = findPropertyFilterComponent("gem_level");
+    const groupBody = gemLevelComponent?.$el?.closest?.(".filter-group")?.querySelector?.(".filter-group-body");
+    if (!groupBody) {
+      return;
+    }
+    const existing = groupBody.querySelector(`.${CORRUPTED_GEM_LEVEL_CONTROL_CLASS}`);
+    const control = existing || createCorruptedGemLevelControl(groupBody.ownerDocument || window.document);
+    if (!existing) {
+      groupBody.appendChild(control);
+    }
+    patchCorruptedGemLevelClearState();
+    const input = control.querySelector(`.${CORRUPTED_GEM_LEVEL_INPUT_CLASS}`);
+    if (input && window.document?.activeElement !== input) {
+      input.value = getCorruptedGemLevelSessionValue();
+      setCorruptedGemLevelValidity(input, input.value === "" || Boolean(getCorruptedGemLevelPreset(input.value)));
+    }
+  }
+
+  function createCorruptedGemLevelControl(document) {
+    const control = document.createElement("div");
+    control.className = `filter filter-property ${CORRUPTED_GEM_LEVEL_CONTROL_CLASS}`;
+    const body = document.createElement("span");
+    body.className = "filter-body";
+    const label = document.createElement("div");
+    label.className = "filter-title";
+    label.textContent = runtime.corruptedGemLevelLabel;
+    const separator = document.createElement("span");
+    separator.className = "sep";
+    const input = document.createElement("input");
+    input.className = `form-control minmax ${CORRUPTED_GEM_LEVEL_INPUT_CLASS}`;
+    input.type = "number";
+    input.min = "2";
+    input.max = "21";
+    input.step = "1";
+    input.inputMode = "numeric";
+    input.id = "poe2-marketwright-corrupted-gem-level";
+    input.setAttribute("aria-label", runtime.corruptedGemLevelLabel);
+    input.addEventListener("input", () => applyCorruptedGemLevelInput(input));
+    const trailingSeparator = document.createElement("span");
+    trailingSeparator.className = "sep";
+    const spacer = document.createElement("input");
+    spacer.className = "form-control minmax poe2-marketwright-corrupted-gem-level-spacer";
+    spacer.type = "number";
+    spacer.tabIndex = -1;
+    spacer.setAttribute("aria-hidden", "true");
+    spacer.disabled = true;
+    body.append(label, separator, input, trailingSeparator, spacer);
+    control.appendChild(body);
+    return control;
+  }
+
+  function applyCorruptedGemLevelInput(input) {
+    const raw = String(input?.value || "").trim();
+    if (!raw) {
+      clearCorruptedGemLevelSessionValue();
+      setCorruptedGemLevelValidity(input, true);
+      return;
+    }
+    const preset = getCorruptedGemLevelPreset(raw);
+    if (!preset || !applyCorruptedGemLevelPreset(preset)) {
+      setCorruptedGemLevelValidity(input, false);
+      return;
+    }
+    setCorruptedGemLevelSessionValue(raw);
+    setCorruptedGemLevelValidity(input, true);
+  }
+
+  function getCorruptedGemLevelPreset(value) {
+    const finalLevel = Number(value);
+    if (!Number.isInteger(finalLevel) || finalLevel < 2 || finalLevel > 21) {
+      return null;
+    }
+    const requiredLevel = GEM_LEVEL_REQUIREMENTS[finalLevel - 2];
+    if (!Number.isInteger(requiredLevel)) {
+      return null;
+    }
+    return {
+      gemLevel: { min: finalLevel, max: finalLevel },
+      requirementsLevel: { min: null, max: requiredLevel },
+      corrupted: { option: "true" }
+    };
+  }
+
+  function applyCorruptedGemLevelPreset(preset) {
+    const gemLevel = findPropertyFilterComponent("gem_level");
+    const requirementsLevel = findPropertyFilterComponent("lvl");
+    const corrupted = findPropertyFilterComponent("corrupted");
+    if (!gemLevel || !requirementsLevel || !corrupted) {
+      return false;
+    }
+    if (
+      !setPropertyFilterValue(gemLevel, preset.gemLevel) ||
+      !setPropertyFilterValue(requirementsLevel, preset.requirementsLevel) ||
+      !setPropertyFilterValue(corrupted, preset.corrupted)
+    ) {
+      return false;
+    }
+    runtime.app?.$root?.save?.(true);
+    return true;
+  }
+
+  function findPropertyFilterComponent(filterId) {
+    let result = null;
+    visitVueComponents(runtime.app, (component) => {
+      if (!result && component?.filter?.id === filterId && Number.isInteger(component?.index)) {
+        result = component;
+      }
+    });
+    return result;
+  }
+
+  function setPropertyFilterValue(component, update) {
+    let group = component?.$parent;
+    while (group && (!group.group?.id || typeof group.updateFilter !== "function")) {
+      group = group.$parent;
+    }
+    if (!group) {
+      return false;
+    }
+    group.updateFilter(component.index, update);
+    return true;
+  }
+
+  function setCorruptedGemLevelValidity(input, valid) {
+    input?.classList?.toggle("poe2-marketwright-corrupted-gem-level-invalid", !valid);
+    input?.setAttribute?.("aria-invalid", String(!valid));
+    input?.setAttribute?.("title", valid ? runtime.corruptedGemLevelLabel : runtime.corruptedGemLevelInvalid);
+  }
+
+  function getCorruptedGemLevelSessionValue() {
+    try {
+      return String(window.sessionStorage?.getItem(CORRUPTED_GEM_LEVEL_SESSION_KEY) || "");
+    } catch (error) {
+      return "";
+    }
+  }
+
+  function setCorruptedGemLevelSessionValue(value) {
+    try {
+      window.sessionStorage?.setItem(CORRUPTED_GEM_LEVEL_SESSION_KEY, String(value));
+    } catch (error) {
+      // Session storage is optional; native filter values still persist the search.
+    }
+  }
+
+  function clearCorruptedGemLevelSessionValue() {
+    try {
+      window.sessionStorage?.removeItem(CORRUPTED_GEM_LEVEL_SESSION_KEY);
+    } catch (error) {
+      // Session storage is optional.
+    }
+  }
+
+  function patchCorruptedGemLevelClearState() {
+    if (runtime.corruptedGemLevelClearStatePatched || typeof runtime.app?.clearState !== "function") {
+      return;
+    }
+    const clearState = runtime.app.clearState;
+    runtime.app.clearState = function (...args) {
+      clearCorruptedGemLevelSessionValue();
+      return clearState.apply(this, args);
+    };
+    runtime.corruptedGemLevelClearStatePatched = true;
   }
 
   function getTierStatId(element) {

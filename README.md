@@ -97,6 +97,12 @@ Stats with Tier support show a `T` button on the left for selecting a Tier direc
 
 Tier mappings are generated from verified PoE2DB modifier ranges and matched by stable Trade stat IDs; ambiguous stats do not show the selector. For modifiers with overlapping ranges, such as added damage, selecting T1 may still return T2 because the filter uses average values rather than full modifier ranges.
 
+### Corrupted +1 Skill Gem Search
+
+The `Corrupted +1 Final Gem Level` input in the `Miscellaneous` filters searches for the indirect signature of an active skill gem that gained one level from corruption. Enter a final level from `2` to `21`; for example, `20` sets Gem Level to `20-20`, sets the maximum required character level to the level-19 gem requirement, and sets `Corrupted` to `Yes`.
+
+The preset does not change the currently selected gem or item category. Select an active skill gem before using it, then the native filters remain available for further refinement.
+
 ### Quick Affix Adding
 
 Click the `+` button to the right of `Add Stat Filter` to enable quick-add mode. After adding a stat normally, the selector immediately reopens with the current search terms preserved, making it easy to add several stats in sequence. Click the button again to turn the mode off.
