@@ -180,6 +180,7 @@
   const ITEM_SEARCH_ROOT_SELECTOR =
     "#trade .top .search-panel > .search-bar:not(.search-advanced) .search-left .multiselect.search-select";
   const ITEM_SEARCH_INPUT_SELECTOR = `${ITEM_SEARCH_ROOT_SELECTOR} input.multiselect__input`;
+  const TRADE_ITEM_POPUP_SELECTOR = ".itemPopupContainer";
   const TYPE_FILTER_GROUP_SELECTOR = "#trade .search-advanced-pane.blue > .filter-group";
   const TRADE_LOCALIZATION_SELECTOR = [
     ".search-panel",
@@ -5828,6 +5829,9 @@
     for (const element of getTradeLocalizationElements(root)) {
       localizeTradeElement(element);
     }
+    for (const element of document.querySelectorAll(TRADE_ITEM_POPUP_SELECTOR)) {
+      localizeTradeElement(element);
+    }
     for (const element of root.querySelectorAll("[placeholder], [title], [aria-label]")) {
       if (element.closest(TRADE_LOCALIZATION_SELECTOR)) {
         localizeTradeAttributes(element, { allowAdvancedFilterCopy: true });
@@ -6064,6 +6068,16 @@
     if (exact) {
       return `${leading}${getLocalizedTradePageText(exact, text, false)}${trailing}`;
     }
+    const label = text.match(/^(.+?)(:\s*)$/);
+    const labelRecord = runtime.tradeLocalization.strings?.[label?.[1] || ""] ||
+      runtime.tradeLocalization.clientStrings?.[label?.[1] || ""];
+    if (labelRecord) {
+      return `${leading}${getLocalizedTradePageText(labelRecord, label[1], false)}${label[2]}${trailing}`;
+    }
+    const gemTooltipText = getLocalizedGemTooltipText(text, element);
+    if (gemTooltipText) {
+      return `${leading}${gemTooltipText}${trailing}`;
+    }
     const optionText = runtime.tradeLocalization.optionStrings?.[text];
     if (optionText) {
       return `${leading}${getLocalizedTradePageText(optionText, text, false)}${trailing}`;
@@ -6077,6 +6091,31 @@
     return item
       ? `${leading}${getLocalizedTradePageText(item, text, false)}${trailing}`
       : source;
+  }
+
+  function getLocalizedGemTooltipText(text, element) {
+    if (!element?.closest?.(".itemPopupContainer.gemPopup")) {
+      return null;
+    }
+    const language = resolvePageLanguage(runtime.state.pageLanguage);
+    if (language === "en") {
+      return text;
+    }
+    const locale = getMessageLocale(language);
+    const gemLevel = text.match(/^(\d+) Levels from Gem(?: \(Max\))?$/);
+    if (gemLevel) {
+      const maximum = text.endsWith(" (Max)");
+      return locale === "zh_CN"
+        ? `通过宝石 ${gemLevel[1]} 等${maximum ? "（最高）" : ""}`
+        : `透過寶石 ${gemLevel[1]} 等${maximum ? "（最高）" : ""}`;
+    }
+    const corruptionLevel = text.match(/^([+-]\d+) Level from Corruption$/);
+    if (corruptionLevel) {
+      return locale === "zh_CN"
+        ? `腐化等级 ${corruptionLevel[1]}`
+        : `腐化等級 ${corruptionLevel[1]}`;
+    }
+    return null;
   }
 
   function getTradeTermLocalizationOverride(value) {

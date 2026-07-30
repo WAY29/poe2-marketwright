@@ -1071,6 +1071,75 @@ test("trade localization reaches nested native labels but leaves excluded conten
   });
 });
 
+test("gem item tooltips localize stable property labels and generated level details", () => {
+  class FakeElement {
+    closest(selector) {
+      return selector === ".itemPopupContainer.gemPopup" ? this : null;
+    }
+  }
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getLocalizedTradeText, runtime };\n})();"
+  );
+  const sandbox = {
+    Element: FakeElement,
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageLanguage: "zh_TW" };
+  hooks.runtime.tradeLocalization = {
+    strings: {
+      Buff: { en: "Buff", zh_TW: "增益效果" },
+      Persistent: { en: "Persistent", zh_TW: "持續" },
+      Quality: { en: "Quality", zh_TW: "品質" },
+      Reservation: { en: "Reservation", zh_TW: "保留" },
+      Requires: { en: "Requires", zh_TW: "需求" }
+    }
+  };
+  const gemPopup = new FakeElement();
+
+  assert.deepStrictEqual(
+    [
+      hooks.getLocalizedTradeText("Buff", gemPopup),
+      hooks.getLocalizedTradeText("Persistent", gemPopup),
+      hooks.getLocalizedTradeText("Quality: ", gemPopup),
+      hooks.getLocalizedTradeText("Reservation: ", gemPopup),
+      hooks.getLocalizedTradeText("Requires ", gemPopup),
+      hooks.getLocalizedTradeText("20 Levels from Gem (Max)", gemPopup),
+      hooks.getLocalizedTradeText("+1 Level from Corruption", gemPopup)
+    ],
+    ["增益效果", "持續", "品質: ", "保留: ", "需求 ", "透過寶石 20 等（最高）", "腐化等級 +1"]
+  );
+
+  hooks.runtime.state.pageLanguage = "zh_CN";
+  hooks.runtime.tradeLocalization.strings = {
+    Buff: { en: "Buff", zh_CN: "增益" },
+    Persistent: { en: "Persistent", zh_CN: "永久性" },
+    Quality: { en: "Quality", zh_CN: "品质" },
+    Reservation: { en: "Reservation", zh_CN: "保留" },
+    Requires: { en: "Requires", zh_CN: "需求" }
+  };
+  assert.deepStrictEqual(
+    [
+      hooks.getLocalizedTradeText("Buff", gemPopup),
+      hooks.getLocalizedTradeText("Persistent", gemPopup),
+      hooks.getLocalizedTradeText("Quality: ", gemPopup),
+      hooks.getLocalizedTradeText("Reservation: ", gemPopup),
+      hooks.getLocalizedTradeText("Requires ", gemPopup),
+      hooks.getLocalizedTradeText("20 Levels from Gem (Max)", gemPopup),
+      hooks.getLocalizedTradeText("+1 Level from Corruption", gemPopup)
+    ],
+    ["增益", "永久性", "品质: ", "保留: ", "需求 ", "通过宝石 20 等（最高）", "腐化等级 +1"]
+  );
+});
+
 test("advanced Trade filter labels can be localized without touching search controls", () => {
   class FakeElement {
     constructor(children = [], advanced = false) {

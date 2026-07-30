@@ -113,6 +113,18 @@ TRADE_CATEGORY_LOCALIZATION_PAGE_SLUGS = {
 TRADE_FILTER_TEXT_OVERRIDES = {
     "group=trade_filters/filter=sale_type/option=priced_with_info/text": {"zh_TW": "標價"},
 }
+# These labels occur in item-popup property models, whose stable numeric type
+# is not exposed by Trade's static localization endpoint.  The terms are
+# verified against the same PoE2DB gem page in all three locales.
+TRADE_ITEM_TOOLTIP_TERM_LOCALIZATIONS = {
+    "Buff": {"en": "Buff", "zh_CN": "增益", "zh_TW": "增益效果"},
+    "Persistent": {"en": "Persistent", "zh_CN": "永久性", "zh_TW": "持續"},
+    "Quality": {"en": "Quality", "zh_CN": "品质", "zh_TW": "品質"},
+    "Reservation": {"en": "Reservation", "zh_CN": "保留", "zh_TW": "保留"},
+    "Requires": {"en": "Requires", "zh_CN": "需求", "zh_TW": "需求"},
+    "Dex": {"en": "Dex", "zh_CN": "敏捷", "zh_TW": "敏捷"},
+    "Int": {"en": "Int", "zh_CN": "智慧", "zh_TW": "智慧"},
+}
 TRADE_STAT_WILDCARD_PLACEHOLDERS = {
     "azmeri spirit",
     "mages legacy",
@@ -4096,7 +4108,8 @@ async def main() -> int:
         unique_item_type_by_name,
         unique_item_localizations,
     )
-    supplemental_trade_strings = dict(trade_filter_page_localizations)
+    supplemental_trade_strings = dict(TRADE_ITEM_TOOLTIP_TERM_LOCALIZATIONS)
+    supplemental_trade_strings.update(trade_filter_page_localizations)
     for record in trade_category_page_localizations.values():
         supplemental_trade_strings.setdefault(record["en"], record)
     trade_localization = build_trade_localization_metadata(

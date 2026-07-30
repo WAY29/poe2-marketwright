@@ -13,6 +13,7 @@ from build_extension_data import (
     DisplayMetadataCoverageError,
     PageArtifacts,
     TradeLocalizationCoverageError,
+    TRADE_ITEM_TOOLTIP_TERM_LOCALIZATIONS,
     build_safe_numeric_trade_item_localizations,
     build_trade_filter_page_localizations,
     build_trade_category_page_localizations,
@@ -70,6 +71,20 @@ from build_extension_data import (
 
 
 class TradeStatMappingTests(unittest.TestCase):
+    def test_defines_verified_item_popup_property_terms(self) -> None:
+        self.assertEqual(
+            TRADE_ITEM_TOOLTIP_TERM_LOCALIZATIONS,
+            {
+                "Buff": {"en": "Buff", "zh_CN": "增益", "zh_TW": "增益效果"},
+                "Persistent": {"en": "Persistent", "zh_CN": "永久性", "zh_TW": "持續"},
+                "Quality": {"en": "Quality", "zh_CN": "品质", "zh_TW": "品質"},
+                "Reservation": {"en": "Reservation", "zh_CN": "保留", "zh_TW": "保留"},
+                "Requires": {"en": "Requires", "zh_CN": "需求", "zh_TW": "需求"},
+                "Dex": {"en": "Dex", "zh_CN": "敏捷", "zh_TW": "敏捷"},
+                "Int": {"en": "Int", "zh_CN": "智慧", "zh_TW": "智慧"},
+            },
+        )
+
     def test_builds_selected_trade_option_texts_from_official_ids(self) -> None:
         english_filters = {
             "result": [

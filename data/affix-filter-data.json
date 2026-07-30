@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "generatedAt": "2026-07-30T04:18:52.933522+00:00",
+  "generatedAt": "2026-07-30T05:15:39.881985+00:00",
   "source": "https://poe2db.tw/us/Modifiers",
   "tradeStatsSource": "https://www.pathofexile.com/api/trade2/data/stats",
   "displayMetadataSources": {
@@ -273767,6 +273767,11 @@
         "zh_CN": "轻盾",
         "zh_TW": "輕盾"
       },
+      "Buff": {
+        "en": "Buff",
+        "zh_CN": "增益",
+        "zh_TW": "增益效果"
+      },
       "Bulwark": {
         "en": "Bulwark",
         "zh_CN": "壁垒",
@@ -275886,6 +275891,11 @@
         "en": "Devour",
         "zh_CN": "吞噬",
         "zh_TW": "吞噬"
+      },
+      "Dex": {
+        "en": "Dex",
+        "zh_CN": "敏捷",
+        "zh_TW": "敏捷"
       },
       "Dexterity": {
         "en": "Dexterity",
@@ -281067,6 +281077,11 @@
         "zh_CN": "立即回复",
         "zh_TW": "立即恢復"
       },
+      "Int": {
+        "en": "Int",
+        "zh_CN": "智慧",
+        "zh_TW": "智慧"
+      },
       "Intelligence": {
         "en": "Intelligence",
         "zh_CN": "智慧",
@@ -285377,6 +285392,11 @@
         "zh_CN": "永续充能",
         "zh_TW": "永恆充能"
       },
+      "Persistent": {
+        "en": "Persistent",
+        "zh_CN": "永久性",
+        "zh_TW": "持續"
+      },
       "Persistent Ground I": {
         "en": "Persistent Ground I",
         "zh_CN": "持久地面 I",
@@ -286051,6 +286071,11 @@
         "en": "Pyrophyte Staff",
         "zh_CN": "耐火长杖",
         "zh_TW": "炎植長杖"
+      },
+      "Quality": {
+        "en": "Quality",
+        "zh_CN": "品质",
+        "zh_TW": "品質"
       },
       "Quartered Crest Shield": {
         "en": "Quartered Crest Shield",
@@ -286782,10 +286807,20 @@
         "zh_CN": "需求",
         "zh_TW": "物品需求"
       },
+      "Requires": {
+        "en": "Requires",
+        "zh_CN": "需求",
+        "zh_TW": "需求"
+      },
       "Rerolling Favours at Ritual Altars in Area costs #% increased Tribute": {
         "en": "Rerolling Favours at Ritual Altars in Area costs #% increased Tribute",
         "zh_CN": "区域内在驱灵祭坛重置恩典消耗的贡品提高 #%",
         "zh_TW": "增加#%在區域中祭祀神壇重骰恩惠的貢禮消耗"
+      },
+      "Reservation": {
+        "en": "Reservation",
+        "zh_CN": "保留",
+        "zh_TW": "保留"
       },
       "Resolute Technique": {
         "en": "Resolute Technique",
@@ -371678,13 +371713,13 @@
     },
     "coverage": {
       "zh_CN": {
-        "matched": 12211,
-        "total": 12215,
+        "matched": 12218,
+        "total": 12222,
         "ratio": 0.999673
       },
       "zh_TW": {
-        "matched": 12215,
-        "total": 12215,
+        "matched": 12222,
+        "total": 12222,
         "ratio": 1.0
       }
     },
