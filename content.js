@@ -180,7 +180,7 @@
   const ITEM_SEARCH_ROOT_SELECTOR =
     "#trade .top .search-panel > .search-bar:not(.search-advanced) .search-left .multiselect.search-select";
   const ITEM_SEARCH_INPUT_SELECTOR = `${ITEM_SEARCH_ROOT_SELECTOR} input.multiselect__input`;
-  const TRADE_ITEM_POPUP_SELECTOR = ".itemPopupContainer";
+  const TRADE_ITEM_POPUP_SELECTOR = ".item-popup";
   const TYPE_FILTER_GROUP_SELECTOR = "#trade .search-advanced-pane.blue > .filter-group";
   const TRADE_LOCALIZATION_SELECTOR = [
     ".search-panel",
@@ -6094,7 +6094,7 @@
   }
 
   function getLocalizedGemTooltipText(text, element) {
-    if (!element?.closest?.(".gemPopup")) {
+    if (!element?.closest?.(".item-popup--gem")) {
       return null;
     }
     const language = resolvePageLanguage(runtime.state.pageLanguage);

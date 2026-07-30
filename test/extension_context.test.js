@@ -1074,7 +1074,7 @@ test("trade localization reaches nested native labels but leaves excluded conten
 test("gem item tooltips localize stable property labels and generated level details", () => {
   class FakeElement {
     closest(selector) {
-      return selector === ".gemPopup" ? this : null;
+      return selector === ".item-popup--gem" ? this : null;
     }
   }
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
