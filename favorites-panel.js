@@ -1229,7 +1229,7 @@
       launch.setAttribute("aria-label", link.displayName || "");
       bindLinkFavoriteTooltip(launch, link);
       launch.appendChild(createElement("span", "favorites-panel-name", link.displayName || ""));
-      const time = Number(link.lastUsedAt || link.createdAt);
+      const time = Number(link.updatedAt ?? link.createdAt);
       if (Number.isFinite(time) && time > 0) {
         launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
       }

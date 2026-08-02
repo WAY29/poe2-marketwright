@@ -2796,7 +2796,7 @@ test("folder header toggles only when the click is outside its controls", () => 
   assert.deepStrictEqual(result, [true, false, true]);
 });
 
-test("replacing a link favorite preserves its position and identity", async () => {
+test("replacing a link favorite preserves its position and identity while renewing its timestamp", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
   source = source.replace(
@@ -2817,6 +2817,7 @@ test("replacing a link favorite preserves its position and identity", async () =
     document: { querySelector() { return null; }, querySelectorAll() { return []; } },
     location: window.location,
     console,
+    Date: { now() { return 456; } },
     Element: class {},
     HTMLInputElement: class {},
     HTMLTextAreaElement: class {},
@@ -2854,6 +2855,7 @@ test("replacing a link favorite preserves its position and identity", async () =
             displayName: "Pinned Bow",
             folderId: "bows",
             createdAt: 123,
+            updatedAt: 234,
             lastUsedAt: null
           }],
           rootLinkIds: [],
@@ -2875,6 +2877,7 @@ test("replacing a link favorite preserves its position and identity", async () =
       displayName: "Pinned Bow",
       folderId: "bows",
       createdAt: 123,
+      updatedAt: 456,
       lastUsedAt: null
     }],
     rootLinkIds: [],

@@ -654,6 +654,7 @@
       folderId = null,
       id = null,
       createdAt = Date.now(),
+      updatedAt = createdAt,
       filterGroups = [],
       displaySnapshot = null
     } = {}) => {
@@ -664,6 +665,7 @@
       }
       const normalizedFilterGroups = normalizeLinkFavoriteFilterGroups(filterGroups);
       const normalizedDisplaySnapshot = normalizeLinkFavoriteDisplaySnapshot(displaySnapshot);
+      const timestamp = normalizeTimestamp(createdAt, Date.now());
       return {
         id: normalizeId(id) || createLinkFavoriteId("link"),
         league: parsed.league,
@@ -671,7 +673,8 @@
         url: parsed.url,
         displayName: name,
         folderId: normalizeId(folderId),
-        createdAt: normalizeTimestamp(createdAt, Date.now()),
+        createdAt: timestamp,
+        updatedAt: normalizeTimestamp(updatedAt, timestamp),
         lastUsedAt: null,
         ...(normalizedFilterGroups.length ? { filterGroups: normalizedFilterGroups } : {}),
         ...(normalizedDisplaySnapshot ? { displaySnapshot: normalizedDisplaySnapshot } : {})
@@ -695,6 +698,7 @@
       }
       const filterGroups = normalizeLinkFavoriteFilterGroups(rawLink?.filterGroups);
       const displaySnapshot = normalizeLinkFavoriteDisplaySnapshot(rawLink?.displaySnapshot);
+      const createdAt = normalizeTimestamp(rawLink?.createdAt);
       return {
         id,
         league,
@@ -702,7 +706,8 @@
         url: parsed.url,
         displayName,
         folderId: allowFolder ? normalizeId(rawLink?.folderId) : null,
-        createdAt: normalizeTimestamp(rawLink?.createdAt),
+        createdAt,
+        updatedAt: normalizeTimestamp(rawLink?.updatedAt, createdAt),
         lastUsedAt: rawLink?.lastUsedAt == null ? null : normalizeTimestamp(rawLink.lastUsedAt),
         ...(filterGroups.length ? { filterGroups } : {}),
         ...(displaySnapshot ? { displaySnapshot } : {})

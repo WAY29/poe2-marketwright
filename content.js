@@ -3965,7 +3965,8 @@
       id: link.id,
       displayName: link.displayName,
       folderId: link.folderId,
-      createdAt: link.createdAt
+      createdAt: link.createdAt,
+      updatedAt: Date.now()
     });
     leagueState.links = leagueState.links.map((entry) => entry.id === linkId ? replacement : entry);
     await replaceLinkFavorites(next);
@@ -4179,6 +4180,7 @@
       return;
     }
     link.displayName = normalizedName;
+    link.updatedAt = Date.now();
     await replaceLinkFavorites(next);
   }
 
@@ -4201,6 +4203,7 @@
       sourceIds.splice(sourceIndex, 1);
     }
     link.folderId = targetFolderId || null;
+    link.updatedAt = Date.now();
     if (targetFolder) {
       targetFolder.collapsed = false;
     }

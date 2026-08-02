@@ -356,6 +356,7 @@ test("link favorite tools validate and create current trade search records", asy
     folderId: "folder-1",
     id: "link-1",
     createdAt: 123,
+    updatedAt: 234,
     filterGroups: [
       { label: "Type Filters", values: ["Bow", " Rare ", "Bow"] },
       { label: "Stat Filters", values: ["+# to maximum Life", ""] },
@@ -373,7 +374,7 @@ test("link favorite tools validate and create current trade search records", asy
   );
 
   const result = structuredClone({ record, invalidCode, realmless });
-  assert.deepStrictEqual(result, {"record": {"id": "link-1", "league": "Dawn of the Hunt", "queryId": "query-7", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-7", "displayName": "Warmonger Bow", "folderId": "folder-1", "createdAt": 123, "lastUsedAt": null, "filterGroups": [{"label": "Type Filters", "values": ["Bow", "Rare"]}, {"label": "Stat Filters", "values": ["+# to maximum Life"]}]}, "invalidCode": "invalid_trade_search_url", "realmless": {"url": "https://www.pathofexile.com/trade2/search/Runes%20of%20Aldur/X39m5o8WTP", "league": "Runes of Aldur", "queryId": "X39m5o8WTP"}});
+  assert.deepStrictEqual(result, {"record": {"id": "link-1", "league": "Dawn of the Hunt", "queryId": "query-7", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-7", "displayName": "Warmonger Bow", "folderId": "folder-1", "createdAt": 123, "updatedAt": 234, "lastUsedAt": null, "filterGroups": [{"label": "Type Filters", "values": ["Bow", "Rare"]}, {"label": "Stat Filters", "values": ["+# to maximum Life"]}]}, "invalidCode": "invalid_trade_search_url", "realmless": {"url": "https://www.pathofexile.com/trade2/search/Runes%20of%20Aldur/X39m5o8WTP", "league": "Runes of Aldur", "queryId": "X39m5o8WTP"}});
 });
 
 test("link favorites omit inactive Any filter values", () => {
@@ -697,6 +698,7 @@ test("link history normalizes, deduplicates, and keeps its newest entries", asyn
             displayName: "New name",
             folderId: null,
             createdAt: 10,
+            updatedAt: 10,
             lastUsedAt: 30
           }]
         }
@@ -710,6 +712,7 @@ test("link history normalizes, deduplicates, and keeps its newest entries", asyn
         displayName: "Second search",
         folderId: null,
         createdAt: 40,
+        updatedAt: 40,
         lastUsedAt: 40,
         filterGroups: [{ label: "Type Filters", values: ["Bow"] }]
       },
@@ -721,6 +724,7 @@ test("link history normalizes, deduplicates, and keeps its newest entries", asyn
         displayName: "New name",
         folderId: null,
         createdAt: 10,
+        updatedAt: 10,
         lastUsedAt: 30
       }
     ]
@@ -778,7 +782,7 @@ test("imports external link bookmarks into the selected league idempotently", as
       skippedLinks: second.skippedLinks
     }
   });
-  assert.deepStrictEqual(result, {"first": {"importedFolders": 2, "importedLinks": 3, "skippedLinks": 1, "folderOrder": ["import-folder-first-folder", "import-folder-later-folder"], "folders": [{"id": "import-folder-first-folder", "name": "Helmets", "createdAt": 123, "collapsed": false}, {"id": "import-folder-later-folder", "name": "Bows", "createdAt": 123, "collapsed": true}], "links": [{"id": "import-link-helm", "league": "Dawn of the Hunt", "queryId": "query-helm", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-helm", "displayName": "Helm", "folderId": "import-folder-first-folder", "createdAt": 123, "lastUsedAt": null}, {"id": "import-link-bow-first", "league": "Dawn of the Hunt", "queryId": "query-first", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-first", "displayName": "First bow", "folderId": "import-folder-later-folder", "createdAt": 123, "lastUsedAt": null}, {"id": "import-link-bow-later", "league": "Dawn of the Hunt", "queryId": "query-later", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-later", "displayName": "Late bow", "folderId": "import-folder-later-folder", "createdAt": 123, "lastUsedAt": null}], "folderLinkIds": {"import-folder-first-folder": ["import-link-helm"], "import-folder-later-folder": ["import-link-bow-first", "import-link-bow-later"]}}, "second": {"importedFolders": 0, "importedLinks": 0, "skippedLinks": 4}});
+  assert.deepStrictEqual(result, {"first": {"importedFolders": 2, "importedLinks": 3, "skippedLinks": 1, "folderOrder": ["import-folder-first-folder", "import-folder-later-folder"], "folders": [{"id": "import-folder-first-folder", "name": "Helmets", "createdAt": 123, "collapsed": false}, {"id": "import-folder-later-folder", "name": "Bows", "createdAt": 123, "collapsed": true}], "links": [{"id": "import-link-helm", "league": "Dawn of the Hunt", "queryId": "query-helm", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-helm", "displayName": "Helm", "folderId": "import-folder-first-folder", "createdAt": 123, "updatedAt": 123, "lastUsedAt": null}, {"id": "import-link-bow-first", "league": "Dawn of the Hunt", "queryId": "query-first", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-first", "displayName": "First bow", "folderId": "import-folder-later-folder", "createdAt": 123, "updatedAt": 123, "lastUsedAt": null}, {"id": "import-link-bow-later", "league": "Dawn of the Hunt", "queryId": "query-later", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn%20of%20the%20Hunt/query-later", "displayName": "Late bow", "folderId": "import-folder-later-folder", "createdAt": 123, "updatedAt": 123, "lastUsedAt": null}], "folderLinkIds": {"import-folder-first-folder": ["import-link-helm"], "import-folder-later-folder": ["import-link-bow-first", "import-link-bow-later"]}}, "second": {"importedFolders": 0, "importedLinks": 0, "skippedLinks": 4}});
 });
 
 test("exports compatible bookmark json and round trips root bookmarks", async () => {
@@ -831,5 +835,5 @@ test("exports compatible bookmark json and round trips root bookmarks", async ()
   const exported = tools.exportExternalLinkFavorites(state, "Dawn");
   const restored = tools.importExternalLinkFavorites({}, exported, "Dawn", 30).state.leagues.Dawn;
   const result = structuredClone({ exported, restored });
-  assert.deepStrictEqual(result, {"exported": {"folders": [{"id": "folder-helms", "childIds": [], "parentId": null, "depth": 0, "index": 0, "name": "Helmets", "bookmarks": [{"id": "link-helm", "name": "Helm", "league": "Auto", "poeVersion": "Poe2", "endpoint": "query-helm", "type": "search", "idx": 0, "isDone": true}], "isOpen": true}, {"id": "folder-bows", "childIds": [], "parentId": null, "depth": 0, "index": 1, "name": "Bows", "bookmarks": [{"id": "link-bow", "name": "Bow", "league": "Auto", "poeVersion": "Poe2", "endpoint": "query-bow", "type": "search", "idx": 0, "isDone": true}], "isOpen": false}], "rootBookmarks": [{"id": "link-root", "name": "Root search", "league": "Auto", "poeVersion": "Poe2", "endpoint": "query-root", "type": "search", "idx": 0, "isDone": true}]}, "restored": {"folders": [{"id": "import-folder-folder-helms", "name": "Helmets", "createdAt": 30, "collapsed": false}, {"id": "import-folder-folder-bows", "name": "Bows", "createdAt": 30, "collapsed": true}], "folderOrder": ["import-folder-folder-helms", "import-folder-folder-bows"], "links": [{"id": "import-link-link-helm", "league": "Dawn", "queryId": "query-helm", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-helm", "displayName": "Helm", "folderId": "import-folder-folder-helms", "createdAt": 30, "lastUsedAt": null}, {"id": "import-link-link-bow", "league": "Dawn", "queryId": "query-bow", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-bow", "displayName": "Bow", "folderId": "import-folder-folder-bows", "createdAt": 30, "lastUsedAt": null}, {"id": "import-link-link-root", "league": "Dawn", "queryId": "query-root", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-root", "displayName": "Root search", "folderId": null, "createdAt": 30, "lastUsedAt": null}], "rootLinkIds": ["import-link-link-root"], "folderLinkIds": {"import-folder-folder-helms": ["import-link-link-helm"], "import-folder-folder-bows": ["import-link-link-bow"]}}});
+  assert.deepStrictEqual(result, {"exported": {"folders": [{"id": "folder-helms", "childIds": [], "parentId": null, "depth": 0, "index": 0, "name": "Helmets", "bookmarks": [{"id": "link-helm", "name": "Helm", "league": "Auto", "poeVersion": "Poe2", "endpoint": "query-helm", "type": "search", "idx": 0, "isDone": true}], "isOpen": true}, {"id": "folder-bows", "childIds": [], "parentId": null, "depth": 0, "index": 1, "name": "Bows", "bookmarks": [{"id": "link-bow", "name": "Bow", "league": "Auto", "poeVersion": "Poe2", "endpoint": "query-bow", "type": "search", "idx": 0, "isDone": true}], "isOpen": false}], "rootBookmarks": [{"id": "link-root", "name": "Root search", "league": "Auto", "poeVersion": "Poe2", "endpoint": "query-root", "type": "search", "idx": 0, "isDone": true}]}, "restored": {"folders": [{"id": "import-folder-folder-helms", "name": "Helmets", "createdAt": 30, "collapsed": false}, {"id": "import-folder-folder-bows", "name": "Bows", "createdAt": 30, "collapsed": true}], "folderOrder": ["import-folder-folder-helms", "import-folder-folder-bows"], "links": [{"id": "import-link-link-helm", "league": "Dawn", "queryId": "query-helm", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-helm", "displayName": "Helm", "folderId": "import-folder-folder-helms", "createdAt": 30, "updatedAt": 30, "lastUsedAt": null}, {"id": "import-link-link-bow", "league": "Dawn", "queryId": "query-bow", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-bow", "displayName": "Bow", "folderId": "import-folder-folder-bows", "createdAt": 30, "updatedAt": 30, "lastUsedAt": null}, {"id": "import-link-link-root", "league": "Dawn", "queryId": "query-root", "url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-root", "displayName": "Root search", "folderId": null, "createdAt": 30, "updatedAt": 30, "lastUsedAt": null}], "rootLinkIds": ["import-link-link-root"], "folderLinkIds": {"import-folder-folder-helms": ["import-link-link-helm"], "import-folder-folder-bows": ["import-link-link-bow"]}}});
 });
