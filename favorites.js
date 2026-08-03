@@ -45,7 +45,7 @@
   function getItemModifiers(item) {
     const modifiers = [];
     for (const [sourceKey, sourceMods] of Object.entries(item || {})) {
-      if (!sourceKey.endsWith("Mods") || !Array.isArray(sourceMods)) {
+      if (sourceKey === "bondedMods" || !sourceKey.endsWith("Mods") || !Array.isArray(sourceMods)) {
         continue;
       }
       sourceMods.forEach((modifier, index) => {
@@ -143,11 +143,14 @@
       let approximate = false;
 
       for (const mod of getItemModifiers(item)) {
+        const text = stripTradeMarkup(mod?.description);
+        if (/^bonded\s*:/i.test(text)) {
+          continue;
+        }
         const id = getStatId(mod?.hash);
         if (!id) {
           continue;
         }
-        const text = stripTradeMarkup(mod?.description);
         if (!text) {
           throw createFavoriteError(
             "missing_modifier_text",

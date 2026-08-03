@@ -116,7 +116,7 @@ test("preserves implicit and special-source stats in saved favorite searches", a
   assert.deepStrictEqual(result.payload, {"query": {"status": {"option": "available"}, "type": "Rider Bow", "stats": [{"type": "and", "filters": [{"id": "implicit.stat_3917489142", "value": {"min": 30, "max": 30}, "disabled": false}, {"id": "enchant.stat_3261801346", "value": {"min": 20, "max": 20}, "disabled": false}, {"id": "rune.stat_3523867985", "value": {"min": 15, "max": 15}, "disabled": false}, {"id": "sanctum.stat_2878762585", "value": {"min": 25, "max": 25}, "disabled": false}, {"id": "skill.mana_drain", "value": {"min": 12, "max": 12}, "disabled": false}]}], "filters": {"type_filters": {"filters": {"rarity": {"option": "rare"}, "category": {"option": "weapon.bow"}}}}}, "sort": {"price": "asc"}});
 });
 
-test("reads rune stats from official extended hashes", async () => {
+test("omits bonded mods while reading rune stats from official hashes", async () => {
   const sandbox = { console };
   vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
     filename: "favorites.js"
@@ -128,8 +128,12 @@ test("reads rune stats from official extended hashes", async () => {
     typeLine: "Ornate Greaves of the Kiln",
     runeMods: [
       "18% increased [Armour|Armour], [Evasion|Evasion] and [EnergyShield|Energy Shield]",
-      "[ShamanOnlyMods|Bonded]: +20 to maximum Life",
-      "[ShamanOnlyMods|Bonded]: +20 to maximum Mana"
+      { description: "[ShamanOnlyMods|Bonded]: +20 to maximum Life", hash: "stat.rune.stat_2280525771" },
+      { description: "[ShamanOnlyMods|Bonded]: +20 to maximum Mana", hash: "stat.rune.stat_2926029365" }
+    ],
+    bondedMods: [
+      { description: "[ShamanOnlyMods|Bonded]: +20 to maximum Life", hash: "stat.rune.stat_2280525771" },
+      { description: "[ShamanOnlyMods|Bonded]: +20 to maximum Mana", hash: "stat.rune.stat_2926029365" }
     ],
     explicitMods: [{ description: "20% increased Armour, Evasion and Energy Shield", hash: "stat.explicit.stat_3523867985" }],
     extended: {
@@ -149,7 +153,7 @@ test("reads rune stats from official extended hashes", async () => {
   const payload = tools.createTradeSearchPayload(favorite);
   const result = structuredClone({ mods: favorite.mods, stats: favorite.stats, filters: payload.query.stats[0].filters });
 
-  assert.deepStrictEqual(result, {"mods": [{"id": "rune.stat_3523867985", "text": "18% increased Armour, Evasion and Energy Shield", "source": "rune"}, {"id": "rune.stat_2280525771", "text": "Bonded: +20 to maximum Life", "source": "rune"}, {"id": "rune.stat_2926029365", "text": "Bonded: +20 to maximum Mana", "source": "rune"}, {"id": "explicit.stat_3523867985", "text": "20% increased Armour, Evasion and Energy Shield", "source": "explicit"}], "stats": [{"id": "rune.stat_3523867985", "value": {"min": 18, "max": 18}}, {"id": "rune.stat_2280525771", "value": {"min": 20, "max": 20}}, {"id": "rune.stat_2926029365", "value": {"min": 20, "max": 20}}, {"id": "explicit.stat_3523867985", "value": {"min": 20, "max": 20}}], "filters": [{"id": "rune.stat_3523867985", "value": {"min": 18, "max": 18}, "disabled": false}, {"id": "rune.stat_2280525771", "value": {"min": 20, "max": 20}, "disabled": false}, {"id": "rune.stat_2926029365", "value": {"min": 20, "max": 20}, "disabled": false}, {"id": "explicit.stat_3523867985", "value": {"min": 20, "max": 20}, "disabled": false}]});
+  assert.deepStrictEqual(result, {"mods": [{"id": "rune.stat_3523867985", "text": "18% increased Armour, Evasion and Energy Shield", "source": "rune"}, {"id": "explicit.stat_3523867985", "text": "20% increased Armour, Evasion and Energy Shield", "source": "explicit"}], "stats": [{"id": "rune.stat_3523867985", "value": {"min": 18, "max": 18}}, {"id": "explicit.stat_3523867985", "value": {"min": 20, "max": 20}}], "filters": [{"id": "rune.stat_3523867985", "value": {"min": 18, "max": 18}, "disabled": false}, {"id": "explicit.stat_3523867985", "value": {"min": 20, "max": 20}, "disabled": false}]});
 });
 
 test("reads granted skills from official extended hashes", async () => {
