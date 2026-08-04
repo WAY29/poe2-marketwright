@@ -41,7 +41,7 @@
         return mod;
       }
       if (mod && typeof mod === "object" && typeof mod.description === "string") {
-        return mod.description.replace(/\[[^\|]+\|([^\]]+)\]/g, "$1");
+        return mod.description.replace(/\[[^\]|]+\|([^\]]+)\]/g, "$1");
       }
       return "";
     };

@@ -55,6 +55,26 @@ test("pob builder emits PoB2 rune sockets and names", () => {
   assert.match(text, /\nSockets: S S S\nRune: Greater Adept Rune\nRune: Greater Iron Rune\nRune: None\n/);
 });
 
+test("pob builder preserves simple stat markers before piped grammar markers", () => {
+  const sandbox = { console };
+  vm.runInNewContext(fs.readFileSync("pob-copy.js", "utf8"), sandbox, {
+    filename: "pob-copy.js"
+  });
+
+  const text = sandbox.Poe2MarketwrightPobCopy.createItemTextBuilder([
+    { key: "explicitMods", tag: null }
+  ]).buildPobFullText({
+    typeLine: "Vaal Gloves",
+    explicitMods: [
+      { description: "Adds 28 to 43 [Fire] damage to [Attack|Attacks]" },
+      { description: "Adds 1 to 70 [Lightning] damage to [Attack|Attacks]" }
+    ]
+  });
+
+  assert.match(text, /Adds 28 to 43 \[Fire\] damage to Attacks/);
+  assert.match(text, /Adds 1 to 70 \[Lightning\] damage to Attacks/);
+});
+
 test("page bridge forwards trade fetch when pob copy is enabled", async () => {
   const listeners = [];
   const messages = [];
