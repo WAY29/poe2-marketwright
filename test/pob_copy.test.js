@@ -75,6 +75,32 @@ test("pob builder preserves simple stat markers before piped grammar markers", (
   assert.match(text, /Adds 1 to 70 \[Lightning\] damage to Attacks/);
 });
 
+test("pob builder tags special domains embedded in explicit mods", () => {
+  const sandbox = { console };
+  vm.runInNewContext(fs.readFileSync("pob-copy.js", "utf8"), sandbox, {
+    filename: "pob-copy.js"
+  });
+
+  const text = sandbox.Poe2MarketwrightPobCopy.createItemTextBuilder([
+    { key: "explicitMods", tag: null }
+  ]).buildPobFullText({
+    typeLine: "Vaal Gloves",
+    explicitMods: [
+      { description: "16% increased [Attack] Speed", domain: "fractured" },
+      {
+        description: "+2 to Level of all [Projectile] Skills",
+        domain: "explicit",
+        flags: { desecrated: true }
+      },
+      { description: "27% increased [CriticalDamageBonus|Critical Damage Bonus]", domain: "crafted" }
+    ]
+  });
+
+  assert.match(text, /\{fractured\}16% increased \[Attack\] Speed/);
+  assert.match(text, /\{desecrated\}\+2 to Level of all \[Projectile\] Skills/);
+  assert.match(text, /\n27% increased Critical Damage Bonus$/);
+});
+
 test("page bridge forwards trade fetch when pob copy is enabled", async () => {
   const listeners = [];
   const messages = [];

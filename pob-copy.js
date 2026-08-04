@@ -46,6 +46,22 @@
       return "";
     };
 
+    const getModTag = (sourceTag, mod) => {
+      if (sourceTag) {
+        return sourceTag;
+      }
+      if (!mod || typeof mod !== "object") {
+        return null;
+      }
+      if (mod.domain === "fractured" || mod.flags?.fractured) {
+        return "fractured";
+      }
+      if (mod.domain === "desecrated" || mod.flags?.desecrated) {
+        return "desecrated";
+      }
+      return null;
+    };
+
     const buildModLines = (item) => {
       if (!item) {
         return [];
@@ -61,8 +77,9 @@
           if (!line || line.includes("#")) {
             continue;
           }
-          if (source.tag) {
-            line = `{${source.tag}}${line}`;
+          const tag = getModTag(source.tag, mod);
+          if (tag) {
+            line = `{${tag}}${line}`;
           }
           lines.push(line);
         }
