@@ -2036,7 +2036,7 @@ test("current link favorite remains available when Trade rerenders its filter DO
   };
   vm.runInNewContext(source, sandbox, { filename: "content.js" });
   const result = structuredClone(sandbox.window.__testHooks.getCurrentLinkFavoriteContext());
-  assert.deepStrictEqual(result, {"url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1", "league": "Dawn", "queryId": "query-1", "displayName": "Unnamed search"});
+  assert.deepStrictEqual(result, {"url": "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1", "league": "Dawn", "queryId": "query-1", "displayName": "Search"});
 });
 
 test("link favorite state refreshes when a search URL changes within the same league", async () => {
@@ -2973,6 +2973,121 @@ test("folder header toggles only when the click is outside its controls", () => 
     shouldToggle({ target: null })
   ];
   assert.deepStrictEqual(result, [true, false, true]);
+});
+
+test("link history reuses the folder renderer with only collapse and clear actions", () => {
+  const compact = fs.readFileSync("content.js", "utf8");
+  const full = fs.readFileSync("favorites-panel.js", "utf8");
+  const compactHistory = compact.slice(
+    compact.indexOf("  function renderLinkHistoryGroup("),
+    compact.indexOf("  function createCurrentLinkFavoriteIconButton(")
+  );
+  const fullHistory = full.slice(
+    full.indexOf("  function renderHistory("),
+    full.indexOf("  function renderFolder(")
+  );
+  const compactGroup = compact.slice(
+    compact.indexOf("  function renderLinkFavoriteGroup("),
+    compact.indexOf("  function renderLinkFavoriteImportForm(")
+  );
+  const fullGroup = full.slice(
+    full.indexOf("  function renderFolder("),
+    full.indexOf("  function setDragSource(")
+  );
+
+  assert.match(compactHistory, /return renderLinkFavoriteGroup\([\s\S]*history: true/);
+  assert.match(fullHistory, /return renderFolder\([\s\S]*history: true/);
+  assert.match(compactGroup, /const collapse = createLinkFavoriteIconButton\([\s\S]*history \? "toggle link history"/);
+  assert.match(fullGroup, /const collapse = createIconButton\([\s\S]*header\.append\(collapse, nameHost\)/);
+  assert.doesNotMatch(compactHistory, /reorderLinkFavoriteFolder/);
+  assert.doesNotMatch(fullHistory, /reorderLinkFavoriteFolder/);
+});
+
+test("favorite confirmations use non-layout dialogs in both favorite views", () => {
+  const compact = fs.readFileSync("content.js", "utf8");
+  const full = fs.readFileSync("favorites-panel.js", "utf8");
+  const compactGroup = compact.slice(
+    compact.indexOf("  function renderLinkFavoriteGroup("),
+    compact.indexOf("  function renderLinkFavoriteImportForm(")
+  );
+  const fullGroup = full.slice(
+    full.indexOf("  function renderFolder("),
+    full.indexOf("  function setDragSource(")
+  );
+  const compactStyles = fs.readFileSync("content.css", "utf8");
+  const fullStyles = fs.readFileSync("favorites-panel.css", "utf8");
+
+  assert.match(compact, /function renderFavoriteConfirmationDialog\(/);
+  assert.match(compact, /pendingFavoriteFolderDeleteId[\s\S]*pendingLinkFavoriteFolderDeleteId[\s\S]*pendingLinkHistoryClear/);
+  assert.doesNotMatch(compactGroup, /options\.confirmation/);
+  assert.match(full, /function renderFavoritesPanelConfirmationDialog\(/);
+  assert.match(full, /confirmingFavoriteFolderId[\s\S]*confirmingFolderId[\s\S]*confirmingHistoryClear/);
+  assert.doesNotMatch(fullGroup, /options\.confirmation/);
+  assert.match(compactStyles, /\.poe2-marketwright-favorite-confirm-dialog\s*\{[^}]*position:\s*fixed;/);
+  assert.match(fullStyles, /\.favorites-panel-confirm-dialog\s*\{[^}]*position:\s*fixed;/);
+});
+
+test("current link favorite uses the same fallback name as search history", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getCurrentLinkFavoriteContext, runtime };\n})();"
+  );
+  const location = {
+    href: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+    pathname: "/trade2/search/poe2/Dawn/query-1"
+  };
+  const sandbox = {
+    window: { location, addEventListener() {} },
+    document: { querySelector() { return null; }, querySelectorAll() { return []; } },
+    location,
+    console,
+    Poe2MarketwrightFavorites: {
+      createLinkFavoriteTools() {
+        return { validateTradeSearchUrl(url) { return { url, league: "Dawn", queryId: "query-1" }; } };
+      }
+    }
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageTranslationEnabled: false, pageLanguage: "en" };
+  hooks.runtime.tradeSearchSnapshots = new Map([[
+    "Dawn\u0000query-1",
+    { type: "Warmonger Bow", category: "weapon.bow", rarity: "rare" }
+  ]]);
+
+  assert.equal(hooks.getCurrentLinkFavoriteContext().displayName, "Warmonger Bow (Bow Rare)");
+});
+
+test("favorite renames replace only the name slot and preserve row content", () => {
+  const source = fs.readFileSync("content.js", "utf8");
+  const styles = fs.readFileSync("content.css", "utf8");
+  const fullSource = fs.readFileSync("favorites-panel.js", "utf8");
+  const fullStyles = fs.readFileSync("favorites-panel.css", "utf8");
+  const favoriteRow = fullSource.slice(
+    fullSource.indexOf("  function renderFavoriteRow("),
+    fullSource.indexOf("  function renderFavoriteFolder(")
+  );
+  const linkRow = fullSource.slice(
+    fullSource.indexOf("  function renderLinkRow("),
+    fullSource.indexOf("  function renderHistoryRow(")
+  );
+
+  assert.match(source, /startFavoriteRename\(favorite, name\)/);
+  assert.match(source, /startLinkFavoriteRename\(name, link\.displayName/);
+  assert.match(favoriteRow, /const nameHost = createElement\("span", "favorites-panel-name"\);[\s\S]*appendEditableName\(\s*nameHost[\s\S]*const time = Number\(favorite\.createdAt\)/);
+  assert.match(linkRow, /const nameHost = createElement\("span", "favorites-panel-name"\);[\s\S]*appendEditableName\(\s*nameHost[\s\S]*const time = Number\(link\.updatedAt \?\? link\.createdAt\)/);
+  assert.doesNotMatch(favoriteRow, /appendEditableName\(launch,/);
+  assert.doesNotMatch(linkRow, /appendEditableName\(launch,/);
+  assert.match(styles, /\.poe2-marketwright-favorite-name,[\s\S]*min-height:\s*14px;/);
+  assert.match(styles, /\.poe2-marketwright-link-favorite-launch > \.poe2-marketwright-link-favorite-rename-input[\s\S]*height:\s*14px;/);
+  assert.match(styles, /\.poe2-marketwright-favorite-rename-input\s*\{[^}]*width:\s*min\(16ch, 100%\);[^}]*min-width:\s*0;/);
+  assert.match(styles, /\.poe2-marketwright-link-favorite-rename-input\s*\{[^}]*width:\s*min\(16ch, 100%\);[^}]*min-width:\s*0;/);
+  assert.match(fullStyles, /\.favorites-panel-rename-input\s*\{[^}]*width:\s*min\(16ch, 100%\);[^}]*min-width:\s*0;/);
+  assert.match(fullStyles, /\.favorites-panel-name > \.favorites-panel-rename-input[\s\S]*height:\s*18px;/);
+  assert.match(styles, /\.poe2-marketwright-editing-name > \.poe2-marketwright-(?:favorite|link-favorite)-rename-input\s*\{[^}]*position:\s*absolute;/);
+  assert.match(fullStyles, /\.favorites-panel-editing-name > \.favorites-panel-rename-input\s*\{[^}]*position:\s*absolute;/);
 });
 
 test("replacing a link favorite preserves its position and identity while renewing its timestamp", async () => {

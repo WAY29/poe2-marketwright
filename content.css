@@ -338,9 +338,27 @@
   display: block;
 }
 
-.poe2-marketwright-favorites-search-field input,
-.poe2-marketwright-favorite-rename-input {
+.poe2-marketwright-favorites-search-field input {
   width: 100%;
+  height: 25px;
+  padding: 3px 7px;
+  border: 1px solid #5c4529;
+  border-radius: 3px;
+  color: #ead7aa;
+  background-color: #14110d;
+  background-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.35), rgba(0, 0, 0, 0.5)),
+    var(--mw-tex-input);
+  background-size: auto, 128px 128px;
+  background-repeat: no-repeat, repeat;
+  box-shadow: var(--mw-recess);
+  font: 11px/1.2 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.poe2-marketwright-favorite-rename-input {
+  width: min(16ch, 100%);
+  min-width: 0;
+  max-width: 100%;
   height: 25px;
   padding: 3px 7px;
   border: 1px solid #5c4529;
@@ -411,6 +429,28 @@
   font: 700 11px/1.2 Georgia, "Times New Roman", serif;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.poe2-marketwright-favorite-name,
+.poe2-marketwright-link-favorite-name {
+  display: block;
+  min-height: 14px;
+}
+
+.poe2-marketwright-favorite-name.poe2-marketwright-editing-name,
+.poe2-marketwright-link-favorite-name.poe2-marketwright-editing-name,
+.poe2-marketwright-link-favorite-group-name.poe2-marketwright-editing-name {
+  position: relative;
+  min-width: 0;
+  overflow: visible;
+}
+
+.poe2-marketwright-editing-name > .poe2-marketwright-favorite-rename-input,
+.poe2-marketwright-editing-name > .poe2-marketwright-link-favorite-rename-input {
+  position: absolute;
+  inset-inline-start: 0;
+  top: 50%;
+  transform: translateY(-50%);
 }
 
 .poe2-marketwright-favorite-meta,
@@ -1129,8 +1169,7 @@
   text-align: center;
 }
 
-.poe2-marketwright-link-favorite-folder-input,
-.poe2-marketwright-link-favorite-rename-input {
+.poe2-marketwright-link-favorite-folder-input {
   width: 100%;
   height: 25px;
   padding: 3px 7px;
@@ -1146,6 +1185,34 @@
   box-shadow:
     inset 0 1px 0 rgba(255, 242, 214, 0.05),
     inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+  font: 700 11px/1.2 Georgia, "Times New Roman", serif;
+}
+
+.poe2-marketwright-link-favorite-rename-input {
+  width: min(16ch, 100%);
+  min-width: 0;
+  max-width: 100%;
+  height: 25px;
+  padding: 3px 7px;
+  border: 1px solid #8d6735;
+  border-radius: 3px;
+  color: #f0dfb0;
+  background-color: #14110d;
+  background-image:
+    linear-gradient(180deg, rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.5)),
+    var(--mw-tex-input);
+  background-size: auto, 128px 128px;
+  background-repeat: no-repeat, repeat;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 242, 214, 0.05),
+    inset 0 -1px 0 rgba(0, 0, 0, 0.28);
+  font: 700 11px/1.2 Georgia, "Times New Roman", serif;
+}
+
+.poe2-marketwright-favorite-launch > .poe2-marketwright-favorite-rename-input,
+.poe2-marketwright-link-favorite-launch > .poe2-marketwright-link-favorite-rename-input {
+  height: 14px;
+  padding: 0 3px;
   font: 700 11px/1.2 Georgia, "Times New Roman", serif;
 }
 
@@ -1227,24 +1294,45 @@
   color: #f2c0c0;
 }
 
-.poe2-marketwright-link-favorite-folder-confirm {
+.poe2-marketwright-favorite-confirm-dialog {
+  position: fixed;
+  z-index: 2147483647;
+  inset: 0;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  background: rgba(0, 0, 0, 0.62);
+}
+
+.poe2-marketwright-favorite-confirm-dialog-content {
+  display: grid;
+  gap: 12px;
+  width: min(320px, calc(100vw - 32px));
+  border: 1px solid rgba(183, 106, 106, 0.86);
+  padding: 12px;
+  color: #e7d0aa;
+  background-color: #21150f;
+  background-image:
+    linear-gradient(180deg, rgba(83, 39, 27, 0.52), rgba(27, 17, 12, 0.92)),
+    var(--mw-tex-metal);
+  background-size: auto, 128px 128px;
+  box-shadow: 0 12px 34px rgba(0, 0, 0, 0.7), inset 0 1px 0 rgba(255, 229, 192, 0.1);
+  font: 11px/1.4 "Segoe UI", -apple-system, BlinkMacSystemFont, sans-serif;
+}
+
+.poe2-marketwright-favorite-confirm-dialog-content p {
+  margin: 0;
+}
+
+.poe2-marketwright-favorite-confirm-dialog-actions {
   display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: 5px;
-  padding: 7px;
-  border-top: 1px solid rgba(183, 106, 106, 0.58);
-  color: #e0c0a0;
-  background: rgba(72, 27, 20, 0.42);
-  font-size: 10px;
+  justify-content: flex-end;
+  gap: 6px;
 }
 
-.poe2-marketwright-link-favorite-folder-confirm span {
-  flex: 1 1 100%;
-}
-
-.poe2-marketwright-link-favorite-folder-confirm button {
-  padding: 2px 6px;
+.poe2-marketwright-favorite-confirm-dialog-actions button {
+  min-height: 24px;
+  padding: 3px 8px;
   border: 1px solid rgba(136, 104, 57, 0.96);
   border-radius: 3px;
   color: #ead7aa;
@@ -1256,7 +1344,7 @@
   font: 700 10px/1.2 Georgia, "Times New Roman", serif;
 }
 
-.poe2-marketwright-link-favorite-folder-confirm-delete {
+.poe2-marketwright-favorite-confirm-dialog-confirm {
   border-color: #b76a6a !important;
   color: #f2c0c0 !important;
 }

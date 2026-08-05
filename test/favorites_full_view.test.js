@@ -1733,6 +1733,7 @@ test("rename mode renders favorite hosts as non-button containers", async () => 
     signature: "sig-1",
     displayName: "Storm Ward",
     baseName: "Rider Bow",
+    createdAt: 1,
     mods: []
   });
   hooks.local.editing = { kind: "link", id: "link-1" };
@@ -1746,18 +1747,26 @@ test("rename mode renders favorite hosts as non-button containers", async () => 
     {
       itemTag: itemHost?.tagName,
       itemClick: Boolean(itemHost?.listeners.click),
-      itemInput: itemHost?.children[0]?.tagName,
+      itemNameSlot: itemHost?.children[0]?.tagName,
+      itemInput: itemHost?.children[0]?.children[0]?.tagName,
+      itemDate: itemHost?.children[1]?.className,
       linkTag: linkHost?.tagName,
       linkClick: Boolean(linkHost?.listeners.click),
-      linkInput: linkHost?.children[0]?.tagName
+      linkNameSlot: linkHost?.children[0]?.tagName,
+      linkInput: linkHost?.children[0]?.children[0]?.tagName,
+      linkDate: linkHost?.children[1]?.className
     },
     {
       itemTag: "DIV",
       itemClick: false,
+      itemNameSlot: "SPAN",
       itemInput: "INPUT",
+      itemDate: "favorites-panel-link-time",
       linkTag: "DIV",
       linkClick: false,
-      linkInput: "INPUT"
+      linkNameSlot: "SPAN",
+      linkInput: "INPUT",
+      linkDate: "favorites-panel-link-time"
     }
   );
 });

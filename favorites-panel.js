@@ -271,10 +271,95 @@
 
     if (!state?.available) {
       ui.content.appendChild(createElement("p", "favorites-panel-unavailable", t("favoritesPanelUnavailable")));
+      renderFavoritesPanelConfirmationDialog();
       return;
     }
     ui.content.appendChild(local.tab === "links" ? renderLinks(state) : renderItems(state));
     restoreSearchFocus(searchFocus);
+    renderFavoritesPanelConfirmationDialog();
+  }
+
+  function renderFavoritesPanelConfirmationDialog() {
+    document.getElementById?.("favorites-panel-confirm-dialog")?.remove();
+    const confirmation = getFavoritesPanelConfirmation();
+    if (!confirmation || !document.body) {
+      return;
+    }
+    const overlay = createElement("div", "favorites-panel-confirm-dialog");
+    overlay.id = "favorites-panel-confirm-dialog";
+    const dialog = createElement("section", "favorites-panel-confirm-dialog-content");
+    dialog.setAttribute("role", "dialog");
+    dialog.setAttribute("aria-modal", "true");
+    dialog.setAttribute("aria-label", confirmation.confirmLabel);
+    dialog.tabIndex = -1;
+    dialog.appendChild(createElement("p", "", confirmation.message));
+    const actions = createElement("div", "favorites-panel-confirm-dialog-actions");
+    const cancel = makeTextButton(t("cancelLinkFavoriteFolderDelete"));
+    cancel.addEventListener("click", confirmation.cancel);
+    const confirm = makeTextButton(confirmation.confirmLabel, "favorites-panel-confirm-delete");
+    confirm.addEventListener("click", confirmation.confirm);
+    actions.append(cancel, confirm);
+    dialog.appendChild(actions);
+    overlay.appendChild(dialog);
+    overlay.addEventListener("pointerdown", (event) => {
+      if (event.target === overlay) {
+        confirmation.cancel();
+      }
+    });
+    dialog.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        confirmation.cancel();
+      }
+    });
+    document.body.appendChild(overlay);
+    window.setTimeout(() => dialog.focus(), 0);
+  }
+
+  function getFavoritesPanelConfirmation() {
+    const state = local.state;
+    const favoriteFolderId = local.confirmingFavoriteFolderId;
+    const favoriteFolder = state?.favoriteFolders?.folders?.find((folder) => folder.id === favoriteFolderId);
+    if (favoriteFolder) {
+      const count = getFavoritesForFolder(state, favoriteFolderId).length;
+      return {
+        message: t("confirmDeleteFavoriteFolder", count),
+        confirmLabel: t("deleteFavoriteFolder"),
+        cancel: () => {
+          local.confirmingFavoriteFolderId = null;
+          render();
+        },
+        confirm: () => run("delete-favorite-folder", { folderId: favoriteFolderId, confirm: true })
+      };
+    }
+
+    const linkFolderId = local.confirmingFolderId;
+    const linkFolder = state?.linkFavorites?.folders?.find((folder) => folder.id === linkFolderId);
+    if (linkFolder) {
+      const count = getLinksForFolder(state, linkFolderId).length;
+      return {
+        message: t("confirmDeleteLinkFavoriteFolder", count),
+        confirmLabel: t("deleteLinkFavoriteFolder"),
+        cancel: () => {
+          local.confirmingFolderId = null;
+          render();
+        },
+        confirm: () => run("delete-folder", { folderId: linkFolderId, confirm: true })
+      };
+    }
+
+    if (local.confirmingHistoryClear) {
+      const count = state?.linkFavorites?.history?.length || 0;
+      return {
+        message: t("confirmClearLinkHistory", count),
+        confirmLabel: t("clearLinkHistory"),
+        cancel: () => {
+          local.confirmingHistoryClear = false;
+          render();
+        },
+        confirm: () => run("clear-history", { confirm: true })
+      };
+    }
+    return null;
   }
 
   function captureSearchFocus() {
@@ -485,39 +570,33 @@
     const drag = createIconButton(t("reorderFavorite"), icons.drag, "favorites-panel-drag-handle");
     setDragSource(drag, { kind: "favorite", id: favorite.signature, folderId });
     const launch = createElement(editing ? "div" : "button", "favorites-panel-item-launch");
-    if (editing) {
-      appendEditableName(
-        launch,
-        "favorite",
-        favorite.signature,
-        favorite.displayName || favorite.baseName || "",
-        (name) => run("rename-favorite", { signature: favorite.signature, name })
-      );
-    } else {
+    if (!editing) {
       launch.type = "button";
       launch.setAttribute("aria-label", favorite.displayName || favorite.baseName || "");
       bindLinkFavoriteTooltip(launch, getFavoriteTooltipLink(favorite));
       launch.addEventListener("click", () => run("launch-favorite", { signature: favorite.signature }));
-      appendEditableName(
-        launch,
-        "favorite",
-        favorite.signature,
-        favorite.displayName || favorite.baseName || "",
-        (name) => run("rename-favorite", { signature: favorite.signature, name })
-      );
-      const time = Number(favorite.createdAt);
-      if (Number.isFinite(time) && time > 0) {
-        launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
+    }
+    const nameHost = createElement("span", "favorites-panel-name");
+    appendEditableName(
+      nameHost,
+      "favorite",
+      favorite.signature,
+      favorite.displayName || favorite.baseName || "",
+      (name) => run("rename-favorite", { signature: favorite.signature, name })
+    );
+    launch.appendChild(nameHost);
+    const time = Number(favorite.createdAt);
+    if (Number.isFinite(time) && time > 0) {
+      launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
+    }
+    if (shouldShowFavoriteSummary()) {
+      const visibleMods = (favorite.mods || []).slice(0, 3);
+      for (const mod of visibleMods) {
+        launch.appendChild(renderLinkFavoriteStat(getFavoriteModifierPresentation(mod)));
       }
-      if (shouldShowFavoriteSummary()) {
-        const visibleMods = (favorite.mods || []).slice(0, 3);
-        for (const mod of visibleMods) {
-          launch.appendChild(renderLinkFavoriteStat(getFavoriteModifierPresentation(mod)));
-        }
-        const moreCount = Math.max(0, (favorite.mods || []).length - visibleMods.length);
-        if (moreCount) {
-          launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
-        }
+      const moreCount = Math.max(0, (favorite.mods || []).length - visibleMods.length);
+      if (moreCount) {
+        launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
       }
     }
     const actions = createElement("div", "favorites-panel-row-actions");
@@ -607,22 +686,6 @@
       }
       section.appendChild(list);
     }
-    if (local.confirmingFavoriteFolderId === folder.id) {
-      const confirm = createElement("div", "favorites-panel-confirm");
-      const count = getFavoritesForFolder(state, folder.id).length;
-      confirm.appendChild(createElement("span", "", t("confirmDeleteFavoriteFolder", count)));
-      const buttons = createElement("div", "favorites-panel-confirm-actions");
-      const cancel = makeTextButton(t("cancelFavoriteFolderDelete"));
-      cancel.addEventListener("click", () => {
-        local.confirmingFavoriteFolderId = null;
-        render();
-      });
-      const remove = makeTextButton(t("deleteFavoriteFolder"), "favorites-panel-confirm-delete");
-      remove.addEventListener("click", () => run("delete-favorite-folder", { folderId: folder.id, confirm: true }));
-      buttons.append(cancel, remove);
-      confirm.appendChild(buttons);
-      section.appendChild(confirm);
-    }
     return section;
   }
 
@@ -631,6 +694,7 @@
       parent.appendChild(createElement("span", "favorites-panel-name", initialValue));
       return;
     }
+    parent.classList.add("favorites-panel-editing-name");
     const input = createElement("input", "favorites-panel-rename-input");
     input.type = "text";
     input.value = initialValue;
@@ -1222,27 +1286,29 @@
     const drag = createIconButton(t("reorderLinkFavorite"), icons.drag, "favorites-panel-drag-handle");
     setDragSource(drag, { kind: "link", id: link.id, folderId: link.folderId || null });
     const launch = createElement(editing ? "div" : "button", "favorites-panel-link-launch");
-    if (editing) {
-      appendEditableName(launch, "link", link.id, link.displayName || "", (name) => run("rename-link", { linkId: link.id, name }));
-    } else {
+    if (!editing) {
       launch.type = "button";
       launch.setAttribute("aria-label", link.displayName || "");
       bindLinkFavoriteTooltip(launch, link);
-      launch.appendChild(createElement("span", "favorites-panel-name", link.displayName || ""));
-      const time = Number(link.updatedAt ?? link.createdAt);
-      if (Number.isFinite(time) && time > 0) {
-        launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
+    }
+    const nameHost = createElement("span", "favorites-panel-name");
+    appendEditableName(nameHost, "link", link.id, link.displayName || "", (name) => run("rename-link", { linkId: link.id, name }));
+    launch.appendChild(nameHost);
+    const time = Number(link.updatedAt ?? link.createdAt);
+    if (Number.isFinite(time) && time > 0) {
+      launch.appendChild(createElement("span", "favorites-panel-link-time", new Intl.DateTimeFormat().format(time)));
+    }
+    if (shouldShowFavoriteSummary()) {
+      const statFilters = getLinkFavoriteStatFilters(link);
+      for (const filter of statFilters.slice(0, 3)) {
+        launch.appendChild(renderLinkFavoriteStatFilter(filter));
       }
-      if (shouldShowFavoriteSummary()) {
-        const statFilters = getLinkFavoriteStatFilters(link);
-        for (const filter of statFilters.slice(0, 3)) {
-          launch.appendChild(renderLinkFavoriteStatFilter(filter));
-        }
-        const moreCount = Math.max(0, statFilters.length - 3);
-        if (moreCount) {
-          launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
-        }
+      const moreCount = Math.max(0, statFilters.length - 3);
+      if (moreCount) {
+        launch.appendChild(createElement("span", "favorites-panel-more", t("favoriteMoreMods", moreCount)));
       }
+    }
+    if (!editing) {
       launch.addEventListener("click", () => run("open-link", { linkId: link.id }));
     }
     const actions = createElement("div", "favorites-panel-row-actions");
@@ -1324,119 +1390,109 @@
   }
 
   function renderHistory(state, query) {
-    const section = createElement("section", "favorites-panel-folder favorites-panel-history");
-    const header = createElement("div", "favorites-panel-folder-header");
-    const collapsed = Boolean(state.linkFavorites?.historyCollapsed);
-    const collapse = createIconButton(
-      t(collapsed ? "expandLinkFavoriteFolder" : "collapseLinkFavoriteFolder"),
-      collapsed ? icons.expand : icons.collapse
-    );
-    collapse.setAttribute("aria-expanded", String(!collapsed));
-    collapse.addEventListener("click", () => run("toggle-history", { collapsed: !collapsed }));
-    const name = createElement("div", "favorites-panel-folder-name", t("linkHistory"));
-    const actions = createElement("div", "favorites-panel-folder-actions");
-    const clear = createIconButton(t("clearLinkHistory"), icons.delete, "favorites-panel-delete");
     const history = (state.linkFavorites?.history || []).filter((link) => matchesLink(link, query));
-    clear.disabled = history.length === 0;
-    clear.addEventListener("click", () => {
-      local.confirmingHistoryClear = true;
-      render();
-    });
-    actions.append(clear);
-    header.append(collapse, name, actions);
-    section.appendChild(header);
-    if (!collapsed) {
-      const list = createElement("div", "favorites-panel-link-list");
-      if (history.length) {
-        for (const link of history) {
-          list.appendChild(renderHistoryRow(state, link));
+    return renderFolder(
+      state,
+      { id: "history", name: t("linkHistory"), collapsed: Boolean(state.linkFavorites?.historyCollapsed) },
+      history,
+      {
+        history: true,
+        renderLink: (link) => renderHistoryRow(state, link),
+        emptyText: t(query ? "favoritesPanelNoLinkMatches" : "linkHistoryEmpty"),
+        toggle: (collapsed) => run("toggle-history", { collapsed }),
+        headerAction: {
+          title: t("clearLinkHistory"),
+          disabled: history.length === 0,
+          onClick: () => {
+            local.confirmingHistoryClear = true;
+            render();
+          }
         }
-      } else {
-        list.appendChild(createElement("p", "favorites-panel-empty", t(query ? "favoritesPanelNoLinkMatches" : "linkHistoryEmpty")));
       }
-      section.appendChild(list);
-    }
-    if (local.confirmingHistoryClear) {
-      const confirm = createElement("div", "favorites-panel-confirm");
-      confirm.appendChild(createElement("span", "", t("confirmClearLinkHistory", (state.linkFavorites?.history || []).length)));
-      const buttons = createElement("div", "favorites-panel-confirm-actions");
-      const cancel = makeTextButton(t("cancelLinkFavoriteFolderDelete"));
-      cancel.addEventListener("click", () => {
-        local.confirmingHistoryClear = false;
-        render();
-      });
-      const remove = makeTextButton(t("clearLinkHistory"), "favorites-panel-confirm-delete");
-      remove.addEventListener("click", () => run("clear-history", { confirm: true }));
-      buttons.append(cancel, remove);
-      confirm.appendChild(buttons);
-      section.appendChild(confirm);
-    }
-    return section;
+    );
   }
 
-  function renderFolder(state, folder, links) {
-    const section = createElement("section", "favorites-panel-folder");
+  function renderFolder(state, folder, links, options = {}) {
+    const history = options.history === true;
+    const toggle = options.toggle || ((collapsed) => run("toggle-folder", { folderId: folder.id, collapsed }));
+    const section = createElement("section", `favorites-panel-folder${history ? " favorites-panel-history" : ""}`);
     const header = createElement("div", "favorites-panel-folder-header");
-    setDropTarget(header, { kind: "folder", id: folder.id });
-    setGroupDropTarget(header, folder.id);
     header.addEventListener("click", (event) => {
       if (shouldToggleFolderFromHeader(event)) {
-        run("toggle-folder", { folderId: folder.id, collapsed: !folder.collapsed });
+        toggle(!folder.collapsed);
       }
     });
-    const drag = createIconButton(t("reorderLinkFavoriteFolder"), icons.drag, "favorites-panel-drag-handle");
-    setDragSource(drag, { kind: "folder", id: folder.id });
+    if (history) {
+      header.tabIndex = 0;
+      header.setAttribute("role", "button");
+      header.setAttribute("aria-expanded", String(!folder.collapsed));
+      header.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          toggle(!folder.collapsed);
+        }
+      });
+    } else {
+      setDropTarget(header, { kind: "folder", id: folder.id });
+      setGroupDropTarget(header, folder.id);
+      const drag = createIconButton(t("reorderLinkFavoriteFolder"), icons.drag, "favorites-panel-drag-handle");
+      setDragSource(drag, { kind: "folder", id: folder.id });
+      header.appendChild(drag);
+    }
     const collapse = createIconButton(
       t(folder.collapsed ? "expandLinkFavoriteFolder" : "collapseLinkFavoriteFolder"),
       folder.collapsed ? icons.expand : icons.collapse
     );
     collapse.setAttribute("aria-expanded", String(!folder.collapsed));
-    collapse.addEventListener("click", () => run("toggle-folder", { folderId: folder.id, collapsed: !folder.collapsed }));
+    collapse.addEventListener("click", () => toggle(!folder.collapsed));
     const nameHost = createElement("div", "favorites-panel-folder-name");
-    appendEditableName(nameHost, "folder", folder.id, folder.name || "", (name) => run("rename-folder", { folderId: folder.id, name }));
-    const actions = createElement("div", "favorites-panel-folder-actions");
-    const save = createIconButton(
-      state.canSaveCurrentLink ? t("createLinkFavorite") : t("createLinkFavoriteUnavailable"),
-      icons.bookmark
-    );
-    save.disabled = !state.canSaveCurrentLink || !state.linkFavoritesEnabled;
-    save.addEventListener("click", () => run("save-link", { folderId: folder.id }));
-    const rename = createIconButton(t("renameLinkFavoriteFolder"), icons.edit);
-    rename.addEventListener("click", () => {
-      local.editing = { kind: "folder", id: folder.id };
-      render();
-    });
-    const remove = createIconButton(t("deleteLinkFavoriteFolder"), icons.delete, "favorites-panel-delete");
-    remove.addEventListener("click", () => {
-      local.confirmingFolderId = folder.id;
-      render();
-    });
-    actions.append(save, rename, remove);
-    header.append(drag, collapse, nameHost, actions);
+    if (history) {
+      nameHost.textContent = folder.name || "";
+    } else {
+      appendEditableName(nameHost, "folder", folder.id, folder.name || "", (name) => run("rename-folder", { folderId: folder.id, name }));
+    }
+    header.append(collapse, nameHost);
+    if (!history) {
+      const actions = createElement("div", "favorites-panel-folder-actions");
+      const save = createIconButton(
+        state.canSaveCurrentLink ? t("createLinkFavorite") : t("createLinkFavoriteUnavailable"),
+        icons.bookmark
+      );
+      save.disabled = !state.canSaveCurrentLink || !state.linkFavoritesEnabled;
+      save.addEventListener("click", () => run("save-link", { folderId: folder.id }));
+      const rename = createIconButton(t("renameLinkFavoriteFolder"), icons.edit);
+      rename.addEventListener("click", () => {
+        local.editing = { kind: "folder", id: folder.id };
+        render();
+      });
+      const remove = createIconButton(t("deleteLinkFavoriteFolder"), icons.delete, "favorites-panel-delete");
+      remove.addEventListener("click", () => {
+        local.confirmingFolderId = folder.id;
+        render();
+      });
+      actions.append(save, rename, remove);
+      header.appendChild(actions);
+    }
+    if (history && options.headerAction) {
+      const clear = createIconButton(options.headerAction.title, icons.delete, "favorites-panel-delete");
+      clear.disabled = Boolean(options.headerAction.disabled);
+      clear.addEventListener("click", options.headerAction.onClick);
+      header.appendChild(clear);
+    }
     section.appendChild(header);
     if (!folder.collapsed) {
       const list = createElement("div", "favorites-panel-link-list");
-      setGroupDropTarget(list, folder.id);
-      for (const link of links) {
-        list.appendChild(renderLinkRow(state, link));
+      if (!history) {
+        setGroupDropTarget(list, folder.id);
+      }
+      if (links.length) {
+        for (const link of links) {
+          list.appendChild((options.renderLink || ((link) => renderLinkRow(state, link)))(link));
+        }
+      } else if (history) {
+        list.appendChild(createElement("p", "favorites-panel-empty", options.emptyText || t("linkHistoryEmpty")));
       }
       section.appendChild(list);
-    }
-    if (local.confirmingFolderId === folder.id) {
-      const confirm = createElement("div", "favorites-panel-confirm");
-      const count = getLinksForFolder(state, folder.id).length;
-      confirm.appendChild(createElement("span", "", t("confirmDeleteLinkFavoriteFolder", count)));
-      const buttons = createElement("div", "favorites-panel-confirm-actions");
-      const cancel = makeTextButton(t("cancelLinkFavoriteFolderDelete"));
-      cancel.addEventListener("click", () => {
-        local.confirmingFolderId = null;
-        render();
-      });
-      const remove = makeTextButton(t("confirmDeleteLinkFavoriteFolder", count), "favorites-panel-confirm-delete");
-      remove.addEventListener("click", () => run("delete-folder", { folderId: folder.id, confirm: true }));
-      buttons.append(cancel, remove);
-      confirm.appendChild(buttons);
-      section.appendChild(confirm);
     }
     return section;
   }
