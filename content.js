@@ -182,33 +182,14 @@
   const ITEM_SEARCH_INPUT_SELECTOR = `${ITEM_SEARCH_ROOT_SELECTOR} input.multiselect__input`;
   const TRADE_ITEM_POPUP_SELECTOR = ".item-popup";
   const TYPE_FILTER_GROUP_SELECTOR = "#trade .search-advanced-pane.blue > .filter-group";
-  const TRADE_LOCALIZATION_SELECTOR = [
-    ".search-panel",
-    ".search-advanced-pane",
-    ".filter-group",
-    ".multiselect__tags",
-    ".multiselect__content-wrapper",
-    ".controls",
+  const TRADE_RESULT_LOCALIZATION_SELECTOR = [
     ".search-results",
     ".results",
     ".result",
-    ".item"
+    ".item",
+    ".item-popup",
+    ".itemPopupContainer"
   ].join(",");
-  const TRADE_ADVANCED_FILTER_COPY_SELECTOR = [
-    ".search-advanced-pane .filter-group-header",
-    ".search-advanced-pane .filter-group-title",
-    ".search-advanced-pane .filter-title"
-  ].join(",");
-  const TRADE_FILTER_TIP_SELECTOR = ".search-advanced-pane .filter-tip > p";
-  const TRADE_TOOLTIP_COPY_PREFIXES = Object.freeze([
-    "check each stat meets",
-    "each stat value that meets",
-    "match items that meet",
-    "count each stat",
-    "filter by the mods",
-    "includes base value",
-    "increased item rarity"
-  ]);
   const TRADE_LOCALIZATION_EXCLUDED_SELECTOR = [
     "[data-field='account']",
     "[data-field='whisper']",
@@ -5797,7 +5778,11 @@
 
   function startTradeLocalizationObserver() {
     if (!runtime.tradeLocalizationObserver && document.documentElement) {
-      runtime.tradeLocalizationObserver = new MutationObserver(scheduleTradeLocalizationRefresh);
+      runtime.tradeLocalizationObserver = new MutationObserver((records) => {
+        if (records.some(isTradeResultLocalizationMutation)) {
+          scheduleTradeLocalizationRefresh();
+        }
+      });
       runtime.tradeLocalizationObserver.observe(document.documentElement, {
         childList: true,
         subtree: true,
@@ -5823,95 +5808,34 @@
       return;
     }
     const root = document.querySelector(TRADE_ROOT_SELECTOR);
-    for (const element of getTradeAdvancedFilterCopyElements(root)) {
-      localizeTradeElement(element, { allowAdvancedFilterCopy: true });
-    }
-    for (const element of getTradeLocalizationElements(root)) {
+    for (const element of getTradeResultLocalizationElements(root)) {
       localizeTradeElement(element);
     }
-    for (const element of document.querySelectorAll(TRADE_ITEM_POPUP_SELECTOR)) {
-      localizeTradeElement(element);
-    }
-    for (const element of root.querySelectorAll("[placeholder], [title], [aria-label]")) {
-      if (element.closest(TRADE_LOCALIZATION_SELECTOR)) {
-        localizeTradeAttributes(element, { allowAdvancedFilterCopy: true });
-      }
-    }
-    localizeTradeFilterTipCopy(root);
   }
 
-  function getTradeLocalizationElements(root) {
-    const elements = new Set(root.querySelectorAll(TRADE_LOCALIZATION_SELECTOR));
-    if (root.matches?.(TRADE_LOCALIZATION_SELECTOR)) {
+  function getTradeResultLocalizationElements(root) {
+    const elements = new Set(root.querySelectorAll(TRADE_RESULT_LOCALIZATION_SELECTOR));
+    if (root.matches?.(TRADE_RESULT_LOCALIZATION_SELECTOR)) {
       elements.add(root);
+    }
+    for (const element of document.querySelectorAll?.(TRADE_ITEM_POPUP_SELECTOR) || []) {
+      elements.add(element);
     }
     return elements;
   }
 
-  function getTradeAdvancedFilterCopyElements(root) {
-    return new Set(root.querySelectorAll(TRADE_ADVANCED_FILTER_COPY_SELECTOR));
+  function isTradeResultLocalizationMutation(record) {
+    return isTradeResultLocalizationNode(record?.target) ||
+      Array.from(record?.addedNodes || []).some(isTradeResultLocalizationNode);
   }
 
-  function localizeTradeFilterTipCopy(root) {
-    for (const element of root.querySelectorAll?.(TRADE_FILTER_TIP_SELECTOR) || []) {
-      let source = element[TRADE_LOCALIZATION_SOURCE_KEY] ?? getTradeFilterTipText(element);
-      element[TRADE_LOCALIZATION_SOURCE_KEY] = source;
-      const current = getTradeFilterTipText(element);
-      if (
-        element[TRADE_LOCALIZATION_RENDER_KEY] !== undefined &&
-        current !== element[TRADE_LOCALIZATION_RENDER_KEY]
-      ) {
-        source = current;
-        element[TRADE_LOCALIZATION_SOURCE_KEY] = source;
-      }
-      if (!isTradeTooltipCopy(source)) {
-        continue;
-      }
-      const localized = !isPageTranslationEnabled() || resolvePageLanguage(runtime.state.pageLanguage) === "en"
-        ? source
-        : getLocalizedTradeText(source);
-      if (localized !== current) {
-        replaceTradeFilterTipText(element, localized);
-      }
-      element[TRADE_LOCALIZATION_RENDER_KEY] = localized;
-    }
+  function isTradeResultLocalizationNode(node) {
+    const element = node?.nodeType === 1 ? node : node?.parentElement;
+    return Boolean(element?.matches?.(TRADE_RESULT_LOCALIZATION_SELECTOR) || element?.closest?.(TRADE_RESULT_LOCALIZATION_SELECTOR));
   }
 
-  function getTradeFilterTipText(element) {
-    const read = (node) => {
-      if (node?.nodeType === 3) {
-        return node.nodeValue || "";
-      }
-      if (node?.nodeType !== 1) {
-        return "";
-      }
-      if (String(node.nodeName || "").toUpperCase() === "BR") {
-        return "\n";
-      }
-      return Array.from(node.childNodes || [], read).join("");
-    };
-    return read(element);
-  }
-
-  function replaceTradeFilterTipText(element, value) {
-    const lines = String(value).split("\n");
-    const nodes = [];
-    for (let index = 0; index < lines.length; index += 1) {
-      if (index > 0) {
-        nodes.push(document.createElement("br"));
-      }
-      nodes.push(document.createTextNode(lines[index]));
-    }
-    element.replaceChildren(...nodes);
-  }
-
-  function isTradeTooltipCopy(value) {
-    const normalized = normalizeLookupText(value);
-    return TRADE_TOOLTIP_COPY_PREFIXES.some((prefix) => normalized.startsWith(prefix));
-  }
-
-  function localizeTradeElement(element, options = {}) {
-    if (isExcludedTradeLocalizationElement(element, options)) {
+  function localizeTradeElement(element) {
+    if (isExcludedTradeLocalizationElement(element)) {
       return;
     }
     const visit = (current) => {
@@ -5932,7 +5856,7 @@
         current[TRADE_LOCALIZATION_RENDER_KEY] = localized;
         return;
       }
-      if (current.nodeType !== 1 || isExcludedTradeLocalizationElement(current, options)) {
+      if (current.nodeType !== 1 || isExcludedTradeLocalizationElement(current)) {
         return;
       }
       if (current.matches?.(".item-popup__property") && localizeTrialTokenProperty(current)) {
@@ -5942,7 +5866,7 @@
         localizeTradeStatElement(current);
         return;
       }
-      localizeTradeAttributes(current, options);
+      localizeTradeAttributes(current);
       for (const child of current.childNodes || []) {
         visit(child);
       }
@@ -6002,8 +5926,8 @@
       : `${display.primary} (${display.english})`;
   }
 
-  function localizeTradeAttributes(element, options = {}) {
-    if (isExcludedTradeLocalizationElement(element, options)) {
+  function localizeTradeAttributes(element) {
+    if (isExcludedTradeLocalizationElement(element)) {
       return;
     }
     for (const attribute of ["placeholder", "title", "aria-label"]) {
@@ -6026,15 +5950,10 @@
     }
   }
 
-  function isExcludedTradeLocalizationElement(element, { allowAdvancedFilterCopy = false } = {}) {
+  function isExcludedTradeLocalizationElement(element) {
     return !(element instanceof Element) ||
       Boolean(
         runtime.ui.root?.contains(element) ||
-          // Search controls come from localized native Trade caches. A DOM
-          // pass here would translate while Vue is filtering and corrupt its
-          // display/search state.
-          element.closest(ITEM_SEARCH_ROOT_SELECTOR) ||
-          (!allowAdvancedFilterCopy && element.closest("#trade .search-advanced-pane")) ||
           element.closest(TRADE_LOCALIZATION_EXCLUDED_SELECTOR) ||
           element.closest(".poe2-marketwright, .poe2-trade2-affix-filter")
       );

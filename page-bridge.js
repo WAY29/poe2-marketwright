@@ -6,6 +6,7 @@
 
   const SOURCE = "poe2-marketwright";
   const UPDATE_TYPE = "POE2_MARKETWRIGHT_UPDATE";
+  const CLIENT_LOCALIZATION_TYPE = "POE2_MARKETWRIGHT_TRADE_CLIENT_LOCALIZATION";
   const TIER_UPDATE_TYPE = "POE2_MARKETWRIGHT_TIER_UPDATE";
   const READY_TYPE = "POE2_MARKETWRIGHT_READY";
   const STATE_TYPE = "POE2_MARKETWRIGHT_STATE";
@@ -157,6 +158,9 @@
     corruptedGemLevelInvalid: "Enter a whole number from 2 to 21",
     corruptedGemLevelClearStatePatched: false,
     tradeOptionOriginalTexts: new WeakMap(),
+    tradeClientLocalization: { enabled: false, language: "en", locale: "en", strings: {}, statGroups: {}, statusOptions: {} },
+    tradeClientTranslateOriginals: new WeakMap(),
+    tradeStatGroupOriginals: new WeakMap(),
     quickAddStaged: new Set(),
     quickAddGroupIndex: null,
     quickAddCommitClickBound: false,
@@ -165,6 +169,20 @@
 
   window.addEventListener("message", (event) => {
     if (event.source !== window || event.data?.source !== SOURCE) {
+      return;
+    }
+
+    if (event.data.type === CLIENT_LOCALIZATION_TYPE) {
+      const payload = event.data.payload || {};
+      runtime.tradeClientLocalization = {
+        enabled: payload.enabled !== false,
+        language: typeof payload.language === "string" ? payload.language : "en",
+        locale: ["zh_CN", "zh_TW"].includes(payload.locale) ? payload.locale : "en",
+        strings: payload.strings && typeof payload.strings === "object" ? payload.strings : {},
+        statGroups: payload.statGroups && typeof payload.statGroups === "object" ? payload.statGroups : {},
+        statusOptions: payload.statusOptions && typeof payload.statusOptions === "object" ? payload.statusOptions : {}
+      };
+      localizeTradeOptions();
       return;
     }
 
@@ -269,28 +287,47 @@
     const bilingual = language.endsWith("_en");
 
     const filterOptionTexts = payload.filterOptionTexts || {};
+    const clientLocalization = runtime.tradeClientLocalization || {};
+    const staticStatusOptions = clientLocalization.statusOptions || {};
+    const hasStaticStatusOptions = Object.keys(staticStatusOptions).length > 0;
+    const changedOptionLists = new Set();
     visitVueComponents(runtime.app, (component) => {
-      for (const [property, translations] of [
-        ["statusOptions", filterOptionTexts["status_filters/status"] || {}],
-        ["leagueOptions", payload.leagueOptionTexts || {}]
+      for (const [property, translations, optionLocale, optionShouldTranslate, optionBilingual] of [
+        [
+          "statusOptions",
+          hasStaticStatusOptions ? staticStatusOptions : filterOptionTexts["status_filters/status"] || {},
+          hasStaticStatusOptions ? clientLocalization.locale : locale,
+          hasStaticStatusOptions ? clientLocalization.enabled && clientLocalization.locale !== "en" : shouldTranslate,
+          hasStaticStatusOptions ? String(clientLocalization.language || "").endsWith("_en") : bilingual
+        ],
+        ["leagueOptions", payload.leagueOptionTexts || {}, locale, shouldTranslate, bilingual]
       ]) {
         const options = component?.[property];
         if (!Array.isArray(options)) {
           continue;
         }
+        let changed = false;
         for (const option of options) {
           if (!option || typeof option !== "object") {
             continue;
           }
-          localizeTradeOptionText(option, translations, locale, shouldTranslate, bilingual);
+          changed = localizeTradeOptionText(option, translations, optionLocale, optionShouldTranslate, optionBilingual) || changed;
+        }
+        if (changed) {
+          changedOptionLists.add(options);
         }
       }
     });
     for (const group of runtime.app?.$data?.static_?.propertyFilters || []) {
       for (const filter of group?.filters || []) {
         const translations = filterOptionTexts[`${group?.id || ""}/${filter?.id || ""}`];
-        for (const option of translations ? filter.option?.options || [] : []) {
-          localizeTradeOptionText(option, translations, locale, shouldTranslate, bilingual);
+        const options = translations ? filter.option?.options || [] : [];
+        let changed = false;
+        for (const option of options) {
+          changed = localizeTradeOptionText(option, translations, locale, shouldTranslate, bilingual) || changed;
+        }
+        if (changed) {
+          changedOptionLists.add(options);
         }
       }
     }
@@ -301,6 +338,97 @@
       shouldTranslate,
       bilingual
     );
+    refreshLocalizedTradeOptionValues(changedOptionLists);
+    localizeTradeClientUi();
+  }
+
+  function refreshLocalizedTradeOptionValues(changedOptionLists) {
+    if (!changedOptionLists.size) {
+      return;
+    }
+    visitVueComponents(runtime.app, (component) => {
+      const options = component?.options;
+      if (!Array.isArray(options) || !changedOptionLists.has(options) || !Array.isArray(component.internalValue)) {
+        return;
+      }
+      const trackBy = String(component.trackBy || "id");
+      const current = component.value == null
+        ? component.internalValue
+        : Array.isArray(component.value)
+          ? component.value
+          : [component.value];
+      const selected = current.map((value) => {
+        const id = value && typeof value === "object" ? value[trackBy] : null;
+        return id == null ? value : options.find((option) => option?.[trackBy] === id) || value;
+      });
+      const unchanged =
+        selected.length === component.internalValue.length &&
+        selected.every((value, index) => value === component.internalValue[index]);
+      if (unchanged) {
+        return;
+      }
+      component.internalValue.splice(0, component.internalValue.length, ...selected);
+      component.$forceUpdate?.();
+    });
+  }
+
+  function localizeTradeClientUi() {
+    const config = runtime.tradeClientLocalization;
+    const staticData = runtime.app?.$data?.static_;
+    if (!config || !staticData) {
+      return;
+    }
+
+    for (const group of Array.isArray(staticData.statGroups) ? staticData.statGroups : []) {
+      if (!group || typeof group !== "object") {
+        continue;
+      }
+      if (!runtime.tradeStatGroupOriginals.has(group)) {
+        runtime.tradeStatGroupOriginals.set(group, { title: group.title, tip: group.tip });
+      }
+      const original = runtime.tradeStatGroupOriginals.get(group);
+      const localized = config.statGroups?.[String(group.type || "")];
+      group.title = getLocalizedTradeClientText(localized?.title, original.title, config);
+      if (original.tip !== undefined) {
+        group.tip = getLocalizedTradeClientText(localized?.tip, original.tip, config);
+      }
+    }
+
+    visitVueComponents(runtime.app, (component) => localizeTradeClientTranslate(component, config));
+  }
+
+  function localizeTradeClientTranslate(component, config) {
+    if (typeof component?.translate !== "function") {
+      return;
+    }
+    let original = runtime.tradeClientTranslateOriginals.get(component);
+    if (!original) {
+      original = component.translate;
+      runtime.tradeClientTranslateOriginals.set(component, original);
+    }
+    if (!config.enabled || config.locale === "en") {
+      if (component.translate !== original) {
+        component.translate = original;
+        component.$forceUpdate?.();
+      }
+      return;
+    }
+    if (component.translate !== original) {
+      return;
+    }
+    component.translate = function (value, ...args) {
+      const rendered = original.call(this, value, ...args);
+      return getLocalizedTradeClientText(config.strings?.[String(value || "")], rendered, runtime.tradeClientLocalization);
+    };
+    component.$forceUpdate?.();
+  }
+
+  function getLocalizedTradeClientText(record, fallback, config) {
+    const english = String(record?.en || fallback || "");
+    if (!config?.enabled || config.locale === "en") {
+      return english;
+    }
+    return String(record?.[config.locale] || english);
   }
 
   function localizeTradeStaticEntryTexts(value, translations, locale, shouldTranslate, bilingual, seen = new Set()) {
@@ -330,7 +458,7 @@
 
   function localizeTradeOptionText(option, translations, locale, shouldTranslate, bilingual) {
     if (!option || typeof option !== "object") {
-      return;
+      return false;
     }
     if (!runtime.tradeOptionOriginalTexts.has(option)) {
       runtime.tradeOptionOriginalTexts.set(option, String(option.text || ""));
@@ -342,9 +470,11 @@
     const nextText = shouldTranslate && typeof localized === "string" && localized
       ? bilingual && localized !== english ? `${localized} (${english})` : localized
       : english;
-    if (option.text !== nextText) {
-      option.text = nextText;
+    if (option.text === nextText) {
+      return false;
     }
+    option.text = nextText;
+    return true;
   }
 
   function visitVueComponents(component, visitor, seen = new Set()) {

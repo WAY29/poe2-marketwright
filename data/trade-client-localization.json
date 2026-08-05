@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "strings": {
+    "Stat Groups": { "en": "Stat Groups", "zh_CN": "属性群组", "zh_TW": "屬性群組" },
+    "Stat Filters": { "en": "Stat Filters", "zh_CN": "属性筛选器", "zh_TW": "屬性篩選器" },
+    "Add Stat Filter": { "en": "Add Stat Filter", "zh_CN": "添加属性筛选器", "zh_TW": "新增屬性篩選器" },
+    "+ Add Stat Filter": { "en": "+ Add Stat Filter", "zh_CN": "+ 添加属性筛选器", "zh_TW": "+ 新增屬性篩選器" },
+    "Add Stat Group": { "en": "Add Stat Group", "zh_CN": "添加属性组", "zh_TW": "新增屬性群組" },
+    "+ Add Stat Group": { "en": "+ Add Stat Group", "zh_CN": "+ 添加属性组", "zh_TW": "+ 新增屬性群組" },
+    "Search Items...": { "en": "Search Items...", "zh_CN": "搜索物品...", "zh_TW": "搜尋物品..." },
+    "No matches.": { "en": "No matches.", "zh_CN": "没有匹配项。", "zh_TW": "沒有符合項目。" },
+    "No elements found. Consider changing the search query.": { "en": "No elements found. Consider changing the search query.", "zh_CN": "未找到元素，请尝试修改搜索词。", "zh_TW": "找不到元素，請嘗試修改搜尋字詞。" },
+    "min": { "en": "min", "zh_CN": "最小", "zh_TW": "最小" },
+    "max": { "en": "max", "zh_CN": "最大", "zh_TW": "最大" },
+    "weight": { "en": "weight", "zh_CN": "权重", "zh_TW": "權重" },
+    "Clear Filter Group": { "en": "Clear Filter Group", "zh_CN": "清除筛选器组", "zh_TW": "清除篩選器群組" },
+    "Activate Live Search": { "en": "Activate Live Search", "zh_CN": "启用实时搜索", "zh_TW": "啟用即時搜尋" },
+    "Deactivate Live Search": { "en": "Deactivate Live Search", "zh_CN": "停用实时搜索", "zh_TW": "停用即時搜尋" },
+    "Search": { "en": "Search", "zh_CN": "搜索", "zh_TW": "搜尋" },
+    "Clear": { "en": "Clear", "zh_CN": "清除", "zh_TW": "清除" },
+    "Show Filters": { "en": "Show Filters", "zh_CN": "显示筛选器", "zh_TW": "顯示篩選器" },
+    "Hide Filters": { "en": "Hide Filters", "zh_CN": "隐藏筛选器", "zh_TW": "隱藏篩選器" }
+  },
+  "statusOptions": {
+    "available": { "en": "Instant Buyout and In Person", "zh_CN": "立即购买和当面交易", "zh_TW": "即刻購買以及面對面交易" },
+    "securable": { "en": "Instant Buyout", "zh_CN": "立即购买", "zh_TW": "即刻購買" },
+    "onlineleague": { "en": "In Person (Online in League)", "zh_CN": "当面交易（联赛在线）", "zh_TW": "面對面交易(聯盟在線)" },
+    "online": { "en": "In Person (Online)", "zh_CN": "当面交易（在线）", "zh_TW": "面對面交易(在線)" },
+    "any": { "en": "Any", "zh_CN": "任何", "zh_TW": "任何" }
+  },
+  "statGroups": {
+    "and": {
+      "title": { "en": "And", "zh_CN": "且", "zh_TW": "且" }
+    },
+    "not": {
+      "title": { "en": "Not", "zh_CN": "非", "zh_TW": "非" }
+    },
+    "if": {
+      "title": { "en": "If", "zh_CN": "如果", "zh_TW": "如果" },
+      "tip": { "en": "Match items that meet each stat's `min` and `max` requirements if the stat is present.", "zh_CN": "若该属性存在，则匹配满足每项属性 `min` 与 `max` 要求的物品。", "zh_TW": "若該屬性存在，則配對符合每項屬性 `min` 與 `max` 要求的物品。" }
+    },
+    "count": {
+      "title": { "en": "Count", "zh_CN": "计数", "zh_TW": "計數" },
+      "tip": { "en": "Count each stat that meets the `min` and `max` (if provided, otherwise existence) requirements.\nUse the group's `min` and `max` to filter items based on the count of matching stats.", "zh_CN": "计算每项符合 `min` 与 `max`（若未设置，则检查是否存在）条件的属性。\n使用该组的 `min` 与 `max`，按匹配属性数量筛选物品。", "zh_TW": "計算每項符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性。\n使用此群組的 `min` 與 `max`，依匹配屬性數量篩選物品。" }
+    },
+    "weight": {
+      "title": { "en": "Weighted Sum", "zh_CN": "加权总和", "zh_TW": "加權總和" },
+      "tip": { "en": "Check each stat meets the `min` and `max` (if provided, otherwise existence) requirements before multiplying the stat value by the `weight` and finally summing them together.\nUse the group's `min` and `max` to filter items based on the total summed value.", "zh_CN": "每项满足 `min` 与 `max`（若未设置，则检查是否存在）条件的属性数值，都会先乘以权重再求和。\n使用该组的 `min` 与 `max`，按加权总和筛选物品。", "zh_TW": "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。" }
+    },
+    "weight2": {
+      "title": { "en": "Weighted Sum v2", "zh_CN": "加权总和 V2", "zh_TW": "加權總和 V2" },
+      "tip": { "en": "Each stat value that meets the `min` and `max` (if provided, otherwise existence) requirements will be multiplied by the `weight` before being summed together.\nUse the group's `min` and `max` to filter items based on the total summed value.", "zh_CN": "每项满足 `min` 与 `max`（若未设置，则检查是否存在）条件的属性数值，都会先乘以权重再求和。\n使用该组的 `min` 与 `max`，按加权总和筛选物品。", "zh_TW": "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。" }
+    },
+    "crucible": {
+      "title": { "en": "Crucible Passive Tree Path", "zh_CN": "熔炉被动技能树路径", "zh_TW": "熔爐被動技能樹路徑" },
+      "tip": { "en": "Filter by the mods that you want to be able to allocate at once.\nUse a lower `min` value for partial matches.", "zh_CN": "筛选你希望能同时配置的词缀。\n使用较低的 `min` 值以匹配部分结果。", "zh_TW": "篩選你希望能同時配置的詞綴。\n使用較低的 `min` 值以配對部分結果。" }
+    },
+    "mercenary": {
+      "title": { "en": "Mercenary Skill Group", "zh_CN": "佣兵技能群组", "zh_TW": "傭兵技能群組" },
+      "tip": { "en": "Filter by a skill and supports that a Mercenary Warrant should have.\nUse a lower `min` value for partial matches.", "zh_CN": "按佣兵令状应拥有的技能和辅助技能筛选。\n使用较低的 `min` 值以匹配部分结果。", "zh_TW": "依傭兵令狀應擁有的技能和輔助技能篩選。\n使用較低的 `min` 值以配對部分結果。" }
+    }
+  }
+}

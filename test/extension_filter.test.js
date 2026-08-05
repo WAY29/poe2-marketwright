@@ -241,6 +241,24 @@ test("page bridge localizes Trade status, price, and league options", () => {
     { id: "chaos", text: "混沌石" },
     { id: "divine", text: "神聖石" }
   ];
+  const statusSelect = {
+    options: statusOptions,
+    trackBy: "id",
+    value: statusOptions[0],
+    internalValue: [{ id: "available", text: "Instant Buyout and In Person" }],
+    refreshes: 0,
+    $forceUpdate() { this.refreshes += 1; },
+    $children: []
+  };
+  const leagueSelect = {
+    options: leagueOptions,
+    trackBy: "id",
+    value: leagueOptions[0],
+    internalValue: [{ id: "Runes of Aldur", text: "Runes of Aldur" }],
+    refreshes: 0,
+    $forceUpdate() { this.refreshes += 1; },
+    $children: []
+  };
   const sandbox = {
     window: { addEventListener() {}, postMessage() {} },
     console
@@ -254,19 +272,26 @@ test("page bridge localizes Trade status, price, and league options", () => {
         exchangeData: currencyOptions
       }
     },
-    $children: [{ statusOptions, $children: [{ leagueOptions, $children: [] }] }]
+    $children: [{ statusOptions, $children: [{ leagueOptions, $children: [] }, statusSelect, leagueSelect] }]
+  };
+  hooks.runtime.tradeClientLocalization = {
+    enabled: true,
+    language: "zh_TW_en",
+    locale: "zh_TW",
+    statusOptions: {
+      available: { en: "Instant Buyout and In Person", zh_TW: "即刻購買以及面對面交易" },
+      securable: { en: "Instant Buyout", zh_TW: "即刻購買" },
+      onlineleague: { en: "In Person (Online in League)", zh_TW: "面對面交易(聯盟在線)" },
+      online: { en: "In Person (Online)", zh_TW: "面對面交易(在線)" },
+      any: { en: "Any", zh_TW: "任何" }
+    },
+    strings: {},
+    statGroups: {}
   };
   hooks.runtime.lastPayload = {
     pageLanguage: "zh_TW_en",
     pageTranslationEnabled: true,
     filterOptionTexts: {
-      "status_filters/status": {
-        available: { en: "Instant Buyout and In Person", zh_TW: "即刻購買以及面對面交易" },
-        securable: { en: "Instant Buyout", zh_CN: "立即购买", zh_TW: "即刻購買" },
-        onlineleague: { en: "In Person (Online in League)", zh_TW: "面對面交易(聯盟在線)" },
-        online: { en: "In Person (Online)", zh_TW: "面對面交易(在線)" },
-        any: { en: "Any", zh_TW: "任何" }
-      },
       "trade_filters/price": {
         mirror: { en: "Mirror of Kalandra", zh_CN: "卡兰德的魔镜", zh_TW: "卡蘭德魔鏡" }
       }
@@ -286,21 +311,113 @@ test("page bridge localizes Trade status, price, and league options", () => {
   const localizedLeagues = structuredClone(leagueOptions.map((option) => option.text));
   const localizedPrices = structuredClone(priceOptions.map((option) => option.text));
   const localizedCurrencies = structuredClone(currencyOptions.map((option) => option.text));
+  const localizedSelected = structuredClone({
+    status: statusSelect.internalValue[0].text,
+    league: leagueSelect.internalValue[0].text,
+    refreshes: [statusSelect.refreshes, leagueSelect.refreshes]
+  });
   hooks.runtime.lastPayload.pageLanguage = "en";
+  hooks.runtime.tradeClientLocalization = { enabled: false, language: "en", locale: "en", statusOptions: {}, strings: {}, statGroups: {} };
   hooks.localizeTradeOptions();
   const restored = structuredClone(statusOptions.map((option) => option.text));
   const restoredLeagues = structuredClone(leagueOptions.map((option) => option.text));
   const restoredPrices = structuredClone(priceOptions.map((option) => option.text));
   const restoredCurrencies = structuredClone(currencyOptions.map((option) => option.text));
+  const restoredSelected = structuredClone({
+    status: statusSelect.internalValue[0].text,
+    league: leagueSelect.internalValue[0].text,
+    refreshes: [statusSelect.refreshes, leagueSelect.refreshes]
+  });
 
   assert.deepStrictEqual(localized, ["即刻購買以及面對面交易 (Instant Buyout and In Person)", "即刻購買 (Instant Buyout)", "面對面交易(聯盟在線) (In Person (Online in League))", "面對面交易(在線) (In Person (Online))", "任何 (Any)"]);
   assert.deepStrictEqual(localizedLeagues, ["阿德爾的符文 (Runes of Aldur)", "阿德爾的符文 專家模式 (HC Runes of Aldur)"]);
   assert.deepStrictEqual(localizedPrices, ["神聖石 (Divine Orb)", "卡蘭德魔鏡 (Mirror of Kalandra)"]);
   assert.deepStrictEqual(localizedCurrencies, ["崇高石 (Exalted Orb)", "混沌石 (Chaos Orb)", "神聖石 (Divine Orb)"]);
+  assert.deepStrictEqual(localizedSelected, {
+    status: "即刻購買以及面對面交易 (Instant Buyout and In Person)",
+    league: "阿德爾的符文 (Runes of Aldur)",
+    refreshes: [1, 1]
+  });
   assert.deepStrictEqual(restored, ["Instant Buyout and In Person", "Instant Buyout", "In Person (Online in League)", "In Person (Online)", "Any"]);
   assert.deepStrictEqual(restoredLeagues, ["Runes of Aldur", "HC Runes of Aldur"]);
   assert.deepStrictEqual(restoredPrices, ["Divine Orb", "Mirror of Kalandra"]);
   assert.deepStrictEqual(restoredCurrencies, ["Exalted Orb", "Chaos Orb", "Divine Orb"]);
+  assert.deepStrictEqual(restoredSelected, {
+    status: "Instant Buyout and In Person",
+    league: "Runes of Aldur",
+    refreshes: [1, 1]
+  });
+});
+
+test("page bridge localizes stat-group UI before its selector renders", () => {
+  const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
+  let source = fs
+    .readFileSync("page-bridge.js", "utf8")
+    .replace(bootstrapCall, "")
+    .replace(
+      /\n\}\)\(\);\s*$/,
+      "\n  window.__testHooks = { localizeTradeOptions, runtime };\n})();"
+    );
+  const statGroups = [
+    { type: "and", title: "And" },
+    { type: "count", title: "Count", tip: "Count matching stats." },
+    { type: "mercenary", title: "Mercenary Skill Group", tip: "Filter by Mercenary skills." }
+  ];
+  let renders = 0;
+  const translate = (text) => text;
+  const panel = {
+    translate,
+    getStatGroupTemplate() {},
+    $forceUpdate() { renders += 1; },
+    $children: []
+  };
+  const sandbox = {
+    window: { addEventListener() {}, postMessage() {} },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.app = {
+    $data: { static_: { knownStats: [], propertyFilters: [], statGroups } },
+    $children: [panel]
+  };
+  hooks.runtime.tradeClientLocalization = {
+    enabled: true,
+    locale: "zh_TW",
+    strings: {
+      "Stat Groups": { en: "Stat Groups", zh_TW: "屬性群組" }
+    },
+    statGroups: {
+      and: { title: { en: "And", zh_TW: "且" } },
+      count: {
+        title: { en: "Count", zh_TW: "計數" },
+        tip: { en: "Count matching stats.", zh_TW: "計算符合的屬性。" }
+      },
+      mercenary: {
+        title: { en: "Mercenary Skill Group", zh_TW: "傭兵技能群組" },
+        tip: { en: "Filter by Mercenary skills.", zh_TW: "依傭兵技能篩選。" }
+      }
+    }
+  };
+
+  hooks.localizeTradeOptions();
+  assert.deepStrictEqual(structuredClone(statGroups), [
+    { type: "and", title: "且" },
+    { type: "count", title: "計數", tip: "計算符合的屬性。" },
+    { type: "mercenary", title: "傭兵技能群組", tip: "依傭兵技能篩選。" }
+  ]);
+  assert.equal(panel.translate("Stat Groups"), "屬性群組");
+  assert.equal(panel.translate("Unmapped"), "Unmapped");
+  assert.ok(renders > 0);
+
+  hooks.runtime.tradeClientLocalization = { enabled: false, locale: "en", strings: {}, statGroups: {} };
+  hooks.localizeTradeOptions();
+  assert.deepStrictEqual(structuredClone(statGroups), [
+    { type: "and", title: "And" },
+    { type: "count", title: "Count", tip: "Count matching stats." },
+    { type: "mercenary", title: "Mercenary Skill Group", tip: "Filter by Mercenary skills." }
+  ]);
+  assert.equal(panel.translate, translate);
 });
 
 test("page bridge commits staged quick-add stats to the current stat group", () => {

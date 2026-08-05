@@ -91,6 +91,7 @@
         "_locales/zh_TW/messages.json",
         "data/affix-filter-data.json",
         "data/trade-item-localization.json",
+        "data/trade-client-localization.json",
         "page-bridge.js",
         "images/currency/*.png",
         "images/ui/*.png"

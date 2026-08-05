@@ -3,6 +3,7 @@
   const MESSAGE_SOURCE = "poe2-marketwright";
   const MESSAGE_TYPE = "POE2_MARKETWRIGHT_TRADE_ITEM_LOCALIZATION";
   const CACHE_MESSAGE_TYPE = "POE2_MARKETWRIGHT_TRADE_ITEM_CACHE";
+  const CLIENT_LOCALIZATION_TYPE = "POE2_MARKETWRIGHT_TRADE_CLIENT_LOCALIZATION";
   const CACHE_MARKER_KEY = "poe2-marketwright:trade-native-search-localization";
   const TRADE_DATASETS = Object.freeze({
     items: "lscache-trade2items",
@@ -73,19 +74,39 @@
   }
 
   async function bootstrap() {
-    const [state, response] = await Promise.all([
+    const [state, response, clientResponse] = await Promise.all([
       loadStoredState(),
-      fetch(chrome.runtime.getURL("data/trade-item-localization.json"))
+      fetch(chrome.runtime.getURL("data/trade-item-localization.json")),
+      fetch(chrome.runtime.getURL("data/trade-client-localization.json"))
     ]);
     if (!response.ok) {
       throw new Error(`Unable to load Trade localization data: ${response.status}`);
+    }
+    if (!clientResponse.ok) {
+      throw new Error(`Unable to load Trade client localization data: ${clientResponse.status}`);
     }
     const language = resolvePageLanguage(state.pageLanguage || state.uiLanguage);
     const locale = getLocale(language);
     const bilingual = language.endsWith("_en");
     const enabled = state.pageTranslationEnabled !== false;
     const bundle = await response.json();
+    const clientLocalization = await clientResponse.json();
     const cacheVersion = getCacheVersion(bundle, locale, bilingual);
+    window.postMessage(
+      {
+        source: MESSAGE_SOURCE,
+        type: CLIENT_LOCALIZATION_TYPE,
+        payload: {
+          enabled,
+          language,
+          locale,
+          strings: clientLocalization.strings || {},
+          statGroups: clientLocalization.statGroups || {},
+          statusOptions: clientLocalization.statusOptions || {}
+        }
+      },
+      "*"
+    );
     window.postMessage(
       {
         source: MESSAGE_SOURCE,

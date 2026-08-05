@@ -984,12 +984,12 @@ test("Trade filter terminology overrides translate headings and help copy", () =
   });
 });
 
-test("trade localization queries semantic descendants relative to the trade root", () => {
+test("trade localization observes result roots without scanning search filters", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
   source = source.replace(
     /\n\}\)\(\);\s*$/,
-    "\n  window.__testHooks = { getTradeLocalizationElements };\n})();"
+    "\n  window.__testHooks = { getTradeResultLocalizationElements };\n})();"
   );
   const sandbox = {
     window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
@@ -1000,7 +1000,7 @@ test("trade localization queries semantic descendants relative to the trade root
   };
   vm.runInNewContext(source, sandbox, { filename: "content.js" });
   let selector = "";
-  sandbox.window.__testHooks.getTradeLocalizationElements({
+  sandbox.window.__testHooks.getTradeResultLocalizationElements({
     querySelectorAll(value) {
       selector = value;
       return [];
@@ -1009,9 +1009,11 @@ test("trade localization queries semantic descendants relative to the trade root
       return false;
     }
   });
-  assert.ok(selector.includes(".search-panel"));
-  assert.ok(selector.includes(".controls"));
-  assert.ok(!selector.includes("#trade"));
+  assert.ok(selector.includes(".search-results"));
+  assert.ok(selector.includes(".item-popup"));
+  assert.ok(!selector.includes(".search-panel"));
+  assert.ok(!selector.includes(".search-advanced-pane"));
+  assert.ok(!selector.includes(".multiselect"));
 });
 
 test("trade localization reaches nested native labels but leaves excluded content alone", () => {
@@ -1146,138 +1148,6 @@ test("gem item tooltips localize stable property labels and generated level deta
     ],
     ["增益", "永久性", "增益, 永久性", "品质: ", "保留: ", "30 精魂", "需求 ", "通过宝石 20 等（最高）", "腐化等级 +1"]
   );
-});
-
-test("advanced Trade filter labels can be localized without touching search controls", () => {
-  class FakeElement {
-    constructor(children = [], advanced = false) {
-      this.nodeType = 1;
-      this.childNodes = children;
-      this.advanced = advanced;
-    }
-
-    hasAttribute() {
-      return false;
-    }
-
-    closest(selector) {
-      return this.advanced && selector === "#trade .search-advanced-pane" ? this : null;
-    }
-
-    matches() {
-      return false;
-    }
-  }
-  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
-  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
-  source = source.replace(
-    /\n\}\)\(\);\s*$/,
-    "\n  window.__testHooks = { localizeTradeElement, runtime };\n})();"
-  );
-  const sandbox = {
-    Element: FakeElement,
-    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
-    document: {},
-    location: { pathname: "/trade2" },
-    console,
-    chrome: {}
-  };
-  vm.runInNewContext(source, sandbox, { filename: "content.js" });
-  const hooks = sandbox.window.__testHooks;
-  hooks.runtime.state = { pageLanguage: "zh_TW" };
-  hooks.runtime.tradeLocalization = { strings: {} };
-  const label = { nodeType: 3, nodeValue: "WEIGHTED SUM" };
-  const advancedLabel = new FakeElement([label], true);
-  hooks.localizeTradeElement(advancedLabel);
-  assert.equal(label.nodeValue, "WEIGHTED SUM");
-  hooks.localizeTradeElement(advancedLabel, { allowAdvancedFilterCopy: true });
-  assert.equal(label.nodeValue, "加權總和");
-});
-
-test("Trade filter tips preserve line breaks while translating complete help copy", () => {
-  class FakeElement {
-    constructor(children = [], nodeName = "DIV") {
-      this.nodeType = 1;
-      this.childNodes = children;
-      this.nodeName = nodeName;
-    }
-
-    get textContent() {
-      return this.childNodes
-        .map((child) => child.nodeType === 3 ? child.nodeValue : child.textContent)
-        .join("");
-    }
-
-    replaceChildren(...children) {
-      this.childNodes = children;
-    }
-
-    querySelectorAll() {
-      return this.tips || [];
-    }
-  }
-  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
-  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
-  source = source.replace(
-    /\n\}\)\(\);\s*$/,
-    "\n  window.__testHooks = { getTradeFilterTipText, localizeTradeFilterTipCopy, runtime };\n})();"
-  );
-  const weightedTip = new FakeElement([
-    { nodeType: 3, nodeValue: "Check each stat meets the `min` and `max` (if provided, otherwise existence) requirements before multiplying the stat value by the `weight` and finally summing them together." },
-    new FakeElement([], "BR"),
-    { nodeType: 3, nodeValue: "Use the group's `min` and `max` to filter items based on the total summed value." }
-  ], "P");
-  const weightedV2Tip = new FakeElement([
-    { nodeType: 3, nodeValue: "Each stat value that meets the `min` and `max` (if provided, otherwise existence) requirements will be multiplied by the `weight` before being summed together." },
-    new FakeElement([], "BR"),
-    { nodeType: 3, nodeValue: "Use the group's `min` and `max` to filter items based on the total summed value." }
-  ], "P");
-  const crucibleTip = new FakeElement([
-    { nodeType: 3, nodeValue: "Filter by the mods that you want to be able to allocate at once." },
-    new FakeElement([], "BR"),
-    { nodeType: 3, nodeValue: "Use a lower `min` value for partial matches." }
-  ], "P");
-  const root = new FakeElement();
-  root.tips = [weightedTip, weightedV2Tip, crucibleTip];
-  const sandbox = {
-    Element: FakeElement,
-    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
-    document: {
-      createElement(nodeName) { return new FakeElement([], nodeName.toUpperCase()); },
-      createTextNode(nodeValue) { return { nodeType: 3, nodeValue }; }
-    },
-    location: { pathname: "/trade2" },
-    console,
-    chrome: {}
-  };
-  vm.runInNewContext(source, sandbox, { filename: "content.js" });
-  const hooks = sandbox.window.__testHooks;
-  hooks.runtime.state = { pageLanguage: "zh_TW" };
-  hooks.runtime.tradeLocalization = { strings: {} };
-  hooks.localizeTradeFilterTipCopy(root);
-  assert.equal(
-    hooks.getTradeFilterTipText(weightedTip),
-    "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
-  );
-  assert.equal(
-    hooks.getTradeFilterTipText(weightedV2Tip),
-    "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
-  );
-  assert.equal(
-    hooks.getTradeFilterTipText(crucibleTip),
-    "篩選你希望能同時配置的詞綴。\n使用較低的 `min` 值以配對部分結果。"
-  );
-  assert.equal(weightedTip.childNodes[1].nodeName, "BR");
-  assert.equal(weightedV2Tip.childNodes[1].nodeName, "BR");
-  assert.equal(crucibleTip.childNodes[1].nodeName, "BR");
-
-  hooks.runtime.state.pageLanguage = "en";
-  hooks.localizeTradeFilterTipCopy(root);
-  assert.equal(
-    hooks.getTradeFilterTipText(weightedV2Tip),
-    "Each stat value that meets the `min` and `max` (if provided, otherwise existence) requirements will be multiplied by the `weight` before being summed together.\nUse the group's `min` and `max` to filter items based on the total summed value."
-  );
-  assert.equal(weightedV2Tip.childNodes[1].nodeName, "BR");
 });
 
 test("favorite presentation uses the global language without overwriting custom names", async () => {

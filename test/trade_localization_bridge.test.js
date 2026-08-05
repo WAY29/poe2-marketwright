@@ -319,3 +319,65 @@ test("manifest starts the native item bridge before the Trade application", () =
   assert.strictEqual(pageBridge?.world, "MAIN");
   assert.strictEqual(bootstrap?.run_at, "document_start");
 });
+
+test("document-start bootstrap publishes static client text before native cache configuration", async () => {
+  let source = fs.readFileSync("trade-localization-bootstrap.js", "utf8");
+  source = source.replace(
+    /\n  bootstrap\(\)\.catch\(\(error\) => \{[\s\S]*?\n  \}\);\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { bootstrap };\n})();"
+  );
+  const messages = [];
+  const sandbox = {
+    window: { postMessage(message) { messages.push(message); } },
+    chrome: {
+      i18n: { getUILanguage() { return "zh-TW"; } },
+      runtime: {
+        getManifest() { return { version: "1.18.4" }; },
+        getURL(path) { return `chrome-extension://test/${path}`; }
+      },
+      storage: {
+        local: {
+          get(key, callback) {
+            callback({ [key]: { pageLanguage: "zh_TW", pageTranslationEnabled: false } });
+          }
+        }
+      }
+    },
+    fetch: async (url) => ({
+      ok: true,
+      async json() {
+        return String(url).endsWith("trade-client-localization.json")
+          ? { strings: { "Stat Groups": { en: "Stat Groups", zh_TW: "屬性群組" } }, statGroups: {} }
+          : { version: 1, items: {}, stats: {}, strings: {} };
+      }
+    }),
+    localStorage: { getItem() { return null; } },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "trade-localization-bootstrap.js" });
+
+  await sandbox.window.__testHooks.bootstrap();
+
+  assert.deepStrictEqual(structuredClone(messages.map((message) => message.type)), [
+    "POE2_MARKETWRIGHT_TRADE_CLIENT_LOCALIZATION",
+    "POE2_MARKETWRIGHT_TRADE_ITEM_LOCALIZATION"
+  ]);
+  assert.deepStrictEqual(structuredClone(messages[0].payload), {
+    enabled: false,
+    language: "zh_TW",
+    locale: "zh_TW",
+    strings: { "Stat Groups": { en: "Stat Groups", zh_TW: "屬性群組" } },
+    statGroups: {},
+    statusOptions: {}
+  });
+});
+
+test("client stat-group localization uses 如果 for the If relationship", () => {
+  const localization = JSON.parse(fs.readFileSync("data/trade-client-localization.json", "utf8"));
+
+  assert.deepStrictEqual(localization.statGroups.if.title, {
+    en: "If",
+    zh_CN: "如果",
+    zh_TW: "如果"
+  });
+});
