@@ -31,6 +31,70 @@ test("staged quick-add options retain their appearance while hovered", () => {
   );
 });
 
+test("extension disables upstream Trade option snapping for continuous wheel scrolling", () => {
+  const styles = fs.readFileSync("content.css", "utf8");
+
+  assert.match(
+    styles,
+    /#trade \.multiselect \.multiselect__content-wrapper\s*\{[^}]*scroll-snap-type:\s*none !important;/
+  );
+});
+
+test("trade filtering refreshes only after an item or category selection commits", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { isTradeSelectionCommitEvent };\n})();"
+  );
+
+  class FakeElement {
+    constructor({ item = false, option = false, input = false } = {}) {
+      this.item = item;
+      this.option = option;
+      this.input = input;
+    }
+
+    closest(selector) {
+      if (this.item && selector.includes("search-bar")) {
+        return this;
+      }
+      if (this.option && selector.includes("multiselect__option")) {
+        return this;
+      }
+      return null;
+    }
+
+    matches(selector) {
+      return this.input && selector === "input.multiselect__input";
+    }
+  }
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: { querySelectorAll() { return []; }, querySelector() { return null; } },
+    location: { pathname: "/trade2" },
+    console,
+    Element: FakeElement,
+    HTMLInputElement: class extends FakeElement {},
+    HTMLTextAreaElement: class extends FakeElement {},
+    MutationObserver: class {},
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+
+  const itemInput = new FakeElement({ item: true, input: true });
+  const itemOption = new FakeElement({ item: true, option: true });
+  const itemRoot = new FakeElement({ item: true });
+  const hooks = sandbox.window.__testHooks;
+  assert.equal(hooks.isTradeSelectionCommitEvent({ type: "input", target: itemInput }), false);
+  assert.equal(hooks.isTradeSelectionCommitEvent({ type: "click", target: itemInput }), false);
+  assert.equal(hooks.isTradeSelectionCommitEvent({ type: "click", target: itemOption }), true);
+  assert.equal(hooks.isTradeSelectionCommitEvent({ type: "keydown", key: "Enter", target: itemInput }), true);
+  assert.equal(hooks.isTradeSelectionCommitEvent({ type: "keydown", key: "ArrowDown", target: itemInput }), false);
+  assert.equal(hooks.isTradeSelectionCommitEvent({ type: "change", target: itemInput }), false);
+  assert.equal(hooks.isTradeSelectionCommitEvent({ type: "change", target: itemRoot }), true);
+});
+
 test("page bridge applies native multi-token search only to item and stat selectors", () => {
   const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
   let source = fs
@@ -1861,11 +1925,11 @@ test("current link favorite remains available when Trade rerenders its filter DO
 test("link favorite state refreshes when a search URL changes within the same league", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  assert.doesNotMatch(source, /\bsetInterval\s*\(/);
   source = source.replace(
     /\n\}\)\(\);\s*$/,
-    "\n  window.__testHooks = { startSelectionPolling, runtime };\n})();"
+    "\n  window.__testHooks = { refreshTradeNavigationState, runtime };\n})();"
   );
-  let poll;
   const messages = [];
   const location = {
     href: "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur",
@@ -1876,8 +1940,7 @@ test("link favorite state refreshes when a search URL changes within the same le
       location,
       addEventListener() {},
       clearTimeout() {},
-      setTimeout() { return 1; },
-      setInterval(callback) { poll = callback; return 1; }
+      setTimeout() { return 1; }
     },
     document: { querySelector() { return null; }, querySelectorAll() { return []; } },
     location,
@@ -1914,10 +1977,9 @@ test("link favorite state refreshes when a search URL changes within the same le
   vm.runInNewContext(source, sandbox, { filename: "content.js" });
   const hooks = sandbox.window.__testHooks;
   hooks.runtime.favoritesPanelSessionId = "panel-session";
-  hooks.startSelectionPolling();
   location.href = "https://www.pathofexile.com/trade2/search/poe2/Runes%20of%20Aldur/aywJY5cJ";
   location.pathname = "/trade2/search/poe2/Runes%20of%20Aldur/aywJY5cJ";
-  poll();
+  hooks.refreshTradeNavigationState();
   await Promise.resolve();
 
   assert.equal(hooks.runtime.linkFavoriteLocationHref, location.href);

@@ -82,6 +82,10 @@ Use ASCII spaces to separate terms in item and stat selectors. Every term must b
   <img src="assets/affix-search-keywords.png" alt="Space-separated affix search" width="92%">
 </p>
 
+### Continuous Selector Scrolling
+
+The extension makes mouse-wheel scrolling smoother in long item and stat suggestion lists, so you can browse options continuously instead of jumping between rows.
+
 ### Affix Tier Selection
 
 Stats with Tier support show a `T` button on the left for selecting a Tier directly.

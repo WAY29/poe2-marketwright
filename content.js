@@ -444,6 +444,7 @@
     ".vs__dropdown-menu",
     ".dropdown-menu"
   ].join(",");
+  const SELECTION_COMMIT_EVENT_TYPES = ["change", "click", "keydown"];
   const STAT_FILTER_ADD_MULTISELECT_SELECTOR =
     "#trade .filter-group > .filter-group-body > .filter.filter-padded .multiselect.filter-select-mutate";
   const STAT_FILTER_ADD_INPUT_SELECTOR = `${STAT_FILTER_ADD_MULTISELECT_SELECTOR} input.multiselect__input`;
@@ -651,12 +652,8 @@
     logicalStatIdCache: new Map(),
     activeSelection: null,
     observer: null,
-    controlListenerAbort: null,
-    controlObservers: [],
     controlListenerTimer: null,
     refreshTimer: null,
-    selectionSignature: "",
-    selectionPollTimer: null,
     bridgeStats: null,
     bridgePayloadSignature: "",
     tierBridgeMappingsSent: false,
@@ -6437,7 +6434,6 @@
     bindTradeControlListeners();
     bindTradeInteractionListeners();
     bindQuickAddListeners();
-    startSelectionPolling();
 
     const observer = new MutationObserver(() => {
       scheduleControlListenerRefresh();
@@ -6448,8 +6444,8 @@
     });
     runtime.observer = observer;
 
-    window.addEventListener("popstate", scheduleRefreshAfterDomUpdate, true);
-    window.addEventListener("hashchange", scheduleRefreshAfterDomUpdate, true);
+    window.addEventListener("popstate", handleTradeNavigation, true);
+    window.addEventListener("hashchange", handleTradeNavigation, true);
     window.addEventListener("keydown", (event) => {
       if (event.key === "Escape") {
         hideCompactLinkFavoriteTooltip();
@@ -6465,14 +6461,12 @@
   }
 
   function bindTradeInteractionListeners() {
-    const eventTypes = ["input", "change", "compositionend", "keyup", "paste", "cut", "click", "pointerup", "blur"];
-    for (const type of eventTypes) {
+    for (const type of SELECTION_COMMIT_EVENT_TYPES) {
       document.addEventListener(
         type,
         (event) => {
-          if (isTradeSelectionEventTarget(event.target)) {
+          if (isTradeSelectionCommitEvent(event)) {
             scheduleRefreshAfterDomUpdate();
-            scheduleControlListenerRefresh();
           }
         },
         true
@@ -6777,7 +6771,21 @@
     updateQuickAddControls();
   }
 
-  function isTradeSelectionEventTarget(target) {
+  function isTradeSelectionCommitEvent(event) {
+    const target = event?.target;
+    if (!isItemOrCategorySelectionTarget(target)) {
+      return false;
+    }
+    if (event.type === "click") {
+      return Boolean(target.closest(OPTION_SELECTOR));
+    }
+    if (event.type === "keydown") {
+      return event.key === "Enter";
+    }
+    return event.type === "change" && !target.matches?.("input.multiselect__input");
+  }
+
+  function isItemOrCategorySelectionTarget(target) {
     if (!(target instanceof Element) || runtime.ui.root?.contains(target)) {
       return false;
     }
@@ -6788,69 +6796,30 @@
     if (typeFilterGroup?.contains(target)) {
       return true;
     }
-    return Boolean(target.closest(OPTION_SELECTOR) || target.closest(OPTION_ROOT_SELECTOR));
+    return false;
   }
 
-  function startSelectionPolling() {
-    if (runtime.selectionPollTimer) {
-      return;
+  function refreshTradeNavigationState() {
+    const favoriteLeague = getCurrentFavoriteLeague();
+    if (favoriteLeague !== runtime.favoriteLeague) {
+      renderFavoriteDrawer();
     }
-    runtime.selectionSignature = getSelectionDomSignature();
-    runtime.selectionPollTimer = window.setInterval(() => {
-      const favoriteLeague = getCurrentFavoriteLeague();
-      if (favoriteLeague !== runtime.favoriteLeague) {
-        renderFavoriteDrawer();
-      }
-      const linkFavoriteLeague = getCurrentLinkFavoriteLeague();
-      if (
-        linkFavoriteLeague !== runtime.linkFavoriteLeague ||
-        location.href !== runtime.linkFavoriteLocationHref
-      ) {
-        renderLinkFavoritesDrawer();
-        publishFavoritesPanelState();
-      }
-      if (location.href !== runtime.linkHistoryLocationHref) {
-        runAsync(recordCurrentLinkHistory, "record link history");
-      }
-      const signature = getSelectionDomSignature();
-      if (signature === runtime.selectionSignature) {
-        return;
-      }
-      runtime.selectionSignature = signature;
-      scheduleRefreshAfterDomUpdate();
-      scheduleControlListenerRefresh();
-    }, 250);
-  }
-
-  function getSelectionDomSignature() {
-    const itemRoot = getItemSearchRoot();
-    const itemInput = getItemSearchInput();
-    const categoryRoot = getTypeCategoryMultiselect();
-    const activeElement = document.activeElement;
-    const activeValue =
-      activeElement instanceof HTMLInputElement || activeElement instanceof HTMLTextAreaElement
-        ? activeElement.value
-        : "";
-
-    return [
-      location.href,
-      itemInput?.value || "",
-      collectMultiselectSelectedTexts(itemRoot || itemInput).join("|"),
-      collectMultiselectSelectedTexts(categoryRoot).join("|"),
-      isActiveSelectionElement(activeElement, itemRoot, categoryRoot) ? activeValue : ""
-    ].join("\n");
-  }
-
-  function isActiveSelectionElement(activeElement, itemRoot, categoryRoot) {
-    if (!(activeElement instanceof Element) || runtime.ui.root?.contains(activeElement)) {
-      return false;
+    const linkFavoriteLeague = getCurrentLinkFavoriteLeague();
+    if (
+      linkFavoriteLeague !== runtime.linkFavoriteLeague ||
+      location.href !== runtime.linkFavoriteLocationHref
+    ) {
+      renderLinkFavoritesDrawer();
+      publishFavoritesPanelState();
     }
-    return Boolean(
-      activeElement.closest(ITEM_SEARCH_ROOT_SELECTOR) ||
-        itemRoot?.contains(activeElement) ||
-        categoryRoot?.contains(activeElement) ||
-        findTypeFilterGroup()?.contains(activeElement)
-    );
+    if (location.href !== runtime.linkHistoryLocationHref) {
+      runAsync(recordCurrentLinkHistory, "record link history");
+    }
+  }
+
+  function handleTradeNavigation() {
+    refreshTradeNavigationState();
+    scheduleRefreshAfterDomUpdate();
   }
 
   function scheduleControlListenerRefresh() {
@@ -6864,55 +6833,7 @@
   }
 
   function bindTradeControlListeners() {
-    if (runtime.controlListenerAbort) {
-      runtime.controlListenerAbort.abort();
-    }
-    for (const observer of runtime.controlObservers) {
-      observer.disconnect();
-    }
-    runtime.controlObservers = [];
-
-    const controller = new AbortController();
-    runtime.controlListenerAbort = controller;
-
-    const targets = new Set([
-      getItemSearchRoot(),
-      getItemSearchInput(),
-      getTypeCategoryMultiselect()
-    ]);
-
-    for (const target of targets) {
-      if (!target || runtime.ui.root?.contains(target)) {
-        continue;
-      }
-
-      bindSelectionTargetEvents(target, controller.signal);
-      observeSelectionTarget(target);
-    }
-
     refreshQuickAddControls();
-    scheduleRefresh();
-  }
-
-  function bindSelectionTargetEvents(target, signal) {
-    for (const type of ["input", "change", "click", "pointerup", "keyup", "blur"]) {
-      target.addEventListener(type, scheduleRefreshAfterDomUpdate, {
-        capture: true,
-        signal
-      });
-    }
-  }
-
-  function observeSelectionTarget(target) {
-    const observer = new MutationObserver(scheduleRefreshAfterDomUpdate);
-    observer.observe(target, {
-      childList: true,
-      subtree: true,
-      characterData: true,
-      attributes: true,
-      attributeFilter: ["class", "style", "value", "aria-expanded", "aria-selected"]
-    });
-    runtime.controlObservers.push(observer);
   }
 
   function bindPageBridgeMessages() {
@@ -6965,11 +6886,8 @@
           if (runtime.tradeSearchSnapshots.size > 12) {
             runtime.tradeSearchSnapshots.delete(runtime.tradeSearchSnapshots.keys().next().value);
           }
-          const current = getCurrentLinkFavoriteContext();
-          if (current?.league === league && current.queryId === queryId) {
-            runAsync(recordCurrentLinkHistory, "update link history snapshot");
-          }
         }
+        refreshTradeNavigationState();
         return;
       }
 
@@ -7133,14 +7051,10 @@
 
   function inferItemSelectionFromSearchBoxDom() {
     const texts = new Set();
-    const input = getItemSearchInput();
     const root = getItemSearchRoot();
 
-    for (const text of collectMultiselectSelectedTexts(root || input)) {
+    for (const text of collectMultiselectSelectedTexts(root)) {
       texts.add(text);
-    }
-    if (input?.value) {
-      texts.add(input.value);
     }
 
     return inferSelectionFromTexts(texts, {
@@ -7213,14 +7127,10 @@
     const selectedSelectors = [
       ".multiselect__tags > .multiselect__single",
       ".multiselect__tags .multiselect__tag",
-      ".multiselect__option--selected",
-      "input.multiselect__input"
+      ".multiselect__option--selected"
     ];
 
     for (const element of multiselect.querySelectorAll(selectedSelectors.join(","))) {
-      if (element instanceof HTMLInputElement || element instanceof HTMLTextAreaElement) {
-        values.push(element.value || "");
-      }
       values.push(element.getAttribute("title") || "");
       values.push(element.getAttribute("data-value") || "");
       values.push(element.getAttribute("data-text") || "");

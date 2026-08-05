@@ -135,6 +135,11 @@
   opacity: var(--poe2-marketwright-idle-opacity, 0.5);
 }
 
+/* Trade's mandatory option snapping turns mouse-wheel scrolling into row jumps. */
+#trade .multiselect .multiselect__content-wrapper {
+  scroll-snap-type: none !important;
+}
+
 #poe2-trade2-affix-filter-root * {
   box-sizing: border-box;
 }

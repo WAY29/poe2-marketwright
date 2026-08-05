@@ -82,6 +82,10 @@ PoE2 Marketwright 为官方 [`trade2`](https://www.pathofexile.com/trade2) 页�
   <img src="assets/affix-search-keywords.png" alt="以空格分隔关键字的词缀搜索" width="92%">
 </p>
 
+### 候选列表连续滚动
+
+扩展会让物品和词缀长候选列表的鼠标滚轮更顺滑，可以连续浏览选项，不会在候选行之间跳动。
+
 ### 词缀等级选择
 
 支持 Tier 的词缀会在左侧显示 `T` 按钮，可直接选择词缀等级。
