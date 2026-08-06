@@ -5,6 +5,14 @@ const fs = require("node:fs");
 const vm = require("node:vm");
 const { test } = require("node:test");
 
+test("full history header keeps collapse, name, and clear controls on one row", () => {
+  const styles = fs.readFileSync("favorites-panel.css", "utf8");
+  assert.match(
+    styles,
+    /\.favorites-panel-history > \.favorites-panel-folder-header \{\s*grid-template-columns: auto minmax\(0, 1fr\) auto;/
+  );
+});
+
 test("full view defaults to compact and migrates the open item drawer", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
