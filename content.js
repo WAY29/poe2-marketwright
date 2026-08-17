@@ -548,6 +548,7 @@
     renameFavorite: "Rename favorite",
     deleteFavorite: "Delete favorite",
     undoFavoriteDelete: "Undo",
+    dismissFavoriteFeedback: "Dismiss",
     favoriteDeleted: "Favorite deleted",
     favoriteSearchLoading: "Creating search...",
     favoriteSearchError: "Search failed. Retry.",
@@ -1113,14 +1114,17 @@
     root.id = ROOT_ID;
     root.innerHTML = `
       <aside class="poe2-marketwright-link-favorites-drawer" aria-live="polite">
+        <div id="poe2-marketwright-link-favorites-feedback" class="poe2-marketwright-link-favorite-feedback" aria-live="polite" hidden>
+          <span id="poe2-marketwright-link-favorites-feedback-text" class="poe2-marketwright-link-favorites-feedback-text"></span>
+          <button id="poe2-marketwright-link-favorites-feedback-undo" class="poe2-marketwright-link-favorites-feedback-undo" type="button" hidden></button>
+          <button id="poe2-marketwright-link-favorites-feedback-dismiss" class="poe2-marketwright-link-favorites-feedback-dismiss" type="button">
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8m0-8l-8 8" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"></path></svg>
+          </button>
+        </div>
         <div class="poe2-marketwright-link-favorites-header">
           <div class="poe2-marketwright-link-favorites-header-row">
             <span id="poe2-marketwright-link-favorites-league" class="poe2-marketwright-link-favorites-league"></span>
             <div class="poe2-marketwright-link-favorites-header-actions">
-              <div id="poe2-marketwright-link-favorites-feedback" class="poe2-marketwright-link-favorite-feedback" aria-live="polite" hidden>
-                <span id="poe2-marketwright-link-favorites-feedback-text" class="poe2-marketwright-link-favorites-feedback-text"></span>
-                <button id="poe2-marketwright-link-favorites-feedback-undo" class="poe2-marketwright-link-favorites-feedback-undo" type="button" hidden></button>
-              </div>
               <button id="poe2-marketwright-link-favorites-import" class="poe2-marketwright-link-favorites-header-action" type="button" aria-label="" title="">
                 <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M7.25 1.5h1.5v6.1l2.1-2.1 1.05 1.05L8 10.25 4.2 6.55l1.05-1.05 2 2V1.5zm-5.5 9.2h12.5v3.8H1.75v-3.8zm1.5 1.5v.8h9.5v-.8h-9.5z"></path></svg>
               </button>
@@ -1147,14 +1151,17 @@
         <div id="poe2-marketwright-link-favorites-list" class="poe2-marketwright-link-favorites-list"></div>
       </aside>
       <aside class="poe2-marketwright-favorites-drawer" aria-live="polite">
+        <div id="poe2-marketwright-favorites-feedback" class="poe2-marketwright-favorite-feedback" aria-live="polite" hidden>
+          <span id="poe2-marketwright-favorites-feedback-text" class="poe2-marketwright-favorites-feedback-text"></span>
+          <button id="poe2-marketwright-favorites-feedback-undo" class="poe2-marketwright-favorites-feedback-undo" type="button"></button>
+          <button id="poe2-marketwright-favorites-feedback-dismiss" class="poe2-marketwright-favorites-feedback-dismiss" type="button">
+            <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 4l8 8m0-8l-8 8" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"></path></svg>
+          </button>
+        </div>
         <div class="poe2-marketwright-favorites-header">
           <div class="poe2-marketwright-favorites-header-row">
             <span id="poe2-marketwright-favorites-league" class="poe2-marketwright-favorites-league"></span>
             <div class="poe2-marketwright-favorites-header-actions">
-              <div id="poe2-marketwright-favorites-feedback" class="poe2-marketwright-favorite-feedback" aria-live="polite" hidden>
-                <span id="poe2-marketwright-favorites-feedback-text" class="poe2-marketwright-favorites-feedback-text"></span>
-                <button id="poe2-marketwright-favorites-feedback-undo" class="poe2-marketwright-favorites-feedback-undo" type="button"></button>
-              </div>
               <button id="poe2-marketwright-favorites-collapse-all" class="poe2-marketwright-favorites-header-action" type="button" aria-label="" title="">
                 <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M3.2 2.5 8 7.3l4.8-4.8v2.15L8 9.45 3.2 4.65V2.5zm0 6.05L8 13.35l4.8-4.8v2.15L8 15.5 3.2 10.7V8.55z"></path></svg>
               </button>
@@ -1329,6 +1336,7 @@
     runtime.ui.linkFavoritesFeedback = root.querySelector("#poe2-marketwright-link-favorites-feedback");
     runtime.ui.linkFavoritesFeedbackText = root.querySelector("#poe2-marketwright-link-favorites-feedback-text");
     runtime.ui.linkFavoritesFeedbackUndo = root.querySelector("#poe2-marketwright-link-favorites-feedback-undo");
+    runtime.ui.linkFavoritesFeedbackDismiss = root.querySelector("#poe2-marketwright-link-favorites-feedback-dismiss");
     runtime.ui.favoritesDrawer = root.querySelector(".poe2-marketwright-favorites-drawer");
     runtime.ui.favoritesClose = root.querySelector("#poe2-marketwright-favorites-close");
     runtime.ui.favoritesDisclosure = root.querySelector("#poe2-marketwright-favorites-disclosure");
@@ -1342,6 +1350,7 @@
     runtime.ui.favoritesFeedback = root.querySelector("#poe2-marketwright-favorites-feedback");
     runtime.ui.favoritesFeedbackText = root.querySelector("#poe2-marketwright-favorites-feedback-text");
     runtime.ui.favoritesFeedbackUndo = root.querySelector("#poe2-marketwright-favorites-feedback-undo");
+    runtime.ui.favoritesFeedbackDismiss = root.querySelector("#poe2-marketwright-favorites-feedback-dismiss");
     runtime.ui.collapse = root.querySelector("#poe2-trade2-affix-filter-collapse");
     runtime.ui.expand = root.querySelector("#poe2-trade2-affix-filter-expand");
     runtime.ui.enabled = root.querySelector("#poe2-trade2-affix-filter-enabled");
@@ -1487,6 +1496,9 @@
     runtime.ui.linkFavoritesFeedbackUndo.addEventListener("click", () => {
       runAsync(undoDeletedLinkFavorite, "undo link favorite deletion");
     });
+    runtime.ui.linkFavoritesFeedbackDismiss.addEventListener("click", () => {
+      dismissFavoriteFeedback();
+    });
 
     runtime.ui.favoritesSearch.addEventListener("input", renderFavoriteDrawer);
     runtime.ui.favoritesNewFolder.addEventListener("click", () => {
@@ -1502,6 +1514,9 @@
     });
     runtime.ui.favoritesFeedbackUndo.addEventListener("click", () => {
       runAsync(undoDeletedFavorite, "undo favorite deletion");
+    });
+    runtime.ui.favoritesFeedbackDismiss.addEventListener("click", () => {
+      dismissFavoriteFeedback();
     });
 
     runtime.ui.enabled.addEventListener("click", () => {
@@ -1692,6 +1707,10 @@
     runtime.ui.favoritesFeedbackText.textContent = t("favoriteDeleted");
     runtime.ui.favoritesFeedbackUndo.textContent = t("undoFavoriteDelete");
     runtime.ui.favoritesFeedbackUndo.title = t("undoFavoriteDelete");
+    if (runtime.ui.favoritesFeedbackDismiss) {
+      runtime.ui.favoritesFeedbackDismiss.title = t("dismissFavoriteFeedback");
+      runtime.ui.favoritesFeedbackDismiss.setAttribute("aria-label", t("dismissFavoriteFeedback"));
+    }
     runtime.ui.favoritesNewFolder.setAttribute("aria-label", t("createFavoriteFolder"));
     runtime.ui.favoritesNewFolder.title = t("createFavoriteFolder");
     runtime.ui.favoritesCollapseAll.setAttribute("aria-label", t("collapseAllFavoriteFolders"));
@@ -1709,6 +1728,10 @@
     runtime.ui.linkFavoritesCollapseAll.title = t("collapseAllLinkFavoriteFolders");
     runtime.ui.linkFavoritesFeedbackUndo.textContent = t("undoFavoriteDelete");
     runtime.ui.linkFavoritesFeedbackUndo.title = t("undoFavoriteDelete");
+    if (runtime.ui.linkFavoritesFeedbackDismiss) {
+      runtime.ui.linkFavoritesFeedbackDismiss.title = t("dismissFavoriteFeedback");
+      runtime.ui.linkFavoritesFeedbackDismiss.setAttribute("aria-label", t("dismissFavoriteFeedback"));
+    }
     runtime.ui.linkFavoritesClose.setAttribute("aria-label", t("closeLinkFavoritesDrawer"));
     runtime.ui.linkFavoritesClose.title = t("closeLinkFavoritesDrawer");
     runtime.ui.tierModeOptions.forEach((option) => {
@@ -2426,6 +2449,9 @@
         break;
       case "undo-link":
         await undoDeletedLinkFavorite();
+        break;
+      case "dismiss-feedback":
+        dismissFavoriteFeedback();
         break;
       case "reorder-link":
         await reorderLinkFavorite(payload.linkId, payload.folderId || null, payload.targetId, payload.placeAfter !== false);
@@ -3647,7 +3673,7 @@
       runtime.deletedFavoriteTimer = null;
       renderFavoriteFeedback();
       publishFavoritesPanelState();
-    }, 5000);
+    }, 10000);
     renderFavoriteFeedback();
     publishFavoritesPanelState();
   }
@@ -3911,7 +3937,7 @@
       runtime.linkFavoriteFeedback = null;
       runtime.linkFavoriteFeedbackTimer = null;
       renderLinkFavoritesDrawer();
-    }, 2600);
+    }, 10000);
     renderLinkFavoritesDrawer();
     publishFavoritesPanelState();
   }
@@ -3923,6 +3949,20 @@
     runtime.linkFavoriteFeedback = null;
     runtime.linkFavoriteFeedbackTimer = null;
     publishFavoritesPanelState();
+  }
+
+  function dismissFavoriteFeedback() {
+    if (runtime.deletedFavoriteTimer) {
+      window.clearTimeout(runtime.deletedFavoriteTimer);
+      runtime.deletedFavoriteTimer = null;
+    }
+    runtime.deletedFavorite = null;
+    runtime.deletedLinkFavorites = [];
+    scheduleDeletedLinkFavoriteExpiry();
+    clearLinkFavoriteFeedback();
+    renderFavoriteFeedback();
+    renderFavoriteDrawer();
+    renderLinkFavoritesDrawer();
   }
 
   async function replaceLinkFavorites(nextLinkFavorites, options = {}) {
@@ -4425,7 +4465,7 @@
     runtime.deletedLinkFavorites.push({
       link,
       index,
-      expiresAt: Date.now() + 5000
+      expiresAt: Date.now() + 10000
     });
     scheduleDeletedLinkFavoriteExpiry();
   }

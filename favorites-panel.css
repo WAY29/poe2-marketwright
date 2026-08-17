@@ -115,6 +115,7 @@ button {
 }
 
 .favorites-panel-shell {
+  position: relative;
   display: flex;
   height: 100%;
   flex-direction: column;
@@ -821,18 +822,30 @@ h1 {
   line-height: 14px;
 }
 
-.favorites-panel-feedback {
-  justify-content: space-between;
+.favorites-panel-toast {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  z-index: 6;
+  display: flex;
+  align-items: flex-start;
   gap: 8px;
-  margin: 4px 0 7px;
+  margin: 0;
   padding: 6px 7px;
   border: 1px solid rgba(136, 104, 57, 0.75);
   color: #ddc99e;
-  background: rgba(35, 24, 15, 0.88);
-  font: 11px/1.25 "Segoe UI", sans-serif;
+  background: rgba(25, 18, 11, 0.96);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.36);
+  font: 11px/1.25 Georgia, "Times New Roman", serif;
 }
 
-.favorites-panel-feedback[data-state="error"] {
+.favorites-panel-toast-text {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.favorites-panel-toast[data-state="error"] {
   border-color: rgba(163, 84, 69, 0.9);
   color: #edb9ad;
 }

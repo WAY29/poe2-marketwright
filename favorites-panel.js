@@ -39,6 +39,7 @@
     renameFavorite: "Rename favorite",
     deleteFavorite: "Delete favorite",
     undoFavoriteDelete: "Undo",
+    dismissFavoriteFeedback: "Dismiss",
     favoriteDeleted: "Favorite deleted",
     favoriteFolderDeleted: "Folder deleted",
     createFavoriteFolder: "Create folder",
@@ -280,6 +281,7 @@
     ui.itemsTab.tabIndex = local.tab === "items" ? 0 : -1;
     ui.linksTab.tabIndex = local.tab === "links" ? 0 : -1;
     ui.content.replaceChildren();
+    document.getElementById("favorites-panel-toast")?.remove();
 
     if (!state?.available) {
       ui.content.appendChild(createElement("p", "favorites-panel-unavailable", t("favoritesPanelUnavailable")));
@@ -287,8 +289,44 @@
       return;
     }
     ui.content.appendChild(local.tab === "links" ? renderLinks(state) : renderItems(state));
+    renderFavoritesPanelToast(state);
     restoreSearchFocus(searchFocus);
     renderFavoritesPanelConfirmationDialog();
+  }
+
+  function renderFavoritesPanelToast(state) {
+    document.getElementById("favorites-panel-toast")?.remove();
+    const item = state?.deletedFavorite;
+    const link = state?.feedback;
+    const useItem = local.tab === "items" ? item : !link && item;
+    const useLink = !useItem && link;
+    if (!useItem && !useLink) {
+      return;
+    }
+    const toast = createElement("div", "favorites-panel-toast");
+    toast.id = "favorites-panel-toast";
+    toast.dataset.state = useLink ? link.state || "ready" : "ready";
+    toast.appendChild(
+      createElement(
+        "span",
+        "favorites-panel-toast-text",
+        useItem
+          ? t(item.kind === "folder" ? "favoriteFolderDeleted" : "favoriteDeleted")
+          : link.text || ""
+      )
+    );
+    if (useItem || state.deletedLinkCount) {
+      const undo = makeTextButton(t("undoFavoriteDelete"));
+      undo.addEventListener("click", () => run(useItem ? "undo-favorite" : "undo-link"));
+      toast.appendChild(undo);
+    }
+    const dismiss = createIconButton(
+      t("dismissFavoriteFeedback"),
+      "M3.2 2.1 8 6.9l4.8-4.8 1.1 1.1L9.1 8l4.8 4.8-1.1 1.1L8 9.1l-4.8 4.8-1.1-1.1L6.9 8 2.1 3.2z"
+    );
+    dismiss.addEventListener("click", () => run("dismiss-feedback"));
+    toast.appendChild(dismiss);
+    ui.content.parentElement?.appendChild(toast);
   }
 
   function renderFavoritesPanelConfirmationDialog() {
@@ -482,14 +520,6 @@
 
   function renderItemResults(state, root) {
     root.replaceChildren();
-    if (state.deletedFavorite) {
-      const feedback = createElement("div", "favorites-panel-feedback");
-      feedback.appendChild(createElement("span", "", t(state.deletedFavorite.kind === "folder" ? "favoriteFolderDeleted" : "favoriteDeleted")));
-      const undo = makeTextButton(t("undoFavoriteDelete"));
-      undo.addEventListener("click", () => run("undo-favorite"));
-      feedback.appendChild(undo);
-      root.appendChild(feedback);
-    }
     if (local.creatingFavoriteFolder) {
       const input = createElement("input", "favorites-panel-folder-input");
       input.type = "text";
@@ -802,18 +832,6 @@
   function renderLinkResults(state, root) {
     root.replaceChildren();
     const folders = state.linkFavorites?.folders || [];
-    if (state.feedback) {
-      const feedback = createElement("div", "favorites-panel-feedback");
-      feedback.dataset.state = state.feedback.state || "ready";
-      feedback.appendChild(createElement("span", "", state.feedback.text || ""));
-      if (state.deletedLinkCount) {
-        const undo = makeTextButton(t("undoFavoriteDelete"));
-        undo.addEventListener("click", () => run("undo-link"));
-        feedback.appendChild(undo);
-      }
-      root.appendChild(feedback);
-    }
-
     if (local.importing) {
       root.appendChild(renderImportForm());
       return;

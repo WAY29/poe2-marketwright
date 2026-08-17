@@ -1269,33 +1269,32 @@
 .poe2-marketwright-favorite-feedback,
 .poe2-marketwright-link-favorite-feedback {
   position: absolute;
-  top: 50%;
-  right: calc(100% + 8px);
-  z-index: 1;
+  top: 8px;
+  left: 8px;
+  right: 8px;
+  z-index: 6;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
-  width: max-content;
-  max-width: 150px;
+  width: auto;
+  max-width: none;
   margin: 0;
-  padding: 3px 6px;
+  padding: 6px 8px;
   overflow: hidden;
   border: 1px solid rgba(136, 104, 57, 0.86);
   color: #d0bd91;
   background: rgba(25, 18, 11, 0.96);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.36);
   font-size: 10px;
-  line-height: 1.2;
+  line-height: 1.25;
   text-align: left;
-  transform: translateY(-50%);
-  white-space: nowrap;
+  pointer-events: auto;
 }
 
 .poe2-marketwright-favorites-feedback-text,
 .poe2-marketwright-link-favorites-feedback-text {
+  flex: 1 1 auto;
   min-width: 0;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 .poe2-marketwright-favorites-feedback-undo,
@@ -1325,6 +1324,34 @@
 .poe2-marketwright-favorites-feedback-undo[hidden],
 .poe2-marketwright-link-favorites-feedback-undo[hidden] {
   display: none;
+}
+
+.poe2-marketwright-favorites-feedback-dismiss,
+.poe2-marketwright-link-favorites-feedback-dismiss {
+  flex: 0 0 auto;
+  width: 18px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  color: inherit;
+  background: transparent;
+  cursor: pointer;
+}
+
+.poe2-marketwright-favorites-feedback-dismiss svg,
+.poe2-marketwright-link-favorites-feedback-dismiss svg {
+  display: block;
+  width: 12px;
+  height: 12px;
+  margin: 3px auto 0;
+}
+
+.poe2-marketwright-favorites-feedback-dismiss:hover,
+.poe2-marketwright-favorites-feedback-dismiss:focus-visible,
+.poe2-marketwright-link-favorites-feedback-dismiss:hover,
+.poe2-marketwright-link-favorites-feedback-dismiss:focus-visible {
+  color: #ead7aa;
+  outline: none;
 }
 
 .poe2-marketwright-favorite-feedback[hidden],

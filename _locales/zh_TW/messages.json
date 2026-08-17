@@ -633,6 +633,9 @@
   "undoFavoriteDelete": {
     "message": "復原"
   },
+  "dismissFavoriteFeedback": {
+    "message": "關閉"
+  },
   "favoriteDeleted": {
     "message": "已刪除收藏"
   },

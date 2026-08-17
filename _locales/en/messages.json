@@ -345,6 +345,9 @@
   "undoFavoriteDelete": {
     "message": "Undo"
   },
+  "dismissFavoriteFeedback": {
+    "message": "Dismiss"
+  },
   "favoriteDeleted": {
     "message": "Favorite deleted"
   },
