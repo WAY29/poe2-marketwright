@@ -68,6 +68,12 @@
     importLinkFavorites: "Import bookmarks",
     exportLinkFavorites: "Export bookmarks to clipboard",
     importLinkFavoritesPlaceholder: "Paste exported bookmark JSON",
+    importLinkFavoritesModeJson: "Bookmark JSON",
+    importLinkFavoritesModePob: "PoB code",
+    importLinkFavoritesPobPlaceholder: "Paste a Path of Building share code",
+    importLinkFavoritesTolerance: "Downward float %",
+    importLinkFavoritesFolderName: "Folder name",
+    importLinkFavoritesFolderPlaceholder: "PoB",
     confirmLinkFavoriteImport: "Import",
     cancelLinkFavoriteImport: "Cancel",
     confirmDeleteLinkFavoriteFolder: "Delete folder and $1 bookmarks",
@@ -149,6 +155,12 @@
     movingFavoriteSignature: null,
     creatingFolder: false,
     importing: false,
+    importMode: "json",
+    importTolerance: 10,
+    importText: "",
+    importFolderName: "",
+    importFolderTouched: false,
+    importPreviewTimer: null,
     confirmingFolderId: null,
     confirmingHistoryClear: false,
     movingLinkId: null,
@@ -766,6 +778,7 @@
     importButton.disabled = !state.linkFavoritesEnabled;
     importButton.addEventListener("click", () => {
       local.importing = true;
+      local.importMode = "json";
       local.creatingFolder = false;
       render();
     });
@@ -873,6 +886,10 @@
     }
     root.appendChild(folderList);
     root.appendChild(rootList);
+    if (state.focusLinkFolderId) {
+      const focused = folderList.querySelector(`[data-folder-id="${CSS.escape(state.focusLinkFolderId)}"]`);
+      window.setTimeout(() => focused?.scrollIntoView?.({ block: "start" }), 0);
+    }
     if (state.linkHistoryEnabled) {
       const history = renderHistory(state, query);
       root.appendChild(history);
@@ -882,27 +899,125 @@
     }
   }
 
+  function resetImportForm() {
+    local.importing = false;
+    local.importText = "";
+    local.importFolderName = "";
+    local.importFolderTouched = false;
+    window.clearTimeout(local.importPreviewTimer);
+    local.importPreviewTimer = null;
+  }
+
+  function schedulePobFolderPreview(code, folderInput) {
+    window.clearTimeout(local.importPreviewTimer);
+    if (local.importFolderTouched) {
+      return;
+    }
+    local.importPreviewTimer = window.setTimeout(async () => {
+      try {
+        const parser = globalThis.Poe2MarketwrightPobParse;
+        const tools = globalThis.Poe2MarketwrightFavorites?.createLinkFavoriteTools?.();
+        if (!parser?.previewPobBuild || !tools?.defaultPobFolderName) {
+          return;
+        }
+        const name = tools.defaultPobFolderName(await parser.previewPobBuild(code));
+        if (local.importFolderTouched || !name) {
+          return;
+        }
+        local.importFolderName = name;
+        if (folderInput?.isConnected) {
+          folderInput.value = name;
+        }
+      } catch (error) {
+        console.debug("[PoE2 Marketwright] PoB folder preview failed", error);
+      }
+    }, 200);
+  }
+
   function renderImportForm() {
     const form = createElement("form", "favorites-panel-confirm");
+    const mode = local.importMode === "pob" ? "pob" : "json";
+    const modes = createElement("div", "favorites-panel-import-modes");
+    for (const [value, labelKey] of [
+      ["json", "importLinkFavoritesModeJson"],
+      ["pob", "importLinkFavoritesModePob"]
+    ]) {
+      const label = createElement("label", "favorites-panel-import-mode");
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "favorites-panel-import-mode";
+      input.value = value;
+      input.checked = mode === value;
+      input.addEventListener("change", () => {
+        local.importMode = value;
+        render();
+      });
+      label.append(input, document.createTextNode(t(labelKey)));
+      modes.appendChild(label);
+    }
     const textarea = createElement("textarea", "favorites-panel-import-input");
-    textarea.placeholder = t("importLinkFavoritesPlaceholder");
-    textarea.setAttribute("aria-label", t("importLinkFavorites"));
+    textarea.value = local.importText || "";
+    textarea.placeholder = t(mode === "pob" ? "importLinkFavoritesPobPlaceholder" : "importLinkFavoritesPlaceholder");
+    textarea.setAttribute("aria-label", t(mode === "pob" ? "importLinkFavoritesModePob" : "importLinkFavorites"));
     textarea.spellcheck = false;
+    textarea.addEventListener("input", () => {
+      local.importText = textarea.value;
+      if (mode === "pob") {
+        schedulePobFolderPreview(textarea.value, form.querySelector(".favorites-panel-import-folder"));
+      }
+    });
+    const extras = createElement("div", "favorites-panel-import-extras");
+    if (mode === "pob") {
+      const folderLabel = createElement("label", "favorites-panel-import-field");
+      folderLabel.appendChild(document.createTextNode(t("importLinkFavoritesFolderName")));
+      const folder = document.createElement("input");
+      folder.type = "text";
+      folder.className = "favorites-panel-import-folder";
+      folder.value = local.importFolderName || "";
+      folder.placeholder = t("importLinkFavoritesFolderPlaceholder");
+      folder.addEventListener("input", () => {
+        local.importFolderName = folder.value;
+        local.importFolderTouched = Boolean(folder.value.trim());
+      });
+      folderLabel.appendChild(folder);
+      const toleranceLabel = createElement("label", "favorites-panel-import-field");
+      toleranceLabel.appendChild(document.createTextNode(t("importLinkFavoritesTolerance")));
+      const tolerance = document.createElement("input");
+      tolerance.type = "number";
+      tolerance.min = "0";
+      tolerance.max = "90";
+      tolerance.step = "1";
+      tolerance.className = "favorites-panel-import-tolerance";
+      tolerance.value = String(local.importTolerance ?? 10);
+      tolerance.addEventListener("input", () => {
+        local.importTolerance = Number(tolerance.value);
+      });
+      toleranceLabel.appendChild(tolerance);
+      extras.append(folderLabel, toleranceLabel);
+      if (local.importText) {
+        schedulePobFolderPreview(local.importText, folder);
+      }
+    }
     const actions = createElement("div", "favorites-panel-confirm-actions");
     const cancel = makeTextButton(t("cancelLinkFavoriteImport"));
     cancel.type = "button";
     cancel.addEventListener("click", () => {
-      local.importing = false;
+      resetImportForm();
       render();
     });
     const submit = makeTextButton(t("confirmLinkFavoriteImport"));
     submit.type = "submit";
     actions.append(cancel, submit);
-    form.append(textarea, actions);
+    form.append(modes, textarea, extras, actions);
     form.addEventListener("submit", (event) => {
       event.preventDefault();
-      run("import-links", { text: textarea.value }).finally(() => {
-        local.importing = false;
+      run("import-links", {
+        text: textarea.value,
+        mode,
+        folderName: local.importFolderName,
+        tolerance: local.importTolerance
+      }).finally(() => {
+        resetImportForm();
       });
     });
     window.setTimeout(() => textarea.focus(), 0);
@@ -1416,6 +1531,9 @@
     const history = options.history === true;
     const toggle = options.toggle || ((collapsed) => run("toggle-folder", { folderId: folder.id, collapsed }));
     const section = createElement("section", `favorites-panel-folder${history ? " favorites-panel-history" : ""}`);
+    if (!history && folder.id) {
+      section.dataset.folderId = folder.id;
+    }
     const header = createElement("div", "favorites-panel-folder-header");
     header.addEventListener("click", (event) => {
       if (shouldToggleFolderFromHeader(event)) {

@@ -453,6 +453,75 @@
   "importLinkFavoritesPlaceholder": {
     "message": "Paste exported bookmark JSON"
   },
+  "importLinkFavoritesModeJson": {
+    "message": "Bookmark JSON"
+  },
+  "importLinkFavoritesModePob": {
+    "message": "PoB code"
+  },
+  "importLinkFavoritesPobPlaceholder": {
+    "message": "Paste a Path of Building share code"
+  },
+  "importLinkFavoritesTolerance": {
+    "message": "Downward float %"
+  },
+  "importLinkFavoritesFolderName": {
+    "message": "Folder name"
+  },
+  "importLinkFavoritesFolderPlaceholder": {
+    "message": "PoB"
+  },
+  "linkFavoritePobImportInvalid": {
+    "message": "Paste a valid PoB share code"
+  },
+  "linkFavoriteSearchFailed": {
+    "message": "Unable to open this bookmark"
+  },
+  "pobImportSlotWeapon": {
+    "message": "Weapon"
+  },
+  "pobImportSlotOffhand": {
+    "message": "Off-hand"
+  },
+  "pobImportSlotWeaponSwap": {
+    "message": "Weapon (swap)"
+  },
+  "pobImportSlotOffhandSwap": {
+    "message": "Off-hand (swap)"
+  },
+  "pobImportSlotHelmet": {
+    "message": "Helmet"
+  },
+  "pobImportSlotBody": {
+    "message": "Body Armour"
+  },
+  "pobImportSlotGloves": {
+    "message": "Gloves"
+  },
+  "pobImportSlotBoots": {
+    "message": "Boots"
+  },
+  "pobImportSlotBelt": {
+    "message": "Belt"
+  },
+  "pobImportSlotAmulet": {
+    "message": "Amulet"
+  },
+  "pobImportSlotRing": {
+    "message": "Ring"
+  },
+  "pobImportSlotFlask": {
+    "message": "Flask"
+  },
+  "pobImportSlotCharm": {
+    "message": "Charm"
+  },
+  "pobImportSlotJewel": {
+    "message": "Jewel"
+  },
+  "pobImportSlotUnequipped": {
+    "message": "Unequipped"
+  },
   "confirmLinkFavoriteImport": {
     "message": "Import"
   },

@@ -651,6 +651,63 @@
       };
     };
 
+    const normalizePendingSearch = (value) => {
+      if (!value || typeof value !== "object" || Array.isArray(value)) {
+        return null;
+      }
+      const query = value.query;
+      const sort = value.sort;
+      if (!query || typeof query !== "object" || Array.isArray(query)) {
+        return null;
+      }
+      if (!sort || typeof sort !== "object" || Array.isArray(sort)) {
+        return null;
+      }
+      return { query, sort };
+    };
+
+    const createPendingLinkFavoriteRecord = ({
+      league,
+      displayName,
+      folderId = null,
+      id = null,
+      createdAt = Date.now(),
+      updatedAt = createdAt,
+      filterGroups = [],
+      displaySnapshot = null,
+      pendingSearch
+    } = {}) => {
+      const name = normalizeName(displayName);
+      const normalizedLeague = normalizeName(league);
+      const normalizedPending = normalizePendingSearch(pendingSearch);
+      if (!name) {
+        throw createLinkFavoriteError("missing_link_favorite_name", "Link favorite requires a display name");
+      }
+      if (!normalizedLeague) {
+        throw createLinkFavoriteError("missing_link_favorite_import_league", "A destination league is required");
+      }
+      if (!normalizedPending) {
+        throw createLinkFavoriteError("invalid_link_favorite_import", "Pending search is required");
+      }
+      const timestamp = normalizeTimestamp(createdAt, Date.now());
+      const normalizedFilterGroups = normalizeLinkFavoriteFilterGroups(filterGroups);
+      const normalizedDisplaySnapshot = normalizeLinkFavoriteDisplaySnapshot(displaySnapshot);
+      return {
+        id: normalizeId(id) || createLinkFavoriteId("link"),
+        league: normalizedLeague,
+        queryId: null,
+        url: null,
+        displayName: name,
+        folderId: normalizeId(folderId),
+        createdAt: timestamp,
+        updatedAt: normalizeTimestamp(updatedAt, timestamp),
+        lastUsedAt: null,
+        pendingSearch: normalizedPending,
+        ...(normalizedFilterGroups.length ? { filterGroups: normalizedFilterGroups } : {}),
+        ...(normalizedDisplaySnapshot ? { displaySnapshot: normalizedDisplaySnapshot } : {})
+      };
+    };
+
     const createLinkFavoriteRecord = ({
       url,
       displayName,
@@ -659,8 +716,23 @@
       createdAt = Date.now(),
       updatedAt = createdAt,
       filterGroups = [],
-      displaySnapshot = null
+      displaySnapshot = null,
+      pendingSearch = null,
+      league = null
     } = {}) => {
+      if (pendingSearch && !url) {
+        return createPendingLinkFavoriteRecord({
+          league,
+          displayName,
+          folderId,
+          id,
+          createdAt,
+          updatedAt,
+          filterGroups,
+          displaySnapshot,
+          pendingSearch
+        });
+      }
       const parsed = validateTradeSearchUrl(url);
       const name = normalizeName(displayName);
       if (!name) {
@@ -689,6 +761,26 @@
       const displayName = normalizeName(rawLink?.displayName);
       if (!id || !displayName) {
         return null;
+      }
+      const pendingSearch = normalizePendingSearch(rawLink?.pendingSearch);
+      if (pendingSearch && !rawLink?.url) {
+        const filterGroups = normalizeLinkFavoriteFilterGroups(rawLink?.filterGroups);
+        const displaySnapshot = normalizeLinkFavoriteDisplaySnapshot(rawLink?.displaySnapshot);
+        const createdAt = normalizeTimestamp(rawLink?.createdAt);
+        return {
+          id,
+          league,
+          queryId: null,
+          url: null,
+          displayName,
+          folderId: allowFolder ? normalizeId(rawLink?.folderId) : null,
+          createdAt,
+          updatedAt: normalizeTimestamp(rawLink?.updatedAt, createdAt),
+          lastUsedAt: rawLink?.lastUsedAt == null ? null : normalizeTimestamp(rawLink.lastUsedAt),
+          pendingSearch,
+          ...(filterGroups.length ? { filterGroups } : {}),
+          ...(displaySnapshot ? { displaySnapshot } : {})
+        };
       }
       let parsed;
       try {
@@ -894,7 +986,7 @@
       const getBookmarks = (linkIds) =>
         (linkIds || [])
           .map((linkId) => linksById.get(linkId))
-          .filter(Boolean)
+          .filter((link) => link?.queryId && link?.url)
           .map(createExternalLinkFavoriteBookmark);
       const folders = leagueState.folderOrder
         .map((folderId) => leagueState.folders.find((folder) => folder.id === folderId))
@@ -1027,14 +1119,336 @@
       };
     };
 
+    const POB_SLOT_RANK = Object.freeze({
+      "Weapon 1": 10,
+      "Weapon 2": 11,
+      "Weapon 1 Swap": 20,
+      "Weapon 2 Swap": 21,
+      Helmet: 30,
+      "Body Armour": 31,
+      Gloves: 32,
+      Boots: 33,
+      Belt: 34,
+      Amulet: 40,
+      "Ring 1": 41,
+      "Ring 2": 42,
+      "Ring 3": 43,
+      "Flask 1": 50,
+      "Flask 2": 51,
+      "Charm 1": 60,
+      "Charm 2": 61,
+      "Charm 3": 62
+    });
+    const POB_JEWEL_PAGES = new Set([
+      "Ruby",
+      "Emerald",
+      "Sapphire",
+      "Diamond",
+      "Time-Lost_Ruby",
+      "Time-Lost_Emerald",
+      "Time-Lost_Sapphire",
+      "Time-Lost_Diamond"
+    ]);
+    const DEFAULT_POB_SLOT_LABELS = Object.freeze({
+      weapon: "Weapon",
+      offhand: "Off-hand",
+      weaponSwap: "Weapon (swap)",
+      offhandSwap: "Off-hand (swap)",
+      helmet: "Helmet",
+      body: "Body Armour",
+      gloves: "Gloves",
+      boots: "Boots",
+      belt: "Belt",
+      amulet: "Amulet",
+      ring: "Ring",
+      flask: "Flask",
+      charm: "Charm",
+      jewel: "Jewel",
+      unequipped: "Unequipped"
+    });
+
+    const normalizeNumber = (value) => {
+      const rounded = Math.round(Number(value) * 1000000) / 1000000;
+      return Object.is(rounded, -0) ? 0 : rounded;
+    };
+
+    const defaultPobFolderName = (build) => {
+      const title = [build?.ascendClassName || build?.className, build?.level].filter(Boolean).join(" ");
+      return title ? `PoB · ${title}` : "PoB";
+    };
+
+    const countPobSockets = (sockets) =>
+      String(sockets || "")
+        .trim()
+        .split(/\s+/)
+        .filter((token) => /^[SJ]$/i.test(token)).length;
+
+    const isPobJewel = (item, category) =>
+      category === "jewel" || POB_JEWEL_PAGES.has(item?.selection?.id);
+
+    const getPobSlotName = (item) => item?.slots?.[0]?.name || "";
+
+    const getPobSortRank = (item, category) => {
+      const slotName = getPobSlotName(item);
+      if (POB_SLOT_RANK[slotName] != null) {
+        return POB_SLOT_RANK[slotName];
+      }
+      return isPobJewel(item, category) ? 70 : 80;
+    };
+
+    const formatPobDisplayName = (item, category, jewelIndex, labels, localizeItem) => {
+      const names = { ...DEFAULT_POB_SLOT_LABELS, ...(labels || {}) };
+      const slotName = getPobSlotName(item);
+      const rarity = String(item?.rarity || "").toUpperCase();
+      const fallbackName =
+        rarity === "NORMAL" || rarity === "MAGIC"
+          ? item?.name || item?.baseName || "Item"
+          : item?.title || item?.baseName || item?.name || "Item";
+      const itemName = localizeItem?.(item) || fallbackName;
+      const prefixBySlot = {
+        "Weapon 1": names.weapon,
+        "Weapon 2": names.offhand,
+        "Weapon 1 Swap": names.weaponSwap,
+        "Weapon 2 Swap": names.offhandSwap,
+        Helmet: names.helmet,
+        "Body Armour": names.body,
+        Gloves: names.gloves,
+        Boots: names.boots,
+        Belt: names.belt,
+        Amulet: names.amulet,
+        "Ring 1": `${names.ring} 1`,
+        "Ring 2": `${names.ring} 2`,
+        "Ring 3": `${names.ring} 3`,
+        "Flask 1": `${names.flask} 1`,
+        "Flask 2": `${names.flask} 2`,
+        "Charm 1": `${names.charm} 1`,
+        "Charm 2": `${names.charm} 2`,
+        "Charm 3": `${names.charm} 3`
+      };
+      let prefix = prefixBySlot[slotName];
+      if (!prefix) {
+        prefix = isPobJewel(item, category) ? `${names.jewel} ${jewelIndex}` : names.unequipped;
+      }
+      return `${prefix}: ${itemName}`;
+    };
+
+    const applyPobTolerance = (value, percent) => {
+      const amount = Number(value);
+      if (!Number.isFinite(amount)) {
+        return null;
+      }
+      const factor = 1 - Number(percent) / 100;
+      const scaled = normalizeNumber(amount * factor);
+      if (amount >= 0) {
+        return { min: scaled };
+      }
+      return { max: scaled };
+    };
+
+    const buildPobPendingSearch = (item, { category, tolerancePercent }) => {
+      const rarity = String(item?.rarity || "").trim().toLowerCase();
+      const baseName = String(item?.baseName || "").trim();
+      const uniqueName = rarity === "unique" || rarity === "relic" ? String(item?.title || "").trim() : "";
+      const filters = [];
+      for (const mod of Array.isArray(item?.mods) ? item.mods : []) {
+        if (
+          !mod?.matched ||
+          !mod.statId ||
+          mod.source === "rune" ||
+          String(mod.statId).startsWith("rune.") ||
+          /^bonded\s*:/i.test(mod.line || "")
+        ) {
+          continue;
+        }
+        const values = Array.isArray(mod.values) ? mod.values.filter(Number.isFinite) : [];
+        const roll =
+          values.length > 1
+            ? normalizeNumber(values.reduce((total, value) => total + value, 0) / values.length)
+            : values.length === 1
+              ? normalizeNumber(values[0])
+              : null;
+        const value = roll == null ? null : applyPobTolerance(roll, tolerancePercent);
+        filters.push({
+          id: mod.statId,
+          disabled: false,
+          ...(value ? { value } : {})
+        });
+      }
+      const typeFilters = {
+        ...(rarity ? { rarity: { option: rarity } } : {}),
+        ...(category ? { category: { option: category } } : {})
+      };
+      const POB_EQUIPMENT_PROPERTIES = {
+        armour: "ar",
+        evasion: "ev",
+        "energy shield": "es",
+        ward: "ward"
+      };
+      const equipmentFilters = {};
+      const properties = item?.properties || {};
+      for (const [key, filterId] of Object.entries(POB_EQUIPMENT_PROPERTIES)) {
+        const amount = Number(String(properties[key] || "").match(/-?\d+(?:\.\d+)?/)?.[0]);
+        const value = Number.isFinite(amount) ? applyPobTolerance(amount, tolerancePercent) : null;
+        if (value) {
+          equipmentFilters[filterId] = value;
+        }
+      }
+      const socketCount = countPobSockets(item?.sockets);
+      if (socketCount > 0) {
+        equipmentFilters.rune_sockets = { min: socketCount };
+      }
+      const query = {
+        status: { option: "available" },
+        ...(uniqueName ? { name: uniqueName } : {}),
+        ...(baseName ? { type: baseName } : {}),
+        stats: [{ type: "and", filters }],
+        filters: {
+          ...(Object.keys(typeFilters).length ? { type_filters: { filters: typeFilters } } : {}),
+          ...(Object.keys(equipmentFilters).length ? { equipment_filters: { filters: equipmentFilters } } : {})
+        }
+      };
+      return {
+        query,
+        sort: { price: "asc" },
+        displaySnapshot: {
+          ...(baseName ? { type: baseName } : {}),
+          ...(category ? { category } : {}),
+          ...(rarity ? { rarity } : {}),
+          ...(filters.length
+            ? {
+                statGroups: [{ type: "and", filters }],
+                statGroupsVersion: LINK_FAVORITE_STAT_GROUPS_VERSION
+              }
+            : {})
+        }
+      };
+    };
+
+    const importPobLinkFavorites = (
+      storedState,
+      {
+        parsed,
+        league: leagueValue,
+        folderName,
+        tolerancePercent = 10,
+        categoryByPage = {},
+        slotLabels = {},
+        localizeItem = null,
+        createdAt = Date.now()
+      } = {}
+    ) => {
+      const league = normalizeName(leagueValue);
+      if (!league) {
+        throw createLinkFavoriteError("missing_link_favorite_import_league", "A destination league is required");
+      }
+      const items = Array.isArray(parsed?.items) ? parsed.items.slice() : [];
+      if (!items.length) {
+        throw createLinkFavoriteError("invalid_link_favorite_import", "PoB code does not contain items");
+      }
+      const percent = Number(tolerancePercent);
+      const tolerance = Number.isFinite(percent) ? Math.min(90, Math.max(0, percent)) : 10;
+      const state = normalizeLinkFavoritesState(storedState);
+      if (!state.leagues[league]) {
+        state.leagues[league] = {
+          folders: [],
+          folderOrder: [],
+          links: [],
+          rootLinkIds: [],
+          folderLinkIds: {}
+        };
+      }
+      const leagueState = state.leagues[league];
+      const name = normalizeName(folderName) || defaultPobFolderName(parsed.build);
+      const folderId = createLinkFavoriteId("folder");
+      leagueState.folders.push({
+        id: folderId,
+        name,
+        createdAt,
+        collapsed: false
+      });
+      leagueState.folderOrder.push(folderId);
+      leagueState.folderLinkIds[folderId] = [];
+
+      const decorated = items.map((item) => {
+        const category =
+          item?.selection?.kind === "page" ? categoryByPage[item.selection.id] || null : null;
+        return { item, category, rank: getPobSortRank(item, category) };
+      });
+      decorated.sort((left, right) => left.rank - right.rank || (left.item.id || 0) - (right.item.id || 0));
+
+      let jewelIndex = 0;
+      let importedLinks = 0;
+      let skippedLinks = 0;
+      const skipped = [];
+      for (const entry of decorated) {
+        const { item, category } = entry;
+        if (!item?.baseName && !(item?.title && (item.rarity === "UNIQUE" || item.rarity === "RELIC"))) {
+          skippedLinks += 1;
+          skipped.push({ name: item?.name || "Item", reason: "unclassified" });
+          continue;
+        }
+        if (!getPobSlotName(item) && !isPobJewel(item, category)) {
+          skippedLinks += 1;
+          skipped.push({ name: item?.name || item?.baseName || "Item", reason: "unequipped" });
+          continue;
+        }
+        if (isPobJewel(item, category) && !getPobSlotName(item)) {
+          jewelIndex += 1;
+        }
+        const built = buildPobPendingSearch(item, { category, tolerancePercent: tolerance });
+        const record = createPendingLinkFavoriteRecord({
+          league,
+          displayName: formatPobDisplayName(item, category, jewelIndex, slotLabels, localizeItem),
+          folderId,
+          createdAt,
+          displaySnapshot: built.displaySnapshot,
+          pendingSearch: { query: built.query, sort: built.sort }
+        });
+        leagueState.links.push(record);
+        leagueState.folderLinkIds[folderId].push(record.id);
+        importedLinks += 1;
+      }
+      if (!importedLinks) {
+        throw createLinkFavoriteError("invalid_link_favorite_import", "PoB code does not contain importable items");
+      }
+      return {
+        state: normalizeLinkFavoritesState(state),
+        importedFolders: 1,
+        importedLinks,
+        skippedLinks,
+        skipped,
+        folderName: name,
+        folderId
+      };
+    };
+
+    const materializePendingLinkFavorite = (link, queryId, leagueValue) => {
+      const league = normalizeName(leagueValue || link?.league);
+      const parsed = validateTradeSearchUrl(
+        `https://www.pathofexile.com/trade2/search/poe2/${encodeURIComponent(league)}/${encodeURIComponent(queryId)}`
+      );
+      const next = {
+        ...link,
+        league: parsed.league,
+        queryId: parsed.queryId,
+        url: parsed.url,
+        updatedAt: Date.now()
+      };
+      delete next.pendingSearch;
+      return next;
+    };
+
     return {
       createEmptyLinkFavoritesState,
       createLinkFavoriteId,
       createLinkFavoriteRecord,
+      defaultPobFolderName,
       exportExternalLinkFavorites,
       formatLinkFavoriteFilterRange,
       formatLinkFavoriteStatFilter,
       importExternalLinkFavorites,
+      importPobLinkFavorites,
+      materializePendingLinkFavorite,
       normalizeLinkFavoriteFilterGroups,
       normalizeLinkFavoriteDisplaySnapshot,
       normalizeLinkFavoriteHistory,

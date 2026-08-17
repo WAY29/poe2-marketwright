@@ -741,6 +741,75 @@
   "importLinkFavoritesPlaceholder": {
     "message": "粘贴导出的书签 JSON"
   },
+  "importLinkFavoritesModeJson": {
+    "message": "书签 JSON"
+  },
+  "importLinkFavoritesModePob": {
+    "message": "PoB 代码"
+  },
+  "importLinkFavoritesPobPlaceholder": {
+    "message": "粘贴 Path of Building 分享码"
+  },
+  "importLinkFavoritesTolerance": {
+    "message": "向下浮动 %"
+  },
+  "importLinkFavoritesFolderName": {
+    "message": "文件夹名"
+  },
+  "importLinkFavoritesFolderPlaceholder": {
+    "message": "PoB"
+  },
+  "linkFavoritePobImportInvalid": {
+    "message": "请粘贴有效的 PoB 分享码"
+  },
+  "linkFavoriteSearchFailed": {
+    "message": "无法打开该书签"
+  },
+  "pobImportSlotWeapon": {
+    "message": "武器"
+  },
+  "pobImportSlotOffhand": {
+    "message": "副手"
+  },
+  "pobImportSlotWeaponSwap": {
+    "message": "武器(换)"
+  },
+  "pobImportSlotOffhandSwap": {
+    "message": "副手(换)"
+  },
+  "pobImportSlotHelmet": {
+    "message": "头盔"
+  },
+  "pobImportSlotBody": {
+    "message": "胸甲"
+  },
+  "pobImportSlotGloves": {
+    "message": "手套"
+  },
+  "pobImportSlotBoots": {
+    "message": "鞋子"
+  },
+  "pobImportSlotBelt": {
+    "message": "腰带"
+  },
+  "pobImportSlotAmulet": {
+    "message": "项链"
+  },
+  "pobImportSlotRing": {
+    "message": "戒指"
+  },
+  "pobImportSlotFlask": {
+    "message": "药剂"
+  },
+  "pobImportSlotCharm": {
+    "message": "护符"
+  },
+  "pobImportSlotJewel": {
+    "message": "珠宝"
+  },
+  "pobImportSlotUnequipped": {
+    "message": "未装备"
+  },
   "confirmLinkFavoriteImport": {
     "message": "导入"
   },
