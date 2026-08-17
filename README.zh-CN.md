@@ -42,7 +42,7 @@
 <a id="about"></a>
 ## 关于项目
 
-PoE2 Marketwright 为官方 [`trade2`](https://www.pathofexile.com/trade2) 页面提供市集增强功能：本地化、词缀筛选与搜索、Tier 选择、物品及搜索链接收藏、PoB 复制，以及固定报价的通货换算。扩展会直接在市集页面内工作，不替代官方交易网站。
+PoE2 Marketwright 为官方 [`trade2`](https://www.pathofexile.com/trade2) 页面提供市集增强功能：本地化、词缀筛选与搜索、结果词缀高亮、Tier 选择、物品及搜索链接收藏、PoB 导入与复制，以及固定报价的通货换算。扩展会直接在市集页面内工作，不替代官方交易网站。
 
 ### 技术与数据
 
@@ -137,9 +137,19 @@ Tier 映射由已验证的 PoE2DB 词缀范围生成，并按官方 Trade 稳定
 <p align="center">
   <img src="assets/favorites-search-links.png" alt="链接收藏管理视图" width="44%">
 </p>
-另外搜索历史也会自动存储,在链接收藏的最底下,如图所示:
+搜索历史会自动保存，并作为与「物品」「链接」并列的「历史」页签显示。
 
 ![image-20260716224410969](./assets/image-20260716224410969.png)
+
+在链接导入面板中切换到 `PoB 代码`，粘贴 Path of Building 分享码，可填写文件夹名和向下浮动百分比后导入。当前联盟里，每件已装备物品会变成一条搜索书签；第一次点开时才会向官方市集创建搜索。命定、符文和未匹配词缀不会写入搜索；未装备的仓库物品不导入，天赋树珠宝仍会导入。
+
+<p align="center">
+  <img src="assets/pob-import-share-code.png" alt="将 Path of Building 分享码导入为搜索链接" width="56%">
+</p>
+
+### 搜索结果词缀高亮
+
+当前搜索里已启用的词缀条件，会在结果中用浅金底标出对应词缀文字。高亮只罩文字，可与官方亵渎词缀装饰叠在一起。已禁用的词缀和 `not` 组不会高亮。
 
 ### PoB 复制按钮
 

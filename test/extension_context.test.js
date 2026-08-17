@@ -807,6 +807,124 @@ test("Trade result refresh preserves the native stat HTML for translation rollba
   assert.strictEqual(element.innerHTML, nativeHtml);
 });
 
+test("search results highlight queried affix text and keep desecrated chrome", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { collectSearchStatMatchKeys, resultStatFieldMatches, applyResultSearchStatHighlights };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  const query = {
+    stats: [
+      {
+        type: "and",
+        filters: [
+          { id: "explicit.stat_124859000" },
+          { id: "explicit.stat_264262054|3" },
+          { id: "explicit.stat_3299347043", disabled: true }
+        ]
+      },
+      {
+        type: "not",
+        filters: [{ id: "explicit.stat_3372524247" }]
+      }
+    ]
+  };
+  const wrappedKeys = hooks.collectSearchStatMatchKeys({ query, sort: { price: "asc" } });
+  const keys = hooks.collectSearchStatMatchKeys(query);
+  const createNode = (field, inResults = true) => {
+    const classes = new Set();
+    return {
+      field,
+      classList: {
+        toggle(name, on) {
+          if (on) classes.add(name);
+          else classes.delete(name);
+        },
+        contains(name) {
+          return classes.has(name);
+        }
+      },
+      getAttribute() {
+        return field;
+      },
+      closest(selector) {
+        if (selector.includes("search-advanced") || selector.includes("search-bar")) {
+          return null;
+        }
+        return inResults && /\.results|\.resultset|\.search-results/.test(selector) ? {} : null;
+      }
+    };
+  };
+  const evasion = createNode("stat.desecrated.stat_124859000");
+  const unique = createNode("stat.explicit.stat_264262054|3");
+  const otherUnique = createNode("stat.explicit.stat_264262054|11");
+  const life = createNode("stat.explicit.stat_3299347043");
+  const fire = createNode("stat.explicit.stat_3372524247");
+  const formStat = createNode("stat.explicit.stat_124859000", false);
+  const snapshot = (nodes) => Object.fromEntries(
+    Object.entries(nodes).map(([name, node]) => [name, node.classList.contains("poe2-marketwright-result-stat-matched")])
+  );
+  const nodes = { evasion, unique, otherUnique, life, fire, formStat };
+  const root = { querySelectorAll: () => Object.values(nodes) };
+  hooks.applyResultSearchStatHighlights(root, query);
+  const matched = snapshot(nodes);
+  hooks.applyResultSearchStatHighlights(root, { stats: [] });
+  assert.deepStrictEqual(
+    structuredClone({
+      keys,
+      wrappedKeys,
+      evasion: hooks.resultStatFieldMatches("stat.desecrated.stat_124859000", keys),
+      unique: hooks.resultStatFieldMatches("stat.explicit.stat_264262054|3", keys),
+      otherUnique: hooks.resultStatFieldMatches("stat.explicit.stat_264262054|11", keys),
+      life: hooks.resultStatFieldMatches("stat.explicit.stat_3299347043", keys),
+      fire: hooks.resultStatFieldMatches("stat.explicit.stat_3372524247", keys),
+      matched,
+      cleared: snapshot(nodes)
+    }),
+    {
+      keys: [
+        { bare: "stat_124859000", variant: "" },
+        { bare: "stat_264262054", variant: "3" }
+      ],
+      wrappedKeys: [
+        { bare: "stat_124859000", variant: "" },
+        { bare: "stat_264262054", variant: "3" }
+      ],
+      evasion: true,
+      unique: true,
+      otherUnique: false,
+      life: false,
+      fire: false,
+      matched: {
+        evasion: true,
+        unique: true,
+        otherUnique: false,
+        life: false,
+        fire: false,
+        formStat: false
+      },
+      cleared: {
+        evasion: false,
+        unique: false,
+        otherUnique: false,
+        life: false,
+        fire: false,
+        formStat: false
+      }
+    }
+  );
+});
+
 test("trade localization preserves numeric stat values and English fallback", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");

@@ -2422,6 +2422,14 @@
   line-height: 1.25;
 }
 
+[data-field^="stat."].poe2-marketwright-result-stat-matched > .poe2-marketwright-result-stat-localized,
+[data-field^="stat."].poe2-marketwright-result-stat-matched:not(:has(.poe2-marketwright-result-stat-localized)) {
+  background-color: rgba(196, 154, 72, 0.22);
+  padding: 0 0.18em;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+
 .poe2-marketwright-inline-stat-original {
   color: inherit;
 }

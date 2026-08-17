@@ -202,6 +202,9 @@
   const TRADE_LOCALIZATION_SOURCE_KEY = "__poe2MarketwrightSourceText";
   const TRADE_LOCALIZATION_RENDER_KEY = "__poe2MarketwrightRenderedText";
   const TRADE_STAT_SOURCE_HTML_KEY = "__poe2MarketwrightStatSourceHtml";
+  const RESULT_SEARCH_STAT_MATCH_CLASS = "poe2-marketwright-result-stat-matched";
+  const RESULT_SEARCH_STAT_ROOT_SELECTOR = ".results, .resultset, .search-results";
+  const RESULT_SEARCH_STAT_FIELD_SELECTOR = ".results [data-field^='stat.'], .resultset [data-field^='stat.'], .search-results [data-field^='stat.']";
   const TRADE_STAT_RENDER_KEY = "__poe2MarketwrightStatRender";
   const FAVORITE_TRADE_CATEGORY_BY_PAGE = Object.freeze({
     Strongbox: "map",
@@ -649,6 +652,7 @@
     tierBridgeMappingsSent: false,
     tierBridgeSignature: "",
     tradeSearchSnapshots: new Map(),
+    activeSearchQuery: null,
     lastFilterStats: null,
     favoriteLeague: null,
     linkFavoriteLeague: null,
@@ -6091,6 +6095,103 @@
     }
   }
 
+  function parseResultStatKey(id) {
+    const raw = String(id || "").trim().replace(/^stat\./i, "");
+    if (!raw) {
+      return null;
+    }
+    const parts = raw.split(".");
+    const body = parts.length > 1 ? parts.slice(1).join(".") : parts[0];
+    const [bare, variant] = String(body || "").split("|");
+    const stat = String(bare || "").trim();
+    return stat ? { bare: stat, variant: String(variant || "").trim() } : null;
+  }
+
+  function collectSearchStatMatchKeys(query) {
+    const groups = Array.isArray(query?.stats)
+      ? query.stats
+      : Array.isArray(query?.query?.stats)
+        ? query.query.stats
+        : Array.isArray(query?.statGroups)
+          ? query.statGroups
+          : [];
+    const keys = [];
+    for (const group of groups) {
+      if (String(group?.type || "and").toLowerCase() === "not") {
+        continue;
+      }
+      for (const filter of group?.filters || []) {
+        if (filter?.disabled) {
+          continue;
+        }
+        const parsed = parseResultStatKey(filter?.id);
+        if (parsed) {
+          keys.push(parsed);
+        }
+      }
+    }
+    return keys;
+  }
+
+  function resultStatFieldMatches(field, keys) {
+    const parsed = parseResultStatKey(field);
+    return Boolean(
+      parsed &&
+        keys?.some((key) => key.bare === parsed.bare && (!key.variant || key.variant === parsed.variant))
+    );
+  }
+
+  function readVueActiveSearchQuery() {
+    const querySelector = document.querySelector?.bind(document);
+    if (!querySelector) {
+      return null;
+    }
+    for (const el of [querySelector("#trade"), querySelector("#app"), document.body?.firstElementChild]) {
+      const query = el?.__vue__?.transient?.search?.active?.query;
+      if (query) {
+        return query;
+      }
+    }
+    return null;
+  }
+
+  function getActiveTradeSearchQuery() {
+    if (runtime.activeSearchQuery) {
+      return runtime.activeSearchQuery;
+    }
+    const vueQuery = readVueActiveSearchQuery();
+    if (vueQuery) {
+      return vueQuery;
+    }
+    try {
+      const current = getLinkFavoriteTools()?.validateTradeSearchUrl(window.location.href);
+      return current ? runtime.tradeSearchSnapshots.get(`${current.league}\u0000${current.queryId}`) || null : null;
+    } catch (error) {
+      return null;
+    }
+  }
+
+  function applyResultSearchStatHighlights(root = document, query = getActiveTradeSearchQuery()) {
+    if (!root?.querySelectorAll) {
+      return;
+    }
+    const nodes = root.querySelectorAll(RESULT_SEARCH_STAT_FIELD_SELECTOR);
+    const keys = collectSearchStatMatchKeys(query);
+    for (const node of nodes) {
+      if (node.closest?.(".search-advanced, .search-bar, .filter-group")) {
+        continue;
+      }
+      if (!node.closest?.(RESULT_SEARCH_STAT_ROOT_SELECTOR) && root?.querySelectorAll) {
+        continue;
+      }
+      node.classList?.toggle?.(RESULT_SEARCH_STAT_MATCH_CLASS, resultStatFieldMatches(node.getAttribute("data-field"), keys));
+    }
+  }
+
+  function refreshResultSearchStatHighlights() {
+    applyResultSearchStatHighlights();
+  }
+
   function scheduleTradeLocalizationRefresh() {
     if (runtime.tradeLocalizationTimer) {
       return;
@@ -6098,6 +6199,7 @@
     runtime.tradeLocalizationTimer = window.setTimeout(() => {
       runtime.tradeLocalizationTimer = null;
       refreshTradeLocalization();
+      refreshResultSearchStatHighlights();
     }, 50);
   }
 
@@ -6609,6 +6711,7 @@
     if (document.documentElement && isPageTranslationEnabled()) {
       scheduleTradeLocalizationRefresh();
     }
+    refreshResultSearchStatHighlights();
   }
 
   function getTradeResultModifierDescription(element) {
@@ -7098,6 +7201,9 @@
         const snapshot = buildLinkFavoriteDisplaySnapshot(payload.query);
         const league = String(payload.league || "").trim();
         const queryId = String(payload.queryId || "").trim();
+        if (payload.query) {
+          runtime.activeSearchQuery = payload.query;
+        }
         if (snapshot && league && queryId) {
           runtime.tradeSearchSnapshots.set(`${league}\u0000${queryId}`, snapshot);
           if (runtime.tradeSearchSnapshots.size > 12) {
@@ -7105,6 +7211,7 @@
           }
         }
         refreshTradeNavigationState();
+        refreshResultSearchStatHighlights();
         return;
       }
 
@@ -7195,6 +7302,8 @@
     scheduleRefresh();
     window.setTimeout(scheduleRefresh, 300);
     window.setTimeout(scheduleRefresh, 800);
+    window.setTimeout(refreshResultSearchStatHighlights, 300);
+    window.setTimeout(refreshResultSearchStatHighlights, 800);
   }
 
   function refreshFiltering() {

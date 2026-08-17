@@ -42,7 +42,7 @@
 <a id="about"></a>
 ## About the Project
 
-PoE2 Marketwright adds localization, affix filtering and search, Tier selection, item and search-link favorites, PoB copy, and fixed-price currency conversion to the official [`trade2`](https://www.pathofexile.com/trade2) page. It works within the Trade page and does not replace the official website.
+PoE2 Marketwright adds localization, affix filtering and search, result affix highlight, Tier selection, item and search-link favorites, PoB import and copy, and fixed-price currency conversion to the official [`trade2`](https://www.pathofexile.com/trade2) page. It works within the Trade page and does not replace the official website.
 
 ### Built With
 
@@ -138,9 +138,19 @@ Search-link favorites save the current search URL and its complete search condit
   <img src="assets/favorites-search-links.png" alt="Search-link favorites management view" width="44%">
 </p>
 
-Search history is also saved automatically and appears at the bottom of the search-link favorites list:
+Search history is saved automatically and has its own `History` tab beside Items and Links.
 
 ![Search history in search-link favorites](assets/image-20260716224410969.png)
+
+In the Links import panel, switch to `PoB Code`, paste a Path of Building share code, set an optional folder name and downward roll percent, then import. Each equipped item becomes a search bookmark in the current league. The first time you open one, the extension creates the official Trade search. Bonded, rune, and unmatched affixes are skipped; unequipped stash items are not imported, but passive-tree jewels still are.
+
+<p align="center">
+  <img src="assets/pob-import-share-code.png" alt="Import Path of Building share codes as search links" width="56%">
+</p>
+
+### Search Result Affix Highlight
+
+Enabled stat filters from the current search highlight matching modifier text in the results. The gold wash covers only the affix text, so it can sit on top of native desecrated styling. Disabled filters and `not` groups are ignored.
 
 ### PoB Copy Button
 
