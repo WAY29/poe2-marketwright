@@ -5,12 +5,14 @@ const fs = require("node:fs");
 const vm = require("node:vm");
 const { test } = require("node:test");
 
-test("full history header keeps collapse, name, and clear controls on one row", () => {
+test("full view exposes history as a third tab instead of a folder", () => {
+  const html = fs.readFileSync("favorites-panel.html", "utf8");
   const styles = fs.readFileSync("favorites-panel.css", "utf8");
-  assert.match(
-    styles,
-    /\.favorites-panel-history > \.favorites-panel-folder-header \{\s*grid-template-columns: auto minmax\(0, 1fr\) auto;/
-  );
+  const panel = fs.readFileSync("favorites-panel.js", "utf8");
+  assert.match(html, /id="favorites-panel-history-tab"/);
+  assert.match(styles, /grid-template-columns: 1fr 1fr 1fr;/);
+  assert.match(panel, /renderHistoryTab/);
+  assert.doesNotMatch(panel, /id: "history", name: t\("linkHistory"\)/);
 });
 
 test("full view defaults to compact and migrates the open item drawer", async () => {
@@ -1565,7 +1567,10 @@ test("full item delete feedback precedes the favorite list", async () => {
       ? child.children.map((result) => result.className)
       : [child.className]
   ));
-  assert.deepStrictEqual(result, ["favorites-panel-toolbar", "favorites-panel-feedback", "favorites-panel-list", "favorites-panel-link-list favorites-panel-root"]);
+  assert.deepStrictEqual(result, ["favorites-panel-toolbar", "favorites-panel-list", "favorites-panel-link-list favorites-panel-root"]);
+  assert.match(fs.readFileSync("favorites-panel.js", "utf8"), /function renderFavoritesPanelToast/);
+  assert.doesNotMatch(fs.readFileSync("favorites-panel.js", "utf8"), /favorites-panel-feedback/);
+
 });
 
 test("full link folder input follows the last existing folder", () => {

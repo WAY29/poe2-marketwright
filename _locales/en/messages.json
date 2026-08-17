@@ -699,8 +699,14 @@
   "favoritesPanelLinks": {
     "message": "Links"
   },
+  "favoritesPanelHistory": {
+    "message": "History"
+  },
   "favoritesPanelSearchLinks": {
     "message": "Search bookmarks"
+  },
+  "favoritesPanelSearchHistory": {
+    "message": "Search history"
   },
   "favoritesPanelUnavailable": {
     "message": "Open a trade search result to view favorites for this league"

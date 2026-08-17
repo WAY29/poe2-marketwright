@@ -853,7 +853,7 @@
         typeof savedState.favoritesPanelOpen === "boolean"
           ? savedState.favoritesPanelOpen
           : DEFAULT_STATE.favoritesPanelOpen,
-      favoritesPanelTab: savedState.favoritesPanelTab === "links" ? "links" : DEFAULT_STATE.favoritesPanelTab,
+      favoritesPanelTab: normalizeFavoritesPanelTab(savedState.favoritesPanelTab),
       linkFavoritesEnabled:
         typeof savedState.linkFavoritesEnabled === "boolean"
           ? savedState.linkFavoritesEnabled
@@ -2084,8 +2084,12 @@
     return runtime.state?.favoritesViewMode === "full" ? "full" : "compact";
   }
 
+  function normalizeFavoritesPanelTab(tab) {
+    return tab === "links" || tab === "history" ? tab : "items";
+  }
+
   function getFavoritesPanelTab() {
-    return runtime.state?.favoritesPanelTab === "links" ? "links" : "items";
+    return normalizeFavoritesPanelTab(runtime.state?.favoritesPanelTab);
   }
 
   function isFavoritesFullViewFallbackActive() {
@@ -2246,7 +2250,7 @@
     if (syncNativePanel) {
       setNativeFavoritesPanelOpen(open);
     }
-    runtime.state.favoritesPanelTab = tab === "links" ? "links" : "items";
+    runtime.state.favoritesPanelTab = normalizeFavoritesPanelTab(tab);
     runtime.state.favoritesPanelOpen = Boolean(open);
     runtime.state.favoritesDrawerOpen = false;
     runtime.state.linkFavoritesDrawerOpen = false;
@@ -4169,30 +4173,16 @@
   }
 
   async function openLinkHistory() {
-    const league = getCurrentLinkFavoriteLeague();
-    if (league) {
-      await setLinkHistoryCollapsed(false);
-    }
-    runtime.linkHistoryFocus = true;
-    renderLinkFavoritesDrawer();
-    publishFavoritesPanelState();
-    await setLinkFavoritesDrawerOpen(true);
-    if (runtime.linkHistoryFocusTimer) {
-      window.clearTimeout(runtime.linkHistoryFocusTimer);
-    }
-    runtime.linkHistoryFocusTimer = window.setTimeout(() => {
-      runtime.linkHistoryFocus = false;
-      runtime.linkHistoryFocusTimer = null;
-      publishFavoritesPanelState();
-    }, 750);
+    runtime.state.favoritesViewMode = "full";
+    await setFavoritesPanelOpen(true, "history");
   }
 
   async function toggleLinkHistory() {
     const open = getFavoritesViewMode() === "full"
-      ? Boolean(runtime.state.favoritesPanelOpen && getFavoritesPanelTab() === "links")
-      : Boolean(runtime.state.linkFavoritesDrawerOpen);
+      && Boolean(runtime.state.favoritesPanelOpen)
+      && getFavoritesPanelTab() === "history";
     if (open) {
-      await setLinkFavoritesDrawerOpen(false);
+      await setFavoritesPanelOpen(false);
       return;
     }
     await openLinkHistory();
@@ -5264,75 +5254,6 @@
     return row;
   }
 
-  function renderLinkHistoryRow(link) {
-    const row = document.createElement("article");
-    row.className = "poe2-marketwright-link-favorite-row poe2-marketwright-link-history-row";
-    row.dataset.linkHistoryId = link.id;
-    const launch = document.createElement("button");
-    launch.type = "button";
-    launch.className = "poe2-marketwright-link-favorite-launch";
-    const presentation = getCompactLinkFavoritePresentation(getLinkFavoritePresentation(link));
-    const name = document.createElement("span");
-    name.className = "poe2-marketwright-link-favorite-name";
-    name.textContent = link.displayName;
-    launch.appendChild(name);
-    if (shouldShowFavoriteSummary()) {
-      for (const stat of presentation.stats.slice(0, 3)) {
-        launch.appendChild(renderCompactLinkFavoriteStat(stat));
-      }
-      const moreCount = Math.max(0, presentation.stats.length - 3);
-      if (moreCount) {
-        const more = document.createElement("span");
-        more.className = "poe2-marketwright-link-favorite-more";
-        more.textContent = t("favoriteMoreMods", moreCount);
-        launch.appendChild(more);
-      }
-    }
-    bindCompactLinkFavoriteTooltip(launch, presentation);
-    launch.addEventListener("click", () => runAsync(() => launchLinkHistory(link.id), "open link history"));
-
-    const actions = document.createElement("div");
-    actions.className = "poe2-marketwright-link-favorite-actions";
-    const save = createLinkFavoriteIconButton(
-      "poe2-marketwright-link-favorite-action poe2-marketwright-link-favorite-save",
-      t("createLinkFavorite"),
-      "M4 1.75h8a1 1 0 0 1 1 1v11.1l-5-2.85-5 2.85V2.75a1 1 0 0 1 1-1z"
-    );
-    save.disabled = !runtime.state.linkFavoritesEnabled;
-    save.addEventListener("click", () => runAsync(() => saveLinkHistory(link.id), "save link history"));
-    const remove = createLinkFavoriteIconButton(
-      "poe2-marketwright-link-favorite-action poe2-marketwright-link-favorite-delete",
-      t("deleteLinkFavorite"),
-      "M4 4.5h8l-.6 9H4.6l-.6-9zm2-2h4l.6 1H13v1.5H3V3.5h2.4L6 2.5zm1 4v5h1.5v-5H7zm2.5 0v5H11v-5H9.5z"
-    );
-    remove.addEventListener("click", () => runAsync(() => deleteLinkHistory(link.id), "delete link history"));
-    actions.append(save, remove);
-    row.append(launch, actions);
-    return row;
-  }
-
-  function renderLinkHistoryGroup(leagueState) {
-    const history = getLinkHistory(leagueState);
-    return renderLinkFavoriteGroup(
-      leagueState,
-      { id: "history", name: t("linkHistory"), collapsed: Boolean(leagueState.historyCollapsed) },
-      {
-        history: true,
-        links: history,
-        renderLink: renderLinkHistoryRow,
-        toggle: (collapsed) => setLinkHistoryCollapsed(collapsed),
-        headerAction: {
-          title: t("clearLinkHistory"),
-          disabled: history.length === 0,
-          onClick: () => {
-            runtime.pendingLinkHistoryClear = true;
-            renderLinkFavoritesDrawer();
-          }
-        }
-      }
-    );
-  }
-
   function createCurrentLinkFavoriteIconButton(folderId) {
     const available = Boolean(getCurrentLinkFavoriteContext());
     const title = available ? t("createLinkFavorite") : t("createLinkFavoriteUnavailable");
@@ -5698,13 +5619,6 @@
       runtime.ui.linkFavoritesList.appendChild(renderLinkFavoriteGroup(leagueState, folder));
     }
     runtime.ui.linkFavoritesList.appendChild(root);
-    if (isLinkHistoryEnabled()) {
-      const historyGroup = renderLinkHistoryGroup(leagueState);
-      runtime.ui.linkFavoritesList.appendChild(historyGroup);
-      if (runtime.linkHistoryFocus) {
-        window.setTimeout(() => historyGroup.scrollIntoView?.({ block: "nearest" }), 0);
-      }
-    }
     if (runtime.linkFavoriteCreatingFolder) {
       const input = document.createElement("input");
       input.type = "text";

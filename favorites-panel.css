@@ -261,7 +261,7 @@ h1 {
 
 .favorites-panel-tabs {
   display: grid;
-  grid-template-columns: 1fr 1fr;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 4px;
   padding: 0 9px 8px;
 }
@@ -703,10 +703,6 @@ h1 {
 .favorites-panel-link-row:not(.favorites-panel-item-row):not(.favorites-panel-history-row) .favorites-panel-action-button svg {
   width: 12px;
   height: 12px;
-}
-
-.favorites-panel-history > .favorites-panel-folder-header {
-  grid-template-columns: auto minmax(0, 1fr) auto;
 }
 
 .favorites-panel-confirm-dialog {

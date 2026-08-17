@@ -4,6 +4,8 @@
     favoritesFullViewTitle: "Favorites",
     favoritesPanelItems: "Items",
     favoritesPanelLinks: "Links",
+    favoritesPanelHistory: "History",
+    favoritesPanelSearchHistory: "Search history",
     closeFavoritesFullView: "Close full favorites view",
     openFavoritesCompactView: "Use compact favorites view",
     favoritesPanelUnavailable: "Open a trade search result to view favorites for this league",
@@ -140,6 +142,7 @@
     close: document.querySelector("#favorites-panel-close"),
     itemsTab: document.querySelector("#favorites-panel-items-tab"),
     linksTab: document.querySelector("#favorites-panel-links-tab"),
+    historyTab: document.querySelector("#favorites-panel-history-tab"),
     content: document.querySelector("#favorites-panel-content"),
     tooltip: document.querySelector("#favorites-panel-tooltip")
   };
@@ -150,6 +153,7 @@
     tab: "items",
     itemSearch: "",
     linkSearch: "",
+    historySearch: "",
     editing: null,
     creatingFavoriteFolder: false,
     confirmingFavoriteFolderId: null,
@@ -259,7 +263,9 @@
   async function setState(nextState) {
     local.state = nextState;
     await loadMessages(nextState?.uiLanguage);
-    local.tab = nextState?.favoritesPanelTab === "links" ? "links" : "items";
+    local.tab = nextState?.favoritesPanelTab === "links" || nextState?.favoritesPanelTab === "history"
+      ? nextState.favoritesPanelTab
+      : "items";
     render();
   }
 
@@ -276,26 +282,35 @@
     ui.close.setAttribute("aria-label", ui.close.title);
     ui.itemsTab.textContent = t("favoritesPanelItems");
     ui.linksTab.textContent = t("favoritesPanelLinks");
+    if (ui.historyTab) {
+      ui.historyTab.textContent = t("favoritesPanelHistory");
+    }
     ui.itemsTab.setAttribute("aria-selected", String(local.tab === "items"));
     ui.linksTab.setAttribute("aria-selected", String(local.tab === "links"));
+    ui.historyTab?.setAttribute("aria-selected", String(local.tab === "history"));
     ui.itemsTab.tabIndex = local.tab === "items" ? 0 : -1;
     ui.linksTab.tabIndex = local.tab === "links" ? 0 : -1;
+    if (ui.historyTab) {
+      ui.historyTab.tabIndex = local.tab === "history" ? 0 : -1;
+    }
     ui.content.replaceChildren();
-    document.getElementById("favorites-panel-toast")?.remove();
+    document.getElementById?.("favorites-panel-toast")?.remove();
 
     if (!state?.available) {
       ui.content.appendChild(createElement("p", "favorites-panel-unavailable", t("favoritesPanelUnavailable")));
       renderFavoritesPanelConfirmationDialog();
       return;
     }
-    ui.content.appendChild(local.tab === "links" ? renderLinks(state) : renderItems(state));
+    ui.content.appendChild(
+      local.tab === "history" ? renderHistoryTab(state) : local.tab === "links" ? renderLinks(state) : renderItems(state)
+    );
     renderFavoritesPanelToast(state);
     restoreSearchFocus(searchFocus);
     renderFavoritesPanelConfirmationDialog();
   }
 
   function renderFavoritesPanelToast(state) {
-    document.getElementById("favorites-panel-toast")?.remove();
+    document.getElementById?.("favorites-panel-toast")?.remove();
     const item = state?.deletedFavorite;
     const link = state?.feedback;
     const useItem = local.tab === "items" ? item : !link && item;
@@ -908,13 +923,6 @@
       const focused = folderList.querySelector(`[data-folder-id="${CSS.escape(state.focusLinkFolderId)}"]`);
       window.setTimeout(() => focused?.scrollIntoView?.({ block: "start" }), 0);
     }
-    if (state.linkHistoryEnabled) {
-      const history = renderHistory(state, query);
-      root.appendChild(history);
-      if (state.focusLinkHistory) {
-        window.setTimeout(() => history.scrollIntoView?.({ block: "start" }), 0);
-      }
-    }
   }
 
   function resetImportForm() {
@@ -1522,27 +1530,41 @@
     return row;
   }
 
-  function renderHistory(state, query) {
-    const history = (state.linkFavorites?.history || []).filter((link) => matchesLink(link, query));
-    return renderFolder(
-      state,
-      { id: "history", name: t("linkHistory"), collapsed: Boolean(state.linkFavorites?.historyCollapsed) },
-      history,
-      {
-        history: true,
-        renderLink: (link) => renderHistoryRow(state, link),
-        emptyText: t(query ? "favoritesPanelNoLinkMatches" : "linkHistoryEmpty"),
-        toggle: (collapsed) => run("toggle-history", { collapsed }),
-        headerAction: {
-          title: t("clearLinkHistory"),
-          disabled: history.length === 0,
-          onClick: () => {
-            local.confirmingHistoryClear = true;
-            render();
-          }
-        }
-      }
+  function renderHistoryTab(state) {
+    const root = createElement("div");
+    const toolbar = createElement("div", "favorites-panel-toolbar");
+    const results = createElement("div", "favorites-panel-results");
+    toolbar.appendChild(
+      makeSearch(local.historySearch, t("favoritesPanelSearchHistory"), (value) => {
+        local.historySearch = value;
+        renderHistoryResults(state, results);
+      })
     );
+    const clear = createIconButton(t("clearLinkHistory"), icons.delete, "favorites-panel-delete");
+    clear.disabled = (state.linkFavorites?.history || []).length === 0;
+    clear.addEventListener("click", () => {
+      local.confirmingHistoryClear = true;
+      render();
+    });
+    toolbar.appendChild(clear);
+    root.append(toolbar, results);
+    renderHistoryResults(state, results);
+    return root;
+  }
+
+  function renderHistoryResults(state, root) {
+    root.replaceChildren();
+    const query = local.historySearch.trim().toLocaleLowerCase();
+    const history = (state.linkFavorites?.history || []).filter((link) => matchesLink(link, query));
+    if (!history.length) {
+      root.appendChild(createElement("p", "favorites-panel-empty", t(query ? "favoritesPanelNoLinkMatches" : "linkHistoryEmpty")));
+      return;
+    }
+    const list = createElement("div", "favorites-panel-link-list");
+    for (const link of history) {
+      list.appendChild(renderHistoryRow(state, link));
+    }
+    root.appendChild(list);
   }
 
   function renderFolder(state, folder, links, options = {}) {
@@ -1877,6 +1899,7 @@
   function bindUi() {
     ui.itemsTab.addEventListener("click", () => run("select-tab", { tab: "items" }));
     ui.linksTab.addEventListener("click", () => run("select-tab", { tab: "links" }));
+    ui.historyTab?.addEventListener("click", () => run("select-tab", { tab: "history" }));
     ui.compact.addEventListener("click", () => run("set-view-mode", { mode: "compact" }));
     ui.close.addEventListener("click", () => run("close-panel"));
     ui.tooltip?.addEventListener("pointerenter", clearLinkFavoriteTooltipHideTimer);
@@ -1912,6 +1935,9 @@
     ui.close.setAttribute("aria-label", ui.close.title);
     ui.itemsTab.textContent = t("favoritesPanelItems");
     ui.linksTab.textContent = t("favoritesPanelLinks");
+    if (ui.historyTab) {
+      ui.historyTab.textContent = t("favoritesPanelHistory");
+    }
     ui.content.replaceChildren(createElement("p", "favorites-panel-unavailable", t("favoritesPanelUnavailable")));
   }
 

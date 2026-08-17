@@ -987,8 +987,14 @@
   "favoritesPanelLinks": {
     "message": "链接"
   },
+  "favoritesPanelHistory": {
+    "message": "历史"
+  },
   "favoritesPanelSearchLinks": {
     "message": "搜索书签"
+  },
+  "favoritesPanelSearchHistory": {
+    "message": "搜索历史"
   },
   "favoritesPanelUnavailable": {
     "message": "请打开市集搜索结果以查看当前赛季的收藏"

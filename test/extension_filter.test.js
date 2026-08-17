@@ -2644,7 +2644,7 @@ test("link favorites render on a league search root without a query id", async (
   };
   hooks.renderLinkFavoritesDrawer();
   const result = structuredClone(hooks.runtime.ui.linkFavoritesList.children.map((child) => child.className));
-  assert.deepStrictEqual(result, ["poe2-marketwright-link-favorite-folder-top-drop-area", "poe2-marketwright-link-favorite-group", "poe2-marketwright-link-favorite-root", "poe2-marketwright-link-favorite-group poe2-marketwright-link-history-group"]);
+  assert.deepStrictEqual(result, ["poe2-marketwright-link-favorite-folder-top-drop-area", "poe2-marketwright-link-favorite-group", "poe2-marketwright-link-favorite-root"]);
 });
 
 test("collapsing all link favorite folders updates every folder", async () => {
@@ -2810,7 +2810,7 @@ test("link history copies to root without duplicates and can clear the current l
   );
 });
 
-test("search history control opens, focuses, and closes the history folder", async () => {
+test("search history control opens and closes the history tab", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
   source = source.replace(
@@ -2850,6 +2850,9 @@ test("search history control opens, focuses, and closes the history folder", asy
   hooks.runtime.state = {
     linkFavoritesEnabled: true,
     linkHistoryEnabled: true,
+    favoritesViewMode: "compact",
+    favoritesPanelOpen: false,
+    favoritesPanelTab: "items",
     linkFavoritesDrawerOpen: false,
     linkFavorites: {
       version: 2,
@@ -2869,14 +2872,15 @@ test("search history control opens, focuses, and closes the history folder", asy
   hooks.runtime.ui = { root: { style: {} } };
   await hooks.toggleLinkHistory();
   const opened = structuredClone({
-    historyCollapsed: hooks.runtime.state.linkFavorites.leagues.Dawn.historyCollapsed,
-    drawerOpen: hooks.runtime.state.linkFavoritesDrawerOpen,
-    focused: hooks.runtime.linkHistoryFocus
+    viewMode: hooks.runtime.state.favoritesViewMode,
+    panelOpen: hooks.runtime.state.favoritesPanelOpen,
+    tab: hooks.runtime.state.favoritesPanelTab,
+    drawerOpen: hooks.runtime.state.linkFavoritesDrawerOpen
   });
   await hooks.toggleLinkHistory();
   assert.deepStrictEqual(
-    { opened, closed: hooks.runtime.state.linkFavoritesDrawerOpen },
-    { opened: { historyCollapsed: false, drawerOpen: true, focused: true }, closed: false }
+    { opened, closed: hooks.runtime.state.favoritesPanelOpen },
+    { opened: { viewMode: "full", panelOpen: true, tab: "history", drawerOpen: false }, closed: false }
   );
 });
 
@@ -2975,32 +2979,13 @@ test("folder header toggles only when the click is outside its controls", () => 
   assert.deepStrictEqual(result, [true, false, true]);
 });
 
-test("link history reuses the folder renderer with only collapse and clear actions", () => {
+test("link history is a full-view tab rather than a folder under links", () => {
   const compact = fs.readFileSync("content.js", "utf8");
   const full = fs.readFileSync("favorites-panel.js", "utf8");
-  const compactHistory = compact.slice(
-    compact.indexOf("  function renderLinkHistoryGroup("),
-    compact.indexOf("  function createCurrentLinkFavoriteIconButton(")
-  );
-  const fullHistory = full.slice(
-    full.indexOf("  function renderHistory("),
-    full.indexOf("  function renderFolder(")
-  );
-  const compactGroup = compact.slice(
-    compact.indexOf("  function renderLinkFavoriteGroup("),
-    compact.indexOf("  function renderLinkFavoriteImportForm(")
-  );
-  const fullGroup = full.slice(
-    full.indexOf("  function renderFolder("),
-    full.indexOf("  function setDragSource(")
-  );
-
-  assert.match(compactHistory, /return renderLinkFavoriteGroup\([\s\S]*history: true/);
-  assert.match(fullHistory, /return renderFolder\([\s\S]*history: true/);
-  assert.match(compactGroup, /const collapse = createLinkFavoriteIconButton\([\s\S]*history \? "toggle link history"/);
-  assert.match(fullGroup, /const collapse = createIconButton\([\s\S]*header\.append\(collapse, nameHost\)/);
-  assert.doesNotMatch(compactHistory, /reorderLinkFavoriteFolder/);
-  assert.doesNotMatch(fullHistory, /reorderLinkFavoriteFolder/);
+  assert.doesNotMatch(compact, /function renderLinkHistoryGroup\(/);
+  assert.match(full, /function renderHistoryTab\(/);
+  assert.match(full, /select-tab", \{ tab: "history" \}/);
+  assert.doesNotMatch(full, /id: "history", name: t\("linkHistory"\)/);
 });
 
 test("favorite confirmations use non-layout dialogs in both favorite views", () => {

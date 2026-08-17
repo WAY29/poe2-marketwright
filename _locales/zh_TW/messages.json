@@ -987,8 +987,14 @@
   "favoritesPanelLinks": {
     "message": "連結"
   },
+  "favoritesPanelHistory": {
+    "message": "歷史"
+  },
   "favoritesPanelSearchLinks": {
     "message": "搜尋書籤"
+  },
+  "favoritesPanelSearchHistory": {
+    "message": "搜尋歷史"
   },
   "favoritesPanelUnavailable": {
     "message": "請開啟市集搜尋結果以檢視目前賽季的收藏"
