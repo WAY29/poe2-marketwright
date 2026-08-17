@@ -2593,8 +2593,9 @@
     category ||= localize(titleCase(String(snapshot.category || "").split(".").pop() || ""));
     rarity ||= localize(titleCase(snapshot.rarity));
     const details = [category, rarity].filter(Boolean);
+    const suffix = details.length ? ` (${details.join(" ")})` : "";
     if (itemName) {
-      return `${itemName}${details.length ? ` (${details.join(" ")})` : ""}`;
+      return suffix && itemName.endsWith(suffix) ? itemName : `${itemName}${suffix}`;
     }
     return details.join(" ") || t("linkHistoryUnnamedSearch");
   }
@@ -4132,7 +4133,7 @@
     const leagueState = getLinkFavoriteLeagueState(next, context.league, true);
     leagueState.history = tools.upsertLinkFavoriteHistory(
       getLinkHistory(leagueState),
-      { ...context, displayName: getLinkHistoryDisplayName(context) },
+      context,
       runtime.state.linkHistoryLimit
     );
     await replaceLinkFavorites(next);

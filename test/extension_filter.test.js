@@ -1996,13 +1996,33 @@ test("automatic link history names item searches with category and rarity", () =
       values: ["物品類別 (Item Category): 弓 (Bow)", "物品稀有度 (Item Rarity): 稀有 (Rare)"]
     }]
   });
+  hooks.runtime.state.pageLanguage = "zh_TW";
+  const beltFilters = [{
+    label: "Type Filters",
+    values: ["Item Category: Belt", "Item Rarity: Unique"]
+  }];
+  hooks.runtime.tradeLocalization.optionStrings = {
+    ...hooks.runtime.tradeLocalization.optionStrings,
+    Belt: { en: "Belt", zh_CN: "腰带", zh_TW: "腰帶" },
+    Unique: { en: "Unique", zh_CN: "传奇", zh_TW: "傳奇" }
+  };
+  const first = hooks.getLinkHistoryDisplayName({
+    displayName: "實用腰帶",
+    filterGroups: beltFilters
+  });
+  const repeated = hooks.getLinkHistoryDisplayName({
+    displayName: first,
+    filterGroups: beltFilters
+  });
   assert.deepStrictEqual(
-    { name, fallback, categoryOnly, traditional },
+    { name, fallback, categoryOnly, traditional, first, repeated },
     {
       name: "狂战者之弓 (弓 稀有)",
       fallback: "Search",
       categoryOnly: "弓 稀有",
-      traditional: "狂戰者之弓 (弓 稀有)"
+      traditional: "狂戰者之弓 (弓 稀有)",
+      first: "實用腰帶 (腰帶 傳奇)",
+      repeated: "實用腰帶 (腰帶 傳奇)"
     }
   );
 });

@@ -736,6 +736,37 @@ test("link history normalizes, deduplicates, and keeps its newest entries", asyn
   assert.match(generatedId, /^history-/);
 });
 
+test("revisiting a history search keeps the saved name", async () => {
+  const sandbox = { console, URL };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+
+  const tools = sandbox.Poe2MarketwrightFavorites.createLinkFavoriteTools();
+  const first = tools.upsertLinkFavoriteHistory([], {
+    url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+    displayName: "實用腰帶 (腰帶 傳奇)"
+  }, 10, 10);
+  const revisited = tools.upsertLinkFavoriteHistory(first, {
+    url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-1",
+    displayName: "實用腰帶 (腰帶 傳奇) (腰帶 傳奇)",
+    filterGroups: [{ label: "Type Filters", values: ["Item Category: Belt"] }]
+  }, 10, 20);
+
+  const result = structuredClone({
+    id: revisited[0].id,
+    displayName: revisited[0].displayName,
+    lastUsedAt: revisited[0].lastUsedAt,
+    filterGroups: revisited[0].filterGroups
+  });
+  assert.deepStrictEqual(result, {
+    id: first[0].id,
+    displayName: "實用腰帶 (腰帶 傳奇)",
+    lastUsedAt: 20,
+    filterGroups: [{ label: "Type Filters", values: ["Item Category: Belt"] }]
+  });
+});
+
 test("imports external link bookmarks into the selected league idempotently", async () => {
   const sandbox = { console, URL };
   vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {

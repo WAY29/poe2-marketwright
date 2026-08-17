@@ -837,6 +837,7 @@
       const record = createLinkFavoriteRecord({
         ...existing,
         ...context,
+        displayName: existing?.displayName || context?.displayName,
         id: existing?.id || createLinkFavoriteId("history"),
         folderId: null,
         createdAt: existing?.createdAt ?? timestamp
