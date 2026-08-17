@@ -6275,12 +6275,22 @@
   }
 
   function localizeTradeStatElement(element) {
+    const interactive = Boolean(element.querySelector?.(".keyword"));
     if (!isPageTranslationEnabled()) {
+      if (interactive) {
+        restoreInteractiveTradeStatElement(element);
+        return;
+      }
       if (element[TRADE_STAT_SOURCE_HTML_KEY] !== undefined) {
         element.innerHTML = element[TRADE_STAT_SOURCE_HTML_KEY];
         delete element[TRADE_STAT_SOURCE_HTML_KEY];
         delete element[TRADE_STAT_RENDER_KEY];
       }
+      return;
+    }
+
+    if (interactive) {
+      localizeInteractiveTradeStatElement(element);
       return;
     }
 
@@ -6315,6 +6325,99 @@
       element.appendChild(original);
     }
     element[TRADE_STAT_RENDER_KEY] = rendered;
+  }
+
+  function splitTradeStatLabelValue(text) {
+    const source = String(text || "");
+    const index = source.indexOf(": ");
+    if (index < 0) {
+      return null;
+    }
+    return { label: source.slice(0, index), value: source.slice(index + 2) };
+  }
+
+  function getInteractiveTradeStatParts(element) {
+    const keyword = element.querySelector?.(".keyword");
+    if (!keyword) {
+      return null;
+    }
+    const label = Array.from(element.children || []).find((child) =>
+      child &&
+      child !== keyword &&
+      String(child.tagName || "").toUpperCase() === "SPAN" &&
+      !child.classList?.contains?.("keyword") &&
+      !child.classList?.contains?.("poe2-marketwright-result-stat-original") &&
+      !child.classList?.contains?.("poe2-marketwright-inline-stat-original")
+    );
+    return label ? { label, keyword } : null;
+  }
+
+  function syncTradeStatOriginalLine(element, display, isResultStat) {
+    const className = isResultStat
+      ? "poe2-marketwright-result-stat-original"
+      : "poe2-marketwright-inline-stat-original";
+    let original = element.querySelector?.(".poe2-marketwright-result-stat-original, .poe2-marketwright-inline-stat-original");
+    if (!display?.english) {
+      original?.remove?.();
+      return;
+    }
+    if (!original) {
+      original = document.createElement("span");
+      original.className = className;
+      element.appendChild(original);
+    } else {
+      original.className = className;
+    }
+    original.textContent = isResultStat ? display.english : ` (${display.english})`;
+  }
+
+  function localizeInteractiveTradeStatElement(element) {
+    const parts = getInteractiveTradeStatParts(element);
+    if (!parts) {
+      return;
+    }
+    const partText = `${parts.label.textContent}: ${parts.keyword.textContent}`;
+    const display = getTradeStatDisplay(element[TRADE_LOCALIZATION_SOURCE_KEY] || partText, element);
+    if (!display) {
+      return;
+    }
+    const isResultStat = Boolean(element.closest(".search-results, .results, .result, .item"));
+    const rendered = getTradeStatRenderText(display, isResultStat);
+    if (element[TRADE_STAT_RENDER_KEY] === rendered && partText === display.primary) {
+      return;
+    }
+    if (partText !== display.primary) {
+      element[TRADE_LOCALIZATION_SOURCE_KEY] = partText;
+    }
+    if (applyInteractiveTradeStatDisplay(element, display, isResultStat)) {
+      element[TRADE_STAT_RENDER_KEY] = rendered;
+    }
+  }
+
+  function applyInteractiveTradeStatDisplay(element, display, isResultStat) {
+    const parts = getInteractiveTradeStatParts(element);
+    const localized = splitTradeStatLabelValue(display?.primary);
+    if (!parts || !localized) {
+      return false;
+    }
+    parts.label.textContent = localized.label;
+    parts.keyword.textContent = localized.value;
+    syncTradeStatOriginalLine(element, display, isResultStat);
+    return true;
+  }
+
+  function restoreInteractiveTradeStatElement(element) {
+    const parts = getInteractiveTradeStatParts(element);
+    const source = splitTradeStatLabelValue(element[TRADE_LOCALIZATION_SOURCE_KEY]);
+    if (parts && source) {
+      parts.label.textContent = source.label;
+      parts.keyword.textContent = source.value;
+    }
+    element.querySelector?.(".poe2-marketwright-result-stat-original")?.remove?.();
+    element.querySelector?.(".poe2-marketwright-inline-stat-original")?.remove?.();
+    delete element[TRADE_LOCALIZATION_SOURCE_KEY];
+    delete element[TRADE_STAT_SOURCE_HTML_KEY];
+    delete element[TRADE_STAT_RENDER_KEY];
   }
 
   function getTradeStatRenderText(display, isResultStat) {

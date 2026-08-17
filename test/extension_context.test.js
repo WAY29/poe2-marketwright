@@ -807,6 +807,112 @@ test("Trade result refresh preserves the native stat HTML for translation rollba
   assert.strictEqual(element.innerHTML, nativeHtml);
 });
 
+test("Trade result granted skills keep native keyword hover markup", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { localizeTradeStatElement, runtime };\n})();"
+  );
+  const createClassList = (el) => ({
+    contains(name) {
+      return String(el.className || "").split(/\s+/).includes(name);
+    }
+  });
+  const createElement = (tag = "span") => {
+    const el = {
+      tagName: String(tag).toUpperCase(),
+      className: "",
+      textContent: "",
+      classList: null,
+      remove() {
+        el._parent?.children && (el._parent.children = el._parent.children.filter((child) => child !== el));
+      }
+    };
+    el.classList = createClassList(el);
+    return el;
+  };
+  const sandbox = {
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: { createElement },
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageLanguage: "zh_TW_en", pageTranslationEnabled: true };
+  hooks.runtime.tradeStatsById = new Map([
+    [
+      "skill.cast_on_elemental_ailment",
+      {
+        id: "skill.cast_on_elemental_ailment",
+        en: "Grants Skill: Level # Cast on Elemental Ailment",
+        zh_CN: "赋予技能: 等级 # 元素异常状态时施放",
+        zh_TW: "賦予技能: 等級 # 元素異常狀態時施放"
+      }
+    ]
+  ]);
+
+  const icon = createElement("img");
+  icon.className = "lci";
+  const label = createElement("span");
+  label.textContent = "Grants Skill";
+  const keyword = createElement("span");
+  keyword.className = "keyword";
+  keyword.textContent = "Level 20 Cast on Elemental Ailment";
+  let replaced = false;
+  const element = {
+    children: [icon, label, keyword],
+    get innerText() {
+      return this.children.map((child) => child.textContent).filter(Boolean).join(" ");
+    },
+    get textContent() {
+      return this.innerText;
+    },
+    querySelector(selector) {
+      const names = String(selector || "")
+        .split(",")
+        .map((part) => part.trim().replace(/^\./, ""));
+      return this.children.find((child) => names.some((name) => createClassList(child).contains(name))) || null;
+    },
+    replaceChildren() {
+      replaced = true;
+      this.children = [];
+    },
+    appendChild(child) {
+      child._parent = this;
+      this.children.push(child);
+    },
+    closest(selector) {
+      if (selector === "[data-field^='stat.']") {
+        return { getAttribute: () => "stat.skill.cast_on_elemental_ailment" };
+      }
+      return selector.includes(".search-results") ? {} : null;
+    }
+  };
+
+  hooks.localizeTradeStatElement(element);
+  hooks.localizeTradeStatElement(element);
+
+  assert.strictEqual(replaced, false);
+  assert.strictEqual(keyword.className, "keyword");
+  assert.strictEqual(label.textContent, "賦予技能");
+  assert.strictEqual(keyword.textContent, "等級 20 元素異常狀態時施放");
+  assert.strictEqual(
+    element.querySelector(".poe2-marketwright-result-stat-original").textContent,
+    "Grants Skill: Level 20 Cast on Elemental Ailment"
+  );
+
+  hooks.runtime.state.pageTranslationEnabled = false;
+  hooks.localizeTradeStatElement(element);
+
+  assert.strictEqual(replaced, false);
+  assert.strictEqual(label.textContent, "Grants Skill");
+  assert.strictEqual(keyword.textContent, "Level 20 Cast on Elemental Ailment");
+  assert.equal(element.querySelector(".poe2-marketwright-result-stat-original"), null);
+});
+
 test("search results highlight queried affix text and keep desecrated chrome", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
