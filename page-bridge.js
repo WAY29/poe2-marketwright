@@ -692,7 +692,8 @@
       return;
     }
     runtime.tierObserver = new MutationObserver(scheduleTierControlRefresh);
-    runtime.tierObserver.observe(document.querySelector("#trade") || document.documentElement, {
+    // documentElement survives Trade remounting #trade; watching #trade missed newly added rows.
+    runtime.tierObserver.observe(document.documentElement, {
       childList: true,
       subtree: true
     });

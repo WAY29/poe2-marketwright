@@ -212,6 +212,46 @@ test("page bridge limits Tier options to the selected exact category", () => {
   assert.deepStrictEqual(exact, [{ tier: 1, min: 17, pageId: "Rings", label: "T1" }]);
 });
 
+test("tier observer watches documentElement so remounted #trade still refreshes", () => {
+  const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
+  const source = fs
+    .readFileSync("page-bridge.js", "utf8")
+    .replace(bootstrapCall, "")
+    .replace(
+      /\n\}\)\(\);\s*$/,
+      "\n  window.__testHooks = { installTierControls, runtime };\n})();"
+    );
+  const observed = [];
+  const documentElement = { id: "documentElement" };
+  const trade = { id: "trade" };
+  class FakeMutationObserver {
+    observe(target, options) {
+      observed.push({ target, options });
+    }
+  }
+  const sandbox = {
+    window: {
+      addEventListener() {},
+      postMessage() {},
+      document: {
+        documentElement,
+        addEventListener() {},
+        querySelector(selector) {
+          return selector === "#trade" ? trade : null;
+        }
+      }
+    },
+    MutationObserver: FakeMutationObserver,
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
+  sandbox.window.__testHooks.installTierControls();
+  assert.equal(observed.length, 1);
+  assert.equal(observed[0].target.id, "documentElement");
+  assert.equal(observed[0].options.childList, true);
+  assert.equal(observed[0].options.subtree, true);
+});
+
 test("page bridge localizes Trade status, price, and league options", () => {
   const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
   let source = fs
