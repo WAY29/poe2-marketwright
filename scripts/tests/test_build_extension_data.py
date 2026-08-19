@@ -2328,6 +2328,49 @@ class TradeStatMappingTests(unittest.TestCase):
             )
             self.assertEqual(stat_ids, expected_stat_ids)
 
+    def test_includes_local_trade_stats_for_local_affixes(self) -> None:
+        trade_stat_index = {
+            "# to maximum energy shield": {"explicit.stat_global_es", "fractured.stat_global_es"},
+            "# to maximum energy shield (local)": {
+                "explicit.stat_4052037485",
+                "fractured.stat_4052037485",
+                "desecrated.stat_4052037485",
+                "rune.stat_4052037485",
+            },
+        }
+
+        patterns, stat_ids = map_affix_to_trade_stat_ids(
+            {
+                "text_html": "+(10-17) to maximum Energy Shield",
+                "hover": "?s=Data%5CMods%2FLocalIncreasedEnergyShield1",
+            },
+            trade_stat_index,
+        )
+
+        self.assertIn("# to maximum Energy Shield (Local)", patterns)
+        self.assertIn("explicit.stat_4052037485", stat_ids)
+        self.assertIn("fractured.stat_4052037485", stat_ids)
+        self.assertIn("desecrated.stat_4052037485", stat_ids)
+        self.assertIn("rune.stat_4052037485", stat_ids)
+        self.assertIn("explicit.stat_global_es", stat_ids)
+
+    def test_does_not_add_local_trade_stats_for_global_affixes(self) -> None:
+        trade_stat_index = {
+            "# to maximum energy shield": {"explicit.stat_global_es"},
+            "# to maximum energy shield (local)": {"explicit.stat_4052037485"},
+        }
+
+        patterns, stat_ids = map_affix_to_trade_stat_ids(
+            {
+                "text_html": "+(10-17) to maximum Energy Shield",
+                "hover": "?s=Data%5CMods%2FIncreasedEnergyShield1",
+            },
+            trade_stat_index,
+        )
+
+        self.assertNotIn("# to maximum Energy Shield (Local)", patterns)
+        self.assertEqual(stat_ids, ["explicit.stat_global_es"])
+
     def test_expands_passive_skill_placeholder_to_official_keystone_variants(self) -> None:
         trade_stats_payload = {
             "result": [

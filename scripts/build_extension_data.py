@@ -2468,12 +2468,29 @@ def map_granted_skill_names_to_trade_stats(
     return sorted(patterns), sorted(stat_ids)
 
 
-def map_affix_text_to_trade_stat_ids(text_html: str, trade_stat_index: dict[str, set[str]]) -> tuple[list[str], list[str]]:
+def map_affix_text_to_trade_stat_ids(
+    text_html: str,
+    trade_stat_index: dict[str, set[str]],
+    require_local: bool = False,
+) -> tuple[list[str], list[str]]:
     patterns: list[str] = []
     stat_ids: set[str] = set()
     for line in split_affix_stat_lines(text_html):
         pattern = canonicalize_stat_text(line)
         if not pattern:
+            continue
+        if require_local:
+            matched: set[str] = set()
+            for keys in tier_trade_stat_lookup_variants(line, require_local=True):
+                for key in keys:
+                    matched.update(trade_stat_index.get(key, set()))
+            if not matched:
+                continue
+            variants = [pattern]
+            if pattern.startswith(("+", "-")):
+                variants.append(pattern[1:])
+            patterns.extend(f"{variant} (Local)" for variant in variants)
+            stat_ids.update(matched)
             continue
         patterns.append(pattern)
         for template in poe2db_trade_stat_templates(line):
@@ -2485,9 +2502,14 @@ def map_affix_text_to_trade_stat_ids(text_html: str, trade_stat_index: dict[str,
 def map_affix_to_trade_stat_ids(
     affix: dict[str, Any], trade_stat_index: dict[str, set[str]]
 ) -> tuple[list[str], list[str]]:
-    patterns, stat_ids = map_affix_text_to_trade_stat_ids(
-        affix.get("text_html") or affix.get("text", ""), trade_stat_index
-    )
+    text_html = affix.get("text_html") or affix.get("text", "")
+    patterns, stat_ids = map_affix_text_to_trade_stat_ids(text_html, trade_stat_index)
+    if is_local_affix(affix):
+        local_patterns, local_stat_ids = map_affix_text_to_trade_stat_ids(
+            text_html, trade_stat_index, require_local=True
+        )
+        patterns = sorted({*patterns, *local_patterns})
+        stat_ids = sorted({*stat_ids, *local_stat_ids})
     known_stat_ids = {stat_id for ids in trade_stat_index.values() for stat_id in ids}
     stat_ids = sorted(
         set(stat_ids).union(

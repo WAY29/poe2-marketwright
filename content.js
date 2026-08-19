@@ -8658,9 +8658,21 @@
     );
   }
 
+  function getTierPageIds(selection) {
+    if (selection?.kind === "page") {
+      return [selection.id];
+    }
+    if (selection?.kind === "logical") {
+      const slugs = runtime.data?.logicalCategories?.[selection.id]?.pageSlugs;
+      return Array.isArray(slugs) ? slugs.slice() : [];
+    }
+    return null;
+  }
+
   function syncTierBridge(selection) {
     const tierMappings = runtime.data?.tierMappings || {};
-    const tierPageId = selection?.kind === "page" ? selection.id : null;
+    const tierPageIds = getTierPageIds(selection);
+    const tierPageId = tierPageIds?.length === 1 ? tierPageIds[0] : null;
     const tierEnabled = Boolean(runtime.state.tierEnabled);
     const tierMode = normalizeTierMode(runtime.state.tierMode);
     const pageLabels = Object.fromEntries(
@@ -8669,7 +8681,7 @@
         return [pageId, localizeSelectionLabel({ kind: "page", id: pageId }, page?.label || pageId)];
       })
     );
-    const signature = [tierPageId || "", runtime.state.uiLanguage || "", tierEnabled, tierMode].join("|");
+    const signature = [(tierPageIds || ["*"]).join(","), runtime.state.uiLanguage || "", tierEnabled, tierMode].join("|");
     if (runtime.tierBridgeMappingsSent && signature === runtime.tierBridgeSignature) {
       return;
     }
@@ -8683,6 +8695,7 @@
         payload: {
           ...(includeMappings ? { tierMappings } : {}),
           tierPageId,
+          tierPageIds,
           tierEnabled,
           tierMode,
           tierPageLabels: pageLabels,

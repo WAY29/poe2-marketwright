@@ -147,6 +147,7 @@
     tierMappings: {},
     tierPageLabels: {},
     tierPageId: null,
+    tierPageIds: null,
     tierEnabled: true,
     tierMode: "minimum",
     tierLabel: "Tier",
@@ -192,7 +193,19 @@
         runtime.tierMappings = payload.tierMappings;
       }
       runtime.tierPageLabels = payload.tierPageLabels || runtime.tierPageLabels;
-      runtime.tierPageId = typeof payload.tierPageId === "string" ? payload.tierPageId : null;
+      if (Array.isArray(payload.tierPageIds)) {
+        runtime.tierPageIds = payload.tierPageIds.map(String);
+      } else if (typeof payload.tierPageId === "string") {
+        runtime.tierPageIds = [payload.tierPageId];
+      } else {
+        runtime.tierPageIds = null;
+      }
+      runtime.tierPageId =
+        typeof payload.tierPageId === "string"
+          ? payload.tierPageId
+          : runtime.tierPageIds?.length === 1
+            ? runtime.tierPageIds[0]
+            : null;
       runtime.tierEnabled = payload.tierEnabled !== false;
       runtime.tierMode = payload.tierMode === "exact" ? "exact" : "minimum";
       if (typeof payload.tierLabel === "string" && payload.tierLabel) {
@@ -911,20 +924,27 @@
 
   function getTierOptions(statId) {
     const mappings = runtime.tierMappings || {};
-    const pageIds = runtime.tierPageId ? [runtime.tierPageId] : Object.keys(mappings);
+    const allowed = Array.isArray(runtime.tierPageIds)
+      ? runtime.tierPageIds
+      : runtime.tierPageId
+        ? [runtime.tierPageId]
+        : null;
+    const pageIds = (allowed || Object.keys(mappings)).filter((pageId) =>
+      Array.isArray(mappings[pageId]?.[statId])
+    );
+    const singlePage = Array.isArray(allowed) && allowed.length === 1;
     return pageIds
-      .flatMap((currentPageId) => {
-        const tiers = mappings[currentPageId]?.[statId];
-        return Array.isArray(tiers)
-          ? tiers.map((tier) => ({
-              ...tier,
-              pageId: currentPageId,
-              label: runtime.tierPageId
-                ? `T${tier.tier}`
-                : `${runtime.tierPageLabels[currentPageId] || currentPageId} T${tier.tier}`
-            }))
-          : [];
+      .map((currentPageId) => {
+        const tiers = mappings[currentPageId][statId];
+        return tiers.map((tier) => ({
+          ...tier,
+          pageId: currentPageId,
+          label: singlePage
+            ? `T${tier.tier}`
+            : `${runtime.tierPageLabels[currentPageId] || currentPageId} T${tier.tier}`
+        }));
       })
+      .flat()
       .sort((left, right) => left.pageId.localeCompare(right.pageId) || left.tier - right.tier);
   }
 

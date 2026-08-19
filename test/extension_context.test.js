@@ -230,6 +230,7 @@ test("Tier bridge sends mappings with its first update and the active category",
       Rings: { "explicit.stat_cold_damage": [{ tier: 1, min: 20.5 }] }
     },
     tierPageId: "Rings",
+    tierPageIds: ["Rings"],
     tierEnabled: true,
     tierMode: "minimum",
     tierPageLabels: { Rings: "Rings" },
@@ -237,6 +238,13 @@ test("Tier bridge sends mappings with its first update and the active category",
     corruptedGemLevelLabel: "Corrupted +1 Final Gem Level",
     corruptedGemLevelInvalid: "Enter a whole number from 2 to 21"
   });
+
+  hooks.runtime.data.logicalCategories = {
+    Gloves: { pageSlugs: ["Gloves_int", "Gloves_dex", "Gloves_str"] }
+  };
+  hooks.syncTierBridge({ kind: "logical", id: "Gloves" });
+  assert.deepStrictEqual(messages[1].payload.tierPageIds, ["Gloves_int", "Gloves_dex", "Gloves_str"]);
+  assert.equal(messages[1].payload.tierPageId, null);
 });
 
 test("Tier mode buttons reflect the active mode and disabled state", () => {

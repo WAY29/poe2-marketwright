@@ -205,11 +205,20 @@ test("page bridge limits Tier options to the selected exact category", () => {
   const global = structuredClone(hooks.getTierOptions("explicit.stat_damage"));
   hooks.runtime.tierPageId = "Rings";
   const exact = structuredClone(hooks.getTierOptions("explicit.stat_damage"));
+  hooks.runtime.tierPageId = null;
+  hooks.runtime.tierMappings.Boots_int = { "explicit.stat_damage": [{ tier: 1, min: 9 }] };
+  hooks.runtime.tierPageLabels.Boots_int = "靴子 (智慧)";
+  hooks.runtime.tierPageIds = ["Rings", "Belts"];
+  const logical = structuredClone(hooks.getTierOptions("explicit.stat_damage"));
   assert.deepStrictEqual(global, [
     { tier: 1, min: 25, pageId: "Belts", label: "腰带 T1" },
     { tier: 1, min: 17, pageId: "Rings", label: "戒指 T1" }
   ]);
   assert.deepStrictEqual(exact, [{ tier: 1, min: 17, pageId: "Rings", label: "T1" }]);
+  assert.deepStrictEqual(logical, [
+    { tier: 1, min: 25, pageId: "Belts", label: "腰带 T1" },
+    { tier: 1, min: 17, pageId: "Rings", label: "戒指 T1" }
+  ]);
 });
 
 test("tier observer watches documentElement so remounted #trade still refreshes", () => {
@@ -1207,6 +1216,61 @@ test("page bridge hides unmatched known stats but keeps related pseudo", async (
   const groups = Object.fromEntries((result).map((group) => [group["id"], group["entries"]]));
   assert.deepStrictEqual((groups["pseudo"]).map((entry) => entry["id"]), ["pseudo.pseudo_total_strength", "pseudo.pseudo_number_of_empty_prefix_mods", "pseudo.pseudo_number_of_suffix_mods", "pseudo.pseudo_number_of_uses_remaining"]);
   assert.deepStrictEqual((groups["explicit"]).map((entry) => entry["id"]), ["explicit.stat_strength"]);
+});
+
+test("page bridge keeps translated local stats only when their ids are allowed", async () => {
+  const listeners = [];
+  const staticData = {
+    knownStats: [
+      {
+        id: "explicit",
+        entries: [
+          { id: "explicit.stat_4052037485", text: "# 能量护盾上限 (区域)" },
+          { id: "explicit.stat_global_es", text: "# to maximum Energy Shield" }
+        ]
+      }
+    ]
+  };
+  const window = {
+    app: { $data: { static_: staticData } },
+    addEventListener(type, listener) {
+      if (type === "message") {
+        listeners.push(listener);
+      }
+    },
+    postMessage() {},
+    setTimeout() {
+      throw new Error("trade app should be captured synchronously");
+    }
+  };
+
+  vm.runInNewContext(fs.readFileSync("page-bridge.js", "utf8"), { window, console }, {
+    filename: "page-bridge.js"
+  });
+
+  const sendUpdate = (allowedStatIds) => {
+    listeners[0]({
+      source: window,
+      data: {
+        source: "poe2-marketwright",
+        type: "POE2_MARKETWRIGHT_UPDATE",
+        payload: {
+          enabled: true,
+          allowedKeys: ["# to maximum energy shield"],
+          allowedStatIds,
+          allStatIds: ["explicit.stat_4052037485", "explicit.stat_global_es"],
+          allKeys: ["# to maximum energy shield", "# to maximum energy shield (local)"]
+        }
+      }
+    });
+    return structuredClone(staticData.knownStats[0].entries).map((entry) => entry.id);
+  };
+
+  assert.deepStrictEqual(sendUpdate([]), ["explicit.stat_global_es"]);
+  assert.deepStrictEqual(sendUpdate(["explicit.stat_4052037485"]), [
+    "explicit.stat_4052037485",
+    "explicit.stat_global_es"
+  ]);
 });
 
 test("content filter keeps related pseudo options", async () => {
