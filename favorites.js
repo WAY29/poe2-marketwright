@@ -122,6 +122,21 @@
         stats: favorite.stats
       });
 
+    const composeUniqueDisplayName = (uniqueName, baseName) => {
+      const name = String(uniqueName || "").trim();
+      const base = String(baseName || "").trim();
+      if (!name) {
+        return base;
+      }
+      if (!base || name.includes(base)) {
+        return name;
+      }
+      if (base.includes(name)) {
+        return base;
+      }
+      return `${name} ${base}`;
+    };
+
     const createFavoriteRecord = (item, league, itemClassification, createdAt = Date.now()) => {
       const normalizedLeague = String(league || "").trim();
       const baseName = String(itemClassification?.baseName || item?.typeLine || item?.baseType || "").trim();
@@ -129,6 +144,10 @@
       const itemType = String(itemClassification?.itemType || "").trim();
       const rarity = String(item?.rarity || "").trim().toLowerCase();
       const originalName = String(item?.name || "").trim();
+      const displayName =
+        rarity === "unique" || rarity === "relic"
+          ? composeUniqueDisplayName(originalName, baseName)
+          : originalName || baseName;
       if (!normalizedLeague || !baseName || !category || !rarity) {
         throw createFavoriteError(
           "missing_item_context",
@@ -206,7 +225,7 @@
       const favorite = {
         version: 2,
         league: normalizedLeague,
-        displayName: originalName || baseName,
+        displayName,
         nameSource: "automatic",
         originalName,
         baseName,
@@ -606,6 +625,7 @@
           ? { ...(min != null ? { min } : {}), ...(max != null ? { max } : {}) }
           : null;
       };
+      const name = normalizeText(snapshot.name);
       const type = normalizeText(snapshot.type);
       const category = normalizeText(snapshot.category);
       const rarity = normalizeText(snapshot.rarity);
@@ -639,10 +659,11 @@
           });
         }
       }
-      if (!type && !category && !rarity && !statGroups.length) {
+      if (!name && !type && !category && !rarity && !statGroups.length) {
         return null;
       }
       return {
+        ...(name ? { name } : {}),
         ...(type ? { type } : {}),
         ...(category ? { category } : {}),
         ...(rarity ? { rarity } : {}),
@@ -1661,7 +1682,11 @@
       }
       setButtonStatus(button, "loading");
       try {
-        const item = await ensureItem(itemId);
+        let item = await ensureItem(itemId);
+        const searchName = String(options.getSearchItemName?.() || "").trim();
+        if (searchName && !String(item?.name || "").trim()) {
+          item = { ...item, name: searchName };
+        }
         const league = options.getLeague?.();
         console.debug("[PoE2 Marketwright] favorite toggle requested", {
           itemId,

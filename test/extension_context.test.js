@@ -1567,6 +1567,59 @@ test("favorite presentation uses the global language without overwriting custom 
   assert.deepStrictEqual(result["custom"]["displayName"], "My saved bow");
 });
 
+test("unique favorite presentation localizes unique name plus base", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getFavoritePresentation, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { uiLanguage: "zh_CN" };
+  hooks.runtime.data = {
+    displayMetadata: {
+      items: { Diamond: { en: "Diamond", zh_CN: "宝钻", zh_TW: "鑽石" } }
+    },
+    tradeLocalization: {
+      search: {
+        items: [{
+          id: "Megalomaniac Diamond",
+          en: "Megalomaniac Diamond",
+          zh_CN: "妄想症 宝钻",
+          zh_TW: "妄想症 鑽石"
+        }]
+      }
+    }
+  };
+  const unique = hooks.getFavoritePresentation({
+    nameSource: "automatic",
+    displayName: "Megalomaniac",
+    originalName: "Megalomaniac",
+    baseName: "Diamond",
+    rarity: "unique",
+    mods: []
+  });
+  const combined = hooks.getFavoritePresentation({
+    nameSource: "automatic",
+    displayName: "Megalomaniac Diamond",
+    originalName: "Megalomaniac",
+    baseName: "Diamond",
+    rarity: "unique",
+    mods: []
+  });
+  assert.equal(unique.displayName, "妄想症 宝钻");
+  assert.equal(combined.displayName, "妄想症 宝钻");
+  assert.equal(unique.baseName, "宝钻");
+});
+
 test("currency panel displays the detected league", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");

@@ -1976,6 +1976,7 @@
       getFavorites: () => runtime.state.favorites,
       getLeague: getCurrentFavoriteLeague,
       getItemClassification: getFavoriteItemClassification,
+      getSearchItemName: () => getTradeQueryItemText(runtime.activeSearchQuery?.name),
       onToggleFavorite: toggleFavorite,
       labels: {
         add: t("favoriteSave"),
@@ -2585,15 +2586,18 @@
         }
       }
     }
-    const selectionName = localize(context?.displayName);
+    const selectionName = getLocalizedTradeItemName(context?.displayName);
     const unnamed = t("linkFavoriteUnnamedSearch");
     const savedNameEnglish = getLinkFavoriteBilingualText(context?.displayName)?.english || "";
     const selectionIsUnnamed =
       normalizeLookupText(selectionName) === normalizeLookupText(unnamed) ||
       normalizeLookupText(savedNameEnglish) === normalizeLookupText(unnamed);
     const selectionIsCategory = category && normalizeLookupText(selectionName) === normalizeLookupText(category);
-    const itemName = (!selectionIsCategory && !selectionIsUnnamed && selectionName ? selectionName : "") ||
-      localize(snapshot.type);
+    const uniqueItemName = composeUniqueFavoriteDisplayName(snapshot.name, snapshot.type);
+    const itemName =
+      (uniqueItemName && uniqueItemName !== snapshot.type ? getLocalizedTradeItemName(uniqueItemName) : "") ||
+      (!selectionIsCategory && !selectionIsUnnamed && selectionName ? selectionName : "") ||
+      getLocalizedTradeItemName(snapshot.type);
     category ||= localize(titleCase(String(snapshot.category || "").split(".").pop() || ""));
     rarity ||= localize(titleCase(snapshot.rarity));
     const details = [category, rarity].filter(Boolean);
@@ -2813,17 +2817,57 @@
     }));
   }
 
+  function getTradeQueryItemText(value) {
+    if (typeof value === "string") {
+      return value.trim();
+    }
+    if (value && typeof value === "object" && typeof value.option === "string") {
+      return value.option.trim();
+    }
+    return "";
+  }
+
+  function getLocalizedTradeItemName(value) {
+    const text = getLinkFavoriteFilterText(value);
+    if (!text) {
+      return "";
+    }
+    const bilingual = getLinkFavoriteBilingualText(text);
+    const record =
+      getPobItemNameRecord(bilingual?.english || text) ||
+      getPobItemNameRecord(text);
+    if (record) {
+      return getLocalizedLinkFavoriteDisplayText(record, bilingual?.primary || text);
+    }
+    return getLocalizedLinkFavoriteFilterLabel(text);
+  }
+
   function getLinkFavoriteDisplayNameFromSelections(itemTexts, categoryTexts) {
     const findSelectionName = (texts, lookup) => {
+      let best = null;
       for (const text of texts) {
         const displayText = String(text).replace(/\s+/g, " ").trim();
-        for (const segment of splitCandidateText(text)) {
-          if (lookup(segment)) {
-            return normalizeLookupText(displayText) === segment ? displayText : segment;
+        const bilingual = getLinkFavoriteBilingualText(displayText);
+        const parts = [displayText, bilingual?.primary, bilingual?.english];
+        for (const part of parts) {
+          if (!part) {
+            continue;
+          }
+          for (const segment of splitCandidateText(part)) {
+            if (!lookup(segment)) {
+              continue;
+            }
+            if (best && segment.length <= best.segment.length) {
+              continue;
+            }
+            best = {
+              segment,
+              display: bilingual?.primary || (normalizeLookupText(displayText) === segment ? displayText : segment)
+            };
           }
         }
       }
-      return null;
+      return best?.display || null;
     };
     const baseName = findSelectionName(
       itemTexts,
@@ -3048,15 +3092,35 @@
     };
   }
 
+  function composeUniqueFavoriteDisplayName(uniqueName, baseName) {
+    const name = String(uniqueName || "").trim();
+    const base = String(baseName || "").trim();
+    if (!name) {
+      return base;
+    }
+    if (!base || name.includes(base)) {
+      return name;
+    }
+    if (base.includes(name)) {
+      return base;
+    }
+    return `${name} ${base}`;
+  }
+
   function getFavoritePresentation(favorite) {
     const baseName = getLocalizedFavoriteBaseName(favorite);
     const automaticName = String(favorite?.originalName || favorite?.displayName || "").trim();
-    const automaticNameRecord = getFavoriteItemRecord(automaticName);
+    const rarity = String(favorite?.rarity || "").trim().toLowerCase();
+    const englishName =
+      rarity === "unique" || rarity === "relic"
+        ? composeUniqueFavoriteDisplayName(automaticName, favorite?.baseName)
+        : automaticName;
+    const automaticNameRecord = getPobItemNameRecord(englishName);
     const displayName =
       favorite?.nameSource === "automatic"
         ? automaticNameRecord
-          ? getLocalizedDisplayText(automaticNameRecord, baseName)
-          : automaticName || baseName
+          ? getLocalizedDisplayText(automaticNameRecord, englishName || baseName)
+          : englishName || baseName
         : favorite?.displayName || baseName;
     const mods = (favorite?.mods || []).map((modifier) => formatLocalizedFavoriteModifier(modifier));
     return {
@@ -3068,6 +3132,7 @@
       rarity: getLocalizedFavoriteRarity(favorite?.rarity),
       mods,
       searchTerms: [
+        displayName,
         favorite?.displayName,
         favorite?.originalName,
         favorite?.baseName,
@@ -7360,7 +7425,8 @@
       return null;
     }
     const typeFilters = query.filters?.type_filters?.filters || {};
-    const type = String(query.type || "").trim();
+    const name = getTradeQueryItemText(query.name);
+    const type = getTradeQueryItemText(query.type);
     const category = String(typeFilters.category?.option || "").trim();
     const rarity = String(typeFilters.rarity?.option || "").trim();
     const normalizeStat = (stat) => {
@@ -7404,8 +7470,9 @@
         };
       })
       .filter(Boolean);
-    return type || category || rarity || statGroups.length
+    return name || type || category || rarity || statGroups.length
       ? {
+          ...(name ? { name } : {}),
           ...(type ? { type } : {}),
           ...(category ? { category } : {}),
           ...(rarity ? { rarity } : {}),

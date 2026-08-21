@@ -73,6 +73,8 @@ test("uses base name and category instead of the random item name", async () => 
     itemType: "Body Armour"
   }, 456);
   const result = structuredClone({
+    displayName: unique.displayName,
+    originalName: unique.originalName,
     baseName: unique.baseName,
     itemType: unique.itemType,
     queryName: tools.createTradeSearchPayload(unique).query.name || null,
@@ -82,7 +84,51 @@ test("uses base name and category instead of the random item name", async () => 
       "https://www.pathofexile.com/trade2/search/poe2/HC%20Dawn/query-1"
     )
   });
-  assert.deepStrictEqual(result, {"baseName": "Fur Plate", "itemType": "Body Armour", "queryName": null, "queryType": "Fur Plate", "category": "armour.chest", "league": "HC Dawn"});
+  assert.deepStrictEqual(result, {"displayName": "Howlcrack Fur Plate", "originalName": "Howlcrack", "baseName": "Fur Plate", "itemType": "Body Armour", "queryName": null, "queryType": "Fur Plate", "category": "armour.chest", "league": "HC Dawn"});
+});
+
+test("unique favorite default names keep unique prefix plus base", async () => {
+  const sandbox = { console };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+
+  const tools = sandbox.Poe2MarketwrightFavorites.createFavoriteTools();
+  const unique = tools.createFavoriteRecord({
+    rarity: "Unique",
+    name: "Megalomaniac",
+    typeLine: "Diamond",
+    explicitMods: [{ description: "Cannot be [Shock|Shocked]", hash: "stat.explicit.stat_491899612" }]
+  }, "Dawn", {
+    baseName: "Diamond",
+    category: "jewel",
+    itemType: "Jewel"
+  }, 1);
+  const alreadyCombined = tools.createFavoriteRecord({
+    rarity: "Unique",
+    name: "Megalomaniac Diamond",
+    typeLine: "Diamond",
+    explicitMods: [{ description: "Cannot be [Shock|Shocked]", hash: "stat.explicit.stat_491899612" }]
+  }, "Dawn", {
+    baseName: "Diamond",
+    category: "jewel",
+    itemType: "Jewel"
+  }, 2);
+  const unnamed = tools.createFavoriteRecord({
+    rarity: "Unique",
+    name: "",
+    typeLine: "Diamond",
+    explicitMods: [{ description: "Cannot be [Shock|Shocked]", hash: "stat.explicit.stat_491899612" }]
+  }, "Dawn", {
+    baseName: "Diamond",
+    category: "jewel",
+    itemType: "Jewel"
+  }, 3);
+
+  assert.equal(unique.displayName, "Megalomaniac Diamond");
+  assert.equal(unique.originalName, "Megalomaniac");
+  assert.equal(alreadyCombined.displayName, "Megalomaniac Diamond");
+  assert.equal(unnamed.displayName, "Diamond");
 });
 
 test("preserves implicit and special-source stats in saved favorite searches", async () => {
@@ -473,6 +519,26 @@ test("link favorite rejects legacy flat display snapshots", async () => {
     }
   });
   assert.equal(record.displaySnapshot, undefined);
+});
+
+test("link favorite snapshot keeps unique item name with its base", async () => {
+  const sandbox = { console, URL };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+  const tools = sandbox.Poe2MarketwrightFavorites.createLinkFavoriteTools();
+  const record = tools.createLinkFavoriteRecord({
+    url: "https://www.pathofexile.com/trade2/search/poe2/Dawn/query-7",
+    displayName: "Megalomaniac Diamond",
+    displaySnapshot: {
+      name: "Megalomaniac",
+      type: "Diamond",
+      category: "jewel",
+      rarity: "unique"
+    }
+  });
+  const result = structuredClone(record.displaySnapshot);
+  assert.deepStrictEqual(result, {"name": "Megalomaniac", "type": "Diamond", "category": "jewel", "rarity": "unique"});
 });
 
 test("link favorite preserves structured stat group relationships in its display snapshot", async () => {

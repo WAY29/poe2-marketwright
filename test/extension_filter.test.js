@@ -3136,6 +3136,67 @@ test("favorite confirmations use non-layout dialogs in both favorite views", () 
   assert.match(fullStyles, /\.favorites-panel-confirm-dialog\s*\{[^}]*position:\s*fixed;/);
 });
 
+test("unique link history names keep unique prefix plus base", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getLinkHistoryDisplayName, getLinkFavoriteDisplayNameFromSelections, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageTranslationEnabled: true, pageLanguage: "zh_CN" };
+  hooks.runtime.data = {
+    itemNameToSelection: {
+      diamond: { kind: "page", id: "Diamond" },
+      "megalomaniac diamond": { kind: "page", id: "Diamond" },
+      "妄想症 宝钻": { kind: "page", id: "Diamond" },
+      "妄想症 鑽石": { kind: "page", id: "Diamond" }
+    },
+    displayMetadata: {
+      items: { Diamond: { en: "Diamond", zh_CN: "宝钻", zh_TW: "鑽石" } }
+    },
+    tradeLocalization: {
+      search: {
+        items: [{
+          id: "Megalomaniac Diamond",
+          en: "Megalomaniac Diamond",
+          zh_CN: "妄想症 宝钻",
+          zh_TW: "妄想症 鑽石"
+        }]
+      }
+    }
+  };
+  hooks.runtime.tradeLocalization = {
+    strings: { Diamond: { en: "Diamond", zh_CN: "宝钻", zh_TW: "鑽石" } },
+    optionStrings: {
+      Jewel: { en: "Jewel", zh_CN: "珠宝", zh_TW: "珠寶" },
+      Unique: { en: "Unique", zh_CN: "传奇", zh_TW: "傳奇" }
+    }
+  };
+  const named = hooks.getLinkHistoryDisplayName({
+    displayName: "Unnamed search",
+    displaySnapshot: { name: "Megalomaniac", type: "Diamond", category: "jewel", rarity: "unique" },
+    filterGroups: [{
+      label: "Type Filters",
+      values: ["Item Category: Jewel", "Item Rarity: Unique"]
+    }]
+  });
+  const fromSelection = hooks.getLinkFavoriteDisplayNameFromSelections(
+    ["Diamond", "妄想症 鑽石 (Megalomaniac Diamond)"],
+    []
+  );
+  assert.equal(named, "妄想症 宝钻 (珠宝 传奇)");
+  assert.equal(fromSelection, "妄想症 鑽石");
+});
+
 test("current link favorite uses the same fallback name as search history", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
