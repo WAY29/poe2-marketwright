@@ -6800,6 +6800,58 @@
     return null;
   }
 
+  function additionalStatKey(text) {
+    return normalizeStatKey(
+      String(text || "")
+        .replace(/\ban additional\b/gi, "# additional")
+        .replace(/(?:#|\d+) additional( [A-Za-z]+)? (\w+)s\b/gi, "# additional$1 $2")
+        .replace(/\bin maps?\b/gi, "in area")
+        .replace(/\bin areas?\b/gi, "in area")
+    );
+  }
+
+  function statRecordMatchesDescription(record, description) {
+    const descriptionKey = additionalStatKey(description);
+    return Boolean(descriptionKey && record?.en && additionalStatKey(record.en) === descriptionKey);
+  }
+
+  function injectAdditionalCount(template, leftoverValues) {
+    if (!leftoverValues.length) {
+      return template;
+    }
+    const value = leftoverValues[0];
+    const numeric = Number(String(value).replace(/^\+/, ""));
+    const withEnglish = template.replace(/\ban additional\b/i, `${value} additional`);
+    if (withEnglish !== template) {
+      if (!Number.isFinite(numeric) || numeric === 1) {
+        return withEnglish;
+      }
+      return withEnglish.replace(
+        /(\d+ additional)(?: ([A-Z][a-z]+))? (\w+)\b/,
+        (match, prefix, adjective, noun) => {
+          if (noun.endsWith("s")) {
+            return match;
+          }
+          if (adjective) {
+            return `${prefix} ${adjective} ${noun}s`;
+          }
+          return `${prefix} ${noun}s`;
+        }
+      );
+    }
+    const additionalOne = template.match(/額外1|额外1|一次|一个|一個|一名|一秒|一波|一道|一座|一位|一支|一发|一發|一颗|一顆|1次|1個|1个|1名|1秒|1波/);
+    if (!additionalOne) {
+      return template;
+    }
+    const token = additionalOne[0];
+    const filled = token.startsWith("額外") || token.startsWith("额外")
+      ? `${token.slice(0, 2)}${value}`
+      : /^1/.test(token)
+        ? `${value}${token.slice(1)}`
+        : `${value}${token.slice(1)}`;
+    return `${template.slice(0, additionalOne.index)}${filled}${template.slice(additionalOne.index + token.length)}`;
+  }
+
   function getLocalizedTradeStatTemplate(text, record = null, actualDescription = null) {
     const template = record || runtime.tradeStatTemplates.get(normalizeStatKey(text));
     if (!template) {
@@ -6807,8 +6859,10 @@
     }
     const expectedDirection = getTradeStatDirection(template.en);
     const actualDirection = getTradeStatDirection(actualDescription);
-    const values = String(text).match(NUMBER_RE) || String(actualDescription || "").match(NUMBER_RE) || [];
-    let index = 0;
+    const source = String(text || "");
+    const actual = String(actualDescription || "");
+    const actualMatches = statRecordMatchesDescription(template, actual);
+    const values = (actualMatches && actual.match(NUMBER_RE)) || source.match(NUMBER_RE) || [];
     const format = (language) => {
       const target = localizeTradeStatDirection(
         String(template[language] || template.en || ""),
@@ -6816,29 +6870,32 @@
         actualDirection,
         language
       );
-      return target.replace(/#/g, (placeholder, offset) => {
-        const value = values[index++] || placeholder;
+      let used = 0;
+      const filled = target.replace(/#/g, (placeholder, offset) => {
+        const value = values[used++] || placeholder;
         return target[offset - 1] === "+" ? value.replace(/^\+/, "") : value;
       });
+      return injectAdditionalCount(filled, values.slice(used));
     };
     const language = resolvePageLanguage(runtime.state.pageLanguage);
+    const formattedEnglish = format("en");
+    const english = actualMatches && !String(template.en).includes("#") && (actual.match(NUMBER_RE) || []).length
+      ? actual
+      : formattedEnglish;
     if (language === "en") {
-      return { en: format("en") };
+      return { en: english };
     }
     const locale = getMessageLocale(language);
-    index = 0;
-    const localized = format(locale);
-    index = 0;
-    const english = format("en");
     return {
       en: english,
-      [locale]: localized
+      [locale]: format(locale)
     };
   }
 
   function stripTradeMarkup(value) {
     return String(value || "")
       .replace(/\[[^\]|]+\|([^\]]+)\]/g, "$1")
+      .replace(/\[([^\]]+)\]/g, "$1")
       .replace(/\s+/g, " ")
       .trim();
   }
@@ -6846,10 +6903,18 @@
   function getResultModifierHash(item, sourceKey, index, modifier) {
     const source = String(sourceKey || "").replace(/Mods$/, "").toLowerCase();
     const hashes = item?.extended?.hashes?.[source];
-    const indexedHash = Array.isArray(hashes)
-      ? hashes.find((entry) => Array.isArray(entry?.[1]) && entry[1].includes(index))?.[0] || hashes[index]?.[0]
+    const byIncludes = Array.isArray(hashes)
+      ? hashes.find((entry) => Array.isArray(entry?.[1]) && entry[1].includes(index))?.[0]
       : null;
-    return String(indexedHash || modifier?.hash || "").replace(/^stat\./, "").trim();
+    const byIndex = Array.isArray(hashes) ? hashes[index]?.[0] : null;
+    const description = stripTradeMarkup(
+      typeof modifier === "string" ? modifier : modifier?.description
+    );
+    const match = [byIndex, modifier?.hash, byIncludes].find((candidate) => {
+      const statId = String(candidate || "").replace(/^stat\./, "").trim();
+      return statRecordMatchesDescription(runtime.tradeStatsById.get(statId), description);
+    });
+    return String(match || byIndex || modifier?.hash || byIncludes || "").replace(/^stat\./, "").trim();
   }
 
   function storeTradeResultModifierDescriptions(data) {

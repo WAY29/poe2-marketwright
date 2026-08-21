@@ -629,6 +629,24 @@ test("Trade result pairs fetch mods by extended hashes when modifier.hash is rot
         zh_CN: "闪电抗性 #%",
         zh_TW: "#%閃電抗性"
       }
+    ],
+    [
+      "enchant.stat_2954116742|27009",
+      {
+        id: "enchant.stat_2954116742|27009",
+        en: "Allocates Lust for Sacrifice",
+        zh_CN: "配置 牺牲的渴望",
+        zh_TW: "配置渴求獻祭"
+      }
+    ],
+    [
+      "enchant.stat_2954116742|31773",
+      {
+        id: "enchant.stat_2954116742|31773",
+        en: "Allocates Resurging Archon",
+        zh_CN: "配置 复兴执政官",
+        zh_TW: "配置復行統治者"
+      }
     ]
   ]);
   hooks.runtime.tradeLocalization = {
@@ -729,6 +747,141 @@ test("Trade result pairs fetch mods by extended hashes when modifier.hash is rot
       secondEffect: {
         primary: "統治者增益效果恢復期加快25%",
         english: "Archon recovery period expires 25% faster"
+      }
+    }
+  );
+});
+
+test("Trade result fills additional-count tablet mods from singular catalog grammar", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getTradeStatDisplay, storeTradeResultModifierDescriptions, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageLanguage: "zh_TW_en", pageTranslationEnabled: true };
+  hooks.runtime.tradeStatsById = new Map([
+    [
+      "explicit.stat_120737942",
+      {
+        id: "explicit.stat_120737942",
+        en: "Ritual Altars in Area allow rerolling Favours an additional time",
+        zh_CN: "区域中的驱灵祭坛可以额外重置恩典一次",
+        zh_TW: "區域中的祭祀神壇可以重骰恩賜之物額外1次"
+      }
+    ],
+    [
+      "explicit.stat_3762913035",
+      {
+        id: "explicit.stat_3762913035",
+        en: "Unstable Breaches in Map spawn an additional Rare Monster when Stabilised",
+        zh_CN: "地图中的不稳定裂隙在稳定时会生成一个额外的稀有怪物",
+        zh_TW: "地圖內的不穩定裂痕會在穩定後生成一名額外稀有怪物"
+      }
+    ],
+    [
+      "explicit.stat_2017682521",
+      {
+        id: "explicit.stat_2017682521",
+        en: "#% increased Pack Size in Map",
+        zh_CN: "地图中的怪物群大小提高 #%",
+        zh_TW: "增加#%地圖內的怪物群大小"
+      }
+    ],
+    [
+      "explicit.stat_4219853180",
+      {
+        id: "explicit.stat_4219853180",
+        en: "Ritual Favours in Area have #% increased chance to be Omens",
+        zh_CN: "区域内的驱灵祭坛恩典为预兆的几率提高 #%",
+        zh_TW: "增加#%區域中祭祀恩惠含有徵兆的機率"
+      }
+    ]
+  ]);
+  hooks.storeTradeResultModifierDescriptions({
+    result: [
+      {
+        id: "tablet-1",
+        item: {
+          explicitMods: [
+            {
+              hash: "stat.explicit.stat_2017682521",
+              description: "7% increased Pack Size in Map"
+            },
+            {
+              hash: "stat.explicit.stat_120737942",
+              description: "[ContainsRitual|Ritual Altars] in Map allow rerolling Favours 3 additional times"
+            },
+            {
+              hash: "stat.explicit.stat_4219853180",
+              description: "[ContainsRitual|Ritual] Favours in Map have 60% increased chance to be [Omen|Omens]"
+            },
+            {
+              hash: "stat.explicit.stat_3762913035",
+              description: "Unstable [Breaches|Breaches] in Map spawn 2 additional [Rare] Monsters when Stabilised"
+            }
+          ],
+          extended: {
+            hashes: {
+              explicit: [
+                ["explicit.stat_2017682521", [1]],
+                ["explicit.stat_120737942", [3]],
+                ["explicit.stat_4219853180", [0]],
+                ["explicit.stat_3762913035", [2]]
+              ]
+            }
+          }
+        }
+      }
+    ]
+  });
+  const elementFor = (statId) => ({
+    closest(selector) {
+      if (selector === "[data-field^='stat.']") {
+        return { getAttribute: () => `stat.${statId}` };
+      }
+      if (selector === "[data-id]") {
+        return { getAttribute: () => "tablet-1" };
+      }
+      return null;
+    }
+  });
+  assert.deepStrictEqual(
+    structuredClone({
+      ritual: hooks.getTradeStatDisplay(
+        "Ritual Altars in Area allow rerolling Favours an additional time",
+        elementFor("explicit.stat_120737942")
+      ),
+      breach: hooks.getTradeStatDisplay(
+        "Unstable Breaches in Map spawn an additional Rare Monster when Stabilised",
+        elementFor("explicit.stat_3762913035")
+      ),
+      omens: hooks.getTradeStatDisplay(
+        "Ritual Favours in Area have 60% increased chance to be Omens",
+        elementFor("explicit.stat_4219853180")
+      )
+    }),
+    {
+      ritual: {
+        primary: "區域中的祭祀神壇可以重骰恩賜之物額外3次",
+        english: "Ritual Altars in Map allow rerolling Favours 3 additional times"
+      },
+      breach: {
+        primary: "地圖內的不穩定裂痕會在穩定後生成2名額外稀有怪物",
+        english: "Unstable Breaches in Map spawn 2 additional Rare Monsters when Stabilised"
+      },
+      omens: {
+        primary: "增加60%區域中祭祀恩惠含有徵兆的機率",
+        english: "Ritual Favours in Area have 60% increased chance to be Omens"
       }
     }
   );
