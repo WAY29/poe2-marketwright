@@ -116,6 +116,42 @@ test("preserves implicit and special-source stats in saved favorite searches", a
   assert.deepStrictEqual(result.payload, {"query": {"status": {"option": "available"}, "type": "Rider Bow", "stats": [{"type": "and", "filters": [{"id": "implicit.stat_3917489142", "value": {"min": 30, "max": 30}, "disabled": false}, {"id": "enchant.stat_3261801346", "value": {"min": 20, "max": 20}, "disabled": false}, {"id": "rune.stat_3523867985", "value": {"min": 15, "max": 15}, "disabled": false}, {"id": "sanctum.stat_2878762585", "value": {"min": 25, "max": 25}, "disabled": false}, {"id": "skill.mana_drain", "value": {"min": 12, "max": 12}, "disabled": false}]}], "filters": {"type_filters": {"filters": {"rarity": {"option": "rare"}, "category": {"option": "weapon.bow"}}}}}, "sort": {"price": "asc"}});
 });
 
+test("pairs enchant mods by extended hashes when fetch modifier.hash is rotated", async () => {
+  const sandbox = { console };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+  const tools = sandbox.Poe2MarketwrightFavorites.createFavoriteTools();
+  const favorite = tools.createFavoriteRecord({
+    rarity: "Unique",
+    name: "Megalomaniac",
+    typeLine: "Diamond",
+    enchantMods: [
+      { hash: "stat.enchant.stat_1671376347", description: "Allocates [corpses17|Lust for Sacrifice]" },
+      { hash: "stat.enchant.stat_2954116742|27009", description: "Allocates [archon7|Resurging Archon]" },
+      { hash: "stat.enchant.stat_2954116742|31773", description: "+5% to [Resistances|Lightning Resistance]" }
+    ],
+    extended: {
+      hashes: {
+        enchant: [
+          ["enchant.stat_1671376347", [2]],
+          ["enchant.stat_2954116742|27009", [0]],
+          ["enchant.stat_2954116742|31773", [1]]
+        ]
+      }
+    }
+  }, "Runes of Aldur", {
+    baseName: "Diamond",
+    category: "jewel",
+    itemType: "Jewel"
+  }, 123);
+  assert.deepStrictEqual(structuredClone(favorite.stats), [
+    { id: "enchant.stat_2954116742|27009" },
+    { id: "enchant.stat_2954116742|31773" },
+    { id: "enchant.stat_1671376347", value: { min: 5, max: 5 } }
+  ]);
+});
+
 test("omits bonded mods while reading rune stats from official hashes", async () => {
   const sandbox = { console };
   vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {

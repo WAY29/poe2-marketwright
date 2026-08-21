@@ -603,6 +603,137 @@ test("Trade result localizes allocated passive titles and effects inside its ite
   );
 });
 
+test("Trade result pairs fetch mods by extended hashes when modifier.hash is rotated", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getTradeStatDisplay, getTradeResultPassiveSkillDisplay, storeTradeResultModifierDescriptions, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageLanguage: "zh_TW_en", pageTranslationEnabled: true };
+  hooks.runtime.tradeStatsById = new Map([
+    [
+      "enchant.stat_1671376347",
+      {
+        id: "enchant.stat_1671376347",
+        en: "#% to Lightning Resistance",
+        zh_CN: "闪电抗性 #%",
+        zh_TW: "#%閃電抗性"
+      }
+    ]
+  ]);
+  hooks.runtime.tradeLocalization = {
+    passiveSkills: {
+      "27009": {
+        en: {
+          name: "Lust for Sacrifice",
+          effects: ["50% increased Minion Damage while you have at least two different active Offerings"]
+        },
+        zh_TW: {
+          name: "渴求獻祭",
+          effects: ["當你有至少兩個不同的獻祭生效時，增加50%召喚物傷害"]
+        }
+      },
+      "31773": {
+        en: {
+          name: "Resurging Archon",
+          effects: ["Archon recovery period expires 25% faster"]
+        },
+        zh_TW: {
+          name: "復行統治者",
+          effects: ["統治者增益效果恢復期加快25%"]
+        }
+      }
+    }
+  };
+  hooks.storeTradeResultModifierDescriptions({
+    result: [
+      {
+        id: "item-1",
+        item: {
+          enchantMods: [
+            {
+              hash: "stat.enchant.stat_1671376347",
+              description: "Allocates [corpses17|Lust for Sacrifice]"
+            },
+            {
+              hash: "stat.enchant.stat_2954116742|27009",
+              description: "Allocates [archon7|Resurging Archon]"
+            },
+            {
+              hash: "stat.enchant.stat_2954116742|31773",
+              description: "+5% to [Resistances|Lightning Resistance]"
+            }
+          ],
+          extended: {
+            hashes: {
+              enchant: [
+                ["enchant.stat_1671376347", [2]],
+                ["enchant.stat_2954116742|27009", [0]],
+                ["enchant.stat_2954116742|31773", [1]]
+              ]
+            }
+          },
+          notableProperties: [
+            { name: "Lust for Sacrifice", suffix: "27009" },
+            { name: "Resurging Archon", suffix: "31773" }
+          ]
+        }
+      }
+    ]
+  });
+  const lightningElement = {
+    closest(selector) {
+      if (selector === "[data-field^='stat.']") {
+        return { getAttribute: () => "stat.enchant.stat_1671376347" };
+      }
+      if (selector === "[data-id]") {
+        return { getAttribute: () => "item-1" };
+      }
+      return null;
+    }
+  };
+  const passiveElement = {
+    closest(selector) {
+      if (selector === ".item-popup, .itemPopupContainer") return {};
+      if (selector === "[data-id]") return { getAttribute: () => "item-1" };
+      return null;
+    }
+  };
+  assert.deepStrictEqual(
+    structuredClone({
+      lightning: hooks.getTradeStatDisplay("#% to Lightning Resistance", lightningElement),
+      firstNotable: hooks.getTradeResultPassiveSkillDisplay("Lust for Sacrifice", passiveElement),
+      secondNotable: hooks.getTradeResultPassiveSkillDisplay("Resurging Archon", passiveElement),
+      secondEffect: hooks.getTradeResultPassiveSkillDisplay(
+        "Archon recovery period expires 25% faster",
+        passiveElement
+      )
+    }),
+    {
+      lightning: {
+        primary: "+5%閃電抗性",
+        english: "+5% to Lightning Resistance"
+      },
+      firstNotable: { primary: "渴求獻祭", english: "Lust for Sacrifice" },
+      secondNotable: { primary: "復行統治者", english: "Resurging Archon" },
+      secondEffect: {
+        primary: "統治者增益效果恢復期加快25%",
+        english: "Archon recovery period expires 25% faster"
+      }
+    }
+  );
+});
+
 test("Trade result localizes split Trial token popup properties", () => {
   class FakeElement {
     constructor(children = [], trialProperty = false) {

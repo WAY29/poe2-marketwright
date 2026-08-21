@@ -6742,7 +6742,7 @@
     }
     const expectedDirection = getTradeStatDirection(template.en);
     const actualDirection = getTradeStatDirection(actualDescription);
-    const values = String(text).match(NUMBER_RE) || [];
+    const values = String(text).match(NUMBER_RE) || String(actualDescription || "").match(NUMBER_RE) || [];
     let index = 0;
     const format = (language) => {
       const target = localizeTradeStatDirection(
@@ -6771,6 +6771,22 @@
     };
   }
 
+  function stripTradeMarkup(value) {
+    return String(value || "")
+      .replace(/\[[^\]|]+\|([^\]]+)\]/g, "$1")
+      .replace(/\s+/g, " ")
+      .trim();
+  }
+
+  function getResultModifierHash(item, sourceKey, index, modifier) {
+    const source = String(sourceKey || "").replace(/Mods$/, "").toLowerCase();
+    const hashes = item?.extended?.hashes?.[source];
+    const indexedHash = Array.isArray(hashes)
+      ? hashes.find((entry) => Array.isArray(entry?.[1]) && entry[1].includes(index))?.[0] || hashes[index]?.[0]
+      : null;
+    return String(indexedHash || modifier?.hash || "").replace(/^stat\./, "").trim();
+  }
+
   function storeTradeResultModifierDescriptions(data) {
     if (!Array.isArray(data?.result)) {
       return;
@@ -6782,13 +6798,15 @@
       }
       const descriptions = new Map();
       const passiveHashes = new Set();
-      for (const modifiers of Object.values(entry.item)) {
-        if (!Array.isArray(modifiers)) {
+      for (const [sourceKey, sourceMods] of Object.entries(entry.item)) {
+        if (sourceKey === "bondedMods" || !sourceKey.endsWith("Mods") || !Array.isArray(sourceMods)) {
           continue;
         }
-        for (const modifier of modifiers) {
-          const statId = String(modifier?.hash || "").replace(/^stat\./, "").trim();
-          const description = String(modifier?.description || "").trim();
+        sourceMods.forEach((modifier, index) => {
+          const statId = getResultModifierHash(entry.item, sourceKey, index, modifier);
+          const description = stripTradeMarkup(
+            typeof modifier === "string" ? modifier : modifier?.description
+          );
           if (statId && description) {
             descriptions.set(statId, description);
             const passiveHash = statId.match(/\|(\d+)$/)?.[1];
@@ -6800,6 +6818,12 @@
               passiveHashes.add(passiveHash);
             }
           }
+        });
+      }
+      for (const notable of Array.isArray(entry.item.notableProperties) ? entry.item.notableProperties : []) {
+        const passiveHash = String(notable?.suffix || "").trim();
+        if (passiveHash) {
+          passiveHashes.add(passiveHash);
         }
       }
       if (descriptions.size) {

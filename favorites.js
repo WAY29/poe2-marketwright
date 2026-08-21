@@ -50,7 +50,7 @@
       }
       sourceMods.forEach((modifier, index) => {
         modifiers.push({
-          hash: modifier?.hash || getExtendedModifierHash(item, sourceKey, index),
+          hash: getExtendedModifierHash(item, sourceKey, index) || modifier?.hash,
           description: typeof modifier === "string" ? modifier : modifier?.description
         });
       });
@@ -1485,7 +1485,7 @@
         if (!sourceKey.endsWith("Mods") || !Array.isArray(sourceMods)) {
           continue;
         }
-        modifiers[sourceKey] = sourceMods.map((mod, index) => mod?.hash || getExtendedModifierHash(item, sourceKey, index));
+        modifiers[sourceKey] = sourceMods.map((mod, index) => getExtendedModifierHash(item, sourceKey, index) || mod?.hash);
       }
       if (!Array.isArray(item.skillMods) && Array.isArray(item.grantedSkills)) {
         modifiers.grantedSkills = item.grantedSkills.map((_, index) => getExtendedModifierHash(item, "skillMods", index));
