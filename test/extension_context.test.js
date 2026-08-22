@@ -752,6 +752,128 @@ test("Trade result pairs fetch mods by extended hashes when modifier.hash is rot
   );
 });
 
+test("Trade result localizes by visible affix text when data-field hashes are rotated", () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getTradeStatDisplay, storeTradeResultModifierDescriptions, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { pageLanguage: "zh_TW_en", pageTranslationEnabled: true };
+  const stats = [
+    [
+      "crafted.stat_2081918629",
+      {
+        id: "crafted.stat_2081918629",
+        en: "#% increased effect of Socketed Augment Items",
+        zh_CN: "镶嵌的增幅器物品效果提高 #%",
+        zh_TW: "增加#%鑲嵌的物品效果"
+      }
+    ],
+    [
+      "crafted.stat_803737631",
+      {
+        id: "crafted.stat_803737631",
+        en: "# to Accuracy Rating",
+        zh_CN: "# 命中值",
+        zh_TW: "#命中值"
+      }
+    ],
+    [
+      "crafted.stat_210067635",
+      {
+        id: "crafted.stat_210067635",
+        en: "#% increased Attack Speed (Local)",
+        zh_CN: "攻击速度提高 #% (区域)",
+        zh_TW: "增加#%攻擊速度 (部分)"
+      }
+    ]
+  ];
+  hooks.runtime.tradeStatsById = new Map(stats);
+  hooks.runtime.tradeStatTemplates = new Map([
+    ["# to accuracy rating", null],
+    ["#% increased attack speed", null]
+  ]);
+  hooks.storeTradeResultModifierDescriptions({
+    result: [
+      {
+        id: "item-1",
+        item: {
+          explicitMods: [
+            {
+              hash: "stat.crafted.stat_2081918629",
+              description: "+391 to [Accuracy|Accuracy] Rating"
+            },
+            {
+              hash: "stat.crafted.stat_803737631",
+              description: "8% increased [Attack] Speed"
+            }
+          ],
+          extended: {
+            hashes: {
+              crafted: [
+                ["crafted.stat_2081918629", null],
+                ["crafted.stat_803737631", [0]],
+                ["crafted.stat_210067635", [0]]
+              ]
+            }
+          }
+        }
+      }
+    ]
+  });
+  const elementFor = (field) => ({
+    closest(selector) {
+      if (selector === "[data-field^='stat.']") {
+        return { getAttribute: () => field };
+      }
+      if (selector === "[data-id]") {
+        return { getAttribute: () => "item-1" };
+      }
+      return selector.includes(".search-results") ? {} : null;
+    }
+  });
+  assert.deepStrictEqual(
+    structuredClone({
+      accuracy: hooks.getTradeStatDisplay(
+        "+391 to Accuracy Rating",
+        elementFor("stat.crafted.stat_2081918629")
+      ),
+      attackSpeed: hooks.getTradeStatDisplay(
+        "8% increased Attack Speed",
+        elementFor("stat.crafted.stat_803737631")
+      ),
+      matching: hooks.getTradeStatDisplay(
+        "23% increased effect of Socketed Augment Items",
+        elementFor("stat.crafted.stat_2081918629")
+      )
+    }),
+    {
+      accuracy: {
+        primary: "+391命中值",
+        english: "+391 to Accuracy Rating"
+      },
+      attackSpeed: {
+        primary: "增加8%攻擊速度 (部分)",
+        english: "8% increased Attack Speed (Local)"
+      },
+      matching: {
+        primary: "增加23%鑲嵌的物品效果",
+        english: "23% increased effect of Socketed Augment Items"
+      }
+    }
+  );
+});
+
 test("Trade result fills additional-count tablet mods from singular catalog grammar", () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");

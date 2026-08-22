@@ -634,6 +634,7 @@
     tradeLocalization: null,
     tradeStatTemplates: new Map(),
     tradeStatsById: new Map(),
+    tradeStatsByPattern: new Map(),
     tradeResultModifierDescriptions: new Map(),
     tradeResultPassiveSkills: new Map(),
     tradeSearchRecords: { items: [], stats: [], categories: [] },
@@ -6117,6 +6118,7 @@
     };
     runtime.tradeStatTemplates = new Map();
     runtime.tradeStatsById = new Map();
+    runtime.tradeStatsByPattern = new Map();
     for (const record of runtime.tradeSearchRecords.stats) {
       const statId = String(record?.id || "").trim();
       if (statId) {
@@ -6125,6 +6127,12 @@
       const key = normalizeStatKey(record?.en || "");
       if (!key || !record?.en) {
         continue;
+      }
+      const group = runtime.tradeStatsByPattern.get(key);
+      if (group) {
+        group.push(record);
+      } else {
+        runtime.tradeStatsByPattern.set(key, [record]);
       }
       const existing = runtime.tradeStatTemplates.get(key);
       if (!existing) {
@@ -6852,8 +6860,64 @@
     return `${template.slice(0, additionalOne.index)}${filled}${template.slice(additionalOne.index + token.length)}`;
   }
 
+  function tradeStatRecordFitsText(record, text) {
+    if (!record?.en || !text) {
+      return false;
+    }
+    if (statRecordMatchesDescription(record, text)) {
+      return true;
+    }
+    const expectedDirection = getTradeStatDirection(record.en);
+    const actualDirection = getTradeStatDirection(text);
+    if (!expectedDirection || !actualDirection || expectedDirection === actualDirection) {
+      return false;
+    }
+    return statRecordMatchesDescription(
+      record,
+      localizeTradeStatDirection(text, actualDirection, expectedDirection, "en")
+    );
+  }
+
+  function tradeStatsForPattern(text) {
+    const key = normalizeStatKey(text);
+    if (!key) {
+      return [];
+    }
+    if (!runtime.tradeStatsByPattern.size && runtime.tradeStatsById.size) {
+      for (const record of runtime.tradeStatsById.values()) {
+        const recordKey = normalizeStatKey(record?.en || "");
+        if (!recordKey) {
+          continue;
+        }
+        const group = runtime.tradeStatsByPattern.get(recordKey);
+        if (group) {
+          group.push(record);
+        } else {
+          runtime.tradeStatsByPattern.set(recordKey, [record]);
+        }
+      }
+    }
+    return runtime.tradeStatsByPattern.get(key) || [];
+  }
+
+  function resolveTradeStatTemplate(text, record) {
+    const visible = String(text || "");
+    if (record && tradeStatRecordFitsText(record, visible)) {
+      return record;
+    }
+    const group = tradeStatsForPattern(visible);
+    const prefix = String(record?.id || "").split(".")[0];
+    return (
+      (prefix && group.find((candidate) => String(candidate.id || "").startsWith(`${prefix}.`))) ||
+      group[0] ||
+      runtime.tradeStatTemplates.get(normalizeStatKey(visible)) ||
+      record ||
+      null
+    );
+  }
+
   function getLocalizedTradeStatTemplate(text, record = null, actualDescription = null) {
-    const template = record || runtime.tradeStatTemplates.get(normalizeStatKey(text));
+    const template = resolveTradeStatTemplate(text, record);
     if (!template) {
       return null;
     }
