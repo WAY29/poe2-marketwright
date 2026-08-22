@@ -1978,6 +1978,8 @@
       getLeague: getCurrentFavoriteLeague,
       getItemClassification: getFavoriteItemClassification,
       getSearchItemName: () => getTradeQueryItemText(runtime.activeSearchQuery?.name),
+      matchStat: (statId, description) =>
+        statRecordMatchesDescription(runtime.tradeStatsById.get(statId), description),
       onToggleFavorite: toggleFavorite,
       labels: {
         add: t("favoriteSave"),

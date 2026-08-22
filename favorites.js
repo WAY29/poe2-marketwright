@@ -32,17 +32,38 @@
     error: "Unable to save"
   };
 
-  function getExtendedModifierHash(item, sourceKey, index) {
-    const source = String(sourceKey || "").replace(/Mods$/, "").toLowerCase();
-    const hashes = item?.extended?.hashes?.[source];
-    if (!Array.isArray(hashes)) {
-      return null;
-    }
-    const indexedHash = hashes.find((entry) => Array.isArray(entry?.[1]) && entry[1].includes(index))?.[0];
-    return indexedHash || hashes[index]?.[0] || null;
+  function stripTradeMarkup(value) {
+    return String(value || "")
+      .replace(/\[[^\]|]+\|([^\]]+)\]/g, "$1")
+      .replace(/\[([^\]]+)\]/g, "$1")
+      .replace(/\s+/g, " ")
+      .trim();
   }
 
-  function getItemModifiers(item) {
+  function getExtendedModifierHash(item, sourceKey, index, modifier, matchStat) {
+    const source = String(sourceKey || "").replace(/Mods$/, "").toLowerCase();
+    const hashes = item?.extended?.hashes?.[source];
+    const byIncludes = Array.isArray(hashes)
+      ? hashes.find((entry) => Array.isArray(entry?.[1]) && entry[1].includes(index))?.[0]
+      : null;
+    const byIndex = Array.isArray(hashes) ? hashes[index]?.[0] : null;
+    const fromMod = typeof modifier === "string" ? null : modifier?.hash || null;
+    const description = stripTradeMarkup(
+      typeof modifier === "string" ? modifier : modifier?.description
+    );
+    if (typeof matchStat === "function" && description) {
+      const match = [byIndex, fromMod, byIncludes].find((candidate) => {
+        const statId = String(candidate || "").replace(/^stat\./, "").trim();
+        return statId && matchStat(statId, description);
+      });
+      if (match) {
+        return match;
+      }
+    }
+    return fromMod || byIndex || byIncludes || null;
+  }
+
+  function getItemModifiers(item, matchStat) {
     const modifiers = [];
     for (const [sourceKey, sourceMods] of Object.entries(item || {})) {
       if (sourceKey === "bondedMods" || !sourceKey.endsWith("Mods") || !Array.isArray(sourceMods)) {
@@ -50,7 +71,7 @@
       }
       sourceMods.forEach((modifier, index) => {
         modifiers.push({
-          hash: getExtendedModifierHash(item, sourceKey, index) || modifier?.hash,
+          hash: getExtendedModifierHash(item, sourceKey, index, modifier, matchStat) || modifier?.hash,
           description: typeof modifier === "string" ? modifier : modifier?.description
         });
       });
@@ -62,7 +83,7 @@
           .map((value) => String(value || "").trim())
           .filter(Boolean);
         modifiers.push({
-          hash: getExtendedModifierHash(item, "skillMods", index),
+          hash: getExtendedModifierHash(item, "skillMods", index, null, matchStat),
           description: [String(skill?.name || "").trim(), ...values].filter(Boolean).join(": ")
         });
       });
@@ -70,19 +91,14 @@
     return modifiers;
   }
 
-  function createFavoriteTools() {
+  function createFavoriteTools(options = {}) {
+    const matchStat = typeof options.matchStat === "function" ? options.matchStat : null;
     const createFavoriteError = (code, message, details = {}) => {
       const error = new Error(message);
       error.code = code;
       error.details = details;
       return error;
     };
-
-    const stripTradeMarkup = (value) =>
-      String(value || "")
-        .replace(/\[[^\]|]+\|([^\]]+)\]/g, "$1")
-        .replace(/\s+/g, " ")
-        .trim();
 
     const normalizeNumber = (value) => {
       const rounded = Math.round(Number(value) * 1000000) / 1000000;
@@ -161,7 +177,7 @@
       const mods = [];
       let approximate = false;
 
-      for (const mod of getItemModifiers(item)) {
+      for (const mod of getItemModifiers(item, matchStat)) {
         const text = stripTradeMarkup(mod?.description);
         if (/^bonded\s*:/i.test(text)) {
           continue;
@@ -1482,7 +1498,7 @@
 
   function createFavoriteFeature(options = {}) {
     const labels = { ...DEFAULT_LABELS, ...(options.labels || {}) };
-    const tools = createFavoriteTools();
+    const tools = createFavoriteTools({ matchStat: options.matchStat });
     const itemCache = new Map();
     const itemSourceUrls = new Map();
     const inFlightEnglishFetches = new Map();
@@ -1506,10 +1522,10 @@
         if (!sourceKey.endsWith("Mods") || !Array.isArray(sourceMods)) {
           continue;
         }
-        modifiers[sourceKey] = sourceMods.map((mod, index) => getExtendedModifierHash(item, sourceKey, index) || mod?.hash);
+        modifiers[sourceKey] = sourceMods.map((mod, index) => getExtendedModifierHash(item, sourceKey, index, mod, options.matchStat) || mod?.hash);
       }
       if (!Array.isArray(item.skillMods) && Array.isArray(item.grantedSkills)) {
-        modifiers.grantedSkills = item.grantedSkills.map((_, index) => getExtendedModifierHash(item, "skillMods", index));
+        modifiers.grantedSkills = item.grantedSkills.map((_, index) => getExtendedModifierHash(item, "skillMods", index, null, options.matchStat));
       }
       return {
         rarity: item.rarity || null,

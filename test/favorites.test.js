@@ -167,7 +167,17 @@ test("pairs enchant mods by extended hashes when fetch modifier.hash is rotated"
   vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
     filename: "favorites.js"
   });
-  const tools = sandbox.Poe2MarketwrightFavorites.createFavoriteTools();
+  const catalog = {
+    "enchant.stat_1671376347": "lightning resistance",
+    "enchant.stat_2954116742|27009": "lust for sacrifice",
+    "enchant.stat_2954116742|31773": "resurging archon"
+  };
+  const tools = sandbox.Poe2MarketwrightFavorites.createFavoriteTools({
+    matchStat(statId, description) {
+      const needle = catalog[statId];
+      return Boolean(needle && String(description || "").toLowerCase().includes(needle));
+    }
+  });
   const favorite = tools.createFavoriteRecord({
     rarity: "Unique",
     name: "Megalomaniac",
@@ -195,6 +205,113 @@ test("pairs enchant mods by extended hashes when fetch modifier.hash is rotated"
     { id: "enchant.stat_2954116742|27009" },
     { id: "enchant.stat_2954116742|31773" },
     { id: "enchant.stat_1671376347", value: { min: 5, max: 5 } }
+  ]);
+});
+
+test("keeps Time-Lost jewel values on modifier.hash when extended mag slots rotate", async () => {
+  const sandbox = { console };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+  const tools = sandbox.Poe2MarketwrightFavorites.createFavoriteTools();
+  const favorite = tools.createFavoriteRecord({
+    rarity: "Rare",
+    name: "Gale Solace",
+    typeLine: "Time-Lost Diamond",
+    explicitMods: [
+      {
+        description: "Notable Passive Skills in Radius also grant Recover 1% of Maximum Life on Kill",
+        hash: "stat.explicit.stat_1111111111"
+      },
+      {
+        description: "Notable Passive Skills in Radius also grant 2% increased Attack Speed",
+        hash: "stat.explicit.stat_2822644689"
+      },
+      {
+        description: "Notable Passive Skills in Radius also grant +1 to Maximum Rage",
+        hash: "stat.explicit.stat_1846980580"
+      },
+      {
+        description: "25% increased Effect of Notable Passive Skills in Radius",
+        hash: "stat.desecrated.stat_4234573345"
+      },
+      {
+        description: "Upgrades Radius to Very Large",
+        hash: "stat.crafted.stat_3891355829|3"
+      }
+    ],
+    extended: {
+      hashes: {
+        explicit: [
+          ["explicit.stat_2822644689", [0]],
+          ["explicit.stat_1846980580", [1]],
+          ["explicit.stat_1111111111", [2]]
+        ],
+        desecrated: [["desecrated.stat_4234573345", [0]]],
+        crafted: [["crafted.stat_3891355829|3", [0]]]
+      }
+    }
+  }, "Runes of Aldur", {
+    baseName: "Time-Lost Diamond",
+    category: "jewel",
+    itemType: "Jewel"
+  }, 123);
+  assert.equal(favorite.displayName, "Gale Solace");
+  assert.deepStrictEqual(structuredClone(favorite.stats), [
+    { id: "explicit.stat_1111111111", value: { min: 1, max: 1 } },
+    { id: "explicit.stat_2822644689", value: { min: 2, max: 2 } },
+    { id: "explicit.stat_1846980580", value: { min: 1, max: 1 } },
+    { id: "desecrated.stat_4234573345", value: { min: 25, max: 25 } },
+    { id: "crafted.stat_3891355829|3" }
+  ]);
+});
+
+test("reads fractured desecrated and crafted hashes from mixed explicitMods", async () => {
+  const sandbox = { console };
+  vm.runInNewContext(fs.readFileSync("favorites.js", "utf8"), sandbox, {
+    filename: "favorites.js"
+  });
+  const tools = sandbox.Poe2MarketwrightFavorites.createFavoriteTools();
+  const favorite = tools.createFavoriteRecord({
+    rarity: "Rare",
+    name: "Eagle Shine",
+    typeLine: "Time-Lost Diamond",
+    explicitMods: [
+      {
+        description: "Notable Passive Skills in Radius also grant 8% increased Critical Hit Chance for Attacks",
+        hash: "stat.fractured.stat_3865605585"
+      },
+      {
+        description: "Notable Passive Skills in Radius also grant 12% increased Critical Damage Bonus for Attack Damage",
+        hash: "stat.explicit.stat_1352561456"
+      },
+      {
+        description: "25% increased Effect of Notable Passive Skills in Radius",
+        hash: "stat.desecrated.stat_4234573345"
+      },
+      {
+        description: "Upgrades Radius to Very Large",
+        hash: "stat.crafted.stat_3891355829|3"
+      }
+    ],
+    extended: {
+      hashes: {
+        explicit: [["explicit.stat_1352561456", [0]]],
+        fractured: [["fractured.stat_3865605585", [0]]],
+        desecrated: [["desecrated.stat_4234573345", [0]]],
+        crafted: [["crafted.stat_3891355829|3", [0]]]
+      }
+    }
+  }, "Runes of Aldur", {
+    baseName: "Time-Lost Diamond",
+    category: "jewel",
+    itemType: "Jewel"
+  }, 123);
+  assert.deepStrictEqual(structuredClone(favorite.stats), [
+    { id: "fractured.stat_3865605585", value: { min: 8, max: 8 } },
+    { id: "explicit.stat_1352561456", value: { min: 12, max: 12 } },
+    { id: "desecrated.stat_4234573345", value: { min: 25, max: 25 } },
+    { id: "crafted.stat_3891355829|3" }
   ]);
 });
 
