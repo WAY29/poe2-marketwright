@@ -43,7 +43,7 @@ test("builds a saved query from trade mod hashes", async () => {
 
   const result = structuredClone({ favorite, payload });
   assert.deepStrictEqual(result["favorite"]["league"], "Dawn of the Hunt");
-  assert.deepStrictEqual(result["favorite"]["displayName"], "Storm Ward");
+  assert.deepStrictEqual(result["favorite"]["displayName"], "Rider Bow (Bow Rare)");
   assert.deepStrictEqual(result["favorite"]["rarity"], "rare");
   assert.deepStrictEqual(result["favorite"]["baseName"], "Rider Bow");
   assert.deepStrictEqual(result["favorite"]["category"], "weapon.bow");
@@ -84,7 +84,7 @@ test("uses base name and category instead of the random item name", async () => 
       "https://www.pathofexile.com/trade2/search/poe2/HC%20Dawn/query-1"
     )
   });
-  assert.deepStrictEqual(result, {"displayName": "Howlcrack Fur Plate", "originalName": "Howlcrack", "baseName": "Fur Plate", "itemType": "Body Armour", "queryName": null, "queryType": "Fur Plate", "category": "armour.chest", "league": "HC Dawn"});
+  assert.deepStrictEqual(result, {"displayName": "Howlcrack Fur Plate (Body Armour Unique)", "originalName": "Howlcrack", "baseName": "Fur Plate", "itemType": "Body Armour", "queryName": null, "queryType": "Fur Plate", "category": "armour.chest", "league": "HC Dawn"});
 });
 
 test("unique favorite default names keep unique prefix plus base", async () => {
@@ -125,10 +125,10 @@ test("unique favorite default names keep unique prefix plus base", async () => {
     itemType: "Jewel"
   }, 3);
 
-  assert.equal(unique.displayName, "Megalomaniac Diamond");
+  assert.equal(unique.displayName, "Megalomaniac Diamond (Jewel Unique)");
   assert.equal(unique.originalName, "Megalomaniac");
-  assert.equal(alreadyCombined.displayName, "Megalomaniac Diamond");
-  assert.equal(unnamed.displayName, "Diamond");
+  assert.equal(alreadyCombined.displayName, "Megalomaniac Diamond (Jewel Unique)");
+  assert.equal(unnamed.displayName, "Diamond (Jewel Unique)");
 });
 
 test("preserves implicit and special-source stats in saved favorite searches", async () => {
@@ -256,7 +256,7 @@ test("keeps Time-Lost jewel values on modifier.hash when extended mag slots rota
     category: "jewel",
     itemType: "Jewel"
   }, 123);
-  assert.equal(favorite.displayName, "Gale Solace");
+  assert.equal(favorite.displayName, "Time-Lost Diamond (Jewel Rare)");
   assert.deepStrictEqual(structuredClone(favorite.stats), [
     { id: "explicit.stat_1111111111", value: { min: 1, max: 1 } },
     { id: "explicit.stat_2822644689", value: { min: 2, max: 2 } },

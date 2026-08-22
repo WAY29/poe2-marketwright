@@ -141,6 +141,8 @@
       zh_TW: "包含基礎數值與本地詞綴"
     },
     "increased item rarity": { en: "Increased Item Rarity", zh_CN: "提高物品稀有度", zh_TW: "增加物品稀有度" },
+    jewel: { en: "Jewel", zh_CN: "珠宝", zh_TW: "珠寶" },
+    jewels: { en: "Jewels", zh_CN: "珠宝", zh_TW: "珠寶" },
     "check each stat meets the `min` and `max` (if provided, otherwise existence) requirements before multiplying the stat value by the `weight` and finally summing them together. use the group's `min` and `max` to filter items based on the total summed value.": {
       en: "Check each stat meets the `min` and `max` (if provided, otherwise existence) requirements before multiplying the stat value by the `weight` and finally summing them together. Use the group's `min` and `max` to filter items based on the total summed value.",
       zh_CN: "每项满足 `min` 与 `max`（若未设置，则检查是否存在）条件的属性数值，都会先乘以权重再求和。\n使用该组的 `min` 与 `max`，按加权总和筛选物品。",
@@ -3110,20 +3112,45 @@
     return `${name} ${base}`;
   }
 
+  function getFavoriteAutomaticDisplayName(favorite) {
+    const rarity = String(favorite?.rarity || "").trim().toLowerCase();
+    const itemType = String(
+      favorite?.itemType || FAVORITE_TRADE_CATEGORY_LABELS[favorite?.category] || ""
+    ).trim();
+    const rarityLabel = rarity ? `${rarity.charAt(0).toUpperCase()}${rarity.slice(1)}` : "";
+    const uniqueName =
+      rarity === "unique" || rarity === "relic"
+        ? String(favorite?.originalName || "").trim() ||
+          String(favorite?.displayName || "").replace(/\s*\([^)]*\)\s*$/, "").trim()
+        : "";
+    return getLinkHistoryDisplayName({
+      displayName: t("linkFavoriteUnnamedSearch"),
+      displaySnapshot: {
+        ...(uniqueName ? { name: uniqueName } : {}),
+        type: favorite?.baseName,
+        category: favorite?.category,
+        rarity
+      },
+      filterGroups:
+        itemType || rarityLabel
+          ? [{
+              label: "Type Filters",
+              values: [
+                ...(itemType ? [`Item Category: ${itemType}`] : []),
+                ...(rarityLabel ? [`Item Rarity: ${rarityLabel}`] : [])
+              ]
+            }]
+          : []
+    });
+  }
+
   function getFavoritePresentation(favorite) {
     const baseName = getLocalizedFavoriteBaseName(favorite);
-    const automaticName = String(favorite?.originalName || favorite?.displayName || "").trim();
-    const rarity = String(favorite?.rarity || "").trim().toLowerCase();
-    const englishName =
-      rarity === "unique" || rarity === "relic"
-        ? composeUniqueFavoriteDisplayName(automaticName, favorite?.baseName)
-        : automaticName;
-    const automaticNameRecord = getPobItemNameRecord(englishName);
+    const itemType = getLocalizedFavoriteItemType(favorite);
+    const rarityLabel = getLocalizedFavoriteRarity(favorite?.rarity);
     const displayName =
       favorite?.nameSource === "automatic"
-        ? automaticNameRecord
-          ? getLocalizedDisplayText(automaticNameRecord, englishName || baseName)
-          : englishName || baseName
+        ? getFavoriteAutomaticDisplayName(favorite)
         : favorite?.displayName || baseName;
     const mods = (favorite?.mods || []).map((modifier) => formatLocalizedFavoriteModifier(modifier));
     return {
@@ -3131,8 +3158,8 @@
       displayName,
       originalName: favorite?.nameSource === "automatic" ? "" : favorite?.originalName || "",
       baseName,
-      itemType: getLocalizedFavoriteItemType(favorite),
-      rarity: getLocalizedFavoriteRarity(favorite?.rarity),
+      itemType,
+      rarity: rarityLabel,
       mods,
       searchTerms: [
         displayName,

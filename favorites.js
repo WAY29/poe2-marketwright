@@ -160,10 +160,13 @@
       const itemType = String(itemClassification?.itemType || "").trim();
       const rarity = String(item?.rarity || "").trim().toLowerCase();
       const originalName = String(item?.name || "").trim();
-      const displayName =
+      const coreName =
         rarity === "unique" || rarity === "relic"
           ? composeUniqueDisplayName(originalName, baseName)
-          : originalName || baseName;
+          : baseName || originalName;
+      const rarityLabel = rarity ? `${rarity.charAt(0).toUpperCase()}${rarity.slice(1)}` : "";
+      const suffix = [itemType, rarityLabel].filter(Boolean).join(" ");
+      const displayName = suffix ? `${coreName} (${suffix})` : coreName;
       if (!normalizedLeague || !baseName || !category || !rarity) {
         throw createFavoriteError(
           "missing_item_context",

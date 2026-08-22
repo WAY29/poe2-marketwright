@@ -1557,6 +1557,7 @@ test("Trade filter terminology overrides translate headings and help copy", () =
     runicWard: hooks.getLocalizedTradeText("Runic Ward"),
     equipmentTip: hooks.getLocalizedTradeText("Includes base value, local modifiers, and maximum quality"),
     rarityTip: hooks.getLocalizedTradeText("Increased Item Rarity"),
+    jewel: hooks.getLocalizedTradeText("Jewel"),
     selectedStatus: hooks.getLocalizedTradeText("Instant Buyout and In Person"),
     selectedLeague: hooks.getLocalizedTradeText("PoE2 - Runes of Aldur"),
     weightedTip: hooks.getLocalizedTradeText(
@@ -1595,6 +1596,7 @@ test("Trade filter terminology overrides translate headings and help copy", () =
     runicWard: "符文保護",
     equipmentTip: "包含基礎數值、本地詞綴與最高品質",
     rarityTip: "增加物品稀有度",
+    jewel: "珠寶",
     selectedStatus: "即刻購買以及面對面交易",
     selectedLeague: "PoE2 - 阿德爾的符文",
     weightedTip: "每個符合 `min` 與 `max`（若未設定，則檢查是否存在）條件的屬性數值，都會先乘以權重再加總。\n使用此群組的 `min` 與 `max`，依加權總和篩選物品。"
@@ -1804,7 +1806,7 @@ test("favorite presentation uses the global language without overwriting custom 
   };
   vm.runInNewContext(source, sandbox, { filename: "content.js" });
   const hooks = sandbox.window.__testHooks;
-  hooks.runtime.state = { uiLanguage: "zh_CN" };
+  hooks.runtime.state = { uiLanguage: "zh_CN", pageLanguage: "zh_CN", pageTranslationEnabled: true };
   hooks.runtime.messages = { selectionPage_Bows: { message: "弓" } };
   hooks.runtime.data = {
     itemNameToSelection: { "rider bow": { kind: "page", id: "Bows" } },
@@ -1813,6 +1815,12 @@ test("favorite presentation uses the global language without overwriting custom 
       stats: {
         "explicit.stat_life": { en: "+# to maximum Life", zh_CN: "+# 生命上限", zh_TW: "+# 最大生命" }
       }
+    }
+  };
+  hooks.runtime.tradeLocalization = {
+    optionStrings: {
+      Bow: { en: "Bow", zh_CN: "弓", zh_TW: "弓" },
+      Rare: { en: "Rare", zh_CN: "稀有", zh_TW: "稀有" }
     }
   };
   const automatic = hooks.getFavoritePresentation({
@@ -1833,7 +1841,7 @@ test("favorite presentation uses the global language without overwriting custom 
     mods: []
   });
   const result = structuredClone({ automatic, custom });
-  assert.deepStrictEqual(result["automatic"]["displayName"], "Storm Ward");
+  assert.deepStrictEqual(result["automatic"]["displayName"], "骑射之弓 (弓 稀有)");
   assert.deepStrictEqual(result["automatic"]["baseName"], "骑射之弓");
   assert.deepStrictEqual(result["automatic"]["itemType"], "弓");
   assert.deepStrictEqual(result["automatic"]["rarity"], "稀有");
@@ -1858,7 +1866,7 @@ test("unique favorite presentation localizes unique name plus base", async () =>
   };
   vm.runInNewContext(source, sandbox, { filename: "content.js" });
   const hooks = sandbox.window.__testHooks;
-  hooks.runtime.state = { uiLanguage: "zh_CN" };
+  hooks.runtime.state = { uiLanguage: "zh_CN", pageLanguage: "zh_CN", pageTranslationEnabled: true };
   hooks.runtime.data = {
     displayMetadata: {
       items: { Diamond: { en: "Diamond", zh_CN: "宝钻", zh_TW: "鑽石" } }
@@ -1874,11 +1882,21 @@ test("unique favorite presentation localizes unique name plus base", async () =>
       }
     }
   };
+  hooks.runtime.tradeLocalization = {
+    optionStrings: {
+      Jewel: { en: "Jewel", zh_CN: "珠宝", zh_TW: "珠寶" },
+      Unique: { en: "Unique", zh_CN: "传奇", zh_TW: "傳奇" }
+    }
+  };
+  hooks.runtime.messages = { selectionPage_Diamond: { message: "珠宝" } };
+  hooks.runtime.data.itemNameToSelection = { diamond: { kind: "page", id: "Diamond" } };
   const unique = hooks.getFavoritePresentation({
     nameSource: "automatic",
     displayName: "Megalomaniac",
     originalName: "Megalomaniac",
     baseName: "Diamond",
+    itemType: "Jewel",
+    category: "jewel",
     rarity: "unique",
     mods: []
   });
@@ -1887,12 +1905,81 @@ test("unique favorite presentation localizes unique name plus base", async () =>
     displayName: "Megalomaniac Diamond",
     originalName: "Megalomaniac",
     baseName: "Diamond",
+    itemType: "Jewel",
+    category: "jewel",
     rarity: "unique",
     mods: []
   });
-  assert.equal(unique.displayName, "妄想症 宝钻");
-  assert.equal(combined.displayName, "妄想症 宝钻");
+  assert.equal(unique.displayName, "妄想症 宝钻 (珠宝 传奇)");
+  assert.equal(combined.displayName, "妄想症 宝钻 (珠宝 传奇)");
   assert.equal(unique.baseName, "宝钻");
+});
+
+test("favorite default names follow the page language without a second language", async () => {
+  const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
+  let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
+  source = source.replace(
+    /\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getFavoritePresentation, runtime };\n})();"
+  );
+  const sandbox = {
+    window: { addEventListener() {}, innerWidth: 1280, innerHeight: 900 },
+    document: {},
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.state = { uiLanguage: "zh_CN", pageLanguage: "zh_TW_en", pageTranslationEnabled: true };
+  hooks.runtime.data = {
+    displayMetadata: {
+      items: {
+        Diamond: { en: "Diamond", zh_CN: "宝钻", zh_TW: "鑽石" },
+        "Time-Lost Diamond": { en: "Time-Lost Diamond", zh_CN: "时送钻石", zh_TW: "時送鑽石" }
+      }
+    },
+    tradeLocalization: {
+      search: {
+        items: [{
+          id: "Megalomaniac Diamond",
+          en: "Megalomaniac Diamond",
+          zh_CN: "妄想症 宝钻",
+          zh_TW: "妄想症 鑽石"
+        }]
+      }
+    }
+  };
+  hooks.runtime.tradeLocalization = {
+    strings: {
+      Rare: { en: "Rare", zh_CN: "稀有", zh_TW: "稀有" },
+      Unique: { en: "Unique", zh_CN: "传奇", zh_TW: "傳奇" },
+      "Any Jewel": { en: "Any Jewel", zh_CN: "任何珠宝", zh_TW: "任何珠寶" }
+    }
+  };
+  const rare = hooks.getFavoritePresentation({
+    nameSource: "automatic",
+    displayName: "Gale Solace",
+    originalName: "Gale Solace",
+    baseName: "Time-Lost Diamond",
+    itemType: "Jewel",
+    category: "jewel",
+    rarity: "rare",
+    mods: []
+  });
+  const unique = hooks.getFavoritePresentation({
+    nameSource: "automatic",
+    displayName: "Megalomaniac",
+    originalName: "Megalomaniac",
+    baseName: "Diamond",
+    itemType: "Jewel",
+    category: "jewel",
+    rarity: "unique",
+    mods: []
+  });
+  assert.equal(rare.displayName, "時送鑽石 (珠寶 稀有)");
+  assert.equal(unique.displayName, "妄想症 鑽石 (珠寶 傳奇)");
+  assert.equal(rare.baseName, "时送钻石");
 });
 
 test("currency panel displays the detected league", async () => {
