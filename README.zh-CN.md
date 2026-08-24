@@ -141,7 +141,7 @@ Tier 映射由已验证的 PoE2DB 词缀范围生成，并按官方 Trade 稳定
 
 ![image-20260716224410969](./assets/image-20260716224410969.png)
 
-在链接导入面板中切换到 `PoB 代码`，粘贴 Path of Building 分享码，可填写文件夹名和向下浮动百分比后导入。当前联盟里，每件已装备物品会变成一条搜索书签；第一次点开时才会向官方市集创建搜索。命定、符文和未匹配词缀不会写入搜索；未装备的仓库物品不导入，天赋树珠宝仍会导入。
+在链接导入面板中切换到 `PoB 代码`，粘贴 Path of Building 分享码即可导入。只有已装备物品会变成一条搜索书签。
 
 <p align="center">
   <img src="assets/pob-import-share-code.png" alt="将 Path of Building 分享码导入为搜索链接" width="56%">
@@ -149,7 +149,7 @@ Tier 映射由已验证的 PoE2DB 词缀范围生成，并按官方 Trade 稳定
 
 ### 搜索结果词缀高亮
 
-当前搜索里已启用的词缀条件，会在结果中用浅金底标出对应词缀文字。高亮只罩文字，可与官方亵渎词缀装饰叠在一起。已禁用的词缀和 `not` 组不会高亮。
+当前搜索里已启用的词缀条件，会在结果中用浅金底标出对应词缀文字。
 
 ### PoB 复制按钮
 
@@ -159,6 +159,7 @@ Tier 映射由已验证的 PoE2DB 词缀范围生成，并按官方 Trade 稳定
   <img src="assets/pob-copy-button.png" alt="结果行中的复制到 PoB 按钮" width="35%">
   <img src="assets/pob-create-custom.png" alt="Path of Building 中的 Create Custom 导入" width="56%">
 </p>
+
 ### 查看物品可能拥有的词缀
 
 想快捷查看物品拥有的词缀,点击结果行物品图标下方的`查看可能词缀`,即可快捷查看物品可能拥有的词缀(数据来源POB,仅供参考,以游戏实际内容为准)

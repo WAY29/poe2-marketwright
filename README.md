@@ -142,7 +142,7 @@ Search history is saved automatically and has its own `History` tab beside Items
 
 ![Search history in search-link favorites](assets/image-20260716224410969.png)
 
-In the Links import panel, switch to `PoB Code`, paste a Path of Building share code, set an optional folder name and downward roll percent, then import. Each equipped item becomes a search bookmark in the current league. The first time you open one, the extension creates the official Trade search. Bonded, rune, and unmatched affixes are skipped; unequipped stash items are not imported, but passive-tree jewels still are.
+In the Links import panel, switch to `PoB Code` and paste a Path of Building share code. Only equipped items become search bookmarks.
 
 <p align="center">
   <img src="assets/pob-import-share-code.png" alt="Import Path of Building share codes as search links" width="56%">
@@ -150,7 +150,7 @@ In the Links import panel, switch to `PoB Code`, paste a Path of Building share 
 
 ### Search Result Affix Highlight
 
-Enabled stat filters from the current search highlight matching modifier text in the results. The gold wash covers only the affix text, so it can sit on top of native desecrated styling. Disabled filters and `not` groups are ignored.
+Enabled stat filters from the current search highlight matching modifier text in the results.
 
 ### PoB Copy Button
 
