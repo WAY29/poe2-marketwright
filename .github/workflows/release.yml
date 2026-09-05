@@ -99,3 +99,14 @@ jobs:
         with:
           files: dist/${{ env.ASSET_NAME }}
           generate_release_notes: true
+
+      - name: Publish to Microsoft Edge Add-ons
+        uses: wdzeng/edge-addon@v2.1.1
+        with:
+          product-id: 1d4531f9-1f9a-4b75-b753-26ee2390c135
+          zip-path: dist/${{ env.ASSET_NAME }}
+          api-key: ${{ secrets.EDGE_API_KEY }}
+          client-id: ${{ secrets.EDGE_CLIENT_ID }}
+          notes-for-certification: |
+            Test on https://www.pathofexile.com/trade2
+            GitHub release: https://github.com/WAY29/poe2-marketwright/releases/tag/${{ env.TAG_NAME }}
