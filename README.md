@@ -251,8 +251,8 @@ uv run --project scripts python scripts/build_extension_data.py --split-dir buil
 
 The generated Trade localization bundle currently covers:
 
-- Item display names: Simplified Chinese `2198/2200` (99.91%), Traditional Chinese `2200/2200` (100%).
-- Trade stat templates: Simplified Chinese `8057/8141` (98.97%), Traditional Chinese `8059/8141` (98.99%).
+- Item display names: Simplified Chinese `3834/3834` (100%), Traditional Chinese `3834/3834` (100%).
+- Trade stat templates: Simplified Chinese `8087/8186` (98.79%), Traditional Chinese `8093/8186` (98.86%).
 
 These counts cover item names and stat templates with stable totals. Native Trade UI text is provided dynamically by regional Trade APIs, so it has no fixed total.
 

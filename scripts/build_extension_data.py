@@ -113,6 +113,12 @@ TRADE_CATEGORY_LOCALIZATION_PAGE_SLUGS = {
 TRADE_FILTER_TEXT_OVERRIDES = {
     "group=trade_filters/filter=sale_type/option=priced_with_info/text": {"zh_TW": "標價"},
 }
+# International Trade lists the current event league first. China/Taiwan may lag
+# and omit it, so these labels stay verified rather than position-guessed.
+TRADE_LEAGUE_TEXT_OVERRIDES = {
+    "Forbidden Rites": {"zh_CN": "禁忌仪式", "zh_TW": "禁斷儀式"},
+    "HC Forbidden Rites": {"zh_CN": "禁忌仪式（专家）", "zh_TW": "禁斷儀式 專家模式"},
+}
 # These labels occur in item-popup property models, whose stable numeric type
 # is not exposed by Trade's static localization endpoint.  The terms are
 # verified against the same PoE2DB gem page in all three locales.
@@ -270,19 +276,34 @@ EXTRA_PAGE_ALLOWED_TRADE_STAT_TEXTS = {
     ],
 }
 # Trade renamed these modifier texts; the PoE2DB source path remains stable.
+POE2DB_TABLET_FAMILY_TRADE_STAT_IDS = {
+    "MapAdditionalShrine": ["explicit.stat_1468737867", "explicit.stat_2017682521"],
+    "MapAdditionalStrongbox": ["explicit.stat_2017682521", "explicit.stat_3240183538"],
+    "MapAdditionalEssence": ["explicit.stat_395808938"],
+    "MapAdditionalChests": ["explicit.stat_231864447"],
+    "MapAdditionalStoneCircle": ["explicit.stat_2839545956"],
+    "BreachAdditionalRares": ["explicit.stat_3762913035"],
+    "DeliriumFogPersistence": ["explicit.stat_3350944114"],
+    "RitualRerollCostIncrease": ["explicit.stat_2282052746"],
+    "RitualDeferCostIncrease": ["explicit.stat_1345835998"],
+    "RitualAdditionalReroll": ["explicit.stat_120737942"],
+    "MapBossAdditionalShrine": ["explicit.stat_3042527515"],
+    "MapBossAdditionalEssence": ["explicit.stat_2162684861"],
+}
 POE2DB_TABLET_SOURCE_TRADE_STAT_IDS = {
-    "Data\\Mods\\TowerAdditionalShrine1": ["explicit.stat_1468737867", "explicit.stat_2017682521"],
-    "Data\\Mods\\TowerAdditionalStrongbox1": ["explicit.stat_2017682521", "explicit.stat_3240183538"],
-    "Data\\Mods\\TowerAdditionalEssence1": ["explicit.stat_395808938"],
-    "Data\\Mods\\TowerRareChestCount1": ["explicit.stat_231864447"],
-    "Data\\Mods\\TowerAdditionalStoneCircle": ["explicit.stat_2839545956"],
-    "Data\\Mods\\TowerBreachAdditionalRares": ["explicit.stat_3762913035"],
-    "Data\\Mods\\TowerDeliriumFogPersistence": ["explicit.stat_3350944114"],
-    "Data\\Mods\\TowerRitualRerollCostIncrease": ["explicit.stat_2282052746"],
-    "Data\\Mods\\TowerRitualDeferCostIncrease": ["explicit.stat_1345835998"],
-    "Data\\Mods\\TowerRitualAdditionalReroll": ["explicit.stat_120737942"],
-    "Data\\Mods\\TowerMapBossAdditionalShrine": ["explicit.stat_3042527515"],
-    "Data\\Mods\\TowerMapBossAdditionalEssence": ["explicit.stat_2162684861"],
+    "Data\\Mods\\TowerAdditionalShrine1": POE2DB_TABLET_FAMILY_TRADE_STAT_IDS["MapAdditionalShrine"],
+    "Data\\Mods\\TowerAdditionalStrongbox1": POE2DB_TABLET_FAMILY_TRADE_STAT_IDS["MapAdditionalStrongbox"],
+    "Data\\Mods\\TowerAdditionalEssence1": POE2DB_TABLET_FAMILY_TRADE_STAT_IDS["MapAdditionalEssence"],
+    "Data\\Mods\\TowerRareChestCount1": POE2DB_TABLET_FAMILY_TRADE_STAT_IDS["MapAdditionalChests"],
+    "Data\\Mods\\TowerAdditionalStoneCircle": POE2DB_TABLET_FAMILY_TRADE_STAT_IDS["MapAdditionalStoneCircle"],
+    "Data\\Mods\\TowerBreachAdditionalRares": POE2DB_TABLET_FAMILY_TRADE_STAT_IDS["BreachAdditionalRares"],
+    "Data\\Mods\\TowerDeliriumFogPersistence": POE2DB_TABLET_FAMILY_TRADE_STAT_IDS["DeliriumFogPersistence"],
+    "Data\\Mods\\TowerRitualRerollCostIncrease": POE2DB_TABLET_FAMILY_TRADE_STAT_IDS["RitualRerollCostIncrease"],
+    "Data\\Mods\\TowerRitualDeferCostIncrease": POE2DB_TABLET_FAMILY_TRADE_STAT_IDS["RitualDeferCostIncrease"],
+    "Data\\Mods\\TowerRitualAdditionalReroll": POE2DB_TABLET_FAMILY_TRADE_STAT_IDS["RitualAdditionalReroll"],
+    "Data\\Mods\\TowerMapBossAdditionalShrine": POE2DB_TABLET_FAMILY_TRADE_STAT_IDS["MapBossAdditionalShrine"],
+    "Data\\Mods\\TowerMapBossAdditionalEssence": POE2DB_TABLET_FAMILY_TRADE_STAT_IDS["MapBossAdditionalEssence"],
+    **POE2DB_TABLET_FAMILY_TRADE_STAT_IDS,
 }
 EXACT_ITEM_CATEGORY_SPECS = {
     "Expedition_Logbook": {
@@ -1267,21 +1288,40 @@ def get_affix_source(affix: dict[str, Any]) -> str:
     source = str(affix.get("code") or "").strip()
     if not source:
         source = unquote(str(affix.get("hover") or "").strip()).removeprefix("?s=")
+    if source.startswith(("http://", "https://")):
+        return ""
     return source.replace("/", "\\")
 
 
 def get_affix_tier_source(affix: dict[str, Any]) -> tuple[str, int] | None:
     source = get_affix_source(affix)
     match = TIER_SOURCE_RE.match(source)
-    if not match:
-        return None
-    return match.group(1), int(match.group(2))
+    if match:
+        return match.group(1), int(match.group(2))
+    families = tuple(sorted(str(value) for value in affix.get("families") or [] if value))
+    level = affix.get("required_level")
+    if families and isinstance(level, int):
+        return "\0".join(families), level
+    return None
+
+
+def is_local_identity(value: str) -> bool:
+    if not value:
+        return False
+    if any(segment.lower().startswith("local") for segment in re.split(r"[\\/_]", value)):
+        return True
+    if "Local" in value:
+        return True
+    return value == "DefencesPercent"
 
 
 def is_local_affix(affix: dict[str, Any]) -> bool:
-    source = str(affix.get("code") or affix.get("hover") or "")
-    source = unquote(source).removeprefix("?s=")
-    return any(segment.lower().startswith("local") for segment in re.split(r"[\\\\/]", source))
+    if is_local_identity(get_affix_source(affix)):
+        return True
+    if any(is_local_identity(str(value)) for value in affix.get("families") or []):
+        return True
+    spawn_on = {str(value).lower() for value in affix.get("spawn_on") or []}
+    return "weapon" in spawn_on
 
 
 def get_tier_trade_stat_group(affix: dict[str, Any]) -> str:
@@ -1860,22 +1900,36 @@ def collect_trade_league_localizations(
         ("zh_TW", traditional_leagues_payload),
     ):
         localized_entries = payload.get("result")
-        if not isinstance(localized_entries, list) or len(localized_entries) != len(english_entries):
+        if not isinstance(localized_entries, list) or not localized_entries:
+            continue
+        aligned_english = english_entries
+        if len(localized_entries) < len(english_entries):
+            aligned_english = english_entries[-len(localized_entries) :]
+        elif len(localized_entries) != len(english_entries):
             continue
         if any(
             not isinstance(english, dict)
             or not isinstance(localized, dict)
             or str(english.get("realm") or "").strip() != str(localized.get("realm") or "").strip()
-            for english, localized in zip(english_entries, localized_entries)
+            for english, localized in zip(aligned_english, localized_entries)
         ):
             continue
-        for english, localized in zip(english_entries, localized_entries):
+        for english, localized in zip(aligned_english, localized_entries):
             if not isinstance(english, dict) or not isinstance(localized, dict):
                 continue
             league_id = str(english.get("id") or "").strip()
             text = str(localized.get("text") or "").strip()
             if league_id and text:
                 localizations.setdefault(league_id, {})[locale] = text
+
+    english_ids = {
+        str(entry.get("id") or "").strip()
+        for entry in english_entries
+        if isinstance(entry, dict)
+    }
+    for league_id, texts in TRADE_LEAGUE_TEXT_OVERRIDES.items():
+        if league_id in english_ids:
+            localizations.setdefault(league_id, {}).update(texts)
 
     return {league_id: dict(sorted(texts.items())) for league_id, texts in sorted(localizations.items())}
 
@@ -2511,13 +2565,13 @@ def map_affix_to_trade_stat_ids(
         patterns = sorted({*patterns, *local_patterns})
         stat_ids = sorted({*stat_ids, *local_stat_ids})
     known_stat_ids = {stat_id for ids in trade_stat_index.values() for stat_id in ids}
-    stat_ids = sorted(
-        set(stat_ids).union(
-            stat_id
-            for stat_id in POE2DB_TABLET_SOURCE_TRADE_STAT_IDS.get(get_affix_source(affix), [])
-            if stat_id in known_stat_ids
-        )
-    )
+    tablet_source_ids = [
+        stat_id
+        for key in (get_affix_source(affix), *(str(value) for value in affix.get("families") or [] if value))
+        for stat_id in POE2DB_TABLET_SOURCE_TRADE_STAT_IDS.get(key, [])
+        if stat_id in known_stat_ids
+    ]
+    stat_ids = sorted(set(stat_ids).union(tablet_source_ids))
     return patterns, stat_ids
 
 

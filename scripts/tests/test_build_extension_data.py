@@ -164,6 +164,38 @@ class TradeStatMappingTests(unittest.TestCase):
             },
         )
 
+    def test_aligns_shorter_regional_league_lists_and_overrides_event_leagues(self) -> None:
+        english_leagues = {
+            "result": [
+                {"id": "Forbidden Rites", "realm": "poe2", "text": "Forbidden Rites"},
+                {"id": "HC Forbidden Rites", "realm": "poe2", "text": "HC Forbidden Rites"},
+                {"id": "Runes of Aldur", "realm": "poe2", "text": "Runes of Aldur"},
+                {"id": "HC Runes of Aldur", "realm": "poe2", "text": "HC Runes of Aldur"},
+            ]
+        }
+        simplified_leagues = {
+            "result": [
+                {"id": "奥杜尔秘符", "realm": "poe2", "text": "奥杜尔秘符"},
+                {"id": "奥杜尔秘符（专家）", "realm": "poe2", "text": "奥杜尔秘符（专家）"},
+            ]
+        }
+        traditional_leagues = {
+            "result": [
+                {"id": "阿德爾的符文", "realm": "poe2", "text": "阿德爾的符文"},
+                {"id": "阿德爾的符文 專家模式", "realm": "poe2", "text": "阿德爾的符文 專家模式"},
+            ]
+        }
+
+        self.assertEqual(
+            collect_trade_league_localizations(english_leagues, simplified_leagues, traditional_leagues),
+            {
+                "Forbidden Rites": {"zh_CN": "禁忌仪式", "zh_TW": "禁斷儀式"},
+                "HC Forbidden Rites": {"zh_CN": "禁忌仪式（专家）", "zh_TW": "禁斷儀式 專家模式"},
+                "HC Runes of Aldur": {"zh_CN": "奥杜尔秘符（专家）", "zh_TW": "阿德爾的符文 專家模式"},
+                "Runes of Aldur": {"zh_CN": "奥杜尔秘符", "zh_TW": "阿德爾的符文"},
+            },
+        )
+
     def test_collects_trade_status_option_translations_by_stable_id(self) -> None:
         simplified_filters = {
             "result": [
@@ -777,6 +809,97 @@ class TradeStatMappingTests(unittest.TestCase):
                         {"tier": 1, "exactMin": 19, "exactMax": 46, "min": 18.1},
                         {"tier": 2, "exactMin": 11, "exactMax": 18},
                     ]
+                }
+            },
+        )
+
+    def test_ranks_tiers_by_required_level_when_poe2db_omits_mod_codes(self) -> None:
+        def affix(level: int, values: tuple[int, int]) -> dict[str, object]:
+            return {
+                "affix_group": "normal",
+                "families": ["Strength"],
+                "hover": "https://cdn.poe2db.tw/cache2/us/Poe_Data_Mods_hover/abc123",
+                "required_level": level,
+                "text_html": f"<span class='mod-value'>+({values[0]}-{values[1]})</span> to Strength",
+            }
+
+        self.assertEqual(
+            build_tier_mappings(
+                {"Amulets": [affix(1, (5, 8)), affix(33, (17, 20)), affix(74, (31, 33))]},
+                {"# to strength": {"explicit.stat_strength"}},
+            ),
+            {
+                "Amulets": {
+                    "explicit.stat_strength": [
+                        {"tier": 1, "exactMin": 31, "exactMax": 33, "min": 20.1},
+                        {"tier": 2, "exactMin": 17, "exactMax": 20, "min": 8.1},
+                        {"tier": 3, "exactMin": 5, "exactMax": 8},
+                    ]
+                }
+            },
+        )
+
+    def test_treats_weapon_spawn_pool_as_local_when_poe2db_omits_mod_codes(self) -> None:
+        affixes = {
+            "One_Hand_Maces": [
+                {
+                    "affix_group": "normal",
+                    "generation_type": "suffix",
+                    "families": ["IncreasedAttackSpeed"],
+                    "spawn_on": ["weapon", "default"],
+                    "text_html": "(5-7)% increased Attack Speed",
+                }
+            ]
+        }
+        trade_stat_index = {
+            "#% increased attack speed": {"explicit.stat_global_attack_speed"},
+            "#% increased attack speed (local)": {"explicit.stat_local_attack_speed"},
+        }
+
+        self.assertEqual(
+            build_affix_effects(affixes, trade_stat_index),
+            {
+                "One_Hand_Maces": {
+                    "prefix": [],
+                    "suffix": ["explicit.stat_local_attack_speed"],
+                    "other": [],
+                }
+            },
+        )
+
+    def test_uses_local_family_names_when_poe2db_omits_mod_codes(self) -> None:
+        affixes = {
+            "Body_Armours_str": [
+                {
+                    "affix_group": "normal",
+                    "generation_type": "prefix",
+                    "families": ["BaseLocalDefences"],
+                    "hover": "https://cdn.poe2db.tw/cache2/us/Poe_Data_Mods_hover/abc123",
+                    "text_html": "+(16-27) to Armour",
+                },
+                {
+                    "affix_group": "normal",
+                    "generation_type": "prefix",
+                    "families": ["DefencesPercent"],
+                    "hover": "https://cdn.poe2db.tw/cache2/us/Poe_Data_Mods_hover/def456",
+                    "text_html": "(15-26)% increased Armour",
+                },
+            ]
+        }
+        trade_stat_index = {
+            "# to armour": {"explicit.stat_global_armour"},
+            "# to armour (local)": {"explicit.stat_local_armour"},
+            "#% increased armour": {"explicit.stat_global_armour_percent"},
+            "#% increased armour (local)": {"explicit.stat_local_armour_percent"},
+        }
+
+        self.assertEqual(
+            build_affix_effects(affixes, trade_stat_index),
+            {
+                "Body_Armours_str": {
+                    "prefix": ["explicit.stat_local_armour", "explicit.stat_local_armour_percent"],
+                    "suffix": [],
+                    "other": [],
                 }
             },
         )
@@ -2327,6 +2450,16 @@ class TradeStatMappingTests(unittest.TestCase):
                 trade_stat_index,
             )
             self.assertEqual(stat_ids, expected_stat_ids)
+
+        _, family_stat_ids = map_affix_to_trade_stat_ids(
+            {
+                "text": "Unmatched tablet modifier",
+                "families": ["MapAdditionalShrine"],
+                "hover": "https://cdn.poe2db.tw/cache2/us/Poe_Data_Mods_hover/abc123",
+            },
+            trade_stat_index,
+        )
+        self.assertEqual(family_stat_ids, source_stat_ids["TowerAdditionalShrine1"])
 
     def test_includes_local_trade_stats_for_local_affixes(self) -> None:
         trade_stat_index = {

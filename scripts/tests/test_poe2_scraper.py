@@ -9,12 +9,15 @@ if str(SCRIPT_ROOT) not in sys.path:
 
 from poe2_scraper import (
     DEFAULT_HEADERS,
+    add_required_modifier_links,
     build_async_client,
     filter_modifier_links,
     discover_modifier_links,
     extract_modsview_payload,
     fetch_text,
     flatten_affixes,
+    is_missing_modsview,
+    page_slug_from_url,
 )
 
 
@@ -246,6 +249,26 @@ class FilterModifierLinksTests(unittest.TestCase):
                 "https://poe2db.tw/us/Bucklers#ModifiersCalc",
             ],
         )
+
+
+class RequiredModifierLinksTests(unittest.TestCase):
+    def test_appends_jewel_pages_missing_from_the_modifiers_index(self) -> None:
+        links = [
+            "https://poe2db.tw/us/Amulets#ModifiersCalc",
+            "https://poe2db.tw/us/Diamond",
+        ]
+
+        completed = add_required_modifier_links(links, "https://poe2db.tw/us/Modifiers")
+
+        self.assertEqual(completed[0], links[0])
+        self.assertEqual(completed[1], links[1])
+        self.assertIn("https://poe2db.tw/us/Ruby", completed)
+        self.assertIn("https://poe2db.tw/us/Time-Lost_Sapphire", completed)
+        self.assertEqual(1, sum(1 for link in completed if page_slug_from_url(link) == "Diamond"))
+
+    def test_missing_modsview_is_a_skippable_index_false_positive(self) -> None:
+        self.assertTrue(is_missing_modsview(ValueError("Unable to find ModsView payload in page")))
+        self.assertFalse(is_missing_modsview(ValueError("Unterminated ModsView JSON payload")))
 
 
 if __name__ == "__main__":

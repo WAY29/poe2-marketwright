@@ -34,6 +34,18 @@ EXTRA_MODSVIEW_PAGE_SLUGS = {
     "Waystones_mid_tier",
     "Waystones_top_tier",
 }
+# PoE2DB's Modifiers index can drop these even though the pages still expose ModsView.
+REQUIRED_MODSVIEW_PAGE_SLUGS = {
+    "Ruby",
+    "Emerald",
+    "Sapphire",
+    "Diamond",
+    "Time-Lost_Ruby",
+    "Time-Lost_Emerald",
+    "Time-Lost_Sapphire",
+    "Time-Lost_Diamond",
+}
+MISSING_MODSVIEW_ERROR = "Unable to find ModsView payload in page"
 EQUIPMENT_PAGE_SLUGS = {
     "Claws",
     "Daggers",
@@ -144,6 +156,20 @@ def filter_modifier_links(links: list[str], scope: str = "all") -> list[str]:
     if scope != "equipment":
         raise ValueError(f"Unsupported scope: {scope}")
     return [link for link in links if page_slug_from_url(link) in EQUIPMENT_PAGE_SLUGS]
+
+
+def add_required_modifier_links(links: list[str], base_url: str) -> list[str]:
+    seen = {page_slug_from_url(link) for link in links}
+    extra = [
+        urljoin(base_url, slug)
+        for slug in sorted(REQUIRED_MODSVIEW_PAGE_SLUGS)
+        if slug not in seen
+    ]
+    return links + extra
+
+
+def is_missing_modsview(error: BaseException) -> bool:
+    return str(error) == MISSING_MODSVIEW_ERROR
 
 
 def extract_modsview_payload(html: str) -> dict[str, Any]:
@@ -407,6 +433,8 @@ async def command_scrape(args: argparse.Namespace) -> int:
         root_html = await fetch_text(client, args.url)
         discovered_links = discover_modifier_links(root_html, args.url)
         links = filter_modifier_links(discovered_links, scope=args.scope)
+        if args.scope == "all":
+            links = add_required_modifier_links(links, args.url)
         if args.limit:
             links = links[: args.limit]
 
@@ -419,15 +447,31 @@ async def command_scrape(args: argparse.Namespace) -> int:
 
     ordered_results: list[PageResult] = []
     errors: list[dict[str, Any]] = []
+    skipped: list[dict[str, Any]] = []
     for index, result in enumerate(raw_results):
         if isinstance(result, Exception):  # pragma: no cover
-            errors.append({"page_url": links[index], "error": str(result)})
+            entry = {"page_url": links[index], "error": str(result)}
+            if is_missing_modsview(result):
+                skipped.append(entry)
+            else:
+                errors.append(entry)
             continue
         ordered_results.append(result)
 
     ordered_results.sort(key=lambda result: result.order)
     pages = [result.summary for result in ordered_results]
     affixes = [affix for result in ordered_results for affix in result.affixes]
+
+    scraped_slugs = {page["page_slug"] for page in pages}
+    if args.scope == "all":
+        for slug in sorted(REQUIRED_MODSVIEW_PAGE_SLUGS):
+            if slug not in scraped_slugs:
+                errors.append(
+                    {
+                        "page_url": urljoin(args.url, slug),
+                        "error": f"Required ModsView page missing: {slug}",
+                    }
+                )
 
     payload = {
         "source": args.url,
@@ -439,6 +483,7 @@ async def command_scrape(args: argparse.Namespace) -> int:
         "affix_count": len(affixes),
         "pages": pages,
         "affixes": affixes,
+        "skipped": skipped,
         "errors": errors,
     }
     if args.split_dir:

@@ -749,6 +749,10 @@
       "zh_CN": "阿兹里的统治 反射长杖",
       "zh_TW": "阿茲里的統御 映像長杖"
     },
+    "Atziri's Soul Core of Devotion": {
+      "zh_CN": "Atziris_Soul_Core_of_Devotion",
+      "zh_TW": "阿茲里的奉獻靈魂核心"
+    },
     "Atziri's Splendour Runemastered Sacrificial Regalia": {
       "zh_CN": "阿兹里的威权 符文师匠献祭盛装",
       "zh_TW": "阿茲里的威權 符煉獻祭法衣"
@@ -1315,7 +1319,7 @@
     },
     "Bounty II": {
       "zh_CN": "丰饶 II",
-      "zh_TW": "寶物 II"
+      "zh_TW": "懸賞 II"
     },
     "Braced Sabatons": {
       "zh_CN": "加固战靴",
@@ -5039,7 +5043,7 @@
     },
     "Heavy Swing": {
       "zh_CN": "沉重挥舞",
-      "zh_TW": "沉重揮擊"
+      "zh_TW": "Heavy Swing"
     },
     "Hedgewitch Assandra's Rune of Wisdom": {
       "zh_CN": "女巫阿桑德拉的智慧符文",
@@ -5491,7 +5495,7 @@
     },
     "Idol of Maxarius": {
       "zh_CN": "玛萨留斯之雕像",
-      "zh_TW": "馬薩里斯魔偶"
+      "zh_TW": "瑪薩里歐斯魔偶"
     },
     "Idol of Oak": {
       "zh_CN": "欧克之雕像",
@@ -5714,7 +5718,7 @@
       "zh_TW": "鋼鐵守護"
     },
     "Ironbound Runeforged Warden Bow": {
-      "zh_CN": "铁箍战弓 符锻监守弓",
+      "zh_CN": "铁箍战弓 Runeforged Warden Bow",
       "zh_TW": "鐵縛者 符鍛守護者之弓"
     },
     "Ironbound Warden Bow": {
@@ -5829,6 +5833,22 @@
       "zh_CN": "铃鸣法器",
       "zh_TW": "響聲法器"
     },
+    "Jiquani's Soul Core of Quaking": {
+      "zh_CN": "Jiquanis_Soul_Core_of_Quaking",
+      "zh_TW": "吉卡尼的震顫靈魂核心"
+    },
+    "Jiquani's Soul Core of Radiance": {
+      "zh_CN": "Jiquanis_Soul_Core_of_Radiance",
+      "zh_TW": "吉卡尼的輝耀靈魂核心"
+    },
+    "Jiquani's Soul Core of Severing": {
+      "zh_CN": "Jiquanis_Soul_Core_of_Severing",
+      "zh_TW": "吉卡尼的斷切靈魂核心"
+    },
+    "Jiquani's Soul Core of Squalls": {
+      "zh_CN": "Jiquanis_Soul_Core_of_Squalls",
+      "zh_TW": "吉卡尼的狂風靈魂核心"
+    },
     "Jiquani's Thesis": {
       "zh_CN": "佳华尼的圣典",
       "zh_TW": "吉卡尼的假說"
@@ -5867,7 +5887,7 @@
     },
     "Kamasa's Orb of Sacrifice": {
       "zh_CN": "渎神献祭宝珠",
-      "zh_TW": "瀆神奉獻寶珠"
+      "zh_TW": "卡瑪薩奉獻寶珠"
     },
     "Kamasan Tiara": {
       "zh_CN": "卡马萨冠冕",
@@ -5963,7 +5983,7 @@
     },
     "Kopec's Orb of Sacrifice": {
       "zh_CN": "强固献祭宝珠",
-      "zh_TW": "堅韌奉獻寶珠"
+      "zh_TW": "科佩克奉獻寶珠"
     },
     "Kris Knife": {
       "zh_CN": "波刃小刀",
@@ -6157,15 +6177,23 @@
       "zh_CN": "丧钟之遗产",
       "zh_TW": "傳承．喪鐘"
     },
+    "Legacy of Dionadair": {
+      "zh_CN": "御身守卫之遗产",
+      "zh_TW": "傳承．捍衛者"
+    },
     "Legacy of Duality": {
       "zh_CN": "二元一体之遗产",
       "zh_TW": "傳承．二元性"
+    },
+    "Legacy of Dunkelhalt": {
+      "zh_CN": "黑暗止步之遗产",
+      "zh_TW": "傳承．唐克哈特"
     },
     "Legacy of Dusk Vigil": {
       "zh_CN": "暮色守望之遗产",
       "zh_TW": "傳承．暗暮守夜"
     },
-    "Legacy of Edyrns Tusks": {
+    "Legacy of Edyrn's Tusks": {
       "zh_CN": "艾丁的獠牙之遗产",
       "zh_TW": "傳承．埃狄恩的曲牙"
     },
@@ -6215,7 +6243,7 @@
     },
     "Legacy of Kingsguard": {
       "zh_CN": "皇家卫甲之遗产",
-      "zh_TW": "傳承．王衛"
+      "zh_TW": "傳承．皇家衛甲"
     },
     "Legacy of Legionstride": {
       "zh_CN": "军团的进击之遗产",
@@ -10750,7 +10778,7 @@
       "zh_TW": "符鍛保衛之盔"
     },
     "Runeforged Warden Bow": {
-      "zh_CN": "符锻监守弓",
+      "zh_CN": "Runeforged Warden Bow",
       "zh_TW": "符鍛守護者之弓"
     },
     "Runeforged Warlock Leggings": {
@@ -11959,7 +11987,7 @@
     },
     "Scimitar": {
       "zh_CN": "弯刀",
-      "zh_TW": "彎刀"
+      "zh_TW": "短彎刀"
     },
     "Scold's Bridle Jade Tiara": {
       "zh_CN": "禁语 翠玉冠冕",
@@ -13118,11 +13146,11 @@
       "zh_TW": "極速苦痛 I"
     },
     "Swift Affliction II": {
-      "zh_CN": "Swift Affliction II",
+      "zh_CN": "极速腐化 II",
       "zh_TW": "極速苦痛 II"
     },
     "Swift Affliction III": {
-      "zh_CN": "Swift Affliction III",
+      "zh_CN": "极速腐化 III",
       "zh_TW": "極速苦痛 III"
     },
     "Swift Alloy": {
@@ -13150,7 +13178,7 @@
       "zh_TW": "林木塑像 魔道權杖"
     },
     "Syzygy": {
-      "zh_CN": "Syzygy",
+      "zh_CN": "朔望",
       "zh_TW": "朔望"
     },
     "Tabula Rasa Garment": {
@@ -13162,7 +13190,7 @@
       "zh_TW": "無盡之衣 符鍛服裝"
     },
     "Tacati's Ire": {
-      "zh_CN": "Tacati's Ire",
+      "zh_CN": "塔卡提之怒",
       "zh_TW": "特卡蒂的憤怒"
     },
     "Tacati's Soul Core of Affliction": {
@@ -13170,7 +13198,7 @@
       "zh_TW": "特卡蒂的苦痛靈魂核心"
     },
     "Tame Beast": {
-      "zh_CN": "Tame Beast",
+      "zh_CN": "驯服野兽",
       "zh_TW": "馴獸"
     },
     "Tangletongue Forked Spear": {
@@ -13206,7 +13234,7 @@
       "zh_TW": "塔薩里奧脛甲"
     },
     "Tasalio's Rhythm": {
-      "zh_CN": "Tasalio's Rhythm",
+      "zh_CN": "塔萨里奥的律动",
       "zh_TW": "塔薩里奧的律動"
     },
     "Tattered Robe": {
@@ -13218,7 +13246,7 @@
       "zh_TW": "緊繃十字弓"
     },
     "Tawhoa's Tending": {
-      "zh_CN": "Tawhoa's Tending",
+      "zh_CN": "塔赫亚的照料",
       "zh_TW": "塔赫亞的照顧"
     },
     "Tawhoan Greatclub": {
@@ -13230,7 +13258,7 @@
       "zh_TW": "塔赫亞塔盾"
     },
     "Tear": {
-      "zh_CN": "Tear",
+      "zh_CN": "撕扯",
       "zh_TW": "撕裂"
     },
     "Tearing Flail": {
@@ -13242,11 +13270,11 @@
       "zh_TW": "特克羅德的邪眼"
     },
     "Tecrod's Revenge": {
-      "zh_CN": "Tecrod's Revenge",
+      "zh_CN": "特克罗的复仇",
       "zh_TW": "特克羅德的復仇"
     },
     "Tectonic Slams": {
-      "zh_CN": "Tectonic Slams",
+      "zh_CN": "破釜一击",
       "zh_TW": "震波猛擊"
     },
     "Tempered Mitts": {
@@ -13274,7 +13302,7 @@
       "zh_TW": "神廟碑牌"
     },
     "Temporal Chains": {
-      "zh_CN": "Temporal Chains",
+      "zh_CN": "时空锁链",
       "zh_TW": "時空鎖鏈"
     },
     "Temporalis Runemastered Silk Robe": {
@@ -13515,7 +13543,7 @@
     },
     "The Dancing Dervish Scimitar": {
       "zh_CN": "禅意苦行僧 弯刀",
-      "zh_TW": "狂舞德爾維希 彎刀"
+      "zh_TW": "狂舞德爾維希 短彎刀"
     },
     "The Dancing Mirage Runemastered Wayfarer Jacket": {
       "zh_CN": "跃舞蜃影 符文师匠远行者外衣",
@@ -13802,11 +13830,11 @@
       "zh_TW": "竊罪 綠寶石戒指"
     },
     "Thornskin I": {
-      "zh_CN": "Thornskin I",
+      "zh_CN": "荆棘皮肤 I",
       "zh_TW": "荊棘之皮 I"
     },
     "Thornskin II": {
-      "zh_CN": "Thornskin II",
+      "zh_CN": "荆棘皮肤 II",
       "zh_TW": "荊棘之皮 II"
     },
     "Thrashing Vines": {
@@ -13826,11 +13854,11 @@
       "zh_TW": "縫紉輕鞋"
     },
     "Thrill of the Kill": {
-      "zh_CN": "Thrill of the Kill",
+      "zh_CN": "杀戮快感",
       "zh_TW": "殺戮渴望"
     },
     "Thrill of the Kill II": {
-      "zh_CN": "Thrill of the Kill II",
+      "zh_CN": "杀戮快感II",
       "zh_TW": "殺戮渴望II"
     },
     "Thrillsteel Runemastered Spired Greathelm": {
@@ -13858,7 +13886,7 @@
       "zh_TW": "雷拳 實用裹手"
     },
     "Thunderous Leap": {
-      "zh_CN": "Thunderous Leap",
+      "zh_CN": "雷鸣飞跃",
       "zh_TW": "雷霆跳躍"
     },
     "Thunderstep Steeltoe Boots": {
@@ -13882,7 +13910,7 @@
       "zh_TW": "潮汐先知披肩"
     },
     "Time of Need": {
-      "zh_CN": "Time of Need",
+      "zh_CN": "紧急时刻",
       "zh_TW": "緊急時刻"
     },
     "Time-Lost Diamond": {
@@ -13906,7 +13934,7 @@
       "zh_TW": "永恆珠寶"
     },
     "Tireless": {
-      "zh_CN": "Tireless",
+      "zh_CN": "冷酷",
       "zh_TW": "孜孜不倦"
     },
     "Titan Mitts": {
@@ -13950,7 +13978,7 @@
       "zh_TW": "龍捲風"
     },
     "Tornado Shot": {
-      "zh_CN": "Tornado Shot",
+      "zh_CN": "龙卷射击",
       "zh_TW": "龍捲射擊"
     },
     "Totemic Greatclub": {
@@ -13958,11 +13986,11 @@
       "zh_TW": "圖騰巨棍棒"
     },
     "Toxic Domain": {
-      "zh_CN": "Toxic Domain",
+      "zh_CN": "毒性领域",
       "zh_TW": "毒素領域"
     },
     "Toxic Growth": {
-      "zh_CN": "Toxic Growth",
+      "zh_CN": "剧毒增生",
       "zh_TW": "毒素植栽"
     },
     "Toxic Quiver": {
@@ -13970,7 +13998,7 @@
       "zh_TW": "劇毒箭袋"
     },
     "Trail of Caltrops": {
-      "zh_CN": "Trail of Caltrops",
+      "zh_CN": "铁蒺藜之路",
       "zh_TW": "蒺藜之徑"
     },
     "Trailblazer Armour": {
@@ -14026,7 +14054,7 @@
       "zh_TW": "樹行者輕鞋"
     },
     "Tremors": {
-      "zh_CN": "Tremors",
+      "zh_CN": "地震",
       "zh_TW": "威震"
     },
     "Trenchtimbre Runeforged Spiked Club": {
@@ -14078,11 +14106,11 @@
       "zh_TW": "托沃的催化劑"
     },
     "Tul's Stillness": {
-      "zh_CN": "Tul's Stillness",
+      "zh_CN": "托沃的寂静",
       "zh_TW": "托沃的寧靜"
     },
     "Tumult": {
-      "zh_CN": "Tumult",
+      "zh_CN": "动乱",
       "zh_TW": "紛亂"
     },
     "Twig Circlet": {
@@ -14126,7 +14154,7 @@
       "zh_TW": "扭曲法杖"
     },
     "Twister": {
-      "zh_CN": "Twister",
+      "zh_CN": "旋龙",
       "zh_TW": "旋風"
     },
     "Two-Point Quiver": {
@@ -14154,7 +14182,7 @@
       "zh_TW": "薩摩特的狂暴靈魂核心"
     },
     "Uhtred's Augury": {
-      "zh_CN": "Uhtred's Augury",
+      "zh_CN": "乌崔德的占卜",
       "zh_TW": "烏特雷的占卜術"
     },
     "Uhtred's Chalice Transcendent Mana Flask": {
@@ -14170,11 +14198,11 @@
       "zh_TW": "烏特雷的聖杯之徽"
     },
     "Uhtred's Exodus": {
-      "zh_CN": "Uhtred's Exodus",
+      "zh_CN": "乌崔德的出走",
       "zh_TW": "烏特雷的出走"
     },
     "Uhtred's Omen": {
-      "zh_CN": "Uhtred's Omen",
+      "zh_CN": "乌崔德的预兆",
       "zh_TW": "烏特雷的徵兆"
     },
     "Uhtred's Rite": {
@@ -14210,15 +14238,15 @@
       "zh_TW": "不朽繫命 麻布腰帶"
     },
     "Unabating": {
-      "zh_CN": "Unabating",
+      "zh_CN": "不倦防护",
       "zh_TW": "勢頭不減"
     },
     "Unbending": {
-      "zh_CN": "Unbending",
+      "zh_CN": "不屈之心",
       "zh_TW": "永不屈服"
     },
     "Unbreakable": {
-      "zh_CN": "Unbreakable",
+      "zh_CN": "不屈不破",
       "zh_TW": "堅不可破"
     },
     "Uncut Skill Gem": {
@@ -14242,11 +14270,11 @@
       "zh_TW": "不朽恨意 永恆珠寶"
     },
     "Unearth": {
-      "zh_CN": "Unearth",
+      "zh_CN": "开掘",
       "zh_TW": "屍術矢"
     },
     "Unerring Power": {
-      "zh_CN": "Unerring Power",
+      "zh_CN": "精准之力",
       "zh_TW": "精準力量"
     },
     "Unforeseen Consequences Abyss Tablet": {
@@ -14266,43 +14294,43 @@
       "zh_TW": "潛能之戒"
     },
     "Unsteady Tempo": {
-      "zh_CN": "Unsteady Tempo",
+      "zh_CN": "失衡节奏",
       "zh_TW": "不穩節奏"
     },
     "Untouchable": {
-      "zh_CN": "Untouchable",
+      "zh_CN": "不可触及",
       "zh_TW": "無法觸碰"
     },
     "Unyielding": {
-      "zh_CN": "Unyielding",
+      "zh_CN": "不屈",
       "zh_TW": "屹立不搖"
     },
     "Upheaval I": {
-      "zh_CN": "Upheaval I",
+      "zh_CN": "剧变 I",
       "zh_TW": "動亂 I"
     },
     "Upheaval II": {
-      "zh_CN": "Upheaval II",
+      "zh_CN": "剧变 II",
       "zh_TW": "動亂 II"
     },
     "Upwelling I": {
-      "zh_CN": "Upwelling I",
+      "zh_CN": "升流 I",
       "zh_TW": "湧升流 I"
     },
     "Upwelling II": {
-      "zh_CN": "Upwelling II",
+      "zh_CN": "升流 II",
       "zh_TW": "湧升流 I"
     },
     "Urgent Totems I": {
-      "zh_CN": "Urgent Totems I",
+      "zh_CN": "紧急图腾 I",
       "zh_TW": "應急圖騰 I"
     },
     "Urgent Totems II": {
-      "zh_CN": "Urgent Totems II",
+      "zh_CN": "紧急图腾 II",
       "zh_TW": "應急圖騰 II"
     },
     "Urgent Totems III": {
-      "zh_CN": "Urgent Totems III",
+      "zh_CN": "紧急图腾 III",
       "zh_TW": "應急圖騰 III"
     },
     "Urn Relic": {
@@ -14314,7 +14342,7 @@
       "zh_TW": "烏爾摩堤的消減靈魂核心"
     },
     "Uruk's Smelting": {
-      "zh_CN": "Uruk's Smelting",
+      "zh_CN": "厄罗克的熔炼术",
       "zh_TW": "厄羅克的鍛鍊"
     },
     "Utility Belt": {
@@ -14334,7 +14362,7 @@
       "zh_TW": "烏爾尼多的催化劑"
     },
     "Uul-Netol's Embrace": {
-      "zh_CN": "Uul-Netol's Embrace",
+      "zh_CN": "乌尔尼多的拥抱",
       "zh_TW": "烏爾尼多的擁抱"
     },
     "Vaal Arcanist's Infuser": {
@@ -14414,15 +14442,15 @@
       "zh_TW": "嗜血之刃"
     },
     "Vanguard I": {
-      "zh_CN": "Vanguard I",
+      "zh_CN": "先锋 I",
       "zh_TW": "無懼先鋒 I"
     },
     "Vanguard II": {
-      "zh_CN": "Vanguard II",
+      "zh_CN": "先锋 II",
       "zh_TW": "無懼先鋒 II"
     },
     "Varashta's Blessing": {
-      "zh_CN": "Varashta's Blessing",
+      "zh_CN": "瓦拉煞的祝福",
       "zh_TW": "瓦拉什塔的祝福"
     },
     "Varnished Crossbow": {
@@ -14478,7 +14506,7 @@
       "zh_TW": "賭神芬多 金光戒指"
     },
     "Verglas": {
-      "zh_CN": "Verglas",
+      "zh_CN": "雨淞",
       "zh_TW": "冰淞"
     },
     "Veridical Chain": {
@@ -14534,11 +14562,11 @@
       "zh_TW": "惡毒長袍"
     },
     "Vilenta's Propulsion": {
-      "zh_CN": "Vilenta's Propulsion",
+      "zh_CN": "薇伦塔之推进",
       "zh_TW": "范尼達的奮進"
     },
     "Vine Arrow": {
-      "zh_CN": "Vine Arrow",
+      "zh_CN": "藤缠箭",
       "zh_TW": "藤蔓箭矢"
     },
     "Viper Cap": {
@@ -14582,11 +14610,11 @@
       "zh_TW": "維生之戒"
     },
     "Vitality I": {
-      "zh_CN": "Vitality I",
+      "zh_CN": "活力 I",
       "zh_TW": "活力 I"
     },
     "Vitality II": {
-      "zh_CN": "Vitality II",
+      "zh_CN": "活力 II",
       "zh_TW": "活力 II"
     },
     "Voices Sapphire": {
@@ -14602,7 +14630,7 @@
       "zh_TW": "速射箭袋"
     },
     "Volatile Power": {
-      "zh_CN": "Volatile Power",
+      "zh_CN": "无常之力",
       "zh_TW": "不穩定的力量"
     },
     "Volatile Wand": {
@@ -14610,15 +14638,15 @@
       "zh_TW": "失衡法杖"
     },
     "Volatility": {
-      "zh_CN": "Volatility",
+      "zh_CN": "无常",
       "zh_TW": "易爆"
     },
     "Volcanic Eruption": {
-      "zh_CN": "Volcanic Eruption",
+      "zh_CN": "熔火喷发",
       "zh_TW": "火山迸發"
     },
     "Volcanic Fissure": {
-      "zh_CN": "Volcanic Fissure",
+      "zh_CN": "火山裂缝",
       "zh_TW": "炎火脈動"
     },
     "Volcano": {
@@ -14634,7 +14662,7 @@
       "zh_TW": "福爾的戰鎧 符煉鐵甲法衣"
     },
     "Volt": {
-      "zh_CN": "Volt",
+      "zh_CN": "电伏积聚",
       "zh_TW": "電壓"
     },
     "Voltaic Barrier": {
@@ -14646,7 +14674,7 @@
       "zh_TW": "電流擲彈"
     },
     "Voltaic Mark": {
-      "zh_CN": "Voltaic Mark",
+      "zh_CN": "流电印记",
       "zh_TW": "電流印記"
     },
     "Voltaic Staff": {
@@ -14690,11 +14718,11 @@
       "zh_TW": "弗倫的餘波"
     },
     "Vruun's Inevitability": {
-      "zh_CN": "Vruun's Inevitability",
+      "zh_CN": "弗伦的必然",
       "zh_TW": "弗倫的必然"
     },
     "Vulnerability": {
-      "zh_CN": "Vulnerability",
+      "zh_CN": "脆弱",
       "zh_TW": "脆弱"
     },
     "Waistgate Heavy Belt": {
@@ -14854,7 +14882,7 @@
       "zh_TW": "總督胸甲"
     },
     "Warm Blooded": {
-      "zh_CN": "Warm Blooded",
+      "zh_CN": "温热血脉",
       "zh_TW": "滿腔熱血"
     },
     "Warmonger Bow": {
@@ -14982,11 +15010,11 @@
       "zh_TW": "迴旋擊"
     },
     "Whirling Slash": {
-      "zh_CN": "Whirling Slash",
+      "zh_CN": "回旋挥斩",
       "zh_TW": "迴旋斬"
     },
     "Whirlwind Lance": {
-      "zh_CN": "Whirlwind Lance",
+      "zh_CN": "旋风投枪",
       "zh_TW": "旋風之槍"
     },
     "Whisper of the Brotherhood Sapphire Ring": {
@@ -15227,7 +15255,7 @@
     },
     "Yaomac's Orb of Sacrifice": {
       "zh_CN": "残暴献祭宝珠",
-      "zh_TW": "殘酷奉獻寶珠"
+      "zh_TW": "堯馬克奉獻寶珠"
     },
     "Yoke of Suffering Bloodstone Amulet": {
       "zh_CN": "苦难羁绊 血岩项链",
@@ -15243,7 +15271,7 @@
     },
     "Yugul's Orb of Sacrifice": {
       "zh_CN": "皇家献祭宝珠",
-      "zh_TW": "皇家奉獻寶珠"
+      "zh_TW": "伊果奉獻寶珠"
     },
     "Zaida's Longevity Ring": {
       "zh_CN": "寨达的长寿 戒指",
@@ -15329,7 +15357,7 @@
     },
     "crafted.stat_1022759479": {
       "zh_CN": "范围内的核心天赋同时提供 施法速度提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 增加#%施放速度"
+      "zh_TW": "範圍內核心天賦也會賦予 增加#%施法速度"
     },
     "crafted.stat_1028592286": {
       "zh_CN": "#% 的几率额外连锁一次",
@@ -15497,7 +15525,7 @@
     },
     "crafted.stat_1805633363": {
       "zh_CN": "召唤生物技能的保留效能提高 #%",
-      "zh_TW": "召喚物技能增加#%保留效率"
+      "zh_TW": "召喚物技能增加#%保留效用"
     },
     "crafted.stat_1823942939": {
       "zh_CN": "# 召唤弩炮图腾数量上限",
@@ -15701,7 +15729,7 @@
     },
     "crafted.stat_2891184298": {
       "zh_CN": "施法速度提高 #%",
-      "zh_TW": "增加#%施放速度"
+      "zh_TW": "增加#%施法速度"
     },
     "crafted.stat_2897413282": {
       "zh_CN": "全属性 #",
@@ -15952,8 +15980,8 @@
       "zh_TW": "配置粉碎裝置"
     },
     "crafted.stat_2954116742|14258": {
-      "zh_CN": "配置 傀儡大师几率",
-      "zh_TW": "配置隱蔽之手"
+      "zh_CN": "配置 隐秘之手",
+      "zh_TW": "配置魁儡大師機率"
     },
     "crafted.stat_2954116742|14265": {
       "zh_CN": "配置 火法师",
@@ -18796,8 +18824,8 @@
       "zh_TW": "配置驚慌失措"
     },
     "crafted.stat_2954116742|62210": {
-      "zh_CN": "配置 傀儡大师几率",
-      "zh_TW": "配置無盡之舞"
+      "zh_CN": "配置 无尽之舞",
+      "zh_TW": "配置魁儡大師機率"
     },
     "crafted.stat_2954116742|62230": {
       "zh_CN": "配置 坚忍屏障",
@@ -19453,7 +19481,7 @@
     },
     "crafted.stat_4101445926": {
       "zh_CN": "魔力消耗效能提高 #%",
-      "zh_TW": "增加#%魔力消耗效率"
+      "zh_TW": "增加#%魔力消耗效用"
     },
     "crafted.stat_4129825612": {
       "zh_CN": "受到击中物理伤害的 #% 转化为混沌伤害",
@@ -19657,7 +19685,7 @@
     },
     "desecrated.stat_1022759479": {
       "zh_CN": "范围内的核心天赋同时提供 施法速度提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 增加#%施放速度"
+      "zh_TW": "範圍內核心天賦也會賦予 增加#%施法速度"
     },
     "desecrated.stat_1034611536": {
       "zh_CN": "范围内的核心天赋同时提供 咒符每秒获得 # 次充能",
@@ -19745,7 +19773,7 @@
     },
     "desecrated.stat_1136768410": {
       "zh_CN": "低血时施法速度提高 #%",
-      "zh_TW": "貧血狀態時增加#%施放速度"
+      "zh_TW": "貧血狀態時增加#%施法速度"
     },
     "desecrated.stat_1137305356": {
       "zh_CN": "范围内的小型天赋同时提供 法术伤害提高 #%",
@@ -19837,7 +19865,7 @@
     },
     "desecrated.stat_1263695895": {
       "zh_CN": "照亮范围提高 #%",
-      "zh_TW": "增加#%光線範圍"
+      "zh_TW": "增加#%照亮範圍"
     },
     "desecrated.stat_1265767008": {
       "zh_CN": "若你的召唤生物近期复活过，则它们为庞然大物",
@@ -19937,7 +19965,7 @@
     },
     "desecrated.stat_1365079333": {
       "zh_CN": "玩家窃取区域内被击杀稀有怪物的被吞噬灵魂",
-      "zh_TW": "Players steal the Eaten Souls of Slain Rare Monsters in Area"
+      "zh_TW": "玩家在區域中擊殺稀有怪物時會偷取其噬魂者"
     },
     "desecrated.stat_1365232741": {
       "zh_CN": "榴弹持续时间提高 #%",
@@ -20053,7 +20081,7 @@
     },
     "desecrated.stat_1518586897": {
       "zh_CN": "近期每施放一个不同的非瞬发法术，施法速度提高 #%",
-      "zh_TW": "你近期每施放一個不同的非瞬發法術，增加#%施放速度"
+      "zh_TW": "你近期每施放一個不同的非瞬發法術，增加#%施法速度"
     },
     "desecrated.stat_1535626285": {
       "zh_CN": "# 力量和智慧",
@@ -20173,7 +20201,7 @@
     },
     "desecrated.stat_1697191405": {
       "zh_CN": "捷技能的保留效能提高 #%",
-      "zh_TW": "捷光環技能增加#%保留效率"
+      "zh_TW": "捷光環技能增加#%保留效用"
     },
     "desecrated.stat_1697447343": {
       "zh_CN": "节杖的冻结积蓄值提高 #%",
@@ -20193,7 +20221,7 @@
     },
     "desecrated.stat_1714971114": {
       "zh_CN": "印记技能的施法速度提高 #%",
-      "zh_TW": "增加#%印記技能的施放速度"
+      "zh_TW": "增加#%印記技能的施法速度"
     },
     "desecrated.stat_1740229525": {
       "zh_CN": "该武器的攻击穿透 #% 的冰霜抗性",
@@ -20273,7 +20301,7 @@
     },
     "desecrated.stat_1805633363": {
       "zh_CN": "召唤生物技能的保留效能提高 #%",
-      "zh_TW": "召喚物技能增加#%保留效率"
+      "zh_TW": "召喚物技能增加#%保留效用"
     },
     "desecrated.stat_1818915622": {
       "zh_CN": "被抑制的小型天赋技能还会使魔力再生率提高 #%",
@@ -20337,7 +20365,7 @@
     },
     "desecrated.stat_1869147066": {
       "zh_CN": "旗帜技能的荣耀产生速度提高 #%",
-      "zh_TW": "旗幟技能增加#%生成的榮耀"
+      "zh_TW": "鬥旗技能增加#%生成的榮耀"
     },
     "desecrated.stat_1874553720": {
       "zh_CN": "你被冰缓的持续时间降低 #%",
@@ -20377,7 +20405,7 @@
     },
     "desecrated.stat_1914226331": {
       "zh_CN": "满魔时施法速度提高 #%",
-      "zh_TW": "滿魔力時，增加#%施放速度"
+      "zh_TW": "滿魔力時，增加#%施法速度"
     },
     "desecrated.stat_1938221597": {
       "zh_CN": "被抑制的属性天赋技能还会提供 # 点敏捷",
@@ -20577,7 +20605,7 @@
     },
     "desecrated.stat_2202308025": {
       "zh_CN": "范围内的小型天赋同时提供 印记技能的施法速度提高 #%",
-      "zh_TW": "範圍內小型天賦也會賦予 增加#%印記技能的施放速度"
+      "zh_TW": "範圍內小型天賦也會賦予 增加#%印記技能的施法速度"
     },
     "desecrated.stat_221701169": {
       "zh_CN": "范围内的核心天赋同时提供 中毒持续时间提高 #%",
@@ -20713,7 +20741,7 @@
     },
     "desecrated.stat_2416650879": {
       "zh_CN": "怒火消耗效能提高 #%",
-      "zh_TW": "增加#%盛怒消耗效率"
+      "zh_TW": "增加#%盛怒消耗效用"
     },
     "desecrated.stat_2421151933": {
       "zh_CN": "范围内的小型天赋同时提供 若你在过去 8 秒内造成过投射物攻击击中，近战伤害提高 #%",
@@ -20789,7 +20817,7 @@
     },
     "desecrated.stat_2488361432": {
       "zh_CN": "怪物施法速度提高 #%",
-      "zh_TW": "增加#%怪物施放速度"
+      "zh_TW": "增加#%怪物施法速度"
     },
     "desecrated.stat_2505884597": {
       "zh_CN": "获得相当于伤害 #% 的额外冰霜伤害",
@@ -20909,7 +20937,7 @@
     },
     "desecrated.stat_263495202": {
       "zh_CN": "消耗效能提高 #%",
-      "zh_TW": "增加#%消耗效率"
+      "zh_TW": "增加#%消耗效用"
     },
     "desecrated.stat_2637470878": {
       "zh_CN": "护甲破损持续时间提高 #%",
@@ -20925,7 +20953,7 @@
     },
     "desecrated.stat_2653231923": {
       "zh_CN": "法术的魔力消耗效能提高 #%",
-      "zh_TW": "增加#%法術的魔力消耗效率"
+      "zh_TW": "增加#%法術的魔力消耗效用"
     },
     "desecrated.stat_2653955271": {
       "zh_CN": "伤害穿透 #% 火焰抗性",
@@ -20941,7 +20969,7 @@
     },
     "desecrated.stat_2690740379": {
       "zh_CN": "范围内的小型天赋同时提供 旗帜技能的持续时间提高 #%",
-      "zh_TW": "範圍內小型天賦也會賦予 旗幟技能增加#%持續時間"
+      "zh_TW": "範圍內小型天賦也會賦予 鬥旗技能增加#%持續時間"
     },
     "desecrated.stat_2694482655": {
       "zh_CN": "#% 暴击伤害加成",
@@ -20981,7 +21009,7 @@
     },
     "desecrated.stat_2720982137": {
       "zh_CN": "旗帜技能的持续时间提高 #%",
-      "zh_TW": "旗幟技能增加#%持續時間"
+      "zh_TW": "鬥旗技能增加#%持續時間"
     },
     "desecrated.stat_2725205297": {
       "zh_CN": "你提供的不洁之力增益状态的强度提高 #%",
@@ -21101,11 +21129,11 @@
     },
     "desecrated.stat_2891184298": {
       "zh_CN": "施法速度提高 #%",
-      "zh_TW": "增加#%施放速度"
+      "zh_TW": "增加#%施法速度"
     },
     "desecrated.stat_289128254": {
       "zh_CN": "在场的友军的施法速度提高 #%",
-      "zh_TW": "處於你存在範圍中的友方增加#%施放速度"
+      "zh_TW": "處於你存在範圍中的友方增加#%施法速度"
     },
     "desecrated.stat_2896115339": {
       "zh_CN": "将所受元素伤害的 #% 吸纳为能量护盾",
@@ -21117,7 +21145,7 @@
     },
     "desecrated.stat_2907381231": {
       "zh_CN": "范围内的核心天赋同时提供 旗帜技能的荣耀产生速度提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 旗幟技能增加#%生成的榮耀"
+      "zh_TW": "範圍內核心天賦也會賦予 鬥旗技能增加#%生成的榮耀"
     },
     "desecrated.stat_2910761524": {
       "zh_CN": "法术技能有 #% 的几率发射 2 个额外投射物",
@@ -21181,7 +21209,7 @@
     },
     "desecrated.stat_3003542304": {
       "zh_CN": "投射物分叉时，有 #% 的几率发射一个额外投射物",
-      "zh_TW": "投射物分岔時有#%機率發射1個額外投射物"
+      "zh_TW": "投射物分裂時有#%機率發射1個額外投射物"
     },
     "desecrated.stat_300723956": {
       "zh_CN": "攻击击中施加创口",
@@ -21241,11 +21269,11 @@
     },
     "desecrated.stat_3091578504": {
       "zh_CN": "召唤生物的攻击和施法速度提高 #%",
-      "zh_TW": "召喚物增加#%攻擊和施放速度"
+      "zh_TW": "召喚物增加#%攻擊和施法速度"
     },
     "desecrated.stat_3106718406": {
       "zh_CN": "范围内的核心天赋同时提供 召唤生物的攻击和施法速度提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 召喚物增加#%攻擊和施放速度"
+      "zh_TW": "範圍內核心天賦也會賦予 召喚物增加#%攻擊和施法速度"
     },
     "desecrated.stat_3107707789": {
       "zh_CN": "奔跑时移动速度提高 #%",
@@ -21253,7 +21281,7 @@
     },
     "desecrated.stat_310945763": {
       "zh_CN": "生命消耗效能提高 #%",
-      "zh_TW": "增加#%生命消耗效率"
+      "zh_TW": "增加#%生命消耗效用"
     },
     "desecrated.stat_3113764475": {
       "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
@@ -21453,7 +21481,7 @@
     },
     "desecrated.stat_3350279336": {
       "zh_CN": "攻击的消耗效能提高 #%",
-      "zh_TW": "增加#%攻擊消耗效率"
+      "zh_TW": "增加#%攻擊消耗效用"
     },
     "desecrated.stat_3362812763": {
       "zh_CN": "#% 的护甲同样作用于元素伤害",
@@ -21505,7 +21533,7 @@
     },
     "desecrated.stat_3396435291": {
       "zh_CN": "若你近期使用过闪避翻滚，魔力消耗效能提高 #%",
-      "zh_TW": "若你近期有閃避翻滾，增加#%魔力消耗效率"
+      "zh_TW": "若你近期有閃避翻滾，增加#%魔力消耗效用"
     },
     "desecrated.stat_3398283493": {
       "zh_CN": "该武器的攻击穿透 #% 的火焰抗性",
@@ -21537,7 +21565,7 @@
     },
     "desecrated.stat_3413635271": {
       "zh_CN": "伙伴技能的保留效能提高 #%",
-      "zh_TW": "盟友技能增加#%保留效率"
+      "zh_TW": "盟友技能增加#%保留效用"
     },
     "desecrated.stat_3417711605": {
       "zh_CN": "伤害穿透 #% 冰霜抗性",
@@ -22021,7 +22049,7 @@
     },
     "desecrated.stat_4101445926": {
       "zh_CN": "魔力消耗效能提高 #%",
-      "zh_TW": "增加#%魔力消耗效率"
+      "zh_TW": "增加#%魔力消耗效用"
     },
     "desecrated.stat_4101943684": {
       "zh_CN": "怪物的晕眩阈值提高 #%",
@@ -22049,7 +22077,7 @@
     },
     "desecrated.stat_4142814612": {
       "zh_CN": "范围内的小型天赋同时提供 旗帜技能的效果范围提高 #%",
-      "zh_TW": "範圍內小型天賦也會賦予 旗幟技能增加#%範圍效果"
+      "zh_TW": "範圍內小型天賦也會賦予 鬥旗技能增加#%範圍效果"
     },
     "desecrated.stat_4147510958": {
       "zh_CN": "封印技能的上限封印 #",
@@ -22129,7 +22157,7 @@
     },
     "desecrated.stat_4257790560": {
       "zh_CN": "范围内的核心天赋同时提供 魔力消耗效能提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 增加#%魔力消耗效率"
+      "zh_TW": "範圍內核心天賦也會賦予 增加#%魔力消耗效用"
     },
     "desecrated.stat_4258000627": {
       "zh_CN": "范围内的小型天赋同时提供 击中时使目标恍惚",
@@ -22141,7 +22169,7 @@
     },
     "desecrated.stat_4258720395": {
       "zh_CN": "范围内的核心天赋同时提供 投射物分叉时，有 #% 的几率发射一个额外投射物",
-      "zh_TW": "範圍內核心天賦也會賦予 投射物分岔時有#%機率發射1個額外投射物"
+      "zh_TW": "範圍內核心天賦也會賦予 投射物分裂時有#%機率發射1個額外投射物"
     },
     "desecrated.stat_4259875040": {
       "zh_CN": "法术造成的穿刺强度提高 #%",
@@ -22169,7 +22197,7 @@
     },
     "desecrated.stat_429143663": {
       "zh_CN": "旗帜技能的效果范围提高 #%",
-      "zh_TW": "旗幟技能增加#%範圍效果"
+      "zh_TW": "鬥旗技能增加#%範圍效果"
     },
     "desecrated.stat_436406826": {
       "zh_CN": "玩家击败稀有或传奇怪物后\n被打上死亡印记，持续 # 秒",
@@ -22269,7 +22297,7 @@
     },
     "desecrated.stat_53386210": {
       "zh_CN": "技能的精魂保留效能提高 #%",
-      "zh_TW": "技能增加#%精魂保留效率"
+      "zh_TW": "技能增加#%精魂保留效用"
     },
     "desecrated.stat_533892981": {
       "zh_CN": "范围内的小型天赋同时提供 命中值提高 #%",
@@ -22357,7 +22385,7 @@
     },
     "desecrated.stat_656291658": {
       "zh_CN": "满血时施法速度提高 #%",
-      "zh_TW": "滿血時增加#%施放速度"
+      "zh_TW": "滿血時增加#%施法速度"
     },
     "desecrated.stat_656461285": {
       "zh_CN": "智慧提高 #%",
@@ -22845,11 +22873,11 @@
     },
     "enchant.stat_2891184298": {
       "zh_CN": "施法速度提高 #%",
-      "zh_TW": "增加#%施放速度"
+      "zh_TW": "增加#%施法速度"
     },
     "enchant.stat_289128254": {
       "zh_CN": "在场的友军的施法速度提高 #%",
-      "zh_TW": "處於你存在範圍中的友方增加#%施放速度"
+      "zh_TW": "處於你存在範圍中的友方增加#%施法速度"
     },
     "enchant.stat_2901986750": {
       "zh_CN": "所有元素抗性 #%",
@@ -23100,8 +23128,8 @@
       "zh_TW": "配置粉碎裝置"
     },
     "enchant.stat_2954116742|14258": {
-      "zh_CN": "配置 傀儡大师几率",
-      "zh_TW": "配置隱蔽之手"
+      "zh_CN": "配置 隐秘之手",
+      "zh_TW": "配置魁儡大師機率"
     },
     "enchant.stat_2954116742|14265": {
       "zh_CN": "配置 火法师",
@@ -25944,8 +25972,8 @@
       "zh_TW": "配置驚慌失措"
     },
     "enchant.stat_2954116742|62210": {
-      "zh_CN": "配置 傀儡大师几率",
-      "zh_TW": "配置無盡之舞"
+      "zh_CN": "配置 无尽之舞",
+      "zh_TW": "配置魁儡大師機率"
     },
     "enchant.stat_2954116742|62230": {
       "zh_CN": "配置 坚忍屏障",
@@ -26697,7 +26725,7 @@
     },
     "explicit.stat_1022759479": {
       "zh_CN": "范围内的核心天赋同时提供 施法速度提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 增加#%施放速度"
+      "zh_TW": "範圍內核心天賦也會賦予 增加#%施法速度"
     },
     "explicit.stat_1027889455": {
       "zh_CN": "每 100 生命上限使非吟唱法术的伤害提高 #%",
@@ -26933,7 +26961,7 @@
     },
     "explicit.stat_1136768410": {
       "zh_CN": "低血时施法速度提高 #%",
-      "zh_TW": "貧血狀態時增加#%施放速度"
+      "zh_TW": "貧血狀態時增加#%施法速度"
     },
     "explicit.stat_1137305356": {
       "zh_CN": "范围内的小型天赋同时提供 法术伤害提高 #%",
@@ -27025,7 +27053,7 @@
     },
     "explicit.stat_1174076861": {
       "zh_CN": "若你近期内有打出过暴击，则施法速度提高 #%",
-      "zh_TW": "若你近期造成暴擊，增加#%施放速度"
+      "zh_TW": "若你近期造成暴擊，增加#%施法速度"
     },
     "explicit.stat_1174954559": {
       "zh_CN": "Delirium Fog in Area lasts # additional seconds before dissipating",
@@ -27069,7 +27097,7 @@
     },
     "explicit.stat_1199718219": {
       "zh_CN": "法术的投射物无法分叉",
-      "zh_TW": "來自法術的投射物分岔"
+      "zh_TW": "來自法術的投射物分裂"
     },
     "explicit.stat_1200347828": {
       "zh_CN": "低血时使用生命药剂立即回复",
@@ -27177,7 +27205,7 @@
     },
     "explicit.stat_1263695895": {
       "zh_CN": "照亮范围提高 #%",
-      "zh_TW": "增加#%光線範圍"
+      "zh_TW": "增加#%照亮範圍"
     },
     "explicit.stat_1265767008": {
       "zh_CN": "若你的召唤生物近期复活过，则它们为庞然大物",
@@ -27361,7 +27389,7 @@
     },
     "explicit.stat_1350127730": {
       "zh_CN": "残片技能的保留效能提高 #%",
-      "zh_TW": "增加#%痕跡技能的保留效率"
+      "zh_TW": "增加#%痕跡技能的保留效用"
     },
     "explicit.stat_1352561456": {
       "zh_CN": "范围内的核心天赋同时提供 攻击伤害的暴击伤害加成 #%",
@@ -27389,7 +27417,7 @@
     },
     "explicit.stat_1365079333": {
       "zh_CN": "玩家窃取区域内被击杀稀有怪物的被吞噬灵魂",
-      "zh_TW": "Players steal the Eaten Souls of Slain Rare Monsters in Area"
+      "zh_TW": "玩家在區域中擊殺稀有怪物時會偷取其噬魂者"
     },
     "explicit.stat_1365232741": {
       "zh_CN": "榴弹持续时间提高 #%",
@@ -27405,7 +27433,7 @@
     },
     "explicit.stat_1367999357": {
       "zh_CN": "每 100 点魔力上限使非吟唱法术的暴击率提高 #%",
-      "zh_TW": "每100最大魔力，增加#%非引導法術的[Critical|暴擊率"
+      "zh_TW": "每100最大魔力，增加#%非引導技能的法術暴擊率"
     },
     "explicit.stat_1368271171": {
       "zh_CN": "每击败一名敌人获得 # 点魔力",
@@ -27457,7 +27485,7 @@
     },
     "explicit.stat_1393838912": {
       "zh_CN": "击中带有弱点暴露的敌人时，EatenSoul吞噬一个灵魂",
-      "zh_TW": "Eat a Soul when you Hit an enemy with an Open Weakness"
+      "zh_TW": "當你擊中一名擁有暴露破綻時吞噬一個靈魂"
     },
     "explicit.stat_1394184789": {
       "zh_CN": "你在使用生命药剂时，移除流血效果",
@@ -27705,7 +27733,7 @@
     },
     "explicit.stat_1518586897": {
       "zh_CN": "近期每施放一个不同的非瞬发法术，施法速度提高 #%",
-      "zh_TW": "你近期每施放一個不同的非瞬發法術，增加#%施放速度"
+      "zh_TW": "你近期每施放一個不同的非瞬發法術，增加#%施法速度"
     },
     "explicit.stat_1519615863": {
       "zh_CN": "击中有 #% 的几率造成流血",
@@ -28005,7 +28033,7 @@
     },
     "explicit.stat_1697191405": {
       "zh_CN": "捷技能的保留效能提高 #%",
-      "zh_TW": "捷光環技能增加#%保留效率"
+      "zh_TW": "捷光環技能增加#%保留效用"
     },
     "explicit.stat_1697447343": {
       "zh_CN": "节杖的冻结积蓄值提高 #%",
@@ -28049,7 +28077,7 @@
     },
     "explicit.stat_1714971114": {
       "zh_CN": "印记技能的施法速度提高 #%",
-      "zh_TW": "增加#%印記技能的施放速度"
+      "zh_TW": "增加#%印記技能的施法速度"
     },
     "explicit.stat_1717295693": {
       "zh_CN": "对流血的目标造成的所有击中伤害作用于冰缓强度",
@@ -28125,7 +28153,7 @@
     },
     "explicit.stat_1761741119": {
       "zh_CN": "Banners always have maximum Valour",
-      "zh_TW": "旗幟必定具有最大勇氣"
+      "zh_TW": "鬥旗必定具有最大勇氣"
     },
     "explicit.stat_1769611692": {
       "zh_CN": "区域中的惊悸迷雾使玩家的亢奋度提高 #%",
@@ -28213,7 +28241,7 @@
     },
     "explicit.stat_1805633363": {
       "zh_CN": "召唤生物技能的保留效能提高 #%",
-      "zh_TW": "召喚物技能增加#%保留效率"
+      "zh_TW": "召喚物技能增加#%保留效用"
     },
     "explicit.stat_1809641701": {
       "zh_CN": "Small Passive Skills in Radius also grant #% increased maximum Life",
@@ -28325,7 +28353,7 @@
     },
     "explicit.stat_1869147066": {
       "zh_CN": "旗帜技能的荣耀产生速度提高 #%",
-      "zh_TW": "旗幟技能增加#%生成的榮耀"
+      "zh_TW": "鬥旗技能增加#%生成的榮耀"
     },
     "explicit.stat_1873752457": {
       "zh_CN": "每秒获得 # 次充能",
@@ -28409,7 +28437,7 @@
     },
     "explicit.stat_1914226331": {
       "zh_CN": "满魔时施法速度提高 #%",
-      "zh_TW": "滿魔力時，增加#%施放速度"
+      "zh_TW": "滿魔力時，增加#%施法速度"
     },
     "explicit.stat_1920747151": {
       "zh_CN": "非吟唱法术额外消耗 #% 的生命上限",
@@ -28733,7 +28761,7 @@
     },
     "explicit.stat_2138799639": {
       "zh_CN": "箭矢在分叉后穿透所有目标",
-      "zh_TW": "箭矢分岔後會穿透所有目標"
+      "zh_TW": "箭矢分裂後會穿透所有目標"
     },
     "explicit.stat_2144192055": {
       "zh_CN": "# 点闪避值",
@@ -28821,7 +28849,7 @@
     },
     "explicit.stat_2189073790": {
       "zh_CN": "若你在过去 8 秒内造成过近战击中，投射物有 #% 的几率分叉",
-      "zh_TW": "如果你在過去8秒內以近戰擊中，則投射物有#%機率分岔"
+      "zh_TW": "如果你在過去8秒內以近戰擊中，則投射物有#%機率分裂"
     },
     "explicit.stat_2189090852": {
       "zh_CN": "每件已装备的被腐化物品使神性上限提高 #%",
@@ -28845,7 +28873,7 @@
     },
     "explicit.stat_2202308025": {
       "zh_CN": "范围内的小型天赋同时提供 印记技能的施法速度提高 #%",
-      "zh_TW": "範圍內小型天賦也會賦予 增加#%印記技能的施放速度"
+      "zh_TW": "範圍內小型天賦也會賦予 增加#%印記技能的施法速度"
     },
     "explicit.stat_2214130968": {
       "zh_CN": "对重度晕眩的敌人必定暴击",
@@ -28973,7 +29001,7 @@
     },
     "explicit.stat_2285766967": {
       "zh_CN": "将所受来自带有弱点暴露敌人 #% 的伤害吸纳为生命",
-      "zh_TW": "#% of damage taken from enemies with an Open Weakness Recouped as Life"
+      "zh_TW": "承受來自擁有暴露破綻敵人的#%傷害會補償為生命"
     },
     "explicit.stat_2293111154": {
       "zh_CN": "你能获得召唤生物攻击速度的增强与减弱效果",
@@ -29137,7 +29165,7 @@
     },
     "explicit.stat_2369495153": {
       "zh_CN": "若你近期消耗过暴击球，技能消耗效能提高 #%",
-      "zh_TW": "若你近期有消耗一顆暴擊球，技能消耗效率增加#%"
+      "zh_TW": "若你近期有消耗一顆暴擊球，技能消耗效用增加#%"
     },
     "explicit.stat_2369960685": {
       "zh_CN": "使用咒符时消耗充能的 #% 会赋予你的生命药剂",
@@ -29153,7 +29181,7 @@
     },
     "explicit.stat_2378065031": {
       "zh_CN": "诅咒技能的施法速度提高 #%",
-      "zh_TW": "增加#%詛咒技能的施放速度"
+      "zh_TW": "增加#%詛咒技能的施法速度"
     },
     "explicit.stat_2381897042": {
       "zh_CN": "每件有火焰抗性词缀的装备物品，使冰霜与闪电抗性 #%",
@@ -29229,7 +29257,7 @@
     },
     "explicit.stat_2416650879": {
       "zh_CN": "怒火消耗效能提高 #%",
-      "zh_TW": "增加#%盛怒消耗效率"
+      "zh_TW": "增加#%盛怒消耗效用"
     },
     "explicit.stat_2416869319": {
       "zh_CN": "给召唤生物提供 #% 生命恢复效果",
@@ -29249,7 +29277,7 @@
     },
     "explicit.stat_2421436896": {
       "zh_CN": "箭矢分叉",
-      "zh_TW": "箭矢會分岔"
+      "zh_TW": "箭矢會分裂"
     },
     "explicit.stat_242161915": {
       "zh_CN": "所有元素抗性都按照每个聚光之石 #%",
@@ -29413,7 +29441,7 @@
     },
     "explicit.stat_2437476305": {
       "zh_CN": "左戒指栏位：法术的投射物分叉",
-      "zh_TW": "左手戒指欄位：法術的投射物會分岔"
+      "zh_TW": "左手戒指欄位：法術的投射物會分裂"
     },
     "explicit.stat_2438634449": {
       "zh_CN": "攻击暴击有 #% 的几率使目标身上的流血效果变为恶性",
@@ -29541,7 +29569,7 @@
     },
     "explicit.stat_2488361432": {
       "zh_CN": "怪物施法速度提高 #%",
-      "zh_TW": "增加#%怪物施放速度"
+      "zh_TW": "增加#%怪物施法速度"
     },
     "explicit.stat_2500154144": {
       "zh_CN": "你地图中的驱灵祭坛可以重置恩典的次数变为两倍",
@@ -29793,7 +29821,7 @@
     },
     "explicit.stat_2626360934": {
       "zh_CN": "可被元素地面效果加持的风系技能视作\n被冰缓地面加持",
-      "zh_TW": "可被元素地表強化的疾風技能視為\n受到冰緩地面強化"
+      "zh_TW": "可被元素地面強化的疾風技能視為\n受到冰緩地面強化"
     },
     "explicit.stat_262946222": {
       "zh_CN": "在场的友军附加 # - # 攻击混沌伤害",
@@ -29801,7 +29829,7 @@
     },
     "explicit.stat_263495202": {
       "zh_CN": "消耗效能提高 #%",
-      "zh_TW": "增加#%消耗效率"
+      "zh_TW": "增加#%消耗效用"
     },
     "explicit.stat_2635559734": {
       "zh_CN": "基础战斗武器攻击时的暴击率为 #%",
@@ -29897,7 +29925,7 @@
     },
     "explicit.stat_2653231923": {
       "zh_CN": "法术的魔力消耗效能提高 #%",
-      "zh_TW": "增加#%法術的魔力消耗效率"
+      "zh_TW": "增加#%法術的魔力消耗效用"
     },
     "explicit.stat_2653955271": {
       "zh_CN": "伤害穿透 #% 火焰抗性",
@@ -29933,7 +29961,7 @@
     },
     "explicit.stat_2672805335": {
       "zh_CN": "攻击和施法速度提高 #%",
-      "zh_TW": "增加#%攻擊和施放速度"
+      "zh_TW": "增加#%攻擊和施法速度"
     },
     "explicit.stat_2675129731": {
       "zh_CN": "Notable Passive Skills in Radius also grant #% increased Warcry Buff Effect",
@@ -29957,7 +29985,7 @@
     },
     "explicit.stat_2690740379": {
       "zh_CN": "范围内的小型天赋同时提供 旗帜技能的持续时间提高 #%",
-      "zh_TW": "範圍內小型天賦也會賦予 旗幟技能增加#%持續時間"
+      "zh_TW": "範圍內小型天賦也會賦予 鬥旗技能增加#%持續時間"
     },
     "explicit.stat_2694482655": {
       "zh_CN": "#% 暴击伤害加成",
@@ -30033,7 +30061,7 @@
     },
     "explicit.stat_2720982137": {
       "zh_CN": "旗帜技能的持续时间提高 #%",
-      "zh_TW": "旗幟技能增加#%持續時間"
+      "zh_TW": "鬥旗技能增加#%持續時間"
     },
     "explicit.stat_2722831300": {
       "zh_CN": "区域内的深渊通往绝望深渊的几率提高 #%",
@@ -30106,6 +30134,10 @@
     "explicit.stat_2770044702": {
       "zh_CN": "范围内的核心天赋同时提供 诅咒强度提高 #%",
       "zh_TW": "範圍內核心天賦也會賦予 增加#%詛咒幅度"
+    },
+    "explicit.stat_2771095426": {
+      "zh_CN": "Gain #% of damage as Fire damage per 1% Chance to Block",
+      "zh_TW": "每擁有1%格擋率，獲得等同於#%傷害的火焰傷害"
     },
     "explicit.stat_2772033465": {
       "zh_CN": "火焰伤害的 #% 转化为闪电伤害",
@@ -30193,7 +30225,7 @@
     },
     "explicit.stat_281990982": {
       "zh_CN": "你和在场的友军的施法速度提高 #%",
-      "zh_TW": "你與處於你存在範圍中的友方增加#%施放速度"
+      "zh_TW": "你與處於你存在範圍中的友方增加#%施法速度"
     },
     "explicit.stat_28208665": {
       "zh_CN": "区域内的驱灵祭坛上延时的恩典重现速度加快 #%",
@@ -30337,11 +30369,11 @@
     },
     "explicit.stat_2891184298": {
       "zh_CN": "施法速度提高 #%",
-      "zh_TW": "增加#%施放速度"
+      "zh_TW": "增加#%施法速度"
     },
     "explicit.stat_289128254": {
       "zh_CN": "在场的友军的施法速度提高 #%",
-      "zh_TW": "處於你存在範圍中的友方增加#%施放速度"
+      "zh_TW": "處於你存在範圍中的友方增加#%施法速度"
     },
     "explicit.stat_2894895028": {
       "zh_CN": "持续伤害穿透你的能量护盾\n非满血状态时，每秒献祭献祭 #% 魔力以回复等量的生命",
@@ -30389,7 +30421,7 @@
     },
     "explicit.stat_2907381231": {
       "zh_CN": "范围内的核心天赋同时提供 旗帜技能的荣耀产生速度提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 旗幟技能增加#%生成的榮耀"
+      "zh_TW": "範圍內核心天賦也會賦予 鬥旗技能增加#%生成的榮耀"
     },
     "explicit.stat_2910761524": {
       "zh_CN": "法术技能有 #% 的几率发射 2 个额外投射物",
@@ -30437,7 +30469,7 @@
     },
     "explicit.stat_2933024469": {
       "zh_CN": "右戒指栏位：法术的投射物无法分叉",
-      "zh_TW": "右手戒指欄位：法術的投射物無法分岔"
+      "zh_TW": "右手戒指欄位：法術的投射物無法分裂"
     },
     "explicit.stat_2933846633": {
       "zh_CN": "击中时使目标恍惚",
@@ -30724,8 +30756,8 @@
       "zh_TW": "配置粉碎裝置"
     },
     "explicit.stat_2954116742|14258": {
-      "zh_CN": "配置 傀儡大师几率",
-      "zh_TW": "配置隱蔽之手"
+      "zh_CN": "配置 隐秘之手",
+      "zh_TW": "配置魁儡大師機率"
     },
     "explicit.stat_2954116742|14265": {
       "zh_CN": "配置 火法师",
@@ -33568,8 +33600,8 @@
       "zh_TW": "配置驚慌失措"
     },
     "explicit.stat_2954116742|62210": {
-      "zh_CN": "配置 傀儡大师几率",
-      "zh_TW": "配置無盡之舞"
+      "zh_CN": "配置 无尽之舞",
+      "zh_TW": "配置魁儡大師機率"
     },
     "explicit.stat_2954116742|62230": {
       "zh_CN": "配置 坚忍屏障",
@@ -34073,7 +34105,7 @@
     },
     "explicit.stat_3003542304": {
       "zh_CN": "投射物分叉时，有 #% 的几率发射一个额外投射物",
-      "zh_TW": "投射物分岔時有#%機率發射1個額外投射物"
+      "zh_TW": "投射物分裂時有#%機率發射1個額外投射物"
     },
     "explicit.stat_3005701891": {
       "zh_CN": "Inflict Cold Exposure on Hit",
@@ -34253,7 +34285,7 @@
     },
     "explicit.stat_3076483222|61382": {
       "zh_CN": "献祭最多 3 神圣石 个，完成试炼时可获得双倍返还",
-      "zh_TW": "獻祭最多3 顆神聖石，以在完成試煉時獲得兩倍獎勵"
+      "zh_TW": "獻祭最多2 顆神聖石，以在完成試煉時獲得兩倍獎勵"
     },
     "explicit.stat_3076483222|62634": {
       "zh_CN": "献祭最多 20 崇高石 个，完成试炼时可获得双倍返还",
@@ -34293,7 +34325,7 @@
     },
     "explicit.stat_3091578504": {
       "zh_CN": "召唤生物的攻击和施法速度提高 #%",
-      "zh_TW": "召喚物增加#%攻擊和施放速度"
+      "zh_TW": "召喚物增加#%攻擊和施法速度"
     },
     "explicit.stat_3093465148": {
       "zh_CN": "怪物伤害穿透 #% 闪电抗性",
@@ -34305,7 +34337,7 @@
     },
     "explicit.stat_3106718406": {
       "zh_CN": "范围内的核心天赋同时提供 召唤生物的攻击和施法速度提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 召喚物增加#%攻擊和施放速度"
+      "zh_TW": "範圍內核心天賦也會賦予 召喚物增加#%攻擊和施法速度"
     },
     "explicit.stat_3107707789": {
       "zh_CN": "奔跑时移动速度提高 #%",
@@ -34317,7 +34349,7 @@
     },
     "explicit.stat_310945763": {
       "zh_CN": "生命消耗效能提高 #%",
-      "zh_TW": "增加#%生命消耗效率"
+      "zh_TW": "增加#%生命消耗效用"
     },
     "explicit.stat_3111921451": {
       "zh_CN": "每 20 智慧使攻击的附加 # - # 闪电伤害",
@@ -34450,10 +34482,6 @@
     "explicit.stat_3169585282": {
       "zh_CN": "Allies in your Presence have # to Accuracy Rating",
       "zh_TW": "處於你存在範圍中的友方命中值#"
-    },
-    "explicit.stat_3170380905": {
-      "zh_CN": "每 #% 格挡几率获得相当于伤害 1% 的火焰伤害",
-      "zh_TW": "每擁有#%格擋率，獲得等同於1%傷害的火焰傷害"
     },
     "explicit.stat_3171212276": {
       "zh_CN": "范围内的核心天赋同时提供 获得的魔力药剂充能提高 #%",
@@ -34777,7 +34805,7 @@
     },
     "explicit.stat_3350279336": {
       "zh_CN": "攻击的消耗效能提高 #%",
-      "zh_TW": "增加#%攻擊消耗效率"
+      "zh_TW": "增加#%攻擊消耗效用"
     },
     "explicit.stat_3350944114": {
       "zh_CN": "区域内惊悸迷雾的消散速度加快 #%",
@@ -34889,7 +34917,7 @@
     },
     "explicit.stat_3396435291": {
       "zh_CN": "若你近期使用过闪避翻滚，魔力消耗效能提高 #%",
-      "zh_TW": "若你近期有閃避翻滾，增加#%魔力消耗效率"
+      "zh_TW": "若你近期有閃避翻滾，增加#%魔力消耗效用"
     },
     "explicit.stat_3398283493": {
       "zh_CN": "该武器的攻击穿透 #% 的火焰抗性",
@@ -34937,11 +34965,11 @@
     },
     "explicit.stat_3413635271": {
       "zh_CN": "伙伴技能的保留效能提高 #%",
-      "zh_TW": "盟友技能增加#%保留效率"
+      "zh_TW": "盟友技能增加#%保留效用"
     },
     "explicit.stat_3414243317": {
       "zh_CN": "荆棘可以反击所有击中",
-      "zh_TW": "荊棘可以對所有擊中給予反擊"
+      "zh_TW": "荊棘可以對所有擊中賦予反擊"
     },
     "explicit.stat_3414998042": {
       "zh_CN": "暴击无法提取穿刺",
@@ -34949,7 +34977,7 @@
     },
     "explicit.stat_34174842": {
       "zh_CN": "每 20 点精魂，施法速度提高 #%",
-      "zh_TW": "每20精魂增加#%施放速度"
+      "zh_TW": "每20精魂增加#%施法速度"
     },
     "explicit.stat_3417711605": {
       "zh_CN": "伤害穿透 #% 冰霜抗性",
@@ -35065,7 +35093,7 @@
     },
     "explicit.stat_3464380325": {
       "zh_CN": "投射物的分裂目标 #",
-      "zh_TW": "投射物分裂至#個目標"
+      "zh_TW": "投射物裂化至#個目標"
     },
     "explicit.stat_3464644319": {
       "zh_CN": "效果期间不具有固有的怒火损失",
@@ -35085,7 +35113,7 @@
     },
     "explicit.stat_3471443885": {
       "zh_CN": "偏转击中造成伤害的 #% 吸纳为生命",
-      "zh_TW": "#% of Damage taken from Deflected Hits Recouped as Life"
+      "zh_TW": "承受來自偏斜擊中的傷害時，受到傷害的#%補償為生命"
     },
     "explicit.stat_347220474": {
       "zh_CN": "你近期每消耗 200 魔力，法术伤害提高 #%",
@@ -35285,7 +35313,7 @@
     },
     "explicit.stat_3581035970": {
       "zh_CN": "每 100 点生命上限使增益技能的精魂保留效能提高 #%",
-      "zh_TW": "每100最大生命增加#%增益技能的精魂保留效率"
+      "zh_TW": "每100最大生命增加#%增益技能的精魂保留效用"
     },
     "explicit.stat_358129101": {
       "zh_CN": "该区域会出现 # 个阿兹莫里之灵正在游荡",
@@ -35310,10 +35338,6 @@
     "explicit.stat_3590792340": {
       "zh_CN": "获得的魔力药剂充能提高 #%",
       "zh_TW": "增加#%魔力藥劑充能獲取"
-    },
-    "explicit.stat_3591307827": {
-      "zh_CN": "有 #% 的几率为地图增加一个瓦尔灯塔传奇怪物",
-      "zh_TW": "有#%機率為地圖新增一名瓦爾烽塔傳奇怪物"
     },
     "explicit.stat_3592067990": {
       "zh_CN": "区域内有 # 个额外的瘟疫怪物群",
@@ -36069,7 +36093,7 @@
     },
     "explicit.stat_3910614548": {
       "zh_CN": "若你近期内有召唤图腾，攻击和施法速度提高 #%",
-      "zh_TW": "若你近期召喚過圖騰，增加#%攻擊和施放速度"
+      "zh_TW": "若你近期召喚過圖騰，增加#%攻擊和施法速度"
     },
     "explicit.stat_3915618954": {
       "zh_CN": "该物品如同手部装备一样从镶嵌的灵核中获得加成",
@@ -36385,7 +36409,7 @@
     },
     "explicit.stat_4101445926": {
       "zh_CN": "魔力消耗效能提高 #%",
-      "zh_TW": "增加#%魔力消耗效率"
+      "zh_TW": "增加#%魔力消耗效用"
     },
     "explicit.stat_4101943684": {
       "zh_CN": "怪物的晕眩阈值提高 #%",
@@ -36469,7 +36493,7 @@
     },
     "explicit.stat_4142814612": {
       "zh_CN": "范围内的小型天赋同时提供 旗帜技能的效果范围提高 #%",
-      "zh_TW": "範圍內小型天賦也會賦予 旗幟技能增加#%範圍效果"
+      "zh_TW": "範圍內小型天賦也會賦予 鬥旗技能增加#%範圍效果"
     },
     "explicit.stat_4145314483": {
       "zh_CN": "满魔时攻击速度提高 #%",
@@ -36665,7 +36689,7 @@
     },
     "explicit.stat_4257790560": {
       "zh_CN": "范围内的核心天赋同时提供 魔力消耗效能提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 增加#%魔力消耗效率"
+      "zh_TW": "範圍內核心天賦也會賦予 增加#%魔力消耗效用"
     },
     "explicit.stat_4258000627": {
       "zh_CN": "范围内的小型天赋同时提供 击中时使目标恍惚",
@@ -36685,7 +36709,7 @@
     },
     "explicit.stat_4258720395": {
       "zh_CN": "范围内的核心天赋同时提供 投射物分叉时，有 #% 的几率发射一个额外投射物",
-      "zh_TW": "範圍內核心天賦也會賦予 投射物分岔時有#%機率發射1個額外投射物"
+      "zh_TW": "範圍內核心天賦也會賦予 投射物分裂時有#%機率發射1個額外投射物"
     },
     "explicit.stat_4259875040": {
       "zh_CN": "法术造成的穿刺强度提高 #%",
@@ -36745,7 +36769,7 @@
     },
     "explicit.stat_429143663": {
       "zh_CN": "旗帜技能的效果范围提高 #%",
-      "zh_TW": "旗幟技能增加#%範圍效果"
+      "zh_TW": "鬥旗技能增加#%範圍效果"
     },
     "explicit.stat_4294267596": {
       "zh_CN": "不会受到暴击所造成的额外暴击伤害",
@@ -37893,7 +37917,7 @@
     },
     "explicit.stat_53386210": {
       "zh_CN": "技能的精魂保留效能提高 #%",
-      "zh_TW": "技能增加#%精魂保留效率"
+      "zh_TW": "技能增加#%精魂保留效用"
     },
     "explicit.stat_533892981": {
       "zh_CN": "范围内的小型天赋同时提供 命中值提高 #%",
@@ -38117,7 +38141,7 @@
     },
     "explicit.stat_656291658": {
       "zh_CN": "满血时施法速度提高 #%",
-      "zh_TW": "滿血時增加#%施放速度"
+      "zh_TW": "滿血時增加#%施法速度"
     },
     "explicit.stat_656461285": {
       "zh_CN": "智慧提高 #%",
@@ -38433,7 +38457,7 @@
     },
     "explicit.stat_828533480": {
       "zh_CN": "击败敌人时有 #% 的几率获得一个能量球",
-      "zh_TW": "殺死敵人時有#%機率獲得一個充能"
+      "zh_TW": "殺死敵人時有#%機率獲得一顆充能"
     },
     "explicit.stat_83011992": {
       "zh_CN": "在场的敌人没有元素抗性",
@@ -38481,7 +38505,7 @@
     },
     "explicit.stat_853326030": {
       "zh_CN": "你只能在该物品中镶嵌 # 个红玉珠宝",
-      "zh_TW": "You can only Socket # Ruby Jewel in this item"
+      "zh_TW": "你只能鑲嵌#顆紅寶石至此物品"
     },
     "explicit.stat_85367160": {
       "zh_CN": "范围内的核心天赋同时提供 将所受伤害的#%吸纳为魔力",
@@ -38757,7 +38781,11 @@
     },
     "fractured.stat_1022759479": {
       "zh_CN": "范围内的核心天赋同时提供 施法速度提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 增加#%施放速度"
+      "zh_TW": "範圍內核心天賦也會賦予 增加#%施法速度"
+    },
+    "fractured.stat_1028592286": {
+      "zh_CN": "#% 的几率额外连锁一次",
+      "zh_TW": "有#%機率額外連鎖一次"
     },
     "fractured.stat_1037193709": {
       "zh_CN": "附加 # - # 冰霜伤害",
@@ -38897,7 +38925,7 @@
     },
     "fractured.stat_1263695895": {
       "zh_CN": "照亮范围提高 #%",
-      "zh_TW": "增加#%光線範圍"
+      "zh_TW": "增加#%照亮範圍"
     },
     "fractured.stat_1265767008": {
       "zh_CN": "若你的召唤生物近期复活过，则它们为庞然大物",
@@ -39193,7 +39221,7 @@
     },
     "fractured.stat_1714971114": {
       "zh_CN": "印记技能的施法速度提高 #%",
-      "zh_TW": "增加#%印記技能的施放速度"
+      "zh_TW": "增加#%印記技能的施法速度"
     },
     "fractured.stat_1718147982": {
       "zh_CN": "#% increased Minion Accuracy Rating",
@@ -39257,7 +39285,7 @@
     },
     "fractured.stat_1805633363": {
       "zh_CN": "召唤生物技能的保留效能提高 #%",
-      "zh_TW": "召喚物技能增加#%保留效率"
+      "zh_TW": "召喚物技能增加#%保留效用"
     },
     "fractured.stat_1823942939": {
       "zh_CN": "# 召唤弩炮图腾数量上限",
@@ -39301,7 +39329,7 @@
     },
     "fractured.stat_1869147066": {
       "zh_CN": "旗帜技能的荣耀产生速度提高 #%",
-      "zh_TW": "旗幟技能增加#%生成的榮耀"
+      "zh_TW": "鬥旗技能增加#%生成的榮耀"
     },
     "fractured.stat_1874553720": {
       "zh_CN": "你被冰缓的持续时间降低 #%",
@@ -39513,7 +39541,7 @@
     },
     "fractured.stat_2202308025": {
       "zh_CN": "范围内的小型天赋同时提供 印记技能的施法速度提高 #%",
-      "zh_TW": "範圍內小型天賦也會賦予 增加#%印記技能的施放速度"
+      "zh_TW": "範圍內小型天賦也會賦予 增加#%印記技能的施法速度"
     },
     "fractured.stat_221701169": {
       "zh_CN": "范围内的核心天赋同时提供 中毒持续时间提高 #%",
@@ -39613,7 +39641,7 @@
     },
     "fractured.stat_2416650879": {
       "zh_CN": "怒火消耗效能提高 #%",
-      "zh_TW": "增加#%盛怒消耗效率"
+      "zh_TW": "增加#%盛怒消耗效用"
     },
     "fractured.stat_2421151933": {
       "zh_CN": "范围内的小型天赋同时提供 若你在过去 8 秒内造成过投射物攻击击中，近战伤害提高 #%",
@@ -39669,7 +39697,7 @@
     },
     "fractured.stat_2488361432": {
       "zh_CN": "怪物施法速度提高 #%",
-      "zh_TW": "增加#%怪物施放速度"
+      "zh_TW": "增加#%怪物施法速度"
     },
     "fractured.stat_2505884597": {
       "zh_CN": "获得相当于伤害 #% 的额外冰霜伤害",
@@ -39761,7 +39789,7 @@
     },
     "fractured.stat_2653231923": {
       "zh_CN": "法术的魔力消耗效能提高 #%",
-      "zh_TW": "增加#%法術的魔力消耗效率"
+      "zh_TW": "增加#%法術的魔力消耗效用"
     },
     "fractured.stat_2653955271": {
       "zh_CN": "伤害穿透 #% 火焰抗性",
@@ -39777,7 +39805,7 @@
     },
     "fractured.stat_2690740379": {
       "zh_CN": "范围内的小型天赋同时提供 旗帜技能的持续时间提高 #%",
-      "zh_TW": "範圍內小型天賦也會賦予 旗幟技能增加#%持續時間"
+      "zh_TW": "範圍內小型天賦也會賦予 鬥旗技能增加#%持續時間"
     },
     "fractured.stat_2694482655": {
       "zh_CN": "#% 暴击伤害加成",
@@ -39805,7 +39833,7 @@
     },
     "fractured.stat_2720982137": {
       "zh_CN": "旗帜技能的持续时间提高 #%",
-      "zh_TW": "旗幟技能增加#%持續時間"
+      "zh_TW": "鬥旗技能增加#%持續時間"
     },
     "fractured.stat_2726713579": {
       "zh_CN": "范围内的核心天赋同时提供 生命在击败敌人时恢复 #%",
@@ -39893,11 +39921,11 @@
     },
     "fractured.stat_2891184298": {
       "zh_CN": "施法速度提高 #%",
-      "zh_TW": "增加#%施放速度"
+      "zh_TW": "增加#%施法速度"
     },
     "fractured.stat_289128254": {
       "zh_CN": "在场的友军的施法速度提高 #%",
-      "zh_TW": "處於你存在範圍中的友方增加#%施放速度"
+      "zh_TW": "處於你存在範圍中的友方增加#%施法速度"
     },
     "fractured.stat_2897413282": {
       "zh_CN": "全属性 #",
@@ -39909,7 +39937,7 @@
     },
     "fractured.stat_2907381231": {
       "zh_CN": "范围内的核心天赋同时提供 旗帜技能的荣耀产生速度提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 旗幟技能增加#%生成的榮耀"
+      "zh_TW": "範圍內核心天賦也會賦予 鬥旗技能增加#%生成的榮耀"
     },
     "fractured.stat_2912416697": {
       "zh_CN": "范围内的核心天赋同时提供 致盲效果提高 #%",
@@ -40359,6 +40387,10 @@
       "zh_CN": "配置 有利胜算",
       "zh_TW": "配置有利形勢"
     },
+    "fractured.stat_2954116742|19644": {
+      "zh_CN": "配置 黑暗的左膀",
+      "zh_TW": "配置黑暗左手"
+    },
     "fractured.stat_2954116742|19715": {
       "zh_CN": "配置 火焚",
       "zh_TW": "配置熔炎送葬"
@@ -40427,6 +40459,10 @@
       "zh_CN": "配置 暴烈冲击",
       "zh_TW": "配置暴烈衝擊"
     },
+    "fractured.stat_2954116742|21213": {
+      "zh_CN": "配置 塔斯之光的西雷尔",
+      "zh_TW": "配置塔斯的西瑞爾之光"
+    },
     "fractured.stat_2954116742|21251": {
       "zh_CN": "配置 兽群衍生",
       "zh_TW": "配置群集復甦"
@@ -40478,6 +40514,10 @@
     "fractured.stat_2954116742|22967": {
       "zh_CN": "配置 警戒",
       "zh_TW": "配置警覺"
+    },
+    "fractured.stat_2954116742|23221": {
+      "zh_CN": "配置 诡射",
+      "zh_TW": "配置花式射擊"
     },
     "fractured.stat_2954116742|23227": {
       "zh_CN": "配置 克敌在先",
@@ -40667,6 +40707,10 @@
       "zh_CN": "配置 风暴执政官",
       "zh_TW": "配置風暴統治者"
     },
+    "fractured.stat_2954116742|2745": {
+      "zh_CN": "配置 显贵头狼",
+      "zh_TW": "配置高貴之狼"
+    },
     "fractured.stat_2954116742|27491": {
       "zh_CN": "配置 高效缓冲",
       "zh_TW": "配置重裝緩衝"
@@ -40678,6 +40722,10 @@
     "fractured.stat_2954116742|27626": {
       "zh_CN": "配置 触染秘能",
       "zh_TW": "配置秘能之觸"
+    },
+    "fractured.stat_2954116742|27704": {
+      "zh_CN": "配置 先祖之恩",
+      "zh_TW": "配置先祖優雅"
     },
     "fractured.stat_2954116742|27875": {
       "zh_CN": "配置 通用电击",
@@ -40798,6 +40846,10 @@
     "fractured.stat_2954116742|31172": {
       "zh_CN": "配置 鹰隼之姿",
       "zh_TW": "配置獵鷹技法"
+    },
+    "fractured.stat_2954116742|31175": {
+      "zh_CN": "配置 邪恶之握",
+      "zh_TW": "配置惡靈之握"
     },
     "fractured.stat_2954116742|31189": {
       "zh_CN": "配置 非凡矫健",
@@ -41123,6 +41175,10 @@
       "zh_CN": "配置 心悸",
       "zh_TW": "配置心寒"
     },
+    "fractured.stat_2954116742|38570": {
+      "zh_CN": "配置 爆破专家",
+      "zh_TW": "配置破壞者"
+    },
     "fractured.stat_2954116742|38614": {
       "zh_CN": "配置 念力分裂",
       "zh_TW": "配置幽能碎片"
@@ -41215,6 +41271,10 @@
       "zh_CN": "配置 狂热",
       "zh_TW": "配置狂熱"
     },
+    "fractured.stat_2954116742|40292": {
+      "zh_CN": "配置 灵巧力量",
+      "zh_TW": "配置敏捷之力"
+    },
     "fractured.stat_2954116742|4031": {
       "zh_CN": "配置 破冰者",
       "zh_TW": "配置破冰者"
@@ -41238,6 +41298,10 @@
     "fractured.stat_2954116742|40803": {
       "zh_CN": "配置 冰霜法印",
       "zh_TW": "配置冰霜符印"
+    },
+    "fractured.stat_2954116742|4091": {
+      "zh_CN": "配置 左心室",
+      "zh_TW": "配置左心室"
     },
     "fractured.stat_2954116742|40985": {
       "zh_CN": "配置 强化残片",
@@ -41418,6 +41482,10 @@
     "fractured.stat_2954116742|45244": {
       "zh_CN": "配置 灌装",
       "zh_TW": "配置補滿"
+    },
+    "fractured.stat_2954116742|4547": {
+      "zh_CN": "配置 超自然坚韧",
+      "zh_TW": "配置超然韌性"
     },
     "fractured.stat_2954116742|45488": {
       "zh_CN": "配置 交错打击",
@@ -41603,6 +41671,10 @@
       "zh_CN": "配置 分裂之劲",
       "zh_TW": "配置分裂力量"
     },
+    "fractured.stat_2954116742|49356": {
+      "zh_CN": "配置 虚空第一原理",
+      "zh_TW": "配置虛空的第一準則"
+    },
     "fractured.stat_2954116742|49550": {
       "zh_CN": "配置 怒火难平",
       "zh_TW": "配置經久之怒"
@@ -41782,6 +41854,10 @@
     "fractured.stat_2954116742|53187": {
       "zh_CN": "配置 督军狂战士",
       "zh_TW": "配置總督軍暴徒"
+    },
+    "fractured.stat_2954116742|53265": {
+      "zh_CN": "配置 自然之咬",
+      "zh_TW": "配置自然之噬"
     },
     "fractured.stat_2954116742|53294": {
       "zh_CN": "配置 焚灭",
@@ -42051,6 +42127,10 @@
       "zh_CN": "配置 幸运兔脚",
       "zh_TW": "配置幸運兔腳"
     },
+    "fractured.stat_2954116742|59541": {
+      "zh_CN": "配置 腐烂肉身",
+      "zh_TW": "配置亡者之軀"
+    },
     "fractured.stat_2954116742|59720": {
       "zh_CN": "配置 猛兽之肤",
       "zh_TW": "配置野獸皮膚"
@@ -42166,6 +42246,10 @@
     "fractured.stat_2954116742|62887": {
       "zh_CN": "配置 鲜活亡躯",
       "zh_TW": "配置行屍走肉"
+    },
+    "fractured.stat_2954116742|62963": {
+      "zh_CN": "配置 火焰行者",
+      "zh_TW": "配置火焰行者"
     },
     "fractured.stat_2954116742|63037": {
       "zh_CN": "配置 火焰法印",
@@ -42469,7 +42553,7 @@
     },
     "fractured.stat_3003542304": {
       "zh_CN": "投射物分叉时，有 #% 的几率发射一个额外投射物",
-      "zh_TW": "投射物分岔時有#%機率發射1個額外投射物"
+      "zh_TW": "投射物分裂時有#%機率發射1個額外投射物"
     },
     "fractured.stat_300723956": {
       "zh_CN": "攻击击中施加创口",
@@ -42517,11 +42601,11 @@
     },
     "fractured.stat_3091578504": {
       "zh_CN": "召唤生物的攻击和施法速度提高 #%",
-      "zh_TW": "召喚物增加#%攻擊和施放速度"
+      "zh_TW": "召喚物增加#%攻擊和施法速度"
     },
     "fractured.stat_3106718406": {
       "zh_CN": "范围内的核心天赋同时提供 召唤生物的攻击和施法速度提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 召喚物增加#%攻擊和施放速度"
+      "zh_TW": "範圍內核心天賦也會賦予 召喚物增加#%攻擊和施法速度"
     },
     "fractured.stat_3107707789": {
       "zh_CN": "奔跑时移动速度提高 #%",
@@ -42847,6 +42931,10 @@
       "zh_CN": "获得的咒符充能提高 #%",
       "zh_TW": "增加#%護符充能獲取"
     },
+    "fractured.stat_3587953142": {
+      "zh_CN": "当你镶嵌有一颗红玉和一颗蓝玉时，击中会使敌人致盲",
+      "zh_TW": "若插槽中的鑲嵌紅寶石和藍寶石，擊中時致盲敵人"
+    },
     "fractured.stat_3590792340": {
       "zh_CN": "获得的魔力药剂充能提高 #%",
       "zh_TW": "增加#%魔力藥劑充能獲取"
@@ -43153,7 +43241,7 @@
     },
     "fractured.stat_4101445926": {
       "zh_CN": "魔力消耗效能提高 #%",
-      "zh_TW": "增加#%魔力消耗效率"
+      "zh_TW": "增加#%魔力消耗效用"
     },
     "fractured.stat_4101943684": {
       "zh_CN": "怪物的晕眩阈值提高 #%",
@@ -43173,7 +43261,7 @@
     },
     "fractured.stat_4142814612": {
       "zh_CN": "范围内的小型天赋同时提供 旗帜技能的效果范围提高 #%",
-      "zh_TW": "範圍內小型天賦也會賦予 旗幟技能增加#%範圍效果"
+      "zh_TW": "範圍內小型天賦也會賦予 鬥旗技能增加#%範圍效果"
     },
     "fractured.stat_4147510958": {
       "zh_CN": "封印技能的上限封印 #",
@@ -43245,7 +43333,7 @@
     },
     "fractured.stat_4258720395": {
       "zh_CN": "范围内的核心天赋同时提供 投射物分叉时，有 #% 的几率发射一个额外投射物",
-      "zh_TW": "範圍內核心天賦也會賦予 投射物分岔時有#%機率發射1個額外投射物"
+      "zh_TW": "範圍內核心天賦也會賦予 投射物分裂時有#%機率發射1個額外投射物"
     },
     "fractured.stat_4273473110": {
       "zh_CN": "符文结界上限提高 #%",
@@ -43257,7 +43345,7 @@
     },
     "fractured.stat_429143663": {
       "zh_CN": "旗帜技能的效果范围提高 #%",
-      "zh_TW": "旗幟技能增加#%範圍效果"
+      "zh_TW": "鬥旗技能增加#%範圍效果"
     },
     "fractured.stat_440490623": {
       "zh_CN": "你的暴击造成的伤害性异常状态强度提高 #%",
@@ -43965,7 +44053,7 @@
     },
     "implicit.stat_2891184298": {
       "zh_CN": "施法速度提高 #%",
-      "zh_TW": "增加#%施放速度"
+      "zh_TW": "增加#%施法速度"
     },
     "implicit.stat_2901986750": {
       "zh_CN": "所有元素抗性 #%",
@@ -44005,7 +44093,7 @@
     },
     "implicit.stat_3003542304": {
       "zh_CN": "投射物分叉时，有 #% 的几率发射一个额外投射物",
-      "zh_TW": "投射物分岔時有#%機率發射1個額外投射物"
+      "zh_TW": "投射物分裂時有#%機率發射1個額外投射物"
     },
     "implicit.stat_3032590688": {
       "zh_CN": "攻击附加 # - # 物理伤害",
@@ -44571,6 +44659,10 @@
       "zh_CN": "旗帜同样使受影响目标每秒回复 #% 的生命",
       "zh_TW": "Banners also grant #% of Life Regenerated per second to affected targets"
     },
+    "rune.stat_1195319608": {
+      "zh_CN": "装备身体护甲的能量护盾提高 #%",
+      "zh_TW": "增加#%已裝備身體護甲的能量護盾"
+    },
     "rune.stat_1197632982": {
       "zh_CN": "每 1 点精魂提供 # 点护甲",
       "zh_TW": "每有1精魂#護甲值"
@@ -44621,7 +44713,7 @@
     },
     "rune.stat_1299166504": {
       "zh_CN": "羁绊： 捷技能的保留效能提高 #%",
-      "zh_TW": "命定: 捷光環技能增加#%保留效率"
+      "zh_TW": "命定: 捷光環技能增加#%保留效用"
     },
     "rune.stat_1311130924": {
       "zh_CN": "能量护盾低于一半时，受到击中的伤害的 #% 会穿透能量护盾",
@@ -44645,7 +44737,7 @@
     },
     "rune.stat_1342402057": {
       "zh_CN": "羁绊： 召唤生物技能的保留效能提高 #%",
-      "zh_TW": "命定: 召喚物技能增加#%保留效率"
+      "zh_TW": "命定: 召喚物技能增加#%保留效用"
     },
     "rune.stat_1350120957": {
       "zh_CN": "羁绊： 诅咒激活速度加快 #%",
@@ -44765,7 +44857,7 @@
     },
     "rune.stat_1528013281": {
       "zh_CN": "羁绊： 投射物分叉时，有 #% 的几率发射一个额外投射物",
-      "zh_TW": "命定: 投射物分岔時有#%機率發射1個額外投射物"
+      "zh_TW": "命定: 投射物分裂時有#%機率發射1個額外投射物"
     },
     "rune.stat_153777645": {
       "zh_CN": "诅咒的效果范围提高 #%",
@@ -44781,7 +44873,7 @@
     },
     "rune.stat_1549287843": {
       "zh_CN": "投射物有 #% 的几率分叉",
-      "zh_TW": "投射物有#%機率會分岔"
+      "zh_TW": "投射物有#%機率會分裂"
     },
     "rune.stat_1554054340": {
       "zh_CN": "羁绊：生命每秒再生 #",
@@ -44888,12 +44980,12 @@
       "zh_TW": "命定: 增加#%召喚物造成的傷害"
     },
     "rune.stat_1729154880": {
-      "zh_CN": "羁绊：当你在场时，敌人受到阻滞效果",
-      "zh_TW": "命定:你存在中的敵人被阻礙"
+      "zh_CN": "羁绊： 当你在场时，敌人受到阻滞效果",
+      "zh_TW": "Bonded: Enemies in your Presence are Hindered"
     },
     "rune.stat_1751756891": {
       "zh_CN": "羁绊： 符文结界消耗效能提高 #%",
-      "zh_TW": "命定: 增加#%符文保護效率"
+      "zh_TW": "命定: 增加#%符文保護效用"
     },
     "rune.stat_1755296234": {
       "zh_CN": "目标可以同时受到你造成的 # 个中毒效果影响",
@@ -44949,7 +45041,7 @@
     },
     "rune.stat_1805633363": {
       "zh_CN": "召唤生物技能的保留效能提高 #%",
-      "zh_TW": "召喚物技能增加#%保留效率"
+      "zh_TW": "召喚物技能增加#%保留效用"
     },
     "rune.stat_1811977226": {
       "zh_CN": "印记激活时获得猛攻，持续 # 秒",
@@ -44966,6 +45058,10 @@
     "rune.stat_1823959929": {
       "zh_CN": "羁绊： 当你的一个召唤生物复活时，回复生命上限的 #%",
       "zh_TW": "命定: 你的其中一個召喚物復甦時，恢復#%最大生命"
+    },
+    "rune.stat_185580205": {
+      "zh_CN": "咒符每秒获得 # 次充能",
+      "zh_TW": "護符每秒獲得#充能"
     },
     "rune.stat_1857162058": {
       "zh_CN": "羁绊： 点燃强度提高 #%",
@@ -44984,8 +45080,8 @@
       "zh_TW": "If you would gain an Endurance Charge, Allies in your Presence gain that Charge instead"
     },
     "rune.stat_1888719480": {
-      "zh_CN": "羁绊：附加 # - # 基础物理伤害",
-      "zh_TW": "命定:附加#至#物理傷害"
+      "zh_CN": "羁绊： 附加 # - # 基础物理伤害",
+      "zh_TW": "Bonded: Adds # to # Physical Damage"
     },
     "rune.stat_1895552497": {
       "zh_CN": "每 5 点怒火使所受伤害的 #% 吸纳为生命",
@@ -45147,6 +45243,10 @@
       "zh_CN": "击中时有 #% 的几率造成流血",
       "zh_TW": "擊中時有#%機率造成流血"
     },
+    "rune.stat_2174462855": {
+      "zh_CN": "羁绊： 你被冰缓的持续时间降低 #%",
+      "zh_TW": "Bonded: #% reduced Chill Duration on you"
+    },
     "rune.stat_217649179": {
       "zh_CN": "羁绊： 诅咒强度提高 #%",
       "zh_TW": "命定: 增加#%詛咒幅度"
@@ -45237,7 +45337,7 @@
     },
     "rune.stat_2336012075": {
       "zh_CN": "羁绊： 魔力消耗效能提高 #%",
-      "zh_TW": "命定: 增加#%魔力消耗效率"
+      "zh_TW": "命定: 增加#%魔力消耗效用"
     },
     "rune.stat_2339757871": {
       "zh_CN": "能量护盾充能率提高 #%",
@@ -45339,9 +45439,17 @@
       "zh_CN": "获得相当于伤害 #% 的额外冰霜伤害",
       "zh_TW": "獲得等同於傷害#%的額外冰冷傷害"
     },
+    "rune.stat_2511217560": {
+      "zh_CN": "晕眩回复提高 #%",
+      "zh_TW": "增加#%暈眩恢復"
+    },
     "rune.stat_2524254339": {
       "zh_CN": "终结",
       "zh_TW": "撲殺"
+    },
+    "rune.stat_2527686725": {
+      "zh_CN": "你造成的感电强度提高 #%",
+      "zh_TW": "增加#%你所施加之感電的幅度"
     },
     "rune.stat_2530800730": {
       "zh_CN": "羁绊： 植物技能的效果持续时间提高 #%",
@@ -45356,8 +45464,8 @@
       "zh_TW": "可以骰出衰敗詞綴"
     },
     "rune.stat_2549764820": {
-      "zh_CN": "羁绊：被包围每秒再生 #% 生命",
-      "zh_TW": "命定:被包圍時，每秒回復#%生命"
+      "zh_CN": "羁绊： 被包围每秒再生 #% 生命",
+      "zh_TW": "Bonded: Regenerate #% of maximum Life per second while Surrounded"
     },
     "rune.stat_2561960218": {
       "zh_CN": "羁绊： 技能的魔力消耗的 #% 转化为生命消耗",
@@ -45407,13 +45515,17 @@
       "zh_CN": "击中敌人时，获得等同于敌人威力值的附加冰霜伤害上限，持续 20 秒，最多总共获得 #",
       "zh_TW": "擊中敵人時，在20秒內獲得等同於敵人強度的最大附加冰冷傷害，最高總計#"
     },
+    "rune.stat_2621116283": {
+      "zh_CN": "每 #% 格挡几率获得相当于伤害 #% 的火焰伤害",
+      "zh_TW": "每擁有#%格擋率，獲得等同於#%傷害的火焰傷害"
+    },
     "rune.stat_262946222": {
       "zh_CN": "在场的友军附加 # - # 攻击混沌伤害",
       "zh_TW": "處於你存在範圍中的友方造成#至#附加攻擊混沌傷害"
     },
     "rune.stat_263495202": {
       "zh_CN": "消耗效能提高 #%",
-      "zh_TW": "增加#%消耗效率"
+      "zh_TW": "增加#%消耗效用"
     },
     "rune.stat_2635559734": {
       "zh_CN": "基础战斗武器攻击时的暴击率为 #%",
@@ -45485,7 +45597,7 @@
     },
     "rune.stat_2729035954": {
       "zh_CN": "羁绊： 伙伴技能的保留效能提高 #%",
-      "zh_TW": "命定: 盟友技能增加#%保留效率"
+      "zh_TW": "命定: 盟友技能增加#%保留效用"
     },
     "rune.stat_2748665614": {
       "zh_CN": "魔力上限提高 #%",
@@ -45539,13 +45651,17 @@
       "zh_CN": "羁绊： 闪避值提高 #%",
       "zh_TW": "命定: 增加#%閃避值"
     },
+    "rune.stat_2861770798": {
+      "zh_CN": "羁绊： 你被冻结的持续时间降低 #%",
+      "zh_TW": "Bonded: #% reduced Freeze Duration on you"
+    },
     "rune.stat_2875218423": {
       "zh_CN": "被格挡的伤害吸纳为魔力",
       "zh_TW": "格擋的傷害補償為魔力"
     },
     "rune.stat_2876843277": {
       "zh_CN": "若你近期没有闪避翻滚，魔力消耗效能提高 #%",
-      "zh_TW": "若你近期沒有閃避翻滾，增加#%魔力消耗效率"
+      "zh_TW": "若你近期沒有閃避翻滾，增加#%魔力消耗效用"
     },
     "rune.stat_2882351629": {
       "zh_CN": "每有一种不同类型的死亡伙伴，伙伴造成的伤害总增 #%",
@@ -45557,11 +45673,11 @@
     },
     "rune.stat_2891184298": {
       "zh_CN": "施法速度提高 #%",
-      "zh_TW": "增加#%施放速度"
+      "zh_TW": "增加#%施法速度"
     },
     "rune.stat_289128254": {
       "zh_CN": "在场的友军的施法速度提高 #%",
-      "zh_TW": "處於你存在範圍中的友方增加#%施放速度"
+      "zh_TW": "處於你存在範圍中的友方增加#%施法速度"
     },
     "rune.stat_2894111835": {
       "zh_CN": "羁绊：在场范围提高 #%",
@@ -45685,7 +45801,7 @@
     },
     "rune.stat_3091578504": {
       "zh_CN": "召唤生物的攻击和施法速度提高 #%",
-      "zh_TW": "召喚物增加#%攻擊和施放速度"
+      "zh_TW": "召喚物增加#%攻擊和施法速度"
     },
     "rune.stat_3107707789": {
       "zh_CN": "奔跑时移动速度提高 #%",
@@ -45693,7 +45809,7 @@
     },
     "rune.stat_310945763": {
       "zh_CN": "生命消耗效能提高 #%",
-      "zh_TW": "增加#%生命消耗效率"
+      "zh_TW": "增加#%生命消耗效用"
     },
     "rune.stat_3126632036": {
       "zh_CN": "羁绊： 招架范围提高 #%",
@@ -45739,9 +45855,9 @@
       "zh_CN": "你造成的流血强度提高 #%",
       "zh_TW": "增加#%你所施加之流血的幅度"
     },
-    "rune.stat_3170380905": {
-      "zh_CN": "每 #% 格挡几率获得相当于伤害 1% 的火焰伤害",
-      "zh_TW": "每擁有#%格擋率，獲得等同於1%傷害的火焰傷害"
+    "rune.stat_3174700878": {
+      "zh_CN": "装备法器的能量护盾提高 #%",
+      "zh_TW": "增加#%來自已裝備法器的能量護盾"
     },
     "rune.stat_3175163625": {
       "zh_CN": "被击败的敌人掉落的金币数量提高 #%",
@@ -45901,7 +46017,7 @@
     },
     "rune.stat_3435915371": {
       "zh_CN": "羁绊： 精魂保留效能提高 #%",
-      "zh_TW": "命定: 增加#%精魂保留效率"
+      "zh_TW": "命定: 增加#%精魂保留效用"
     },
     "rune.stat_3441651621": {
       "zh_CN": "攻击击中承受 # 物理伤害",
@@ -46028,8 +46144,12 @@
       "zh_TW": "此武器的攻擊有#%機率造成曝曬"
     },
     "rune.stat_368025119": {
-      "zh_CN": "Bonded: Attacks have #% chance to cause Bleeding",
+      "zh_CN": "羁绊： 攻击有 #% 的几率导致流血",
       "zh_TW": "命定: 攻擊有#%機率造成流血"
+    },
+    "rune.stat_3686997387": {
+      "zh_CN": "举起盾牌时晕眩阈值翻倍",
+      "zh_TW": "舉起盾牌時，暈眩門檻加倍"
     },
     "rune.stat_3695891184": {
       "zh_CN": "每击败一名敌人获得 # 点生命",
@@ -46062,6 +46182,10 @@
     "rune.stat_3788647247": {
       "zh_CN": "羁绊： #%闪电抗性上限",
       "zh_TW": "命定: #%最大閃電抗性"
+    },
+    "rune.stat_3791899485": {
+      "zh_CN": "点燃强度提高 #%",
+      "zh_TW": "增加#%點燃幅度"
     },
     "rune.stat_3793026369": {
       "zh_CN": "羁绊： 植物首次进入在场范围时，有 #% 的几率立即蔓生",
@@ -46197,7 +46321,7 @@
     },
     "rune.stat_4012965551": {
       "zh_CN": "羁绊： 战旗技能的光环强度提高 #%",
-      "zh_TW": "命定: 旗幟技能增加#%光環幅度"
+      "zh_TW": "命定: 鬥旗技能增加#%光環幅度"
     },
     "rune.stat_4019240232": {
       "zh_CN": "羁绊： 伤害穿透 #% 的闪电抗性",
@@ -46235,6 +46359,10 @@
       "zh_CN": "# 力量",
       "zh_TW": "#點力量"
     },
+    "rune.stat_4081947835": {
+      "zh_CN": "投射物击中地形时有 #% 的几率额外连锁一次",
+      "zh_TW": "投射物有#%機率從地形額外連鎖一次"
+    },
     "rune.stat_408302348": {
       "zh_CN": "羁绊： #% 火焰抗性上限",
       "zh_TW": "命定: #%最大火焰抗性"
@@ -46253,7 +46381,7 @@
     },
     "rune.stat_4108430531": {
       "zh_CN": "羁绊： 击中伤害的 #% 在你承受之前，由你的可受伤伙伴的生命承受",
-      "zh_TW": "Bonded: #% of Damage from Hits is taken from your Damageable Companion's Life before you"
+      "zh_TW": "命定: 擊中傷害的#%會先由你的可傷害盟友承受"
     },
     "rune.stat_4111152445": {
       "zh_CN": "羁绊： 所有闪电技能等级 #",
@@ -46313,7 +46441,7 @@
     },
     "rune.stat_4254029169": {
       "zh_CN": "羁绊： 非凡技能的保留效能提高 #%",
-      "zh_TW": "命定: 主要技能增加#%保留效率"
+      "zh_TW": "命定: 主要技能增加#%保留效用"
     },
     "rune.stat_4258409981": {
       "zh_CN": "稀有或传奇敌人每在场一秒，对其造成的击中伤害提高 #%，上限为 200%",
@@ -46381,7 +46509,7 @@
     },
     "rune.stat_532897212": {
       "zh_CN": "羁绊： 在低魔时，魔力消耗效能提高 #%",
-      "zh_TW": "命定: 貧魔狀態時，增加#%魔力消耗效率"
+      "zh_TW": "命定: 貧魔狀態時，增加#%魔力消耗效用"
     },
     "rune.stat_538981065": {
       "zh_CN": "榴弹有 #% 的几率再次激活",
@@ -46397,7 +46525,7 @@
     },
     "rune.stat_553018427": {
       "zh_CN": "命令技能的魔力消耗效能提高 #%",
-      "zh_TW": "增加#%號令技能的魔力消耗效率"
+      "zh_TW": "增加#%號令技能的魔力消耗效用"
     },
     "rune.stat_554899692": {
       "zh_CN": "咒符栏 # (全域)",
@@ -47157,7 +47285,7 @@
     },
     "sanctum.stat_1798691236": {
       "zh_CN": "被敌人投射物击中时避免失去坚毅的几率提高 #%",
-      "zh_TW": "增加有#%機率避免敵人投射物擊中時失去決心"
+      "zh_TW": "增加#%避免因敵人投射物擊中而失去決心的機率"
     },
     "sanctum.stat_1890519597": {
       "zh_CN": "怪物造成的伤害提高 #%",
@@ -47273,7 +47401,7 @@
     },
     "sanctum.stat_3134588943": {
       "zh_CN": "被敌人近战击中时避免失去荣誉的几率提高 #%",
-      "zh_TW": "增加#%敵人近戰擊中後避免榮譽損失的機率"
+      "zh_TW": "增加#%避免因敵人近戰擊中而失去榮譽的機率"
     },
     "sanctum.stat_315260783": {
       "zh_CN": "耀金币在击败天灾先驱时转换为遗物",
@@ -48395,7 +48523,7 @@
     },
     "#% Chance to gain a Charge when you kill an enemy": {
       "zh_CN": "击败敌人时有 #% 的几率获得一个能量球",
-      "zh_TW": "殺死敵人時有#%機率獲得一個充能"
+      "zh_TW": "殺死敵人時有#%機率獲得一顆充能"
     },
     "#% Global chance to Blind Enemies on Hit": {
       "zh_CN": "击中有 #% 的全局几率致盲敌人",
@@ -48525,6 +48653,10 @@
       "zh_CN": "被击中时有 #% 的几率避免火焰伤害",
       "zh_TW": "有#%機率避免來自擊中的火焰傷害"
     },
+    "#% chance to Avoid Honour loss from Enemy Hits if you've been Hit Recently": {
+      "zh_CN": "若你近期内被击中，则有 #% 的几率避免敌人击中造成的坚毅损失",
+      "zh_TW": "若你近期被擊中，則有#%機率避免由於敵人擊中的榮譽損失"
+    },
     "#% chance to Avoid Lightning Damage from Hits": {
       "zh_CN": "被击中时有 #% 的几率避免闪电伤害",
       "zh_TW": "有#%機率避免來自擊中的閃電傷害"
@@ -48536,10 +48668,6 @@
     "#% chance to Avoid Resolve loss from Enemy Hits": {
       "zh_CN": "被敌人击中时有 #% 的几率避免失去坚毅",
       "zh_TW": "有#%機率避免敵人擊中時失去決心"
-    },
-    "#% chance to Avoid Resolve loss from Enemy Hits if you've been Hit Recently": {
-      "zh_CN": "若你近期内被击中，则有 #% 的几率避免敌人击中造成的坚毅损失",
-      "zh_TW": "若你近期被擊中，則有#%機率避免由於敵人擊中的榮譽損失"
     },
     "#% chance to Avoid gaining an Affliction": {
       "zh_CN": "#% 几率避免获得一个痛苦",
@@ -48592,10 +48720,6 @@
     "#% chance to Poison on Hit with this weapon": {
       "zh_CN": "此武器击中时有 #% 的几率使目标中毒",
       "zh_TW": "用此武器擊中時有#%機率造成中毒"
-    },
-    "#% chance to add a Vaal Beacon Unique Monster to the Map": {
-      "zh_CN": "有 #% 的几率为地图增加一个瓦尔灯塔传奇怪物",
-      "zh_TW": "有#%機率為地圖新增一名瓦爾烽塔傳奇怪物"
     },
     "#% chance to avoid Projectiles": {
       "zh_CN": "#% 的几率免疫投射物",
@@ -48883,11 +49007,11 @@
     },
     "#% increased Attack and Cast Speed": {
       "zh_CN": "攻击和施法速度提高 #%",
-      "zh_TW": "增加#%攻擊和施放速度"
+      "zh_TW": "增加#%攻擊和施法速度"
     },
     "#% increased Attack and Cast Speed if you've summoned a Totem Recently": {
       "zh_CN": "若你近期内有召唤图腾，攻击和施法速度提高 #%",
-      "zh_TW": "若你近期召喚過圖騰，增加#%攻擊和施放速度"
+      "zh_TW": "若你近期召喚過圖騰，增加#%攻擊和施法速度"
     },
     "#% increased Attribute Requirements": {
       "zh_CN": "属性需求提高 #%",
@@ -48935,7 +49059,7 @@
     },
     "#% increased Cast Speed": {
       "zh_CN": "施法速度提高 #%",
-      "zh_TW": "增加#%施放速度"
+      "zh_TW": "增加#%施法速度"
     },
     "#% increased Cast Speed during any Flask Effect": {
       "zh_CN": "药剂持续期间，施法速度提高 #%",
@@ -48943,27 +49067,27 @@
     },
     "#% increased Cast Speed for each different Non-Instant Spell you've Cast Recently": {
       "zh_CN": "近期每施放一个不同的非瞬发法术，施法速度提高 #%",
-      "zh_TW": "你近期每施放一個不同的非瞬發法術，增加#%施放速度"
+      "zh_TW": "你近期每施放一個不同的非瞬發法術，增加#%施法速度"
     },
     "#% increased Cast Speed if you've dealt a Critical Hit Recently": {
       "zh_CN": "若你近期内有打出过暴击，则施法速度提高 #%",
-      "zh_TW": "若你近期造成暴擊，增加#%施放速度"
+      "zh_TW": "若你近期造成暴擊，增加#%施法速度"
     },
     "#% increased Cast Speed per 20 Spirit": {
       "zh_CN": "每 20 点精魂，施法速度提高 #%",
-      "zh_TW": "每20精魂增加#%施放速度"
+      "zh_TW": "每20精魂增加#%施法速度"
     },
     "#% increased Cast Speed when on Full Life": {
       "zh_CN": "满血时施法速度提高 #%",
-      "zh_TW": "滿血時增加#%施放速度"
+      "zh_TW": "滿血時增加#%施法速度"
     },
     "#% increased Cast Speed when on Low Life": {
       "zh_CN": "低血时施法速度提高 #%",
-      "zh_TW": "貧血狀態時增加#%施放速度"
+      "zh_TW": "貧血狀態時增加#%施法速度"
     },
     "#% increased Cast Speed while on Full Mana": {
       "zh_CN": "满魔时施法速度提高 #%",
-      "zh_TW": "滿魔力時，增加#%施放速度"
+      "zh_TW": "滿魔力時，增加#%施法速度"
     },
     "#% increased Chance to be afflicted by Ailments when Hit": {
       "zh_CN": "被击中时受到异常状态的几率提高 #%",
@@ -49023,15 +49147,15 @@
     },
     "#% increased Cost Efficiency": {
       "zh_CN": "消耗效能提高 #%",
-      "zh_TW": "增加#%消耗效率"
+      "zh_TW": "增加#%消耗效用"
     },
     "#% increased Cost Efficiency of Attacks": {
       "zh_CN": "攻击的消耗效能提高 #%",
-      "zh_TW": "增加#%攻擊消耗效率"
+      "zh_TW": "增加#%攻擊消耗效用"
     },
     "#% increased Cost Efficiency of Skills if you've consumed a Power Charge Recently": {
       "zh_CN": "若你近期消耗过暴击球，技能消耗效能提高 #%",
-      "zh_TW": "若你近期有消耗一顆暴擊球，技能消耗效率增加#%"
+      "zh_TW": "若你近期有消耗一顆暴擊球，技能消耗效用增加#%"
     },
     "#% increased Cost of Skills for each 200 total Mana Spent Recently": {
       "zh_CN": "近期内每消耗总计 200 魔力都使技能消耗提高 #%",
@@ -49495,7 +49619,7 @@
     },
     "#% increased Glory generation for Banner Skills": {
       "zh_CN": "旗帜技能的荣耀产生速度提高 #%",
-      "zh_TW": "旗幟技能增加#%生成的榮耀"
+      "zh_TW": "鬥旗技能增加#%生成的榮耀"
     },
     "#% increased Gold found in this Area": {
       "zh_CN": "#% increased Gold found in this Area",
@@ -49551,7 +49675,7 @@
     },
     "#% increased Life Cost Efficiency": {
       "zh_CN": "生命消耗效能提高 #%",
-      "zh_TW": "增加#%生命消耗效率"
+      "zh_TW": "增加#%生命消耗效用"
     },
     "#% increased Life Flask Charges gained": {
       "zh_CN": "获得的生命药剂充能提高 #%",
@@ -49591,7 +49715,7 @@
     },
     "#% increased Light Radius": {
       "zh_CN": "照亮范围提高 #%",
-      "zh_TW": "增加#%光線範圍"
+      "zh_TW": "增加#%照亮範圍"
     },
     "#% increased Lightning Damage": {
       "zh_CN": "闪电伤害提高 #%",
@@ -49671,23 +49795,23 @@
     },
     "#% increased Mana Cost Efficiency": {
       "zh_CN": "魔力消耗效能提高 #%",
-      "zh_TW": "增加#%魔力消耗效率"
+      "zh_TW": "增加#%魔力消耗效用"
     },
     "#% increased Mana Cost Efficiency if you have Dodge Rolled Recently": {
       "zh_CN": "若你近期使用过闪避翻滚，魔力消耗效能提高 #%",
-      "zh_TW": "若你近期有閃避翻滾，增加#%魔力消耗效率"
+      "zh_TW": "若你近期有閃避翻滾，增加#%魔力消耗效用"
     },
     "#% increased Mana Cost Efficiency if you haven't Dodge Rolled Recently": {
       "zh_CN": "若你近期没有闪避翻滚，魔力消耗效能提高 #%",
-      "zh_TW": "若你近期沒有閃避翻滾，增加#%魔力消耗效率"
+      "zh_TW": "若你近期沒有閃避翻滾，增加#%魔力消耗效用"
     },
     "#% increased Mana Cost Efficiency of Command Skills": {
       "zh_CN": "命令技能的魔力消耗效能提高 #%",
-      "zh_TW": "增加#%號令技能的魔力消耗效率"
+      "zh_TW": "增加#%號令技能的魔力消耗效用"
     },
     "#% increased Mana Cost Efficiency of Spells": {
       "zh_CN": "法术的魔力消耗效能提高 #%",
-      "zh_TW": "增加#%法術的魔力消耗效率"
+      "zh_TW": "增加#%法術的魔力消耗效用"
     },
     "#% increased Mana Flask Charges gained": {
       "zh_CN": "获得的魔力药剂充能提高 #%",
@@ -49783,7 +49907,7 @@
     },
     "#% increased Monster Cast Speed": {
       "zh_CN": "怪物施法速度提高 #%",
-      "zh_TW": "增加#%怪物施放速度"
+      "zh_TW": "增加#%怪物施法速度"
     },
     "#% increased Monster Damage": {
       "zh_CN": "怪物伤害提高 #%",
@@ -49931,7 +50055,7 @@
     },
     "#% increased Rage Cost Efficiency": {
       "zh_CN": "怒火消耗效能提高 #%",
-      "zh_TW": "增加#%盛怒消耗效率"
+      "zh_TW": "增加#%盛怒消耗效用"
     },
     "#% increased Rarity of Items Dropped by Enemies killed with a Critical Hit": {
       "zh_CN": "暴击击败敌人时物品稀有度提高 #%",
@@ -49971,19 +50095,19 @@
     },
     "#% increased Reservation Efficiency of Companion Skills": {
       "zh_CN": "伙伴技能的保留效能提高 #%",
-      "zh_TW": "盟友技能增加#%保留效率"
+      "zh_TW": "盟友技能增加#%保留效用"
     },
     "#% increased Reservation Efficiency of Herald Skills": {
       "zh_CN": "捷技能的保留效能提高 #%",
-      "zh_TW": "捷光環技能增加#%保留效率"
+      "zh_TW": "捷光環技能增加#%保留效用"
     },
     "#% increased Reservation Efficiency of Minion Skills": {
       "zh_CN": "召唤生物技能的保留效能提高 #%",
-      "zh_TW": "召喚物技能增加#%保留效率"
+      "zh_TW": "召喚物技能增加#%保留效用"
     },
     "#% increased Reservation Efficiency of Remnant Skills": {
       "zh_CN": "残片技能的保留效能提高 #%",
-      "zh_TW": "增加#%痕跡技能的保留效率"
+      "zh_TW": "增加#%痕跡技能的保留效用"
     },
     "#% increased Reservation Efficiency of Skills which create Undead Minions": {
       "zh_CN": "创造亡灵召唤生物技能的保留效能提高 #%",
@@ -50083,11 +50207,11 @@
     },
     "#% increased Spirit Reservation Efficiency of Buff Skills per 100 Maximum Life": {
       "zh_CN": "每 100 点生命上限使增益技能的精魂保留效能提高 #%",
-      "zh_TW": "每100最大生命增加#%增益技能的精魂保留效率"
+      "zh_TW": "每100最大生命增加#%增益技能的精魂保留效用"
     },
     "#% increased Spirit Reservation Efficiency of Skills": {
       "zh_CN": "技能的精魂保留效能提高 #%",
-      "zh_TW": "技能增加#%精魂保留效率"
+      "zh_TW": "技能增加#%精魂保留效用"
     },
     "#% increased Spirit per socketed Grand Spectrum": {
       "zh_CN": "每个镶嵌的聚光之石使精魂提高 #%",
@@ -50255,7 +50379,7 @@
     },
     "#% increased chance to Avoid Resolve Loss from Enemy Projectile Hits": {
       "zh_CN": "被敌人投射物击中时避免失去坚毅的几率提高 #%",
-      "zh_TW": "增加有#%機率避免敵人投射物擊中時失去決心"
+      "zh_TW": "增加#%避免因敵人投射物擊中而失去決心的機率"
     },
     "#% increased chance to Poison": {
       "zh_CN": "中毒几率提高 #%",
@@ -50267,7 +50391,7 @@
     },
     "#% increased chance to avoid Honour loss from Enemy Melee Hits": {
       "zh_CN": "被敌人近战击中时避免失去荣誉的几率提高 #%",
-      "zh_TW": "增加#%敵人近戰擊中後避免榮譽損失的機率"
+      "zh_TW": "增加#%避免因敵人近戰擊中而失去榮譽的機率"
     },
     "#% increased chance to inflict Ailments": {
       "zh_CN": "造成异常状态的几率提高 #%",
@@ -50473,7 +50597,7 @@
       "zh_CN": "#% 的护甲同样作用于闪电伤害",
       "zh_TW": "#%的護甲值也會套用至閃電傷害"
     },
-    "#% of Chaos Damage from Hits taken as a Damage of a random Element": {
+    "#% of Chaos Damage from Hits taken as Damage of a random Element": {
       "zh_CN": "受到混沌击中伤害的 #% 转化为一种随机元素伤害",
       "zh_TW": "承受擊中#%的混沌傷害會改為承受一種隨機元素傷害"
     },
@@ -50543,7 +50667,7 @@
     },
     "#% of Damage taken from Deflected Hits Recouped as Life": {
       "zh_CN": "偏转击中造成伤害的 #% 吸纳为生命",
-      "zh_TW": "#% of Damage taken from Deflected Hits Recouped as Life"
+      "zh_TW": "承受來自偏斜擊中的傷害時，受到傷害的#%補償為生命"
     },
     "#% of Damage taken from Hits bypasses Energy Shield if Energy Shield is below half": {
       "zh_CN": "能量护盾低于一半时，受到击中的伤害的 #% 会穿透能量护盾",
@@ -50687,7 +50811,7 @@
     },
     "#% of damage taken from enemies with an Open Weakness Recouped as Life": {
       "zh_CN": "将所受来自带有弱点暴露敌人 #% 的伤害吸纳为生命",
-      "zh_TW": "#% of damage taken from enemies with an Open Weakness Recouped as Life"
+      "zh_TW": "承受來自擁有暴露破綻敵人的#%傷害會補償為生命"
     },
     "#% of maximum Life Regenerated per second per Fragile Regrowth": {
       "zh_CN": "每次脆弱重生都每秒回复生命上限的 #%",
@@ -52419,7 +52543,7 @@
     },
     "Allies in your Presence have #% increased Cast Speed": {
       "zh_CN": "在场的友军的施法速度提高 #%",
-      "zh_TW": "處於你存在範圍中的友方增加#%施放速度"
+      "zh_TW": "處於你存在範圍中的友方增加#%施法速度"
     },
     "Allies in your Presence have #% increased Critical Damage Bonus": {
       "zh_CN": "在场的友军的暴击伤害加成提高 #%",
@@ -56631,11 +56755,11 @@
     },
     "Arrows Fork": {
       "zh_CN": "箭矢分叉",
-      "zh_TW": "箭矢會分岔"
+      "zh_TW": "箭矢會分裂"
     },
     "Arrows Pierce all targets after Forking": {
       "zh_CN": "箭矢在分叉后穿透所有目标",
-      "zh_TW": "箭矢分岔後會穿透所有目標"
+      "zh_TW": "箭矢分裂後會穿透所有目標"
     },
     "Arrows Pierce an additional Target": {
       "zh_CN": "箭矢会穿透 1 个额外目标",
@@ -56805,6 +56929,10 @@
       "zh_CN": "阿兹里的焦躁",
       "zh_TW": "阿茲里的不耐"
     },
+    "Atziri's Soul Core of Devotion": {
+      "zh_CN": "Atziris_Soul_Core_of_Devotion",
+      "zh_TW": "阿茲里的奉獻靈魂核心"
+    },
     "Augment": {
       "zh_CN": "增幅器",
       "zh_TW": "增幅"
@@ -56899,11 +57027,11 @@
     },
     "Banner Skills have #% increased Area of Effect": {
       "zh_CN": "旗帜技能的效果范围提高 #%",
-      "zh_TW": "旗幟技能增加#%範圍效果"
+      "zh_TW": "鬥旗技能增加#%範圍效果"
     },
     "Banner Skills have #% increased Duration": {
       "zh_CN": "旗帜技能的持续时间提高 #%",
-      "zh_TW": "旗幟技能增加#%持續時間"
+      "zh_TW": "鬥旗技能增加#%持續時間"
     },
     "Banners also grant #% of Life Regenerated per second to affected targets": {
       "zh_CN": "旗帜同样使受影响目标每秒回复 #% 的生命",
@@ -56911,7 +57039,7 @@
     },
     "Banners always have maximum Valour": {
       "zh_CN": "Banners always have maximum Valour",
-      "zh_TW": "旗幟必定具有最大勇氣"
+      "zh_TW": "鬥旗必定具有最大勇氣"
     },
     "Barbarian Plate": {
       "zh_CN": "野蛮人战铠",
@@ -57635,11 +57763,11 @@
     },
     "Bonded: #% increased Mana Cost Efficiency": {
       "zh_CN": "羁绊： 魔力消耗效能提高 #%",
-      "zh_TW": "命定: 增加#%魔力消耗效率"
+      "zh_TW": "命定: 增加#%魔力消耗效用"
     },
     "Bonded: #% increased Mana Cost Efficiency while on Low Mana": {
       "zh_CN": "羁绊： 在低魔时，魔力消耗效能提高 #%",
-      "zh_TW": "命定: 貧魔狀態時，增加#%魔力消耗效率"
+      "zh_TW": "命定: 貧魔狀態時，增加#%魔力消耗效用"
     },
     "Bonded: #% increased Mana Recovery rate while your Companion is in your Presence": {
       "zh_CN": "羁绊： 伙伴在场时，魔力回复速度提高 #%",
@@ -57679,19 +57807,19 @@
     },
     "Bonded: #% increased Reservation Efficiency of Companion Skills": {
       "zh_CN": "羁绊： 伙伴技能的保留效能提高 #%",
-      "zh_TW": "命定: 盟友技能增加#%保留效率"
+      "zh_TW": "命定: 盟友技能增加#%保留效用"
     },
     "Bonded: #% increased Reservation Efficiency of Herald Skills": {
       "zh_CN": "羁绊： 捷技能的保留效能提高 #%",
-      "zh_TW": "命定: 捷光環技能增加#%保留效率"
+      "zh_TW": "命定: 捷光環技能增加#%保留效用"
     },
     "Bonded: #% increased Reservation Efficiency of Minion Skills": {
       "zh_CN": "羁绊： 召唤生物技能的保留效能提高 #%",
-      "zh_TW": "命定: 召喚物技能增加#%保留效率"
+      "zh_TW": "命定: 召喚物技能增加#%保留效用"
     },
     "Bonded: #% increased Runic Ward Cost Efficiency": {
       "zh_CN": "羁绊： 符文结界消耗效能提高 #%",
-      "zh_TW": "命定: 增加#%符文保護效率"
+      "zh_TW": "命定: 增加#%符文保護效用"
     },
     "Bonded: #% increased Runic Ward Regeneration Rate if you've dealt a Critical Hit Recently": {
       "zh_CN": "羁绊： 若你近期内造成过暴击，则符文结界回复速度提高 #%",
@@ -57715,7 +57843,7 @@
     },
     "Bonded: #% increased Spirit Reservation Efficiency": {
       "zh_CN": "羁绊： 精魂保留效能提高 #%",
-      "zh_TW": "命定: 增加#%精魂保留效率"
+      "zh_TW": "命定: 增加#%精魂保留效用"
     },
     "Bonded: #% increased Stun Buildup": {
       "zh_CN": "羁绊： 晕眩积蓄值提高 #%",
@@ -57783,7 +57911,7 @@
     },
     "Bonded: #% of Damage from Hits is taken from your Damageable Companion's Life before you": {
       "zh_CN": "羁绊： 击中伤害的 #% 在你承受之前，由你的可受伤伙伴的生命承受",
-      "zh_TW": "Bonded: #% of Damage from Hits is taken from your Damageable Companion's Life before you"
+      "zh_TW": "命定: 擊中傷害的#%會先由你的可傷害盟友承受"
     },
     "Bonded: #% of Damage is taken from Mana before Life": {
       "zh_CN": "羁绊： #% 的伤害优先从魔力扣除",
@@ -57801,9 +57929,17 @@
       "zh_CN": "羁绊： 技能的魔力消耗的 #% 转化为生命消耗",
       "zh_TW": "命定: #%技能魔力消耗轉換為生命消耗"
     },
+    "Bonded: #% reduced Chill Duration on you": {
+      "zh_CN": "羁绊： 你被冰缓的持续时间降低 #%",
+      "zh_TW": "Bonded: #% reduced Chill Duration on you"
+    },
     "Bonded: #% reduced Damage taken from Projectile Hits": {
       "zh_CN": "羁绊： 受到的 投射物击中伤害降低 #%",
       "zh_TW": "Bonded: #% reduced Damage taken from Projectile Hits"
+    },
+    "Bonded: #% reduced Freeze Duration on you": {
+      "zh_CN": "羁绊： 你被冻结的持续时间降低 #%",
+      "zh_TW": "Bonded: #% reduced Freeze Duration on you"
     },
     "Bonded: #% reduced Shock duration on you": {
       "zh_CN": "羁绊： 你被感电的持续时间降低 #%",
@@ -57862,8 +57998,8 @@
       "zh_TW": "命定: 攻擊附加#至#火焰傷害"
     },
     "Bonded: Adds # to # Physical Damage": {
-      "zh_CN": "羁绊：附加 # - # 基础物理伤害",
-      "zh_TW": "命定:附加#至#物理傷害"
+      "zh_CN": "羁绊： 附加 # - # 基础物理伤害",
+      "zh_TW": "Bonded: Adds # to # Physical Damage"
     },
     "Bonded: Adds # to # Physical Damage to Attacks": {
       "zh_CN": "羁绊： 攻击附加 # - # 物理伤害",
@@ -57882,7 +58018,7 @@
       "zh_TW": "命定: 統治者增益效果恢復期加快#%"
     },
     "Bonded: Attacks have #% chance to cause Bleeding": {
-      "zh_CN": "Bonded: Attacks have #% chance to cause Bleeding",
+      "zh_CN": "羁绊： 攻击有 #% 的几率导致流血",
       "zh_TW": "命定: 攻擊有#%機率造成流血"
     },
     "Bonded: Attacks have #% to Critical Hit Chance": {
@@ -57891,7 +58027,7 @@
     },
     "Bonded: Banner Skills have #% increased Aura Magnitudes": {
       "zh_CN": "羁绊： 战旗技能的光环强度提高 #%",
-      "zh_TW": "命定: 旗幟技能增加#%光環幅度"
+      "zh_TW": "命定: 鬥旗技能增加#%光環幅度"
     },
     "Bonded: Break #% increased Armour": {
       "zh_CN": "羁绊： 粉碎的护甲提高 #%",
@@ -57942,8 +58078,8 @@
       "zh_TW": "命定: 若你的符文保護近期被傷害\n敵人擊中你的傷害很不幸"
     },
     "Bonded: Enemies in your Presence are Hindered": {
-      "zh_CN": "羁绊：当你在场时，敌人受到阻滞效果",
-      "zh_TW": "命定:你存在中的敵人被阻礙"
+      "zh_CN": "羁绊： 当你在场时，敌人受到阻滞效果",
+      "zh_TW": "Bonded: Enemies in your Presence are Hindered"
     },
     "Bonded: Every Rage also grants #% increased Spell Damage": {
       "zh_CN": "羁绊： 每一点怒火还会使法术伤害提高 #%",
@@ -58011,7 +58147,7 @@
     },
     "Bonded: Meta Skills have #% increased Reservation Efficiency": {
       "zh_CN": "羁绊： 非凡技能的保留效能提高 #%",
-      "zh_TW": "命定: 主要技能增加#%保留效率"
+      "zh_TW": "命定: 主要技能增加#%保留效用"
     },
     "Bonded: Minions Revive #% faster": {
       "zh_CN": "羁绊： 召唤生物的复活速度加快 #%",
@@ -58055,7 +58191,7 @@
     },
     "Bonded: Projectiles have #% chance for an additional Projectile when Forking": {
       "zh_CN": "羁绊： 投射物分叉时，有 #% 的几率发射一个额外投射物",
-      "zh_TW": "命定: 投射物分岔時有#%機率發射1個額外投射物"
+      "zh_TW": "命定: 投射物分裂時有#%機率發射1個額外投射物"
     },
     "Bonded: Recover #% of Maximum Mana when you collect a Remnant": {
       "zh_CN": "羁绊： 收集残片时恢复 #% 魔力上限",
@@ -58078,8 +58214,8 @@
       "zh_TW": "命定: 每秒回復#%生命"
     },
     "Bonded: Regenerate #% of maximum Life per second while Surrounded": {
-      "zh_CN": "羁绊：被包围每秒再生 #% 生命",
-      "zh_TW": "命定:被包圍時，每秒回復#%生命"
+      "zh_CN": "羁绊： 被包围每秒再生 #% 生命",
+      "zh_TW": "Bonded: Regenerate #% of maximum Life per second while Surrounded"
     },
     "Bonded: Remnants can be collected from #% further away": {
       "zh_CN": "羁绊： 残片收集距离延长 #%",
@@ -58187,7 +58323,7 @@
     },
     "Bounty II": {
       "zh_CN": "丰饶 II",
-      "zh_TW": "寶物 II"
+      "zh_TW": "懸賞 II"
     },
     "Bow": {
       "zh_CN": "弓",
@@ -59687,7 +59823,7 @@
     },
     "Curse Skills have #% increased Cast Speed": {
       "zh_CN": "诅咒技能的施法速度提高 #%",
-      "zh_TW": "增加#%詛咒技能的施放速度"
+      "zh_TW": "增加#%詛咒技能的施法速度"
     },
     "Cursed Ground": {
       "zh_CN": "诅咒之地",
@@ -60311,7 +60447,7 @@
     },
     "Eat a Soul when you Hit an enemy with an Open Weakness": {
       "zh_CN": "击中带有弱点暴露的敌人时，EatenSoul吞噬一个灵魂",
-      "zh_TW": "Eat a Soul when you Hit an enemy with an Open Weakness"
+      "zh_TW": "當你擊中一名擁有暴露破綻時吞噬一個靈魂"
     },
     "Echoing Cry": {
       "zh_CN": "回荡战嚎",
@@ -61841,6 +61977,14 @@
       "zh_CN": "获得额外火焰伤害， 其数值等同于物理伤害的 #%",
       "zh_TW": "獲得等同於#%物理傷害的額外火焰傷害"
     },
+    "Gain #% of damage as Fire damage per 1% Chance to Block": {
+      "zh_CN": "Gain #% of damage as Fire damage per 1% Chance to Block",
+      "zh_TW": "每擁有1%格擋率，獲得等同於#%傷害的火焰傷害"
+    },
+    "Gain #% of damage as Fire damage per 2% Chance to Block": {
+      "zh_CN": "每 #% 格挡几率获得相当于伤害 #% 的火焰伤害",
+      "zh_TW": "每擁有#%格擋率，獲得等同於#%傷害的火焰傷害"
+    },
     "Gain #% of maximum Life as Extra maximum Energy Shield": {
       "zh_CN": "获得等同生命上限 #% 的额外能量护盾",
       "zh_TW": "獲得等同於最大生命#%的額外最大能量護盾"
@@ -61884,10 +62028,6 @@
     "Gain 1 Runic Binding on Hit with Spells, no more than once every 0.5 seconds\nLose all Runic Bindings when you Shapeshift to gain that much Unbound Potential": {
       "zh_CN": "使用法术击中时获得 1 点符文咒缚，每 0.5 秒只能获得一次\n变形时，损失所有符文咒缚以获得等量的潜能释放",
       "zh_TW": "法術擊中時獲得1層符文束縛，每0.5秒不超過一次\n當你變形時失去所有符文束縛以獲得同等數量的無縛潛能"
-    },
-    "Gain 1% of damage as Fire damage per #% Chance to Block": {
-      "zh_CN": "每 #% 格挡几率获得相当于伤害 1% 的火焰伤害",
-      "zh_TW": "每擁有#%格擋率，獲得等同於1%傷害的火焰傷害"
     },
     "Gain Arcane Surge when a Minion Dies": {
       "zh_CN": "当召唤生物被击败时，获得秘术增强",
@@ -63591,7 +63731,7 @@
     },
     "Heavy Swing": {
       "zh_CN": "沉重挥舞",
-      "zh_TW": "沉重揮擊"
+      "zh_TW": "Heavy Swing"
     },
     "Hedgewitch Assandra's Rune of Wisdom": {
       "zh_CN": "女巫阿桑德拉的智慧符文",
@@ -63923,7 +64063,7 @@
     },
     "Idol of Maxarius": {
       "zh_CN": "玛萨留斯之雕像",
-      "zh_TW": "馬薩里斯魔偶"
+      "zh_TW": "瑪薩里歐斯魔偶"
     },
     "Idol of Oak": {
       "zh_CN": "欧克之雕像",
@@ -64421,6 +64561,22 @@
       "zh_CN": "铃鸣法器",
       "zh_TW": "響聲法器"
     },
+    "Jiquani's Soul Core of Quaking": {
+      "zh_CN": "Jiquanis_Soul_Core_of_Quaking",
+      "zh_TW": "吉卡尼的震顫靈魂核心"
+    },
+    "Jiquani's Soul Core of Radiance": {
+      "zh_CN": "Jiquanis_Soul_Core_of_Radiance",
+      "zh_TW": "吉卡尼的輝耀靈魂核心"
+    },
+    "Jiquani's Soul Core of Severing": {
+      "zh_CN": "Jiquanis_Soul_Core_of_Severing",
+      "zh_TW": "吉卡尼的斷切靈魂核心"
+    },
+    "Jiquani's Soul Core of Squalls": {
+      "zh_CN": "Jiquanis_Soul_Core_of_Squalls",
+      "zh_TW": "吉卡尼的狂風靈魂核心"
+    },
     "Jiquani's Thesis": {
       "zh_CN": "佳华尼的圣典",
       "zh_TW": "吉卡尼的假說"
@@ -64639,7 +64795,7 @@
     },
     "Left ring slot: Projectiles from Spells Fork": {
       "zh_CN": "左戒指栏位：法术的投射物分叉",
-      "zh_TW": "左手戒指欄位：法術的投射物會分岔"
+      "zh_TW": "左手戒指欄位：法術的投射物會分裂"
     },
     "Left ring slot: Projectiles from Spells cannot Chain": {
       "zh_CN": "左戒指栏位：法术的投射物无法连锁",
@@ -64753,7 +64909,7 @@
       "zh_CN": "暮色守望之遗产",
       "zh_TW": "傳承．暗暮守夜"
     },
-    "Legacy of Edyrns Tusks": {
+    "Legacy of Edyrn's Tusks": {
       "zh_CN": "艾丁的獠牙之遗产",
       "zh_TW": "傳承．埃狄恩的曲牙"
     },
@@ -64815,7 +64971,7 @@
     },
     "Legacy of Kingsguard": {
       "zh_CN": "皇家卫甲之遗产",
-      "zh_TW": "傳承．王衛"
+      "zh_TW": "傳承．皇家衛甲"
     },
     "Legacy of Legionstride": {
       "zh_CN": "军团的进击之遗产",
@@ -65651,7 +65807,7 @@
     },
     "Mark Skills have #% increased Use Speed": {
       "zh_CN": "印记技能的施法速度提高 #%",
-      "zh_TW": "增加#%印記技能的施放速度"
+      "zh_TW": "增加#%印記技能的施法速度"
     },
     "Mark for Death": {
       "zh_CN": "死亡印记",
@@ -65879,7 +66035,7 @@
     },
     "Minions have #% increased Attack and Cast Speed": {
       "zh_CN": "召唤生物的攻击和施法速度提高 #%",
-      "zh_TW": "召喚物增加#%攻擊和施放速度"
+      "zh_TW": "召喚物增加#%攻擊和施法速度"
     },
     "Minions have #% increased Cooldown Recovery Rate": {
       "zh_CN": "召唤生物的冷却回复率提高 #%",
@@ -66269,6 +66425,10 @@
       "zh_CN": "贵族塔盾",
       "zh_TW": "高貴塔盾"
     },
+    "Non-Channelling Skills have #% increased Spell Critical Hit Chance per 100 maximum Mana": {
+      "zh_CN": "每 100 点魔力上限使非吟唱法术的暴击率提高 #%",
+      "zh_TW": "每100最大魔力，增加#%非引導技能的法術暴擊率"
+    },
     "Non-Channelling Spells cost an additional #% of your maximum Life": {
       "zh_CN": "非吟唱法术额外消耗 #% 的生命上限",
       "zh_TW": "非引導法術額外消耗你的#%最大生命"
@@ -66284,10 +66444,6 @@
     "Non-Channelling Spells have #% increased Critical Hit Chance per 100 maximum Life": {
       "zh_CN": "每 100 生命上限使非吟唱法术的暴击率提高 #%",
       "zh_TW": "每100最大生命，增加#%非引導法術的暴擊率"
-    },
-    "Non-Channelling Spells have #% increased Critical Hit Chance per 100 maximum Mana": {
-      "zh_CN": "每 100 点魔力上限使非吟唱法术的暴击率提高 #%",
-      "zh_TW": "每100最大魔力，增加#%非引導法術的[Critical|暴擊率"
     },
     "Non-Channelling Spells have #% increased Magnitude of Ailments per 100 maximum Life": {
       "zh_CN": "每 100 点生命上限使非吟唱法术的异常状态强度提高 #%",
@@ -66367,7 +66523,7 @@
     },
     "Notable Passive Skills in Radius also grant #% increased Cast Speed": {
       "zh_CN": "范围内的核心天赋同时提供 施法速度提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 增加#%施放速度"
+      "zh_TW": "範圍內核心天賦也會賦予 增加#%施法速度"
     },
     "Notable Passive Skills in Radius also grant #% increased Charm Charges gained": {
       "zh_CN": "范围内的核心天赋同时提供 获得的咒符充能提高 #%",
@@ -66455,7 +66611,7 @@
     },
     "Notable Passive Skills in Radius also grant #% increased Glory generation for Banner Skills": {
       "zh_CN": "范围内的核心天赋同时提供 旗帜技能的荣耀产生速度提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 旗幟技能增加#%生成的榮耀"
+      "zh_TW": "範圍內核心天賦也會賦予 鬥旗技能增加#%生成的榮耀"
     },
     "Notable Passive Skills in Radius also grant #% increased Ignite Magnitude": {
       "zh_CN": "范围内的核心天赋同时提供 点燃强度提高 #%",
@@ -66499,7 +66655,7 @@
     },
     "Notable Passive Skills in Radius also grant #% increased Mana Cost Efficiency": {
       "zh_CN": "范围内的核心天赋同时提供 魔力消耗效能提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 增加#%魔力消耗效率"
+      "zh_TW": "範圍內核心天賦也會賦予 增加#%魔力消耗效用"
     },
     "Notable Passive Skills in Radius also grant #% increased Mana Flask Charges gained": {
       "zh_CN": "范围内的核心天赋同时提供 获得的魔力药剂充能提高 #%",
@@ -66695,7 +66851,7 @@
     },
     "Notable Passive Skills in Radius also grant Minions have #% increased Attack and Cast Speed": {
       "zh_CN": "范围内的核心天赋同时提供 召唤生物的攻击和施法速度提高 #%",
-      "zh_TW": "範圍內核心天賦也會賦予 召喚物增加#%攻擊和施放速度"
+      "zh_TW": "範圍內核心天賦也會賦予 召喚物增加#%攻擊和施法速度"
     },
     "Notable Passive Skills in Radius also grant Minions have #% increased Critical Damage Bonus": {
       "zh_CN": "范围内的核心天赋同时提供 召唤生物的暴击伤害加成提高 #%",
@@ -66711,7 +66867,7 @@
     },
     "Notable Passive Skills in Radius also grant Projectiles have #% chance for an additional Projectile when Forking": {
       "zh_CN": "范围内的核心天赋同时提供 投射物分叉时，有 #% 的几率发射一个额外投射物",
-      "zh_TW": "範圍內核心天賦也會賦予 投射物分岔時有#%機率發射1個額外投射物"
+      "zh_TW": "範圍內核心天賦也會賦予 投射物分裂時有#%機率發射1個額外投射物"
     },
     "Notable Passive Skills in Radius also grant Projectiles have #% chance to Chain an additional time from terrain": {
       "zh_CN": "范围内的核心天赋同时提供 投射物击中地形时有 #% 的几率额外连锁一次",
@@ -67875,7 +68031,7 @@
     },
     "Players steal the Eaten Souls of Slain Rare Monsters in Area": {
       "zh_CN": "玩家窃取区域内被击杀稀有怪物的被吞噬灵魂",
-      "zh_TW": "Players steal the Eaten Souls of Slain Rare Monsters in Area"
+      "zh_TW": "玩家在區域中擊殺稀有怪物時會偷取其噬魂者"
     },
     "Plumed Focus": {
       "zh_CN": "彩羽法器",
@@ -68123,7 +68279,7 @@
     },
     "Projectiles Split towards # targets": {
       "zh_CN": "投射物的分裂目标 #",
-      "zh_TW": "投射物分裂至#個目標"
+      "zh_TW": "投射物裂化至#個目標"
     },
     "Projectiles deal #% increased Damage with Hits against Enemies further than 6m": {
       "zh_CN": "投射物对 6 米外的敌人造成的击中伤害提高 #%",
@@ -68143,7 +68299,7 @@
     },
     "Projectiles from Spells Fork": {
       "zh_CN": "法术的投射物无法分叉",
-      "zh_TW": "來自法術的投射物分岔"
+      "zh_TW": "來自法術的投射物分裂"
     },
     "Projectiles from Spells cannot Pierce": {
       "zh_CN": "法术的投射物无法穿透",
@@ -68151,7 +68307,7 @@
     },
     "Projectiles have #% chance for an additional Projectile when Forking": {
       "zh_CN": "投射物分叉时，有 #% 的几率发射一个额外投射物",
-      "zh_TW": "投射物分岔時有#%機率發射1個額外投射物"
+      "zh_TW": "投射物分裂時有#%機率發射1個額外投射物"
     },
     "Projectiles have #% chance to Chain an additional time from terrain": {
       "zh_CN": "投射物击中地形时有 #% 的几率额外连锁一次",
@@ -68159,11 +68315,11 @@
     },
     "Projectiles have #% chance to Fork": {
       "zh_CN": "投射物有 #% 的几率分叉",
-      "zh_TW": "投射物有#%機率會分岔"
+      "zh_TW": "投射物有#%機率會分裂"
     },
     "Projectiles have #% chance to Fork if you've dealt a Melee Hit in the past eight seconds": {
       "zh_CN": "若你在过去 8 秒内造成过近战击中，投射物有 #% 的几率分叉",
-      "zh_TW": "如果你在過去8秒內以近戰擊中，則投射物有#%機率分岔"
+      "zh_TW": "如果你在過去8秒內以近戰擊中，則投射物有#%機率分裂"
     },
     "Projectiles have #% increased Critical Damage Bonus against Enemies within 2m": {
       "zh_CN": "投射物对 2 米内的敌人的暴击伤害加成提高 #%",
@@ -68947,7 +69103,7 @@
     },
     "Right ring slot: Projectiles from Spells cannot Fork": {
       "zh_CN": "右戒指栏位：法术的投射物无法分叉",
-      "zh_TW": "右手戒指欄位：法術的投射物無法分岔"
+      "zh_TW": "右手戒指欄位：法術的投射物無法分裂"
     },
     "Rigwald's Ferocity": {
       "zh_CN": "瑞佛的凶猛",
@@ -70782,7 +70938,7 @@
       "zh_TW": "符鍛保衛之盔"
     },
     "Runeforged Warden Bow": {
-      "zh_CN": "符锻监守弓",
+      "zh_CN": "Runeforged Warden Bow",
       "zh_TW": "符鍛守護者之弓"
     },
     "Runeforged Warlock Leggings": {
@@ -71797,7 +71953,7 @@
       "zh_CN": "符文结界回复速度翻倍",
       "zh_TW": "Runic Ward Regeneration Rate is doubled"
     },
-    "Runic Ward recovery can can Overflow maximum Runic Ward": {
+    "Runic Ward recovery can Overflow maximum Runic Ward": {
       "zh_CN": "符文结界回复可溢出符文结界上限",
       "zh_TW": "符文保護恢復可以溢出最大符文保護"
     },
@@ -71881,6 +72037,10 @@
       "zh_CN": "献祭最多 10 瓦尔宝珠 个，完成试炼时可获得双倍返还",
       "zh_TW": "獻祭最多10 顆瓦爾寶珠，以在完成試煉時獲得兩倍獎勵"
     },
+    "Sacrifice up to 2 Divine Orbs to receive double on Trial completion": {
+      "zh_CN": "献祭最多 3 神圣石 个，完成试炼时可获得双倍返还",
+      "zh_TW": "獻祭最多2 顆神聖石，以在完成試煉時獲得兩倍獎勵"
+    },
     "Sacrifice up to 20 Arcanist's Etchers to receive double on Trial completion": {
       "zh_CN": "献祭最多 20 奥术师的铭刻 个，完成试炼时可获得双倍返还",
       "zh_TW": "獻祭最多20 個奧術師刻具，以在完成試煉時獲得兩倍獎勵"
@@ -71908,10 +72068,6 @@
     "Sacrifice up to 20 Regal Orbs to receive double on Trial completion": {
       "zh_CN": "献祭最多 20 富豪石 个，完成试炼时可获得双倍返还",
       "zh_TW": "獻祭最多20 顆富豪石，以在完成試煉時獲得兩倍獎勵"
-    },
-    "Sacrifice up to 3 Divine Orbs to receive double on Trial completion": {
-      "zh_CN": "献祭最多 3 神圣石 个，完成试炼时可获得双倍返还",
-      "zh_TW": "獻祭最多3 顆神聖石，以在完成試煉時獲得兩倍獎勵"
     },
     "Sacrifice up to 3 Orb of Annulments to receive double on Trial completion": {
       "zh_CN": "献祭最多 3 剥离石 个，完成试炼时可获得双倍返还",
@@ -72051,7 +72207,7 @@
     },
     "Scimitar": {
       "zh_CN": "弯刀",
-      "zh_TW": "彎刀"
+      "zh_TW": "短彎刀"
     },
     "Scoundrel Armour": {
       "zh_CN": "恶棍护甲",
@@ -72831,11 +72987,11 @@
     },
     "Small Passive Skills in Radius also grant Banner Skills have #% increased Area of Effect": {
       "zh_CN": "范围内的小型天赋同时提供 旗帜技能的效果范围提高 #%",
-      "zh_TW": "範圍內小型天賦也會賦予 旗幟技能增加#%範圍效果"
+      "zh_TW": "範圍內小型天賦也會賦予 鬥旗技能增加#%範圍效果"
     },
     "Small Passive Skills in Radius also grant Banner Skills have #% increased Duration": {
       "zh_CN": "范围内的小型天赋同时提供 旗帜技能的持续时间提高 #%",
-      "zh_TW": "範圍內小型天賦也會賦予 旗幟技能增加#%持續時間"
+      "zh_TW": "範圍內小型天賦也會賦予 鬥旗技能增加#%持續時間"
     },
     "Small Passive Skills in Radius also grant Break #% increased Armour": {
       "zh_CN": "范围内的小型天赋同时提供 粉碎的护甲提高 #%",
@@ -72887,7 +73043,7 @@
     },
     "Small Passive Skills in Radius also grant Mark Skills have #% increased Use Speed": {
       "zh_CN": "范围内的小型天赋同时提供 印记技能的施法速度提高 #%",
-      "zh_TW": "範圍內小型天賦也會賦予 增加#%印記技能的施放速度"
+      "zh_TW": "範圍內小型天賦也會賦予 增加#%印記技能的施法速度"
     },
     "Small Passive Skills in Radius also grant Minions deal #% increased Damage": {
       "zh_CN": "范围内的小型天赋同时提供 召唤生物的伤害提高 #%",
@@ -73542,11 +73698,11 @@
       "zh_TW": "極速苦痛 I"
     },
     "Swift Affliction II": {
-      "zh_CN": "Swift Affliction II",
+      "zh_CN": "极速腐化 II",
       "zh_TW": "極速苦痛 II"
     },
     "Swift Affliction III": {
-      "zh_CN": "Swift Affliction III",
+      "zh_CN": "极速腐化 III",
       "zh_TW": "極速苦痛 III"
     },
     "Swift Alloy": {
@@ -73570,12 +73726,16 @@
       "zh_TW": "劍刃長矛"
     },
     "Syzygy": {
-      "zh_CN": "Syzygy",
+      "zh_CN": "朔望",
       "zh_TW": "朔望"
     },
     "Tablet": {
       "zh_CN": "石板",
       "zh_TW": "碑牌"
+    },
+    "Tacati's Ire": {
+      "zh_CN": "塔卡提之怒",
+      "zh_TW": "特卡蒂的憤怒"
     },
     "Tacati's Soul Core of Affliction": {
       "zh_CN": "塔卡提的折磨灵核",
@@ -73602,7 +73762,7 @@
       "zh_TW": "魔符"
     },
     "Tame Beast": {
-      "zh_CN": "Tame Beast",
+      "zh_CN": "驯服野兽",
       "zh_TW": "馴獸"
     },
     "Tangmazu's Reliquary Key": {
@@ -73649,6 +73809,10 @@
       "zh_CN": "塔萨里奥胫甲",
       "zh_TW": "塔薩里奧脛甲"
     },
+    "Tasalio's Rhythm": {
+      "zh_CN": "塔萨里奥的律动",
+      "zh_TW": "塔薩里奧的律動"
+    },
     "Tattered Robe": {
       "zh_CN": "破烂长袍",
       "zh_TW": "殘破長袍"
@@ -73656,6 +73820,10 @@
     "Taut Crossbow": {
       "zh_CN": "绷紧战弩",
       "zh_TW": "緊繃十字弓"
+    },
+    "Tawhoa's Tending": {
+      "zh_CN": "塔赫亚的照料",
+      "zh_TW": "塔赫亞的照顧"
     },
     "Tawhoan Greatclub": {
       "zh_CN": "塔赫亚巨棍",
@@ -73666,7 +73834,7 @@
       "zh_TW": "塔赫亞塔盾"
     },
     "Tear": {
-      "zh_CN": "Tear",
+      "zh_CN": "撕扯",
       "zh_TW": "撕裂"
     },
     "Tearing Flail": {
@@ -73677,8 +73845,12 @@
       "zh_CN": "特克罗的凝视",
       "zh_TW": "特克羅德的邪眼"
     },
+    "Tecrod's Revenge": {
+      "zh_CN": "特克罗的复仇",
+      "zh_TW": "特克羅德的復仇"
+    },
     "Tectonic Slams": {
-      "zh_CN": "Tectonic Slams",
+      "zh_CN": "破釜一击",
       "zh_TW": "震波猛擊"
     },
     "Tempered Mitts": {
@@ -73710,7 +73882,7 @@
       "zh_TW": "神廟碑牌"
     },
     "Temporal Chains": {
-      "zh_CN": "Temporal Chains",
+      "zh_CN": "时空锁链",
       "zh_TW": "時空鎖鏈"
     },
     "Temporary Minion Skills have # to Limit of Minions summoned": {
@@ -73959,14 +74131,14 @@
     },
     "Thorns can Retaliate against all Hits": {
       "zh_CN": "荆棘可以反击所有击中",
-      "zh_TW": "荊棘可以對所有擊中給予反擊"
+      "zh_TW": "荊棘可以對所有擊中賦予反擊"
     },
     "Thornskin I": {
-      "zh_CN": "Thornskin I",
+      "zh_CN": "荆棘皮肤 I",
       "zh_TW": "荊棘之皮 I"
     },
     "Thornskin II": {
-      "zh_CN": "Thornskin II",
+      "zh_CN": "荆棘皮肤 II",
       "zh_TW": "荊棘之皮 II"
     },
     "Thrashing Vines": {
@@ -73978,11 +74150,11 @@
       "zh_TW": "縫紉輕鞋"
     },
     "Thrill of the Kill": {
-      "zh_CN": "Thrill of the Kill",
+      "zh_CN": "杀戮快感",
       "zh_TW": "殺戮渴望"
     },
     "Thrill of the Kill II": {
-      "zh_CN": "Thrill of the Kill II",
+      "zh_CN": "杀戮快感II",
       "zh_TW": "殺戮渴望II"
     },
     "Thrud's Might": {
@@ -73994,7 +74166,7 @@
       "zh_TW": "天雷魔符"
     },
     "Thunderous Leap": {
-      "zh_CN": "Thunderous Leap",
+      "zh_CN": "雷鸣飞跃",
       "zh_TW": "雷霆跳躍"
     },
     "Thunderstorm": {
@@ -74006,7 +74178,7 @@
       "zh_TW": "潮汐先知披肩"
     },
     "Time of Need": {
-      "zh_CN": "Time of Need",
+      "zh_CN": "紧急时刻",
       "zh_TW": "緊急時刻"
     },
     "Time-Lost Diamond": {
@@ -74030,7 +74202,7 @@
       "zh_TW": "永恆珠寶"
     },
     "Tireless": {
-      "zh_CN": "Tireless",
+      "zh_CN": "冷酷",
       "zh_TW": "孜孜不倦"
     },
     "Titan Mitts": {
@@ -74066,7 +74238,7 @@
       "zh_TW": "龍捲風"
     },
     "Tornado Shot": {
-      "zh_CN": "Tornado Shot",
+      "zh_CN": "龙卷射击",
       "zh_TW": "龍捲射擊"
     },
     "Totemic Greatclub": {
@@ -74074,11 +74246,11 @@
       "zh_TW": "圖騰巨棍棒"
     },
     "Toxic Domain": {
-      "zh_CN": "Toxic Domain",
+      "zh_CN": "毒性领域",
       "zh_TW": "毒素領域"
     },
     "Toxic Growth": {
-      "zh_CN": "Toxic Growth",
+      "zh_CN": "剧毒增生",
       "zh_TW": "毒素植栽"
     },
     "Toxic Quiver": {
@@ -74090,7 +74262,7 @@
       "zh_TW": "交易過濾"
     },
     "Trail of Caltrops": {
-      "zh_CN": "Trail of Caltrops",
+      "zh_CN": "铁蒺藜之路",
       "zh_TW": "蒺藜之徑"
     },
     "Trailblazer Armour": {
@@ -74146,7 +74318,7 @@
       "zh_TW": "樹行者輕鞋"
     },
     "Tremors": {
-      "zh_CN": "Tremors",
+      "zh_CN": "地震",
       "zh_TW": "威震"
     },
     "Tribal Bow": {
@@ -74209,8 +74381,12 @@
       "zh_CN": "托沃催化剂",
       "zh_TW": "托沃的催化劑"
     },
+    "Tul's Stillness": {
+      "zh_CN": "托沃的寂静",
+      "zh_TW": "托沃的寧靜"
+    },
     "Tumult": {
-      "zh_CN": "Tumult",
+      "zh_CN": "动乱",
       "zh_TW": "紛亂"
     },
     "Twice Corrupted": {
@@ -74250,7 +74426,7 @@
       "zh_TW": "扭曲法杖"
     },
     "Twister": {
-      "zh_CN": "Twister",
+      "zh_CN": "旋龙",
       "zh_TW": "旋風"
     },
     "Two-Handed Axe": {
@@ -74281,6 +74457,10 @@
       "zh_CN": "提扎墨脱的狂暴灵核",
       "zh_TW": "薩摩特的狂暴靈魂核心"
     },
+    "Uhtred's Augury": {
+      "zh_CN": "乌崔德的占卜",
+      "zh_TW": "烏特雷的占卜術"
+    },
     "Uhtred's Constellation": {
       "zh_CN": "乌崔德的星图",
       "zh_TW": "烏特雷的星座"
@@ -74288,6 +74468,14 @@
     "Uhtred's Crest of the Chalice": {
       "zh_CN": "乌崔德的圣杯徽记",
       "zh_TW": "烏特雷的聖杯之徽"
+    },
+    "Uhtred's Exodus": {
+      "zh_CN": "乌崔德的出走",
+      "zh_TW": "烏特雷的出走"
+    },
+    "Uhtred's Omen": {
+      "zh_CN": "乌崔德的预兆",
+      "zh_TW": "烏特雷的徵兆"
     },
     "Uhtred's Rite": {
       "zh_CN": "乌崔德仪式",
@@ -74326,7 +74514,7 @@
       "zh_TW": "終極巨劍"
     },
     "Unabating": {
-      "zh_CN": "Unabating",
+      "zh_CN": "不倦防护",
       "zh_TW": "勢頭不減"
     },
     "Unarmed": {
@@ -74334,7 +74522,7 @@
       "zh_TW": "空手"
     },
     "Unbending": {
-      "zh_CN": "Unbending",
+      "zh_CN": "不屈之心",
       "zh_TW": "永不屈服"
     },
     "Unblockable": {
@@ -74342,7 +74530,7 @@
       "zh_TW": "無法被格擋"
     },
     "Unbreakable": {
-      "zh_CN": "Unbreakable",
+      "zh_CN": "不屈不破",
       "zh_TW": "堅不可破"
     },
     "Uncut Gems": {
@@ -74538,11 +74726,11 @@
       "zh_TW": "減少#%不死召喚物的保留"
     },
     "Unearth": {
-      "zh_CN": "Unearth",
+      "zh_CN": "开掘",
       "zh_TW": "屍術矢"
     },
     "Unerring Power": {
-      "zh_CN": "Unerring Power",
+      "zh_CN": "精准之力",
       "zh_TW": "精準力量"
     },
     "Unidentified Tier": {
@@ -74586,11 +74774,11 @@
       "zh_TW": "地圖內的不穩定裂痕會在計時器填滿後再過額外一秒才崩塌"
     },
     "Unsteady Tempo": {
-      "zh_CN": "Unsteady Tempo",
+      "zh_CN": "失衡节奏",
       "zh_TW": "不穩節奏"
     },
     "Untouchable": {
-      "zh_CN": "Untouchable",
+      "zh_CN": "不可触及",
       "zh_TW": "無法觸碰"
     },
     "Unwavering Stance": {
@@ -74598,7 +74786,7 @@
       "zh_TW": "烈士意志"
     },
     "Unyielding": {
-      "zh_CN": "Unyielding",
+      "zh_CN": "不屈",
       "zh_TW": "屹立不搖"
     },
     "Up to 1 Month Ago": {
@@ -74650,31 +74838,31 @@
       "zh_TW": "將範圍升級至非常大"
     },
     "Upheaval I": {
-      "zh_CN": "Upheaval I",
+      "zh_CN": "剧变 I",
       "zh_TW": "動亂 I"
     },
     "Upheaval II": {
-      "zh_CN": "Upheaval II",
+      "zh_CN": "剧变 II",
       "zh_TW": "動亂 II"
     },
     "Upwelling I": {
-      "zh_CN": "Upwelling I",
+      "zh_CN": "升流 I",
       "zh_TW": "湧升流 I"
     },
     "Upwelling II": {
-      "zh_CN": "Upwelling II",
+      "zh_CN": "升流 II",
       "zh_TW": "湧升流 I"
     },
     "Urgent Totems I": {
-      "zh_CN": "Urgent Totems I",
+      "zh_CN": "紧急图腾 I",
       "zh_TW": "應急圖騰 I"
     },
     "Urgent Totems II": {
-      "zh_CN": "Urgent Totems II",
+      "zh_CN": "紧急图腾 II",
       "zh_TW": "應急圖騰 II"
     },
     "Urgent Totems III": {
-      "zh_CN": "Urgent Totems III",
+      "zh_CN": "紧急图腾 III",
       "zh_TW": "應急圖騰 III"
     },
     "Urn Relic": {
@@ -74684,6 +74872,10 @@
     "Uromoti's Soul Core of Attenuation": {
       "zh_CN": "武罗摩提的弱化灵核",
       "zh_TW": "烏爾摩堤的消減靈魂核心"
+    },
+    "Uruk's Smelting": {
+      "zh_CN": "厄罗克的熔炼术",
+      "zh_TW": "厄羅克的鍛鍊"
     },
     "Used when you are affected by a Slow": {
       "zh_CN": "当你受到减速影响时使用",
@@ -74757,6 +74949,10 @@
       "zh_CN": "乌尔尼多催化剂",
       "zh_TW": "烏爾尼多的催化劑"
     },
+    "Uul-Netol's Embrace": {
+      "zh_CN": "乌尔尼多的拥抱",
+      "zh_TW": "烏爾尼多的擁抱"
+    },
     "Vaal": {
       "zh_CN": "瓦尔",
       "zh_TW": "瓦爾"
@@ -74826,12 +75022,16 @@
       "zh_TW": "嗜血之刃"
     },
     "Vanguard I": {
-      "zh_CN": "Vanguard I",
+      "zh_CN": "先锋 I",
       "zh_TW": "無懼先鋒 I"
     },
     "Vanguard II": {
-      "zh_CN": "Vanguard II",
+      "zh_CN": "先锋 II",
       "zh_TW": "無懼先鋒 II"
+    },
+    "Varashta's Blessing": {
+      "zh_CN": "瓦拉煞的祝福",
+      "zh_TW": "瓦拉什塔的祝福"
     },
     "Varnished Crossbow": {
       "zh_CN": "浸漆战弩",
@@ -74866,7 +75066,7 @@
       "zh_TW": "古老星耀礦石"
     },
     "Verglas": {
-      "zh_CN": "Verglas",
+      "zh_CN": "雨淞",
       "zh_TW": "冰淞"
     },
     "Veridical Chain": {
@@ -74913,8 +75113,12 @@
       "zh_CN": "邪恶束衣",
       "zh_TW": "惡毒長袍"
     },
+    "Vilenta's Propulsion": {
+      "zh_CN": "薇伦塔之推进",
+      "zh_TW": "范尼達的奮進"
+    },
     "Vine Arrow": {
-      "zh_CN": "Vine Arrow",
+      "zh_CN": "藤缠箭",
       "zh_TW": "藤蔓箭矢"
     },
     "Viper Cap": {
@@ -74942,11 +75146,11 @@
       "zh_TW": "維生之戒"
     },
     "Vitality I": {
-      "zh_CN": "Vitality I",
+      "zh_CN": "活力 I",
       "zh_TW": "活力 I"
     },
     "Vitality II": {
-      "zh_CN": "Vitality II",
+      "zh_CN": "活力 II",
       "zh_TW": "活力 II"
     },
     "Void Flux": {
@@ -74958,7 +75162,7 @@
       "zh_TW": "速射箭袋"
     },
     "Volatile Power": {
-      "zh_CN": "Volatile Power",
+      "zh_CN": "无常之力",
       "zh_TW": "不穩定的力量"
     },
     "Volatile Wand": {
@@ -74966,15 +75170,15 @@
       "zh_TW": "失衡法杖"
     },
     "Volatility": {
-      "zh_CN": "Volatility",
+      "zh_CN": "无常",
       "zh_TW": "易爆"
     },
     "Volcanic Eruption": {
-      "zh_CN": "Volcanic Eruption",
+      "zh_CN": "熔火喷发",
       "zh_TW": "火山迸發"
     },
     "Volcanic Fissure": {
-      "zh_CN": "Volcanic Fissure",
+      "zh_CN": "火山裂缝",
       "zh_TW": "炎火脈動"
     },
     "Volcano": {
@@ -74982,7 +75186,7 @@
       "zh_TW": "火山"
     },
     "Volt": {
-      "zh_CN": "Volt",
+      "zh_CN": "电伏积聚",
       "zh_TW": "電壓"
     },
     "Voltaic Barrier": {
@@ -74994,7 +75198,7 @@
       "zh_TW": "電流擲彈"
     },
     "Voltaic Mark": {
-      "zh_CN": "Voltaic Mark",
+      "zh_CN": "流电印记",
       "zh_TW": "電流印記"
     },
     "Voltaic Staff": {
@@ -75033,8 +75237,12 @@
       "zh_CN": "弗伦的余波",
       "zh_TW": "弗倫的餘波"
     },
+    "Vruun's Inevitability": {
+      "zh_CN": "弗伦的必然",
+      "zh_TW": "弗倫的必然"
+    },
     "Vulnerability": {
-      "zh_CN": "Vulnerability",
+      "zh_CN": "脆弱",
       "zh_TW": "脆弱"
     },
     "Walking Calamity": {
@@ -75178,7 +75386,7 @@
       "zh_TW": "總督胸甲"
     },
     "Warm Blooded": {
-      "zh_CN": "Warm Blooded",
+      "zh_CN": "温热血脉",
       "zh_TW": "滿腔熱血"
     },
     "Warmonger Bow": {
@@ -75374,11 +75582,11 @@
       "zh_TW": "迴旋擊"
     },
     "Whirling Slash": {
-      "zh_CN": "Whirling Slash",
+      "zh_CN": "回旋挥斩",
       "zh_TW": "迴旋斬"
     },
     "Whirlwind Lance": {
-      "zh_CN": "Whirlwind Lance",
+      "zh_CN": "旋风投枪",
       "zh_TW": "旋風之槍"
     },
     "Whispers of Doom": {
@@ -75435,7 +75643,7 @@
     },
     "Wind Skills which can be boosted by Elemental Ground Surfaces count\nas being boosted by Chilled Ground": {
       "zh_CN": "可被元素地面效果加持的风系技能视作\n被冰缓地面加持",
-      "zh_TW": "可被元素地表強化的疾風技能視為\n受到冰緩地面強化"
+      "zh_TW": "可被元素地面強化的疾風技能視為\n受到冰緩地面強化"
     },
     "Wind Wave": {
       "zh_CN": "劲风波",
@@ -75591,7 +75799,7 @@
     },
     "You and Allies in your Presence have #% increased Cast Speed": {
       "zh_CN": "你和在场的友军的施法速度提高 #%",
-      "zh_TW": "你與處於你存在範圍中的友方增加#%施放速度"
+      "zh_TW": "你與處於你存在範圍中的友方增加#%施法速度"
     },
     "You and Allies in your Presence have #% increased Cooldown Recovery Rate": {
       "zh_CN": "你和在场的友军冷却回复速度提高 #%",
@@ -75627,7 +75835,7 @@
     },
     "You can only Socket # Ruby Jewel in this item": {
       "zh_CN": "你只能在该物品中镶嵌 # 个红玉珠宝",
-      "zh_TW": "You can only Socket # Ruby Jewel in this item"
+      "zh_TW": "你只能鑲嵌#顆紅寶石至此物品"
     },
     "You can only Socket Emerald Jewels in this item": {
       "zh_CN": "你只能在该物品中镶嵌翡翠珠宝",
