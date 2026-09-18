@@ -1490,7 +1490,7 @@ class TradeStatMappingTests(unittest.TestCase):
         self.assertEqual(
             bundle,
             {
-                "version": 6,
+                "version": 7,
                 "items": {
                     "From Nothing Diamond": {"zh_CN": "无根之源 宝钻", "zh_TW": "從無到有 鑽石"},
                     "Gold Ring": {"zh_CN": "金环", "zh_TW": "金環"},

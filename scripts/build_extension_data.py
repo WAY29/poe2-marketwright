@@ -2223,7 +2223,7 @@ def build_trade_item_localization_bundle(trade_localization: dict[str, Any]) -> 
             strings[key] = {"zh_CN": simplified, "zh_TW": traditional}
 
     return {
-        "version": 6,
+        "version": 7,
         "items": dict(sorted(items.items())),
         "stats": dict(sorted(stats.items())),
         "strings": dict(sorted(strings.items())),

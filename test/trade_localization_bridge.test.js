@@ -320,6 +320,35 @@ test("manifest starts the native item bridge before the Trade application", () =
   assert.strictEqual(bootstrap?.run_at, "document_start");
 });
 
+test("generated bundles include official Expedition Tablet stat translations", () => {
+  const data = JSON.parse(fs.readFileSync("data/affix-filter-data.json", "utf8"));
+  const native = JSON.parse(fs.readFileSync("data/trade-item-localization.json", "utf8"));
+  const statIds = [
+    "explicit.stat_1083387327",
+    "explicit.stat_1109460697",
+    "explicit.stat_1183698646",
+    "explicit.stat_1640965354",
+    "explicit.stat_181823691",
+    "explicit.stat_2852112245",
+    "explicit.stat_2905096233",
+    "explicit.stat_3039133122",
+    "explicit.stat_3520418269",
+    "explicit.stat_3653794255",
+    "explicit.stat_3871299443",
+    "explicit.stat_3963944561",
+    "explicit.stat_779964546"
+  ];
+
+  assert.strictEqual(native.version, 7);
+  for (const statId of statIds) {
+    const record = data.displayMetadata.stats[statId];
+    assert.deepStrictEqual(record.sources, { zh_CN: "exact_id", zh_TW: "exact_id" });
+    assert.notStrictEqual(record.zh_CN, record.en);
+    assert.notStrictEqual(record.zh_TW, record.en);
+    assert.deepStrictEqual(native.stats[statId], { zh_CN: record.zh_CN, zh_TW: record.zh_TW });
+  }
+});
+
 test("document-start bootstrap publishes static client text before native cache configuration", async () => {
   let source = fs.readFileSync("trade-localization-bootstrap.js", "utf8");
   source = source.replace(

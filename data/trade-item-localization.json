@@ -1,5 +1,5 @@
 {
-  "version": 6,
+  "version": 7,
   "items": {
     "Ab Aeterno Grand Cuisses": {
       "zh_CN": "无始之时 恢弘腿甲",
@@ -749,9 +749,21 @@
       "zh_CN": "阿兹里的统治 反射长杖",
       "zh_TW": "阿茲里的統御 映像長杖"
     },
+    "Atziri's Soul Core of Alacrity": {
+      "zh_CN": "阿兹里的敏捷灵核",
+      "zh_TW": "阿茲里的敏捷靈魂核心"
+    },
     "Atziri's Soul Core of Devotion": {
-      "zh_CN": "Atziris_Soul_Core_of_Devotion",
+      "zh_CN": "阿兹里的奉献灵核",
       "zh_TW": "阿茲里的奉獻靈魂核心"
+    },
+    "Atziri's Soul Core of Inoculation": {
+      "zh_CN": "阿兹里的免疫灵核",
+      "zh_TW": "阿茲里的免疫靈魂核心"
+    },
+    "Atziri's Soul Core of Vitality": {
+      "zh_CN": "阿兹里的活力灵核",
+      "zh_TW": "阿茲里的活力靈魂核心"
     },
     "Atziri's Splendour Runemastered Sacrificial Regalia": {
       "zh_CN": "阿兹里的威权 符文师匠献祭盛装",
@@ -5833,21 +5845,57 @@
       "zh_CN": "铃鸣法器",
       "zh_TW": "響聲法器"
     },
+    "Jiquani's Soul Core of Abundance": {
+      "zh_CN": "佳华尼的丰饶灵核",
+      "zh_TW": "吉卡尼的豐饒靈魂核心"
+    },
+    "Jiquani's Soul Core of Automation": {
+      "zh_CN": "佳华尼的自动灵核",
+      "zh_TW": "吉卡尼的自動化靈魂核心"
+    },
+    "Jiquani's Soul Core of Malediction": {
+      "zh_CN": "佳华尼的诅咒灵核",
+      "zh_TW": "吉卡尼的惡語靈魂核心"
+    },
+    "Jiquani's Soul Core of Munitions": {
+      "zh_CN": "佳华尼的弹药灵核",
+      "zh_TW": "吉卡尼的彈藥靈魂核心"
+    },
     "Jiquani's Soul Core of Quaking": {
-      "zh_CN": "Jiquanis_Soul_Core_of_Quaking",
+      "zh_CN": "佳华尼的震颤灵核",
       "zh_TW": "吉卡尼的震顫靈魂核心"
     },
     "Jiquani's Soul Core of Radiance": {
-      "zh_CN": "Jiquanis_Soul_Core_of_Radiance",
+      "zh_CN": "佳华尼的辐照灵核",
       "zh_TW": "吉卡尼的輝耀靈魂核心"
     },
+    "Jiquani's Soul Core of Rallying": {
+      "zh_CN": "佳华尼的集结灵核",
+      "zh_TW": "吉卡尼的號召靈魂核心"
+    },
+    "Jiquani's Soul Core of Rippling": {
+      "zh_CN": "佳华尼的涟漪灵核",
+      "zh_TW": "吉卡尼的漣漪靈魂核心"
+    },
     "Jiquani's Soul Core of Severing": {
-      "zh_CN": "Jiquanis_Soul_Core_of_Severing",
+      "zh_CN": "佳华尼的切断灵核",
       "zh_TW": "吉卡尼的斷切靈魂核心"
     },
+    "Jiquani's Soul Core of Snares": {
+      "zh_CN": "佳华尼的陷阱灵核",
+      "zh_TW": "吉卡尼的陷阱靈魂核心"
+    },
     "Jiquani's Soul Core of Squalls": {
-      "zh_CN": "Jiquanis_Soul_Core_of_Squalls",
+      "zh_CN": "佳华尼的暴风灵核",
       "zh_TW": "吉卡尼的狂風靈魂核心"
+    },
+    "Jiquani's Soul Core of Targeting": {
+      "zh_CN": "佳华尼的瞄准灵核",
+      "zh_TW": "吉卡尼的索敵靈魂核心"
+    },
+    "Jiquani's Soul Core of Thundering": {
+      "zh_CN": "佳华尼的雷鸣灵核",
+      "zh_TW": "吉卡尼的雷鳴靈魂核心"
     },
     "Jiquani's Thesis": {
       "zh_CN": "佳华尼的圣典",
@@ -5886,7 +5934,7 @@
       "zh_TW": "冰霜之鏡 符煉脊狀輕盾"
     },
     "Kamasa's Orb of Sacrifice": {
-      "zh_CN": "渎神献祭宝珠",
+      "zh_CN": "卡马萨之献祭宝珠",
       "zh_TW": "卡瑪薩奉獻寶珠"
     },
     "Kamasan Tiara": {
@@ -5982,7 +6030,7 @@
       "zh_TW": "克洛爾的狩獵"
     },
     "Kopec's Orb of Sacrifice": {
-      "zh_CN": "强固献祭宝珠",
+      "zh_CN": "科佩克之献祭宝珠",
       "zh_TW": "科佩克奉獻寶珠"
     },
     "Kris Knife": {
@@ -6650,7 +6698,7 @@
       "zh_TW": "液態偏執"
     },
     "Liquid Verisium": {
-      "zh_CN": "Liquid Verisium",
+      "zh_CN": "液态维金",
       "zh_TW": "液態維里西姆"
     },
     "Living Bomb": {
@@ -11821,6 +11869,10 @@
       "zh_CN": "圣礼束衣",
       "zh_TW": "聖禮長袍"
     },
+    "Sacred Bloom": {
+      "zh_CN": "神圣之花",
+      "zh_TW": "聖綻之花"
+    },
     "Sacred Flame Shrine Sceptre": {
       "zh_CN": "神圣之火 圣地权杖",
       "zh_TW": "神聖烈焰 神殿權杖"
@@ -15254,7 +15306,7 @@
       "zh_TW": "索伏的燃焰"
     },
     "Yaomac's Orb of Sacrifice": {
-      "zh_CN": "残暴献祭宝珠",
+      "zh_CN": "约马克之献祭宝珠",
       "zh_TW": "堯馬克奉獻寶珠"
     },
     "Yoke of Suffering Bloodstone Amulet": {
@@ -15270,7 +15322,7 @@
       "zh_TW": "伊瑞的栽培 疾行者背心"
     },
     "Yugul's Orb of Sacrifice": {
-      "zh_CN": "皇家献祭宝珠",
+      "zh_CN": "尤格尔之献祭宝珠",
       "zh_TW": "伊果奉獻寶珠"
     },
     "Zaida's Longevity Ring": {
@@ -15980,7 +16032,7 @@
       "zh_TW": "配置粉碎裝置"
     },
     "crafted.stat_2954116742|14258": {
-      "zh_CN": "配置 隐秘之手",
+      "zh_CN": "配置 傀儡大师几率",
       "zh_TW": "配置魁儡大師機率"
     },
     "crafted.stat_2954116742|14265": {
@@ -18824,7 +18876,7 @@
       "zh_TW": "配置驚慌失措"
     },
     "crafted.stat_2954116742|62210": {
-      "zh_CN": "配置 无尽之舞",
+      "zh_CN": "配置 傀儡大师几率",
       "zh_TW": "配置魁儡大師機率"
     },
     "crafted.stat_2954116742|62230": {
@@ -19352,7 +19404,7 @@
       "zh_TW": "增加#%圖騰設置速度"
     },
     "crafted.stat_3377888098": {
-      "zh_CN": "技能效果持续时间提高 #%",
+      "zh_CN": "技能效果持续时间延长 #%",
       "zh_TW": "增加#%技能效果持續時間"
     },
     "crafted.stat_3384867265": {
@@ -19533,7 +19585,7 @@
     },
     "crafted.stat_541021467": {
       "zh_CN": "当你镶嵌有一颗翡翠和一颗蓝玉时，击中会使敌人疲惫",
-      "zh_TW": "若插槽中的鑲嵌碧綠翠雲和藍寶石，擊中時虛弱敵人"
+      "zh_TW": "若你的天賦樹中鑲嵌了一顆綠寶石和藍寶石，擊中時虛弱敵人"
     },
     "crafted.stat_54812069": {
       "zh_CN": "有 #% 被击中的伤害优先由你的灵体承受",
@@ -20916,7 +20968,7 @@
       "zh_TW": "增加#%在移動時使用技能的移動速度懲罰"
     },
     "desecrated.stat_2594634307": {
-      "zh_CN": "印记技能的技能效果持续时间提高 #%",
+      "zh_CN": "印记技能的技能效果持续时间延长 #%",
       "zh_TW": "印記技能增加#%技能效果持續時間"
     },
     "desecrated.stat_2601021356": {
@@ -21284,7 +21336,7 @@
       "zh_TW": "增加#%生命消耗效用"
     },
     "desecrated.stat_3113764475": {
-      "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
+      "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
       "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間"
     },
     "desecrated.stat_311641062": {
@@ -21500,7 +21552,7 @@
       "zh_TW": "玩家#%最大抗性"
     },
     "desecrated.stat_3377888098": {
-      "zh_CN": "技能效果持续时间提高 #%",
+      "zh_CN": "技能效果持续时间延长 #%",
       "zh_TW": "增加#%技能效果持續時間"
     },
     "desecrated.stat_337935900": {
@@ -22104,7 +22156,7 @@
       "zh_TW": "獲得等同於最大能量護盾#%的額外暈眩門檻"
     },
     "desecrated.stat_4162678661": {
-      "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
+      "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
       "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間"
     },
     "desecrated.stat_4173554949": {
@@ -23128,7 +23180,7 @@
       "zh_TW": "配置粉碎裝置"
     },
     "enchant.stat_2954116742|14258": {
-      "zh_CN": "配置 隐秘之手",
+      "zh_CN": "配置 傀儡大师几率",
       "zh_TW": "配置魁儡大師機率"
     },
     "enchant.stat_2954116742|14265": {
@@ -25972,7 +26024,7 @@
       "zh_TW": "配置驚慌失措"
     },
     "enchant.stat_2954116742|62210": {
-      "zh_CN": "配置 无尽之舞",
+      "zh_CN": "配置 傀儡大师几率",
       "zh_TW": "配置魁儡大師機率"
     },
     "enchant.stat_2954116742|62230": {
@@ -26444,7 +26496,7 @@
       "zh_TW": "#%火焰抗性"
     },
     "enchant.stat_3377888098": {
-      "zh_CN": "技能效果持续时间提高 #%",
+      "zh_CN": "技能效果持续时间延长 #%",
       "zh_TW": "增加#%技能效果持續時間"
     },
     "enchant.stat_3398787959": {
@@ -26915,6 +26967,10 @@
       "zh_CN": "对稀有和传奇敌人揭示弱点",
       "zh_TW": "使稀有和傳奇敵人暴露弱點"
     },
+    "explicit.stat_1109460697": {
+      "zh_CN": "地图内的先祖秘藏额外包含 1 个维金哨兵",
+      "zh_TW": "地圖中的探險含有1個額外維里西姆守望"
+    },
     "explicit.stat_111835965": {
       "zh_CN": "范围内的核心天赋同时提供 节杖的攻击速度提高 #%",
       "zh_TW": "範圍內核心天賦也會賦予 增加#%細杖攻擊速度"
@@ -27082,6 +27138,10 @@
     "explicit.stat_1181501418": {
       "zh_CN": "# 怒火上限",
       "zh_TW": "#層最大盛怒"
+    },
+    "explicit.stat_1183698646": {
+      "zh_CN": "地图内的先祖秘藏额外包含 1 个被坚冰包裹的首领",
+      "zh_TW": "地圖中的探險含有1個額外封存於冰霜中的頭目"
     },
     "explicit.stat_1185341308": {
       "zh_CN": "范围内的核心天赋同时提供 生命再生率提高 #%",
@@ -27432,7 +27492,7 @@
       "zh_TW": "你所施加的詛咒能夠影響無咒的敵人"
     },
     "explicit.stat_1367999357": {
-      "zh_CN": "每 100 点魔力上限使非吟唱法术的暴击率提高 #%",
+      "zh_CN": "每 100 点魔力上限使非吟唱技能的法术暴击几率提高 #%",
       "zh_TW": "每100最大魔力，增加#%非引導技能的法術暴擊率"
     },
     "explicit.stat_1368271171": {
@@ -28258,6 +28318,10 @@
     "explicit.stat_1816894864": {
       "zh_CN": "被你的击中冰缓的敌人受到的伤害提高，取决于冰缓强度",
       "zh_TW": "被你的擊中所冰緩的敵人根據冰緩幅度增加承受傷害"
+    },
+    "explicit.stat_181823691": {
+      "zh_CN": "地图内的先祖秘藏包含 1 个埋藏的保险箱",
+      "zh_TW": "地圖中的探險含有1個埋藏的保險箱"
     },
     "explicit.stat_1818915622": {
       "zh_CN": "被抑制的小型天赋技能还会使魔力再生率提高 #%",
@@ -29768,7 +29832,7 @@
       "zh_TW": "每個鑲嵌的插槽使全元素抗性+#%"
     },
     "explicit.stat_2594634307": {
-      "zh_CN": "印记技能的技能效果持续时间提高 #%",
+      "zh_CN": "印记技能的技能效果持续时间延长 #%",
       "zh_TW": "印記技能增加#%技能效果持續時間"
     },
     "explicit.stat_259470957": {
@@ -30136,7 +30200,7 @@
       "zh_TW": "範圍內核心天賦也會賦予 增加#%詛咒幅度"
     },
     "explicit.stat_2771095426": {
-      "zh_CN": "Gain #% of damage as Fire damage per 1% Chance to Block",
+      "zh_CN": "每 1% 格挡几率获得相当于伤害 #% 的火焰伤害",
       "zh_TW": "每擁有1%格擋率，獲得等同於#%傷害的火焰傷害"
     },
     "explicit.stat_2772033465": {
@@ -30283,6 +30347,10 @@
       "zh_CN": "范围内的核心天赋同时提供 非凡技能获得的能量提高 #%",
       "zh_TW": "範圍內核心天賦也會賦予 增加#%主要技能獲得能量"
     },
+    "explicit.stat_2852112245": {
+      "zh_CN": "地图内的先祖秘藏包含 1 个瓦尔遗物",
+      "zh_TW": "地圖中的探險含有1個瓦爾遺物"
+    },
     "explicit.stat_2853314994": {
       "zh_CN": "怒火每秒再生 #",
       "zh_TW": "每秒回復#盛怒"
@@ -30414,6 +30482,10 @@
     "explicit.stat_2901986750": {
       "zh_CN": "所有元素抗性 #%",
       "zh_TW": "#%全元素抗性"
+    },
+    "explicit.stat_2905096233": {
+      "zh_CN": "地图内的先祖秘藏怪物稀有度提高 #%",
+      "zh_TW": "增加#%地圖中的探險怪物稀有度"
     },
     "explicit.stat_2905515354": {
       "zh_CN": "击中被格挡时，你承受伤害的 #%",
@@ -30756,7 +30828,7 @@
       "zh_TW": "配置粉碎裝置"
     },
     "explicit.stat_2954116742|14258": {
-      "zh_CN": "配置 隐秘之手",
+      "zh_CN": "配置 傀儡大师几率",
       "zh_TW": "配置魁儡大師機率"
     },
     "explicit.stat_2954116742|14265": {
@@ -33600,7 +33672,7 @@
       "zh_TW": "配置驚慌失措"
     },
     "explicit.stat_2954116742|62210": {
-      "zh_CN": "配置 无尽之舞",
+      "zh_CN": "配置 傀儡大师几率",
       "zh_TW": "配置魁儡大師機率"
     },
     "explicit.stat_2954116742|62230": {
@@ -34159,6 +34231,10 @@
       "zh_CN": "被抑制的小型天赋技能还会使法术伤害提高 #%",
       "zh_TW": "被征服的小型天賦也會賦予增加#%法術傷害"
     },
+    "explicit.stat_3039133122": {
+      "zh_CN": "地图内先祖秘藏爆炸范围提高 #%",
+      "zh_TW": "增加#%地圖中探險炸藥的範圍效果"
+    },
     "explicit.stat_3040571529": {
       "zh_CN": "偏转值提高 #%",
       "zh_TW": "增加#%偏斜值"
@@ -34284,7 +34360,7 @@
       "zh_TW": "獻祭最多3 顆完美混沌石，以在完成試煉時獲得兩倍獎勵"
     },
     "explicit.stat_3076483222|61382": {
-      "zh_CN": "献祭最多 3 神圣石 个，完成试炼时可获得双倍返还",
+      "zh_CN": "献祭最多 2 神圣石 个，完成试炼时可获得双倍返还",
       "zh_TW": "獻祭最多2 顆神聖石，以在完成試煉時獲得兩倍獎勵"
     },
     "explicit.stat_3076483222|62634": {
@@ -34356,7 +34432,7 @@
       "zh_TW": "每20點智慧，攻擊附加#至#閃電傷害"
     },
     "explicit.stat_3113764475": {
-      "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
+      "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
       "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間"
     },
     "explicit.stat_3116298775": {
@@ -34860,7 +34936,7 @@
       "zh_TW": "玩家#%最大抗性"
     },
     "explicit.stat_3377888098": {
-      "zh_CN": "技能效果持续时间提高 #%",
+      "zh_CN": "技能效果持续时间延长 #%",
       "zh_TW": "增加#%技能效果持續時間"
     },
     "explicit.stat_337935900": {
@@ -35235,6 +35311,10 @@
       "zh_CN": "植物蔓生时，有 #% 的几率获得自然执政官",
       "zh_TW": "當你的植物過度生長時有#%機率獲得自然統治者"
     },
+    "explicit.stat_3520418269": {
+      "zh_CN": "维金残片生成的怪物掉落的维金数量提高 #%",
+      "zh_TW": "增加#%維里西姆遺物怪物掉落的維里西姆"
+    },
     "explicit.stat_352044736": {
       "zh_CN": "每一点怒火还会使晕眩阈值提高 #%",
       "zh_TW": "每一層盛怒也會增加#%暈眩門檻"
@@ -35369,7 +35449,7 @@
     },
     "explicit.stat_3598729471": {
       "zh_CN": "你只能在该物品中镶嵌翡翠珠宝",
-      "zh_TW": "你只能在這件物品上鑲嵌翡翠珠寶"
+      "zh_TW": "你只能在這件物品上鑲嵌綠寶石"
     },
     "explicit.stat_3602667353": {
       "zh_CN": "击中时有 #% 的几率施加曝露",
@@ -35490,6 +35570,10 @@
     "explicit.stat_3650992555": {
       "zh_CN": "你造成的减益的减速强度提高 #%",
       "zh_TW": "你施加的減益效果增加#%緩速幅度"
+    },
+    "explicit.stat_3653794255": {
+      "zh_CN": "先祖秘藏有 +#% 的溢出几率包含一个额外的维金残片",
+      "zh_TW": "探險擁有+#%滿溢機率含有額外一個維里西姆遺物"
     },
     "explicit.stat_3655769732": {
       "zh_CN": "所有技能品质 #%",
@@ -36003,6 +36087,10 @@
       "zh_CN": "敌人根据与你的距离受到命中惩罚",
       "zh_TW": "敵人對你具有視距離而定的命中懲罰"
     },
+    "explicit.stat_3871299443": {
+      "zh_CN": "地图内的维金残片有 +#% 的几率添加一个额外的符文词缀",
+      "zh_TW": "地圖中的維里西姆遺物擁有+#%機率添加一條額外符文詞綴"
+    },
     "explicit.stat_3871530702": {
       "zh_CN": "被抑制的属性天赋技能还会提供 # 点力量",
       "zh_TW": "被征服的能力值天賦也會賦予#力量"
@@ -36143,6 +36231,10 @@
       "zh_CN": "范围内的核心天赋同时提供 死亡凋零强度提高 #%",
       "zh_TW": "範圍內核心天賦也會賦予 增加#%凋零幅度"
     },
+    "explicit.stat_3937291366": {
+      "zh_CN": "有 #% 的几率为地图增加一个瓦尔灯塔传奇怪物",
+      "zh_TW": "有#%機率為地圖新增一名瓦爾烽塔傳奇怪物"
+    },
     "explicit.stat_3939216292": {
       "zh_CN": "范围内的核心天赋同时提供 魔力药剂每秒获得 # 次充能",
       "zh_TW": "範圍內核心天賦也會賦予 魔力藥劑每秒獲得#充能"
@@ -36198,6 +36290,10 @@
     "explicit.stat_3963171183": {
       "zh_CN": "受到你施加的深渊耗散影响的目标陷入致盲状态",
       "zh_TW": "受你施加的深淵耗損影響的目標被致盲"
+    },
+    "explicit.stat_3963944561": {
+      "zh_CN": "地图内最先被开掘的符文怪物将为稀有怪物",
+      "zh_TW": "地圖中首名出土的符文怪物會是稀有怪物"
     },
     "explicit.stat_3969608626": {
       "zh_CN": "未保留的魔力全满时不移除效果",
@@ -36536,7 +36632,7 @@
       "zh_TW": "獲得等同於最大能量護盾#%的額外暈眩門檻"
     },
     "explicit.stat_4162678661": {
-      "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
+      "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
       "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間"
     },
     "explicit.stat_4163076972": {
@@ -37945,7 +38041,7 @@
     },
     "explicit.stat_541021467": {
       "zh_CN": "当你镶嵌有一颗翡翠和一颗蓝玉时，击中会使敌人疲惫",
-      "zh_TW": "若插槽中的鑲嵌碧綠翠雲和藍寶石，擊中時虛弱敵人"
+      "zh_TW": "若你的天賦樹中鑲嵌了一顆綠寶石和藍寶石，擊中時虛弱敵人"
     },
     "explicit.stat_546201303": {
       "zh_CN": "从受到深渊损耗影响的目标偷取魔力的 #% 立即生效",
@@ -38351,6 +38447,10 @@
       "zh_CN": "具有地图首领的区域包含一个额外的阿兹莫里之灵",
       "zh_TW": "具有地圖頭目的地區內含1個額外的阿茲莫里魂靈"
     },
+    "explicit.stat_779964546": {
+      "zh_CN": "地图内的先祖秘藏有 +#% 的溢出几率复制符文怪物",
+      "zh_TW": "探險擁有+#%滿溢機率複製地圖中的符文怪物"
+    },
     "explicit.stat_782941180": {
       "zh_CN": "法术伤害的 #% 转化为生命偷取",
       "zh_TW": "法術傷害的#%轉化為生命偷取"
@@ -38584,7 +38684,7 @@
       "zh_TW": "Increases and Reductions to\n Cold and Fire Damage in Radius are transformed to apply to Lightning Damage"
     },
     "explicit.stat_900933517": {
-      "zh_CN": "地图中的惊悸迷雾生成的破溃之镜碎片数量提高 #%",
+      "zh_CN": "地图中的惊悸迷雾生成的破溃之镜碎片提高 #%",
       "zh_TW": "地圖中的譫妄迷霧增加#%裂鏡碎片的生成量"
     },
     "explicit.stat_905072977": {
@@ -38632,7 +38732,7 @@
       "zh_TW": "當你創造一個奉獻時，有#%機率獲得亡靈統治者"
     },
     "explicit.stat_933768533": {
-      "zh_CN": "每个镶嵌的插槽全局护甲，闪避与能量护盾提高 #%",
+      "zh_CN": "每个镶嵌的插槽使全局护甲，闪避与能量护盾提高 #%",
       "zh_TW": "每鑲嵌一個插槽，增加#%全域護甲、閃備與能量護盾"
     },
     "explicit.stat_937291386": {
@@ -39768,7 +39868,7 @@
       "zh_TW": "閃避翻滾距離#公尺"
     },
     "fractured.stat_2594634307": {
-      "zh_CN": "印记技能的技能效果持续时间提高 #%",
+      "zh_CN": "印记技能的技能效果持续时间延长 #%",
       "zh_TW": "印記技能增加#%技能效果持續時間"
     },
     "fractured.stat_2610562860": {
@@ -40798,6 +40898,10 @@
     "fractured.stat_2954116742|29762": {
       "zh_CN": "配置 刺耳呐喊",
       "zh_TW": "配置喉鳴咆哮"
+    },
+    "fractured.stat_2954116742|29800": {
+      "zh_CN": "配置 电震上限",
+      "zh_TW": "配置感電上限"
     },
     "fractured.stat_2954116742|29899": {
       "zh_CN": "配置 禁锢终结",
@@ -42612,7 +42716,7 @@
       "zh_TW": "衝刺時增加#%移動速度"
     },
     "fractured.stat_3113764475": {
-      "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
+      "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
       "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間"
     },
     "fractured.stat_3119612865": {
@@ -42796,7 +42900,7 @@
       "zh_TW": "玩家#%最大抗性"
     },
     "fractured.stat_3377888098": {
-      "zh_CN": "技能效果持续时间提高 #%",
+      "zh_CN": "技能效果持续时间延长 #%",
       "zh_TW": "增加#%技能效果持續時間"
     },
     "fractured.stat_337935900": {
@@ -43280,7 +43384,7 @@
       "zh_TW": "獲得等同於最大能量護盾#%的額外暈眩門檻"
     },
     "fractured.stat_4162678661": {
-      "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
+      "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
       "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間"
     },
     "fractured.stat_4173554949": {
@@ -43429,7 +43533,7 @@
     },
     "fractured.stat_541021467": {
       "zh_CN": "当你镶嵌有一颗翡翠和一颗蓝玉时，击中会使敌人疲惫",
-      "zh_TW": "若插槽中的鑲嵌碧綠翠雲和藍寶石，擊中時虛弱敵人"
+      "zh_TW": "若你的天賦樹中鑲嵌了一顆綠寶石和藍寶石，擊中時虛弱敵人"
     },
     "fractured.stat_548070846": {
       "zh_CN": "你处于异常状态的时间提高#%",
@@ -44512,7 +44616,7 @@
       "zh_TW": "+# 全能力"
     },
     "pseudo.pseudo_total_all_elemental_resistances": {
-      "zh_CN": "+#% 总最大元素抗性",
+      "zh_CN": "+#% 全元素抗性",
       "zh_TW": "+#% 元素抗性"
     },
     "pseudo.pseudo_total_attributes": {
@@ -44528,7 +44632,7 @@
       "zh_TW": "+#% 冰冷抗性"
     },
     "pseudo.pseudo_total_dexterity": {
-      "zh_CN": "+#% 敏捷",
+      "zh_CN": "+# 敏捷",
       "zh_TW": "+# 敏捷"
     },
     "pseudo.pseudo_total_elemental_resistance": {
@@ -44544,7 +44648,7 @@
       "zh_TW": "+#% 火焰抗性"
     },
     "pseudo.pseudo_total_intelligence": {
-      "zh_CN": "+#% 智慧",
+      "zh_CN": "+# 智慧",
       "zh_TW": "+# 智慧"
     },
     "pseudo.pseudo_total_life": {
@@ -44564,7 +44668,7 @@
       "zh_TW": "+#% 總抗性"
     },
     "pseudo.pseudo_total_strength": {
-      "zh_CN": "+#% 力量",
+      "zh_CN": "+# 力量",
       "zh_TW": "+# 力量"
     },
     "rune.stat_1004011302": {
@@ -44615,9 +44719,17 @@
       "zh_CN": "羁绊： # 怒火上限",
       "zh_TW": "Bonded: # to Maximum Rage"
     },
+    "rune.stat_1062190843": {
+      "zh_CN": "所有风暴技能宝石等级提高 #",
+      "zh_TW": "# to Level of all Storm Skill Gems"
+    },
     "rune.stat_1073847159": {
       "zh_CN": "你的装备中每镶嵌一个雕像，# 点精魂",
       "zh_TW": "你裝備中每鑲嵌一個魔偶即#精魂"
+    },
+    "rune.stat_1078570138": {
+      "zh_CN": "所有危害技能宝石等级提高 #",
+      "zh_TW": "# to Level of all Hazard Skill Gems"
     },
     "rune.stat_1083521623": {
       "zh_CN": "羁绊： 粉碎的护甲提高 #%",
@@ -44771,6 +44883,10 @@
       "zh_CN": "移动时偏转值提高 #%",
       "zh_TW": "移動時增加#%偏斜率"
     },
+    "rune.stat_138373935": {
+      "zh_CN": "每个已装备的腐化物品使混沌抗性 #%",
+      "zh_TW": "#% to Chaos Resistance for each Corrupted Item Equipped"
+    },
     "rune.stat_1386257341": {
       "zh_CN": "羁绊： # - # 物理荆棘伤害",
       "zh_TW": "命定: #至#點物理荊棘傷害"
@@ -44847,13 +44963,17 @@
       "zh_CN": "羁绊：击中时击退敌人",
       "zh_TW": "命定:擊中時會擊退敵人"
     },
+    "rune.stat_1519474779": {
+      "zh_CN": "你受到的非伤害性异常状态的效果提高 #%",
+      "zh_TW": "增加#%你身上的非傷害型異常狀態效果"
+    },
     "rune.stat_1519615863": {
       "zh_CN": "击中有 #% 的几率造成流血",
       "zh_TW": "擊中時有#%機率造成流血"
     },
     "rune.stat_1524834794": {
-      "zh_CN": "羁绊：每 # 点力量可使伤害提高 #%",
-      "zh_TW": "命定:每#點力量增加#%傷害"
+      "zh_CN": "羁绊： 每 15 点力量可使伤害提高 #%",
+      "zh_TW": "Bonded: #% increased Damage per 15 Strength"
     },
     "rune.stat_1528013281": {
       "zh_CN": "羁绊： 投射物分叉时，有 #% 的几率发射一个额外投射物",
@@ -45059,6 +45179,10 @@
       "zh_CN": "羁绊： 当你的一个召唤生物复活时，回复生命上限的 #%",
       "zh_TW": "命定: 你的其中一個召喚物復甦時，恢復#%最大生命"
     },
+    "rune.stat_1839315243": {
+      "zh_CN": "所有猛击技能宝石等级提高 #",
+      "zh_TW": "# to Level of all Slam Skill Gems"
+    },
     "rune.stat_185580205": {
       "zh_CN": "咒符每秒获得 # 次充能",
       "zh_TW": "護符每秒獲得#充能"
@@ -45151,6 +45275,10 @@
       "zh_CN": "羁绊： 死亡凋零强度提高 #%",
       "zh_TW": "命定: 增加#%凋零幅度"
     },
+    "rune.stat_1992191903": {
+      "zh_CN": "# 所有印记技能等级",
+      "zh_TW": "#所有印記技能等級"
+    },
     "rune.stat_1995345015": {
       "zh_CN": "获得等同于该武器伤害上限 #% 的符文结界上限",
       "zh_TW": "獲得等同於此武器最大傷害#%的最大符文保護"
@@ -45235,6 +45363,14 @@
       "zh_CN": "羁绊： 敌人击中你的伤害有 #% 的几率不幸",
       "zh_TW": "命定: 敵人擊中你的傷害有#%機率視為帶來厄運"
     },
+    "rune.stat_2139847597": {
+      "zh_CN": "腐化必定会改变",
+      "zh_TW": "汙染的結果總會是改變"
+    },
+    "rune.stat_2148999925": {
+      "zh_CN": "所有战吼技能宝石等级提高 #",
+      "zh_TW": "#全部戰吼技能寶石等級"
+    },
     "rune.stat_2153364323": {
       "zh_CN": "# 智慧需求",
       "zh_TW": "#點智慧需求"
@@ -45259,6 +45395,10 @@
       "zh_CN": "#% 的护甲同样作用于闪电伤害",
       "zh_TW": "#%的護甲值也會套用至閃電傷害"
     },
+    "rune.stat_2203195791": {
+      "zh_CN": "每有一件已装备的腐化物品，技能速度提高 #%",
+      "zh_TW": "#% increased Skill Speed for each Corrupted Item Equipped"
+    },
     "rune.stat_2211478554": {
       "zh_CN": "若你可以获得狂怒球，则在场的友军直接获得相应的能量球",
       "zh_TW": "如果你會獲得一顆狂怒球，改為由你存在中的友方獲得該能量球"
@@ -45282,6 +45422,10 @@
     "rune.stat_2246411426": {
       "zh_CN": "羁绊： 生命上限提高 #%",
       "zh_TW": "命定: 增加#%最大生命"
+    },
+    "rune.stat_2247017114": {
+      "zh_CN": "每件已装备的被腐化物品使精魂提高 #%",
+      "zh_TW": "每裝備一件已汙染物品，即增加#%精魂"
     },
     "rune.stat_2248594298": {
       "zh_CN": "羁绊： 你的无常被引爆时，你会重新获得等量的无常",
@@ -45319,9 +45463,17 @@
       "zh_CN": "你能获得召唤生物攻击速度的增强与减弱效果",
       "zh_TW": "召喚物攻擊速度增減也會影響你"
     },
+    "rune.stat_2296009672": {
+      "zh_CN": "所有植物技能宝石等级提高 #",
+      "zh_TW": "#全部植物技能寶石等級"
+    },
     "rune.stat_2301852600": {
       "zh_CN": "对被击败的敌人 2 米内的敌人造成相当于溢出伤害 #% 的伤害",
       "zh_TW": "對被擊殺敵人2公尺內的敵人造成等同於溢出傷害#%的傷害"
+    },
+    "rune.stat_2305301734": {
+      "zh_CN": "所有打击技能宝石等级提高 #",
+      "zh_TW": "#全部風暴技能寶石等級"
     },
     "rune.stat_2310741722": {
       "zh_CN": "药剂的生命和魔力回复提高 #%",
@@ -45338,6 +45490,10 @@
     "rune.stat_2336012075": {
       "zh_CN": "羁绊： 魔力消耗效能提高 #%",
       "zh_TW": "命定: 增加#%魔力消耗效用"
+    },
+    "rune.stat_2336703514": {
+      "zh_CN": "所有图腾主动技能石等级 #",
+      "zh_TW": "#全部圖騰技能寶石的等級"
     },
     "rune.stat_2339757871": {
       "zh_CN": "能量护盾充能率提高 #%",
@@ -45430,6 +45586,10 @@
     "rune.stat_2481353198": {
       "zh_CN": "格挡几率提高 #% (区域)",
       "zh_TW": "增加#%格擋率 (部分)"
+    },
+    "rune.stat_2487305362": {
+      "zh_CN": "你造成的中毒强度提高 #%",
+      "zh_TW": "增加#%你所施加之中毒的幅度"
     },
     "rune.stat_2502507413": {
       "zh_CN": "羁绊： 火焰伤害提高 #%",
@@ -45839,6 +45999,10 @@
       "zh_CN": "魔力回复同样作用于符文结界",
       "zh_TW": "來自回復的魔力恢復也會套用於符文保護"
     },
+    "rune.stat_3148103963": {
+      "zh_CN": "所有新星技能宝石等级提高 #",
+      "zh_TW": "#全部新星技能寶石等級"
+    },
     "rune.stat_3151560620": {
       "zh_CN": "在场每有一种不同的伙伴，伤害提高 #%",
       "zh_TW": "你存在範圍中每有一種盟友即增加#%傷害"
@@ -45886,6 +46050,10 @@
     "rune.stat_3266426611": {
       "zh_CN": "羁绊： 荆棘伤害提高 #%",
       "zh_TW": "命定: 增加#%荊棘傷害"
+    },
+    "rune.stat_3268281424": {
+      "zh_CN": "所有榴弹技能宝石等级提高 #",
+      "zh_TW": "#全部擲彈技能寶石等級"
     },
     "rune.stat_326965591": {
       "zh_CN": "霸体",
@@ -45980,7 +46148,7 @@
       "zh_TW": "Bonded: #% increased Ignite Duration on Enemies"
     },
     "rune.stat_3377888098": {
-      "zh_CN": "技能效果持续时间提高 #%",
+      "zh_CN": "技能效果持续时间延长 #%",
       "zh_TW": "增加#%技能效果持續時間"
     },
     "rune.stat_3378643287": {
@@ -46307,6 +46475,10 @@
       "zh_CN": "该装备精魂提高 #%",
       "zh_TW": "增加#%精魂"
     },
+    "rune.stat_3985867204": {
+      "zh_CN": "定身持续时间提高 #%",
+      "zh_TW": "#% increased Pin duration"
+    },
     "rune.stat_3986710072": {
       "zh_CN": "羁绊： 狂怒球数量上限 #",
       "zh_TW": "命定: #最大狂怒球數量"
@@ -46410,6 +46582,10 @@
     "rune.stat_4168500604": {
       "zh_CN": "羁绊： 药剂的生命和魔力回复提高 #%",
       "zh_TW": "命定: 增加#%藥劑的生命和魔力恢復"
+    },
+    "rune.stat_4169430079": {
+      "zh_CN": "每已装备一件腐化物品，生命上限提高 #%",
+      "zh_TW": "每一個已裝備的已汙染物品，增加#%最大生命"
     },
     "rune.stat_4200448078": {
       "zh_CN": "当你在场时，伙伴获得 #% 的伤害作为额外随机元素伤害",
@@ -46587,6 +46763,10 @@
       "zh_CN": "低血时移动速度提高 #%",
       "zh_TW": "增加#%貧血狀態時，移動速度"
     },
+    "rune.stat_653358410": {
+      "zh_CN": "所有风系技能宝石等级提高 #",
+      "zh_TW": "#全部疾風技能寶石等級"
+    },
     "rune.stat_666077204": {
       "zh_CN": "伙伴的攻击速度提高 #%",
       "zh_TW": "增加#%盟友的攻擊速度"
@@ -46632,7 +46812,7 @@
       "zh_TW": "允許後綴#"
     },
     "rune.stat_726496846": {
-      "zh_CN": "镶嵌在该物品上的雕像获得其自身的绑定词缀的强化效果",
+      "zh_CN": "镶嵌在该物品上的雕像获得其自身的羁绊词缀的强化效果",
       "zh_TW": "鑲嵌在此物品中的魔偶獲得其命定詞綴的加成效果"
     },
     "rune.stat_731403740": {
@@ -46690,6 +46870,10 @@
     "rune.stat_774059442": {
       "zh_CN": "# 符文结界上限",
       "zh_TW": "#最大符文保護"
+    },
+    "rune.stat_776287420": {
+      "zh_CN": "所有捷技能宝石等级提高 #",
+      "zh_TW": "# to Level of all Herald Skill Gems"
     },
     "rune.stat_782230869": {
       "zh_CN": "你造成的非伤害性异常状态强度提高 #%",
@@ -46832,7 +47016,7 @@
       "zh_TW": "命定: #%全元素抗性"
     },
     "rune.stat_967155385": {
-      "zh_CN": "若你近期没有偏转击中，避免 #% 的\n偏转击中伤害",
+      "zh_CN": "若你近期没有受到偏转击中，避免 #% 的\n偏转击中伤害",
       "zh_TW": "若你近期沒有偏斜擊中，\n避免#%來自偏斜擊中的傷害"
     },
     "rune.stat_96906928": {
@@ -46858,6 +47042,10 @@
     "rune.stat_98977150": {
       "zh_CN": "苦痛灵曲",
       "zh_TW": "苦痛靈曲"
+    },
+    "rune.stat_995044379": {
+      "zh_CN": "已装备的头盔每有 3 点物品护甲，魔力上限 #",
+      "zh_TW": "# to maximum Mana per 3 Item Armour on Equipped Helmet"
     },
     "sanctum.sanctum_effect_0": {
       "zh_CN": "使用",
@@ -47400,7 +47588,7 @@
       "zh_TW": "#%全部抗性"
     },
     "sanctum.stat_3134588943": {
-      "zh_CN": "被敌人近战击中时避免失去荣誉的几率提高 #%",
+      "zh_CN": "被敌人近战击中时避免失去坚毅的几率提高 #%",
       "zh_TW": "增加#%避免因敵人近戰擊中而失去榮譽的機率"
     },
     "sanctum.stat_315260783": {
@@ -48345,6 +48533,18 @@
       "zh_CN": "所有火焰法术技能等级 #",
       "zh_TW": "全部火焰法術技能等級#"
     },
+    "# to Level of all Grenade Skill Gems": {
+      "zh_CN": "所有榴弹技能宝石等级提高 #",
+      "zh_TW": "#全部擲彈技能寶石等級"
+    },
+    "# to Level of all Hazard Skill Gems": {
+      "zh_CN": "所有危害技能宝石等级提高 #",
+      "zh_TW": "# to Level of all Hazard Skill Gems"
+    },
+    "# to Level of all Herald Skill Gems": {
+      "zh_CN": "所有捷技能宝石等级提高 #",
+      "zh_TW": "# to Level of all Herald Skill Gems"
+    },
     "# to Level of all Lightning Skills": {
       "zh_CN": "所有闪电技能等级 #",
       "zh_TW": "全部閃電技能等級#"
@@ -48365,9 +48565,17 @@
       "zh_CN": "所有召唤生物技能等级 #",
       "zh_TW": "全部召喚物技能等級#"
     },
+    "# to Level of all Nova Skill Gems": {
+      "zh_CN": "所有新星技能宝石等级提高 #",
+      "zh_TW": "#全部新星技能寶石等級"
+    },
     "# to Level of all Physical Spell Skills": {
       "zh_CN": "所有物理法术技能等级 #",
       "zh_TW": "全部物理法術技能等級#"
+    },
+    "# to Level of all Plant Skill Gems": {
+      "zh_CN": "所有植物技能宝石等级提高 #",
+      "zh_TW": "#全部植物技能寶石等級"
     },
     "# to Level of all Projectile Skills": {
       "zh_CN": "所有投射物技能等级 #",
@@ -48377,9 +48585,33 @@
       "zh_CN": "所有技能等级 #",
       "zh_TW": "全部技能寶石等級#"
     },
+    "# to Level of all Slam Skill Gems": {
+      "zh_CN": "所有猛击技能宝石等级提高 #",
+      "zh_TW": "# to Level of all Slam Skill Gems"
+    },
     "# to Level of all Spell Skills": {
       "zh_CN": "所有法术技能等级 #",
       "zh_TW": "全部法術技能等級#"
+    },
+    "# to Level of all Storm Skill Gems": {
+      "zh_CN": "所有风暴技能宝石等级提高 #",
+      "zh_TW": "# to Level of all Storm Skill Gems"
+    },
+    "# to Level of all Strike Skill Gems": {
+      "zh_CN": "所有打击技能宝石等级提高 #",
+      "zh_TW": "#全部風暴技能寶石等級"
+    },
+    "# to Level of all Totem Skill Gems": {
+      "zh_CN": "所有图腾主动技能石等级 #",
+      "zh_TW": "#全部圖騰技能寶石的等級"
+    },
+    "# to Level of all Warcry Skill Gems": {
+      "zh_CN": "所有战吼技能宝石等级提高 #",
+      "zh_TW": "#全部戰吼技能寶石等級"
+    },
+    "# to Level of all Wind Skill Gems": {
+      "zh_CN": "所有风系技能宝石等级提高 #",
+      "zh_TW": "#全部疾風技能寶石等級"
     },
     "# to Limit for Elemental Skills": {
       "zh_CN": "元素技能上限 #",
@@ -48484,6 +48716,10 @@
     "# to maximum Mana per 2 Item Energy Shield on Equipped Helmet": {
       "zh_CN": "已装备头盔每有 2 点物品能量护盾，魔力上限 #",
       "zh_TW": "已裝備的頭盔每擁有2物品能量護盾，#最大魔力"
+    },
+    "# to maximum Mana per 3 Item Armour on Equipped Helmet": {
+      "zh_CN": "已装备的头盔每有 3 点物品护甲，魔力上限 #",
+      "zh_TW": "# to maximum Mana per 3 Item Armour on Equipped Helmet"
     },
     "# to maximum Mana per Socket filled": {
       "zh_CN": "每个镶嵌的插槽使魔力上限 #",
@@ -48720,6 +48956,10 @@
     "#% chance to Poison on Hit with this weapon": {
       "zh_CN": "此武器击中时有 #% 的几率使目标中毒",
       "zh_TW": "用此武器擊中時有#%機率造成中毒"
+    },
+    "#% chance to add a Vaal Beacon Unique Monster to the Map": {
+      "zh_CN": "有 #% 的几率为地图增加一个瓦尔灯塔传奇怪物",
+      "zh_TW": "有#%機率為地圖新增一名瓦爾烽塔傳奇怪物"
     },
     "#% chance to avoid Projectiles": {
       "zh_CN": "#% 的几率免疫投射物",
@@ -49389,6 +49629,10 @@
       "zh_CN": "含有被腐化的稀有珠宝的\n珠宝插槽天赋效果提高 #%",
       "zh_TW": "增加#%含有已汙染稀有珠寶的\n珠寶插槽天賦效果"
     },
+    "#% increased Effect of Non-Damaging Ailments on you": {
+      "zh_CN": "你受到的非伤害性异常状态的效果提高 #%",
+      "zh_TW": "增加#%你身上的非傷害型異常狀態效果"
+    },
     "#% increased Effect of Notable Passive Skills in Radius": {
       "zh_CN": "范围内的核心天赋效果提高 #%",
       "zh_TW": "增加#%範圍內核心天賦的效果"
@@ -49497,6 +49741,10 @@
       "zh_CN": "闪避与能量护盾提高 #%",
       "zh_TW": "增加#%閃避和能量護盾"
     },
+    "#% increased Expedition Explosive Area of Effect in Map": {
+      "zh_CN": "地图内先祖秘藏爆炸范围提高 #%",
+      "zh_TW": "增加#%地圖中探險炸藥的範圍效果"
+    },
     "#% increased Expedition Explosive Placement Range": {
       "zh_CN": "先祖秘藏炸药放置范围提高 #%",
       "zh_TW": "#%增加包含的探險放置距離"
@@ -49504,6 +49752,10 @@
     "#% increased Expedition Explosive Radius": {
       "zh_CN": "先祖秘藏爆炸范围提高 #%",
       "zh_TW": "#%增加包含的探險爆炸範圍"
+    },
+    "#% increased Expedition Monster Rarity in Map": {
+      "zh_CN": "地图内的先祖秘藏怪物稀有度提高 #%",
+      "zh_TW": "增加#%地圖中的探險怪物稀有度"
     },
     "#% increased Explicit Chaos Modifier magnitudes": {
       "zh_CN": "外延混沌词缀增幅提高 #%",
@@ -49602,7 +49854,7 @@
       "zh_TW": "增加#%全域護甲、閃避、和能量護盾"
     },
     "#% increased Global Armour, Evasion and Energy Shield per Socket filled": {
-      "zh_CN": "每个镶嵌的插槽全局护甲，闪避与能量护盾提高 #%",
+      "zh_CN": "每个镶嵌的插槽使全局护甲，闪避与能量护盾提高 #%",
       "zh_TW": "每鑲嵌一個插槽，增加#%全域護甲、閃備與能量護盾"
     },
     "#% increased Global Evasion Rating when on Low Life": {
@@ -49977,6 +50229,10 @@
       "zh_CN": "定身积蓄值提高 #%",
       "zh_TW": "增加#%釘身累積"
     },
+    "#% increased Pin duration": {
+      "zh_CN": "定身持续时间提高 #%",
+      "zh_TW": "#% increased Pin duration"
+    },
     "#% increased Poison Duration": {
       "zh_CN": "中毒持续时间提高 #%",
       "zh_TW": "增加#%中毒持續時間"
@@ -50134,7 +50390,7 @@
       "zh_TW": "增加#%感電持續時間"
     },
     "#% increased Skill Effect Duration": {
-      "zh_CN": "技能效果持续时间提高 #%",
+      "zh_CN": "技能效果持续时间延长 #%",
       "zh_TW": "增加#%技能效果持續時間"
     },
     "#% increased Skill Effect Duration with Plant Skills": {
@@ -50144,6 +50400,10 @@
     "#% increased Skill Speed": {
       "zh_CN": "技能速度提高 #%",
       "zh_TW": "增加#%技能速度"
+    },
+    "#% increased Skill Speed for each Corrupted Item Equipped": {
+      "zh_CN": "每有一件已装备的腐化物品，技能速度提高 #%",
+      "zh_TW": "#% increased Skill Speed for each Corrupted Item Equipped"
     },
     "#% increased Skill Speed if you've consumed a Frenzy Charge Recently": {
       "zh_CN": "若你近期消耗过狂怒球，技能速度提高 #%",
@@ -50212,6 +50472,10 @@
     "#% increased Spirit Reservation Efficiency of Skills": {
       "zh_CN": "技能的精魂保留效能提高 #%",
       "zh_TW": "技能增加#%精魂保留效用"
+    },
+    "#% increased Spirit for each Corrupted Item Equipped": {
+      "zh_CN": "每件已装备的被腐化物品使精魂提高 #%",
+      "zh_TW": "每裝備一件已汙染物品，即增加#%精魂"
     },
     "#% increased Spirit per socketed Grand Spectrum": {
       "zh_CN": "每个镶嵌的聚光之石使精魂提高 #%",
@@ -50390,7 +50654,7 @@
       "zh_TW": "增加#%感電機率"
     },
     "#% increased chance to avoid Honour loss from Enemy Melee Hits": {
-      "zh_CN": "被敌人近战击中时避免失去荣誉的几率提高 #%",
+      "zh_CN": "被敌人近战击中时避免失去坚毅的几率提高 #%",
       "zh_TW": "增加#%避免因敵人近戰擊中而失去榮譽的機率"
     },
     "#% increased chance to inflict Ailments": {
@@ -50892,6 +51156,10 @@
     "#% to Chaos Resistance": {
       "zh_CN": "混沌抗性 #%",
       "zh_TW": "#%混沌抗性"
+    },
+    "#% to Chaos Resistance for each Corrupted Item Equipped": {
+      "zh_CN": "每个已装备的腐化物品使混沌抗性 #%",
+      "zh_TW": "#% to Chaos Resistance for each Corrupted Item Equipped"
     },
     "#% to Chaos Resistance per Socket filled": {
       "zh_CN": "每个镶嵌的插槽使混沌抗性 #%",
@@ -52038,15 +52306,15 @@
       "zh_TW": "+# 全能力"
     },
     "+# total to Dexterity": {
-      "zh_CN": "+#% 敏捷",
+      "zh_CN": "+# 敏捷",
       "zh_TW": "+# 敏捷"
     },
     "+# total to Intelligence": {
-      "zh_CN": "+#% 智慧",
+      "zh_CN": "+# 智慧",
       "zh_TW": "+# 智慧"
     },
     "+# total to Strength": {
-      "zh_CN": "+#% 力量",
+      "zh_CN": "+# 力量",
       "zh_TW": "+# 力量"
     },
     "+# total to all Attributes": {
@@ -52086,7 +52354,7 @@
       "zh_TW": "+#% 閃電抗性"
     },
     "+#% total to all Elemental Resistances": {
-      "zh_CN": "+#% 总最大元素抗性",
+      "zh_CN": "+#% 全元素抗性",
       "zh_TW": "+#% 元素抗性"
     },
     "+1 to Armour per Strength": {
@@ -54961,6 +55229,10 @@
       "zh_CN": "配置 肺部穿刺",
       "zh_TW": "配置肺部破壞"
     },
+    "Allocates Puppet Master chance": {
+      "zh_CN": "配置 傀儡大师几率",
+      "zh_TW": "配置魁儡大師機率"
+    },
     "Allocates Pure Chaos": {
       "zh_CN": "配置 纯粹混沌",
       "zh_TW": "配置全然混沌"
@@ -56929,9 +57201,21 @@
       "zh_CN": "阿兹里的焦躁",
       "zh_TW": "阿茲里的不耐"
     },
+    "Atziri's Soul Core of Alacrity": {
+      "zh_CN": "阿兹里的敏捷灵核",
+      "zh_TW": "阿茲里的敏捷靈魂核心"
+    },
     "Atziri's Soul Core of Devotion": {
-      "zh_CN": "Atziris_Soul_Core_of_Devotion",
+      "zh_CN": "阿兹里的奉献灵核",
       "zh_TW": "阿茲里的奉獻靈魂核心"
+    },
+    "Atziri's Soul Core of Inoculation": {
+      "zh_CN": "阿兹里的免疫灵核",
+      "zh_TW": "阿茲里的免疫靈魂核心"
+    },
+    "Atziri's Soul Core of Vitality": {
+      "zh_CN": "阿兹里的活力灵核",
+      "zh_TW": "阿茲里的活力靈魂核心"
     },
     "Augment": {
       "zh_CN": "增幅器",
@@ -57622,8 +57906,8 @@
       "zh_TW": "命定: 每對敵人施加一種元素異常狀態，增加#%傷害"
     },
     "Bonded: #% increased Damage per 15 Strength": {
-      "zh_CN": "羁绊：每 # 点力量可使伤害提高 #%",
-      "zh_TW": "命定:每#點力量增加#%傷害"
+      "zh_CN": "羁绊： 每 15 点力量可使伤害提高 #%",
+      "zh_TW": "Bonded: #% increased Damage per 15 Strength"
     },
     "Bonded: #% increased Damage while Shapeshifted": {
       "zh_CN": "羁绊： 变形时伤害提高 #%",
@@ -58366,7 +58650,7 @@
       "zh_TW": "分岔裂縫 II"
     },
     "Breach": {
-      "zh_CN": "深渊",
+      "zh_CN": "裂隙",
       "zh_TW": "裂痕聯盟"
     },
     "Breach Hives in Map have an additional wave of Hiveborn Monsters": {
@@ -59525,6 +59809,10 @@
       "zh_CN": "腐化战吼 II",
       "zh_TW": "汙染戰吼 II"
     },
+    "Corrupting will always result in change": {
+      "zh_CN": "腐化必定会改变",
+      "zh_TW": "汙染的結果總會是改變"
+    },
     "Corsair Cap": {
       "zh_CN": "海贼帽",
       "zh_TW": "海盜便帽"
@@ -60031,7 +60319,7 @@
     },
     "Debilitate Enemies on Hit while you have an Emerald and a Sapphire socketed in your tree": {
       "zh_CN": "当你镶嵌有一颗翡翠和一颗蓝玉时，击中会使敌人疲惫",
-      "zh_TW": "若插槽中的鑲嵌碧綠翠雲和藍寶石，擊中時虛弱敵人"
+      "zh_TW": "若你的天賦樹中鑲嵌了一顆綠寶石和藍寶石，擊中時虛弱敵人"
     },
     "Debuffs on you expire #% faster": {
       "zh_CN": "你身上的减益消失速度加快 #%",
@@ -60145,8 +60433,8 @@
       "zh_CN": "区域内的惊悸迷雾生成的破溃之镜数量提高 #%",
       "zh_TW": "增加#%區域中譫妄之霧產生的破裂之鏡"
     },
-    "Delirium Fog in Map spawns #% increased MirrorShards": {
-      "zh_CN": "地图中的惊悸迷雾生成的破溃之镜碎片数量提高 #%",
+    "Delirium Fog in Map spawns #% increased Mirror Shards": {
+      "zh_CN": "地图中的惊悸迷雾生成的破溃之镜碎片提高 #%",
       "zh_TW": "地圖中的譫妄迷霧增加#%裂鏡碎片的生成量"
     },
     "Delirium Fog in your Maps never dissipates": {
@@ -61225,6 +61513,30 @@
       "zh_CN": "先祖秘藏石板",
       "zh_TW": "探險碑牌"
     },
+    "Expeditions contain 1 Additional Boss encased in ice in Map": {
+      "zh_CN": "地图内的先祖秘藏额外包含 1 个被坚冰包裹的首领",
+      "zh_TW": "地圖中的探險含有1個額外封存於冰霜中的頭目"
+    },
+    "Expeditions contain 1 Additional Verisium Sentry in Map": {
+      "zh_CN": "地图内的先祖秘藏额外包含 1 个维金哨兵",
+      "zh_TW": "地圖中的探險含有1個額外維里西姆守望"
+    },
+    "Expeditions contain 1 Vaal Relic in Map": {
+      "zh_CN": "地图内的先祖秘藏包含 1 个瓦尔遗物",
+      "zh_TW": "地圖中的探險含有1個瓦爾遺物"
+    },
+    "Expeditions contain 1 buried Strongbox in Map": {
+      "zh_CN": "地图内的先祖秘藏包含 1 个埋藏的保险箱",
+      "zh_TW": "地圖中的探險含有1個埋藏的保險箱"
+    },
+    "Expeditions have +#% Surpassing chance to Duplicate Runic Monsters in Map": {
+      "zh_CN": "地图内的先祖秘藏有 +#% 的溢出几率复制符文怪物",
+      "zh_TW": "探險擁有+#%滿溢機率複製地圖中的符文怪物"
+    },
+    "Expeditions have +#% Surpassing chance to contain an additional Verisium Remnant": {
+      "zh_CN": "先祖秘藏有 +#% 的溢出几率包含一个额外的维金残片",
+      "zh_TW": "探險擁有+#%滿溢機率含有額外一個維里西姆遺物"
+    },
     "Expeditions in Area have # Remnants": {
       "zh_CN": "区域内的先祖秘藏残骸 #",
       "zh_TW": "區域中的探險#個遺物"
@@ -61978,7 +62290,7 @@
       "zh_TW": "獲得等同於#%物理傷害的額外火焰傷害"
     },
     "Gain #% of damage as Fire damage per 1% Chance to Block": {
-      "zh_CN": "Gain #% of damage as Fire damage per 1% Chance to Block",
+      "zh_CN": "每 1% 格挡几率获得相当于伤害 #% 的火焰伤害",
       "zh_TW": "每擁有1%格擋率，獲得等同於#%傷害的火焰傷害"
     },
     "Gain #% of damage as Fire damage per 2% Chance to Block": {
@@ -64106,7 +64418,7 @@
       "zh_TW": "魔偶"
     },
     "Idols socketed in this item gain the benefits of their Bonded modifiers": {
-      "zh_CN": "镶嵌在该物品上的雕像获得其自身的绑定词缀的强化效果",
+      "zh_CN": "镶嵌在该物品上的雕像获得其自身的羁绊词缀的强化效果",
       "zh_TW": "鑲嵌在此物品中的魔偶獲得其命定詞綴的加成效果"
     },
     "If Map was not previously Irradiated, completing Map adds Irradiation instead": {
@@ -64561,21 +64873,57 @@
       "zh_CN": "铃鸣法器",
       "zh_TW": "響聲法器"
     },
+    "Jiquani's Soul Core of Abundance": {
+      "zh_CN": "佳华尼的丰饶灵核",
+      "zh_TW": "吉卡尼的豐饒靈魂核心"
+    },
+    "Jiquani's Soul Core of Automation": {
+      "zh_CN": "佳华尼的自动灵核",
+      "zh_TW": "吉卡尼的自動化靈魂核心"
+    },
+    "Jiquani's Soul Core of Malediction": {
+      "zh_CN": "佳华尼的诅咒灵核",
+      "zh_TW": "吉卡尼的惡語靈魂核心"
+    },
+    "Jiquani's Soul Core of Munitions": {
+      "zh_CN": "佳华尼的弹药灵核",
+      "zh_TW": "吉卡尼的彈藥靈魂核心"
+    },
     "Jiquani's Soul Core of Quaking": {
-      "zh_CN": "Jiquanis_Soul_Core_of_Quaking",
+      "zh_CN": "佳华尼的震颤灵核",
       "zh_TW": "吉卡尼的震顫靈魂核心"
     },
     "Jiquani's Soul Core of Radiance": {
-      "zh_CN": "Jiquanis_Soul_Core_of_Radiance",
+      "zh_CN": "佳华尼的辐照灵核",
       "zh_TW": "吉卡尼的輝耀靈魂核心"
     },
+    "Jiquani's Soul Core of Rallying": {
+      "zh_CN": "佳华尼的集结灵核",
+      "zh_TW": "吉卡尼的號召靈魂核心"
+    },
+    "Jiquani's Soul Core of Rippling": {
+      "zh_CN": "佳华尼的涟漪灵核",
+      "zh_TW": "吉卡尼的漣漪靈魂核心"
+    },
     "Jiquani's Soul Core of Severing": {
-      "zh_CN": "Jiquanis_Soul_Core_of_Severing",
+      "zh_CN": "佳华尼的切断灵核",
       "zh_TW": "吉卡尼的斷切靈魂核心"
     },
+    "Jiquani's Soul Core of Snares": {
+      "zh_CN": "佳华尼的陷阱灵核",
+      "zh_TW": "吉卡尼的陷阱靈魂核心"
+    },
     "Jiquani's Soul Core of Squalls": {
-      "zh_CN": "Jiquanis_Soul_Core_of_Squalls",
+      "zh_CN": "佳华尼的暴风灵核",
       "zh_TW": "吉卡尼的狂風靈魂核心"
+    },
+    "Jiquani's Soul Core of Targeting": {
+      "zh_CN": "佳华尼的瞄准灵核",
+      "zh_TW": "吉卡尼的索敵靈魂核心"
+    },
+    "Jiquani's Soul Core of Thundering": {
+      "zh_CN": "佳华尼的雷鸣灵核",
+      "zh_TW": "吉卡尼的雷鳴靈魂核心"
     },
     "Jiquani's Thesis": {
       "zh_CN": "佳华尼的圣典",
@@ -64600,6 +64948,10 @@
     "Kalisa's Crescendo": {
       "zh_CN": "卡莉莎的强音",
       "zh_TW": "卡莉莎的漸強"
+    },
+    "Kamasa's Orb of Sacrifice": {
+      "zh_CN": "卡马萨之献祭宝珠",
+      "zh_TW": "卡瑪薩奉獻寶珠"
     },
     "Kamasan Tiara": {
       "zh_CN": "卡马萨冠冕",
@@ -64656,6 +65008,10 @@
     "Kolr's Hunt": {
       "zh_CN": "克尔的狩猎",
       "zh_TW": "克洛爾的狩獵"
+    },
+    "Kopec's Orb of Sacrifice": {
+      "zh_CN": "科佩克之献祭宝珠",
+      "zh_TW": "科佩克奉獻寶珠"
     },
     "Kris Knife": {
       "zh_CN": "波刃小刀",
@@ -65469,6 +65825,10 @@
       "zh_CN": "液化偏执",
       "zh_TW": "液態偏執"
     },
+    "Liquid Verisium": {
+      "zh_CN": "液态维金",
+      "zh_TW": "液態維里西姆"
+    },
     "Listed": {
       "zh_CN": "已上架",
       "zh_TW": "標示"
@@ -65802,7 +66162,7 @@
       "zh_TW": "行軍之錘"
     },
     "Mark Skills have #% increased Skill Effect Duration": {
-      "zh_CN": "印记技能的技能效果持续时间提高 #%",
+      "zh_CN": "印记技能的技能效果持续时间延长 #%",
       "zh_TW": "印記技能增加#%技能效果持續時間"
     },
     "Mark Skills have #% increased Use Speed": {
@@ -66205,6 +66565,10 @@
       "zh_CN": "怪物可以发射 # 个额外投射物",
       "zh_TW": "怪物發射#個額外投射物"
     },
+    "Monsters from Verisium Remnants drop #% increased Verisium": {
+      "zh_CN": "维金残片生成的怪物掉落的维金数量提高 #%",
+      "zh_TW": "增加#%維里西姆遺物怪物掉落的維里西姆"
+    },
     "Monsters gain #% of maximum Life as Extra maximum Energy Shield": {
       "zh_CN": "怪物将生命上限的 #% 转化为额外能量护盾上限",
       "zh_TW": "怪物獲得等同於最大生命#%的額外最大能量護盾"
@@ -66426,7 +66790,7 @@
       "zh_TW": "高貴塔盾"
     },
     "Non-Channelling Skills have #% increased Spell Critical Hit Chance per 100 maximum Mana": {
-      "zh_CN": "每 100 点魔力上限使非吟唱法术的暴击率提高 #%",
+      "zh_CN": "每 100 点魔力上限使非吟唱技能的法术暴击几率提高 #%",
       "zh_TW": "每100最大魔力，增加#%非引導技能的法術暴擊率"
     },
     "Non-Channelling Spells cost an additional #% of your maximum Life": {
@@ -66686,7 +67050,7 @@
       "zh_TW": "範圍內核心天賦也會賦予 增加#%投射物速度"
     },
     "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration": {
-      "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
+      "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
       "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間"
     },
     "Notable Passive Skills in Radius also grant #% increased Skill Speed while Shapeshifted": {
@@ -68190,7 +68554,7 @@
       "zh_TW": "抵禦偏斜擊中的#%傷害"
     },
     "Prevent #% of Damage from Deflected Hits if you've\nDeflected no Hits Recently": {
-      "zh_CN": "若你近期没有偏转击中，避免 #% 的\n偏转击中伤害",
+      "zh_CN": "若你近期没有受到偏转击中，避免 #% 的\n偏转击中伤害",
       "zh_TW": "若你近期沒有偏斜擊中，\n避免#%來自偏斜擊中的傷害"
     },
     "Price with Note": {
@@ -71989,6 +72353,10 @@
       "zh_CN": "圣礼束衣",
       "zh_TW": "聖禮長袍"
     },
+    "Sacred Bloom": {
+      "zh_CN": "神圣之花",
+      "zh_TW": "聖綻之花"
+    },
     "Sacred Focus": {
       "zh_CN": "圣洁法器",
       "zh_TW": "神聖法器"
@@ -72038,7 +72406,7 @@
       "zh_TW": "獻祭最多10 顆瓦爾寶珠，以在完成試煉時獲得兩倍獎勵"
     },
     "Sacrifice up to 2 Divine Orbs to receive double on Trial completion": {
-      "zh_CN": "献祭最多 3 神圣石 个，完成试炼时可获得双倍返还",
+      "zh_CN": "献祭最多 2 神圣石 个，完成试炼时可获得双倍返还",
       "zh_TW": "獻祭最多2 顆神聖石，以在完成試煉時獲得兩倍獎勵"
     },
     "Sacrifice up to 20 Arcanist's Etchers to receive double on Trial completion": {
@@ -73038,7 +73406,7 @@
       "zh_TW": "範圍內小型天賦也會賦予 增加#%捷光環技能造成的傷害"
     },
     "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration": {
-      "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
+      "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
       "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間"
     },
     "Small Passive Skills in Radius also grant Mark Skills have #% increased Use Speed": {
@@ -74077,6 +74445,10 @@
       "zh_CN": "重铸三耀之火",
       "zh_TW": "再鑄三曲"
     },
+    "The first unearthed Runic Monster will be a Rare Monster in Map": {
+      "zh_CN": "地图内最先被开掘的符文怪物将为稀有怪物",
+      "zh_TW": "地圖中首名出土的符文怪物會是稀有怪物"
+    },
     "This Flask cannot be Used but applies its Effect constantly": {
       "zh_CN": "此药剂无法使用，但效果持续生效",
       "zh_TW": "此藥劑無法使用，但會持續套用其效果"
@@ -75085,6 +75457,10 @@
       "zh_CN": "维金化形",
       "zh_TW": "維里西姆顯化"
     },
+    "Verisium Remnants have +#% chance to add an additional Runic Modifier in Map": {
+      "zh_CN": "地图内的维金残片有 +#% 的几率添加一个额外的符文词缀",
+      "zh_TW": "地圖中的維里西姆遺物擁有+#%機率添加一條額外符文詞綴"
+    },
     "Vermeil Circlet": {
       "zh_CN": "朱砂头冠",
       "zh_TW": "鍍金頭環"
@@ -75781,6 +76157,10 @@
       "zh_CN": "索伏的葬火",
       "zh_TW": "索伏的燃焰"
     },
+    "Yaomac's Orb of Sacrifice": {
+      "zh_CN": "约马克之献祭宝珠",
+      "zh_TW": "堯馬克奉獻寶珠"
+    },
     "Yes": {
       "zh_CN": "是",
       "zh_TW": "是"
@@ -75839,7 +76219,7 @@
     },
     "You can only Socket Emerald Jewels in this item": {
       "zh_CN": "你只能在该物品中镶嵌翡翠珠宝",
-      "zh_TW": "你只能在這件物品上鑲嵌翡翠珠寶"
+      "zh_TW": "你只能在這件物品上鑲嵌綠寶石"
     },
     "You can only Socket Ruby Jewels in this item": {
       "zh_CN": "你只能在该物品中镶嵌红玉珠宝",
@@ -75996,6 +76376,10 @@
     "Your speed is unaffected by Slows": {
       "zh_CN": "你的速度不受减速效果影响",
       "zh_TW": "你的速度不受緩速影響"
+    },
+    "Yugul's Orb of Sacrifice": {
+      "zh_CN": "尤格尔之献祭宝珠",
+      "zh_TW": "伊果奉獻寶珠"
     },
     "Zalatl's Soul Core of Insulation": {
       "zh_CN": "扎拉迪的绝缘灵核",

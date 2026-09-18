@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "generatedAt": "2026-09-05T00:19:21.748985+00:00",
+  "generatedAt": "2026-09-18T15:57:07.949909+00:00",
   "source": "https://poe2db.tw/us/Modifiers",
   "tradeStatsSource": "https://www.pathofexile.com/api/trade2/data/stats",
   "displayMetadataSources": {
@@ -853,6 +853,7 @@
         "rune.stat_210067635",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2694482655",
@@ -1429,6 +1430,7 @@
         "rune.stat_210067635",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
@@ -2076,6 +2078,8 @@
         "implicit.stat_983749596",
         "rune.stat_1020945697",
         "rune.stat_1050105434",
+        "rune.stat_1062190843",
+        "rune.stat_1078570138",
         "rune.stat_1228682002",
         "rune.stat_124131830",
         "rune.stat_1368271171",
@@ -2086,11 +2090,17 @@
         "rune.stat_1676950499",
         "rune.stat_1693515857",
         "rune.stat_1779262102",
+        "rune.stat_1839315243",
         "rune.stat_185580205",
         "rune.stat_1963398329",
+        "rune.stat_1992191903",
         "rune.stat_2074866941",
+        "rune.stat_2148999925",
         "rune.stat_2174054121",
         "rune.stat_227523295",
+        "rune.stat_2296009672",
+        "rune.stat_2305301734",
+        "rune.stat_2336703514",
         "rune.stat_2339757871",
         "rune.stat_2390027291",
         "rune.stat_2505884597",
@@ -2110,8 +2120,10 @@
         "rune.stat_2974417149",
         "rune.stat_3015669065",
         "rune.stat_3145796865",
+        "rune.stat_3148103963",
         "rune.stat_3166958180",
         "rune.stat_3261801346",
+        "rune.stat_3268281424",
         "rune.stat_3278136794",
         "rune.stat_328541901",
         "rune.stat_3299347043",
@@ -2136,6 +2148,7 @@
         "rune.stat_4236566306",
         "rune.stat_473429811",
         "rune.stat_602344904",
+        "rune.stat_653358410",
         "rune.stat_704409219",
         "rune.stat_718638445",
         "rune.stat_731403740",
@@ -2143,6 +2156,7 @@
         "rune.stat_737908626",
         "rune.stat_762761075",
         "rune.stat_774059442",
+        "rune.stat_776287420",
         "rune.stat_789117908",
         "rune.stat_805298720",
         "rune.stat_983749596",
@@ -2692,6 +2706,7 @@
         "rune.stat_210067635",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
@@ -3258,6 +3273,7 @@
         "rune.stat_210067635",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
@@ -3897,6 +3913,7 @@
         "rune.stat_2223678961",
         "rune.stat_2293111154",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
@@ -4463,6 +4480,8 @@
         "rune.stat_101878827",
         "rune.stat_1020945697",
         "rune.stat_1050105434",
+        "rune.stat_1062190843",
+        "rune.stat_1078570138",
         "rune.stat_1250712710",
         "rune.stat_1379411836",
         "rune.stat_1416406066",
@@ -4475,14 +4494,20 @@
         "rune.stat_1779262102",
         "rune.stat_1798257884",
         "rune.stat_1805182458",
+        "rune.stat_1839315243",
         "rune.stat_185580205",
         "rune.stat_1881314095",
         "rune.stat_1911097163",
         "rune.stat_1963398329",
+        "rune.stat_1992191903",
         "rune.stat_1998951374",
+        "rune.stat_2148999925",
         "rune.stat_2211478554",
         "rune.stat_2250533757",
+        "rune.stat_2296009672",
+        "rune.stat_2305301734",
         "rune.stat_2310741722",
+        "rune.stat_2336703514",
         "rune.stat_234296660",
         "rune.stat_2390027291",
         "rune.stat_2505884597",
@@ -4501,9 +4526,11 @@
         "rune.stat_3057012405",
         "rune.stat_3091578504",
         "rune.stat_3145796865",
+        "rune.stat_3148103963",
         "rune.stat_3151560620",
         "rune.stat_315791320",
         "rune.stat_3261801346",
+        "rune.stat_3268281424",
         "rune.stat_3278136794",
         "rune.stat_328541901",
         "rune.stat_3299347043",
@@ -4529,12 +4556,14 @@
         "rune.stat_540694930",
         "rune.stat_602344904",
         "rune.stat_632743438",
+        "rune.stat_653358410",
         "rune.stat_666077204",
         "rune.stat_718638445",
         "rune.stat_731781020",
         "rune.stat_762761075",
         "rune.stat_770672621",
         "rune.stat_774059442",
+        "rune.stat_776287420",
         "rune.stat_789117908",
         "rune.stat_805298720",
         "sanctum.stat_1416455556",
@@ -5217,6 +5246,7 @@
         "rune.stat_2223678961",
         "rune.stat_234296660",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
@@ -5832,6 +5862,7 @@
         "rune.stat_210067635",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
@@ -6538,6 +6569,7 @@
         "rune.stat_234296660",
         "rune.stat_2463230181",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
@@ -7219,6 +7251,8 @@
         "implicit.stat_983749596",
         "rune.stat_1020945697",
         "rune.stat_1050105434",
+        "rune.stat_1062190843",
+        "rune.stat_1078570138",
         "rune.stat_1228682002",
         "rune.stat_124131830",
         "rune.stat_1368271171",
@@ -7231,11 +7265,17 @@
         "rune.stat_1693515857",
         "rune.stat_1702195217",
         "rune.stat_1779262102",
+        "rune.stat_1839315243",
         "rune.stat_185580205",
         "rune.stat_1936645603",
         "rune.stat_1963398329",
+        "rune.stat_1992191903",
         "rune.stat_2074866941",
+        "rune.stat_2148999925",
+        "rune.stat_2296009672",
+        "rune.stat_2305301734",
         "rune.stat_2328443419",
+        "rune.stat_2336703514",
         "rune.stat_2339757871",
         "rune.stat_2390027291",
         "rune.stat_2505884597",
@@ -7254,7 +7294,9 @@
         "rune.stat_2974417149",
         "rune.stat_3015669065",
         "rune.stat_3145796865",
+        "rune.stat_3148103963",
         "rune.stat_3261801346",
+        "rune.stat_3268281424",
         "rune.stat_3278136794",
         "rune.stat_328541901",
         "rune.stat_3299347043",
@@ -7278,12 +7320,14 @@
         "rune.stat_4236566306",
         "rune.stat_473429811",
         "rune.stat_602344904",
+        "rune.stat_653358410",
         "rune.stat_718638445",
         "rune.stat_731403740",
         "rune.stat_731781020",
         "rune.stat_737908626",
         "rune.stat_762761075",
         "rune.stat_774059442",
+        "rune.stat_776287420",
         "rune.stat_789117908",
         "rune.stat_805298720",
         "rune.stat_983749596",
@@ -7839,6 +7883,7 @@
         "rune.stat_210067635",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
@@ -8405,6 +8450,7 @@
         "rune.stat_210067635",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
@@ -9038,6 +9084,7 @@
         "rune.stat_210067635",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
@@ -9711,6 +9758,7 @@
         "rune.stat_2223678961",
         "rune.stat_2443032293",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
@@ -10372,6 +10420,7 @@
         "rune.stat_210067635",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
@@ -11282,6 +11331,7 @@
         "rune.stat_2250533757",
         "rune.stat_234296660",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
@@ -12805,6 +12855,7 @@
         "rune.stat_2103650854",
         "rune.stat_2174054121",
         "rune.stat_2353576063",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2704225257",
         "rune.stat_2748665614",
@@ -14153,16 +14204,20 @@
         "rune.stat_1933674044",
         "rune.stat_1963398329",
         "rune.stat_1963589548",
+        "rune.stat_1992191903",
         "rune.stat_1999910726",
         "rune.stat_201332984",
         "rune.stat_2023107756",
         "rune.stat_2074866941",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
+        "rune.stat_2203195791",
         "rune.stat_226999623",
         "rune.stat_2310741722",
         "rune.stat_234296660",
         "rune.stat_2353576063",
         "rune.stat_2392260628",
+        "rune.stat_2487305362",
         "rune.stat_2524254339",
         "rune.stat_2547063279",
         "rune.stat_2635559734",
@@ -14970,15 +15025,19 @@
         "rune.stat_1933674044",
         "rune.stat_1963398329",
         "rune.stat_1963589548",
+        "rune.stat_1992191903",
         "rune.stat_1999910726",
         "rune.stat_201332984",
         "rune.stat_2074866941",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
+        "rune.stat_2203195791",
         "rune.stat_226999623",
         "rune.stat_2310741722",
         "rune.stat_234296660",
         "rune.stat_2353576063",
         "rune.stat_2392260628",
+        "rune.stat_2487305362",
         "rune.stat_2524254339",
         "rune.stat_2547063279",
         "rune.stat_2635559734",
@@ -15781,16 +15840,20 @@
         "rune.stat_1933674044",
         "rune.stat_1963398329",
         "rune.stat_1963589548",
+        "rune.stat_1992191903",
         "rune.stat_1999910726",
         "rune.stat_201332984",
         "rune.stat_2074866941",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
+        "rune.stat_2203195791",
         "rune.stat_226999623",
         "rune.stat_2310741722",
         "rune.stat_2339757871",
         "rune.stat_234296660",
         "rune.stat_2353576063",
         "rune.stat_2392260628",
+        "rune.stat_2487305362",
         "rune.stat_2524254339",
         "rune.stat_2547063279",
         "rune.stat_2635559734",
@@ -16578,16 +16641,20 @@
         "rune.stat_1933674044",
         "rune.stat_1963398329",
         "rune.stat_1963589548",
+        "rune.stat_1992191903",
         "rune.stat_1999910726",
         "rune.stat_201332984",
         "rune.stat_2023107756",
         "rune.stat_2074866941",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
+        "rune.stat_2203195791",
         "rune.stat_226999623",
         "rune.stat_2310741722",
         "rune.stat_234296660",
         "rune.stat_2353576063",
         "rune.stat_2392260628",
+        "rune.stat_2487305362",
         "rune.stat_2524254339",
         "rune.stat_2547063279",
         "rune.stat_2635559734",
@@ -17411,17 +17478,21 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1984310483",
+        "rune.stat_1992191903",
         "rune.stat_1999910726",
         "rune.stat_201332984",
         "rune.stat_2023107756",
         "rune.stat_2074866941",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
+        "rune.stat_2203195791",
         "rune.stat_226999623",
         "rune.stat_2310741722",
         "rune.stat_2339757871",
         "rune.stat_234296660",
         "rune.stat_2353576063",
         "rune.stat_2392260628",
+        "rune.stat_2487305362",
         "rune.stat_2524254339",
         "rune.stat_2547063279",
         "rune.stat_2635559734",
@@ -18250,16 +18321,20 @@
         "rune.stat_1933674044",
         "rune.stat_1963398329",
         "rune.stat_1963589548",
+        "rune.stat_1992191903",
         "rune.stat_1999910726",
         "rune.stat_201332984",
         "rune.stat_2074866941",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
+        "rune.stat_2203195791",
         "rune.stat_226999623",
         "rune.stat_2310741722",
         "rune.stat_2339757871",
         "rune.stat_234296660",
         "rune.stat_2353576063",
         "rune.stat_2392260628",
+        "rune.stat_2487305362",
         "rune.stat_2524254339",
         "rune.stat_2547063279",
         "rune.stat_2635559734",
@@ -18813,6 +18888,7 @@
         "rune.stat_1228682002",
         "rune.stat_1238227257",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1496740334",
         "rune.stat_1556124492",
         "rune.stat_1585886916",
@@ -18825,6 +18901,7 @@
         "rune.stat_1963589548",
         "rune.stat_2011656677",
         "rune.stat_2041668411",
+        "rune.stat_2139847597",
         "rune.stat_2200571612",
         "rune.stat_2250533757",
         "rune.stat_2301852600",
@@ -19367,6 +19444,7 @@
         "rune.stat_1228682002",
         "rune.stat_1238227257",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1496740334",
         "rune.stat_1556124492",
         "rune.stat_1585886916",
@@ -19379,6 +19457,7 @@
         "rune.stat_1963589548",
         "rune.stat_2011656677",
         "rune.stat_2041668411",
+        "rune.stat_2139847597",
         "rune.stat_2200571612",
         "rune.stat_2250533757",
         "rune.stat_2301852600",
@@ -19926,6 +20005,7 @@
         "rune.stat_1228682002",
         "rune.stat_1238227257",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1496740334",
         "rune.stat_1556124492",
         "rune.stat_1585886916",
@@ -19939,6 +20019,7 @@
         "rune.stat_1963589548",
         "rune.stat_2011656677",
         "rune.stat_2041668411",
+        "rune.stat_2139847597",
         "rune.stat_2200571612",
         "rune.stat_2250533757",
         "rune.stat_2301852600",
@@ -20496,6 +20577,7 @@
         "rune.stat_1228682002",
         "rune.stat_1238227257",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1496740334",
         "rune.stat_1556124492",
         "rune.stat_1585886916",
@@ -20508,6 +20590,7 @@
         "rune.stat_1963589548",
         "rune.stat_2011656677",
         "rune.stat_2041668411",
+        "rune.stat_2139847597",
         "rune.stat_2200571612",
         "rune.stat_2250533757",
         "rune.stat_2301852600",
@@ -21066,6 +21149,7 @@
         "rune.stat_1228682002",
         "rune.stat_1238227257",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1496740334",
         "rune.stat_1556124492",
         "rune.stat_1585886916",
@@ -21078,6 +21162,7 @@
         "rune.stat_1963589548",
         "rune.stat_2011656677",
         "rune.stat_2041668411",
+        "rune.stat_2139847597",
         "rune.stat_2200571612",
         "rune.stat_2250533757",
         "rune.stat_2301852600",
@@ -21627,6 +21712,7 @@
         "rune.stat_1228682002",
         "rune.stat_1238227257",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1496740334",
         "rune.stat_1556124492",
         "rune.stat_1585886916",
@@ -21639,6 +21725,7 @@
         "rune.stat_1963589548",
         "rune.stat_2011656677",
         "rune.stat_2041668411",
+        "rune.stat_2139847597",
         "rune.stat_2200571612",
         "rune.stat_2250533757",
         "rune.stat_227523295",
@@ -22267,6 +22354,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -22313,6 +22401,7 @@
         "rune.stat_3984865854",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -22878,6 +22967,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -22923,6 +23013,7 @@
         "rune.stat_3984865854",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -23485,6 +23576,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -23531,6 +23623,7 @@
         "rune.stat_4052037485",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -24103,6 +24196,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -24149,6 +24243,7 @@
         "rune.stat_3984865854",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -24718,6 +24813,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -24765,6 +24861,7 @@
         "rune.stat_4052037485",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -25336,6 +25433,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -25382,6 +25480,7 @@
         "rune.stat_4052037485",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -25961,6 +26060,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -26008,6 +26108,7 @@
         "rune.stat_4052037485",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -26668,7 +26769,9 @@
         "rune.stat_1984310483",
         "rune.stat_1999910726",
         "rune.stat_2074866941",
+        "rune.stat_2139847597",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_227523295",
         "rune.stat_2310741722",
         "rune.stat_2392260628",
@@ -26718,6 +26821,7 @@
         "rune.stat_3917489142",
         "rune.stat_3972229254",
         "rune.stat_3981240776",
+        "rune.stat_3985867204",
         "rune.stat_4058681894",
         "rune.stat_4080418644",
         "rune.stat_4111745607",
@@ -27428,7 +27532,9 @@
         "rune.stat_1984310483",
         "rune.stat_1999910726",
         "rune.stat_2074866941",
+        "rune.stat_2139847597",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_227523295",
         "rune.stat_2310741722",
         "rune.stat_2392260628",
@@ -27477,6 +27583,7 @@
         "rune.stat_3903510399",
         "rune.stat_3917489142",
         "rune.stat_3981240776",
+        "rune.stat_3985867204",
         "rune.stat_4058681894",
         "rune.stat_4080418644",
         "rune.stat_4111745607",
@@ -28197,7 +28304,9 @@
         "rune.stat_1999910726",
         "rune.stat_2074866941",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_227523295",
         "rune.stat_2310741722",
         "rune.stat_2339757871",
@@ -28247,6 +28356,7 @@
         "rune.stat_3903510399",
         "rune.stat_3917489142",
         "rune.stat_3981240776",
+        "rune.stat_3985867204",
         "rune.stat_4052037485",
         "rune.stat_4058681894",
         "rune.stat_4080418644",
@@ -28965,7 +29075,9 @@
         "rune.stat_1984310483",
         "rune.stat_1999910726",
         "rune.stat_2074866941",
+        "rune.stat_2139847597",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_227523295",
         "rune.stat_2310741722",
         "rune.stat_2392260628",
@@ -29016,6 +29128,7 @@
         "rune.stat_3917489142",
         "rune.stat_3972229254",
         "rune.stat_3981240776",
+        "rune.stat_3985867204",
         "rune.stat_4058681894",
         "rune.stat_4080418644",
         "rune.stat_4111745607",
@@ -29752,8 +29865,10 @@
         "rune.stat_1999910726",
         "rune.stat_2074866941",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
         "rune.stat_2153364323",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_227523295",
         "rune.stat_2310741722",
         "rune.stat_2339757871",
@@ -29805,6 +29920,7 @@
         "rune.stat_3917489142",
         "rune.stat_3972229254",
         "rune.stat_3981240776",
+        "rune.stat_3985867204",
         "rune.stat_4052037485",
         "rune.stat_4058681894",
         "rune.stat_4080418644",
@@ -30552,7 +30668,9 @@
         "rune.stat_1999910726",
         "rune.stat_2074866941",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_227523295",
         "rune.stat_2310741722",
         "rune.stat_2339757871",
@@ -30601,6 +30719,7 @@
         "rune.stat_3903510399",
         "rune.stat_3917489142",
         "rune.stat_3981240776",
+        "rune.stat_3985867204",
         "rune.stat_4052037485",
         "rune.stat_4058681894",
         "rune.stat_4080418644",
@@ -34851,12 +34970,15 @@
         "enchant.stat_4080418644",
         "enchant.stat_4220027924",
         "explicit.stat_1083387327",
+        "explicit.stat_1109460697",
         "explicit.stat_1133965702",
+        "explicit.stat_1183698646",
         "explicit.stat_1352729973",
         "explicit.stat_144770454",
         "explicit.stat_1468737867",
         "explicit.stat_1640965354",
         "explicit.stat_1671376347",
+        "explicit.stat_181823691",
         "explicit.stat_1825943485",
         "explicit.stat_2017682521",
         "explicit.stat_2065500219",
@@ -34866,6 +34988,8 @@
         "explicit.stat_2777224821",
         "explicit.stat_2816104578",
         "explicit.stat_2839545956",
+        "explicit.stat_2852112245",
+        "explicit.stat_2905096233",
         "explicit.stat_2923486259",
         "explicit.stat_3039133122",
         "explicit.stat_3240183538",
@@ -34873,10 +34997,13 @@
         "explicit.stat_328541901",
         "explicit.stat_3371085671",
         "explicit.stat_3372524247",
+        "explicit.stat_3520418269",
         "explicit.stat_3550168289",
         "explicit.stat_358129101",
+        "explicit.stat_3653794255",
         "explicit.stat_3793155082",
         "explicit.stat_3815617979",
+        "explicit.stat_3871299443",
         "explicit.stat_3873704640",
         "explicit.stat_395808938",
         "explicit.stat_4080418644",
@@ -34886,6 +35013,7 @@
         "explicit.stat_57434274",
         "explicit.stat_588512487",
         "explicit.stat_689816330",
+        "explicit.stat_779964546",
         "fractured.stat_1671376347",
         "fractured.stat_2923486259",
         "fractured.stat_3261801346",
@@ -35041,7 +35169,6 @@
         "explicit.stat_57434274",
         "explicit.stat_588512487",
         "explicit.stat_689816330",
-        "explicit.stat_900933517",
         "fractured.stat_1671376347",
         "fractured.stat_2923486259",
         "fractured.stat_3261801346",
@@ -41061,6 +41188,7 @@
         "fractured.stat_2954116742|29514",
         "fractured.stat_2954116742|29527",
         "fractured.stat_2954116742|29762",
+        "fractured.stat_2954116742|29800",
         "fractured.stat_2954116742|29899",
         "fractured.stat_2954116742|2999",
         "fractured.stat_2954116742|30132",
@@ -41642,6 +41770,7 @@
         "rune.stat_234296660",
         "rune.stat_2353576063",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2709367754",
         "rune.stat_280731498",
@@ -42270,6 +42399,7 @@
         "rune.stat_2074866941",
         "rune.stat_2250533757",
         "rune.stat_234296660",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2923486259",
         "rune.stat_293638271",
@@ -42753,6 +42883,7 @@
         "rune.stat_2174054121",
         "rune.stat_234296660",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2709367754",
         "rune.stat_280731498",
         "rune.stat_2923486259",
@@ -43299,6 +43430,7 @@
         "rune.stat_2074866941",
         "rune.stat_234296660",
         "rune.stat_2353576063",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_280731498",
         "rune.stat_2891184298",
@@ -46967,6 +47099,8 @@
         "rune.stat_103706408",
         "rune.stat_1037193709",
         "rune.stat_1050105434",
+        "rune.stat_1062190843",
+        "rune.stat_1078570138",
         "rune.stat_1147690586",
         "rune.stat_1181501418",
         "rune.stat_1228682002",
@@ -46997,6 +47131,7 @@
         "rune.stat_1779262102",
         "rune.stat_1798257884",
         "rune.stat_1805182458",
+        "rune.stat_1839315243",
         "rune.stat_185580205",
         "rune.stat_1879206848",
         "rune.stat_1881314095",
@@ -47006,6 +47141,7 @@
         "rune.stat_1936645603",
         "rune.stat_1940865751",
         "rune.stat_1963398329",
+        "rune.stat_1992191903",
         "rune.stat_1995345015",
         "rune.stat_1998951374",
         "rune.stat_2023107756",
@@ -47015,6 +47151,7 @@
         "rune.stat_2077615515",
         "rune.stat_2091621414",
         "rune.stat_210067635",
+        "rune.stat_2148999925",
         "rune.stat_2153364323",
         "rune.stat_2174054121",
         "rune.stat_2211478554",
@@ -47022,14 +47159,18 @@
         "rune.stat_2250533757",
         "rune.stat_227523295",
         "rune.stat_2293111154",
+        "rune.stat_2296009672",
+        "rune.stat_2305301734",
         "rune.stat_2310741722",
         "rune.stat_2328443419",
+        "rune.stat_2336703514",
         "rune.stat_2339757871",
         "rune.stat_234296660",
         "rune.stat_2390027291",
         "rune.stat_2443032293",
         "rune.stat_2463230181",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2579974553",
@@ -47067,10 +47208,12 @@
         "rune.stat_3057012405",
         "rune.stat_3091578504",
         "rune.stat_3145796865",
+        "rune.stat_3148103963",
         "rune.stat_3151560620",
         "rune.stat_315791320",
         "rune.stat_3166958180",
         "rune.stat_3261801346",
+        "rune.stat_3268281424",
         "rune.stat_3278136794",
         "rune.stat_328541901",
         "rune.stat_3299347043",
@@ -47129,6 +47272,7 @@
         "rune.stat_602344904",
         "rune.stat_627339348",
         "rune.stat_632743438",
+        "rune.stat_653358410",
         "rune.stat_666077204",
         "rune.stat_669069897",
         "rune.stat_681332047",
@@ -47143,6 +47287,7 @@
         "rune.stat_769129523",
         "rune.stat_770672621",
         "rune.stat_774059442",
+        "rune.stat_776287420",
         "rune.stat_789117908",
         "rune.stat_791928121",
         "rune.stat_803737631",
@@ -48742,6 +48887,8 @@
         "rune.stat_103706408",
         "rune.stat_1037193709",
         "rune.stat_1050105434",
+        "rune.stat_1062190843",
+        "rune.stat_1078570138",
         "rune.stat_1147690586",
         "rune.stat_1181501418",
         "rune.stat_1228682002",
@@ -48769,18 +48916,21 @@
         "rune.stat_1779262102",
         "rune.stat_1798257884",
         "rune.stat_1805182458",
+        "rune.stat_1839315243",
         "rune.stat_185580205",
         "rune.stat_1879206848",
         "rune.stat_1881314095",
         "rune.stat_1911097163",
         "rune.stat_1940865751",
         "rune.stat_1963398329",
+        "rune.stat_1992191903",
         "rune.stat_1995345015",
         "rune.stat_1998951374",
         "rune.stat_2023107756",
         "rune.stat_2074866941",
         "rune.stat_2077615515",
         "rune.stat_210067635",
+        "rune.stat_2148999925",
         "rune.stat_2153364323",
         "rune.stat_2174054121",
         "rune.stat_2211478554",
@@ -48788,11 +48938,15 @@
         "rune.stat_2250533757",
         "rune.stat_227523295",
         "rune.stat_2293111154",
+        "rune.stat_2296009672",
+        "rune.stat_2305301734",
         "rune.stat_2310741722",
+        "rune.stat_2336703514",
         "rune.stat_2339757871",
         "rune.stat_234296660",
         "rune.stat_2390027291",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2579974553",
@@ -48829,10 +48983,12 @@
         "rune.stat_3057012405",
         "rune.stat_3091578504",
         "rune.stat_3145796865",
+        "rune.stat_3148103963",
         "rune.stat_3151560620",
         "rune.stat_315791320",
         "rune.stat_3166958180",
         "rune.stat_3261801346",
+        "rune.stat_3268281424",
         "rune.stat_3278136794",
         "rune.stat_328541901",
         "rune.stat_3299347043",
@@ -48883,6 +49039,7 @@
         "rune.stat_602344904",
         "rune.stat_627339348",
         "rune.stat_632743438",
+        "rune.stat_653358410",
         "rune.stat_666077204",
         "rune.stat_669069897",
         "rune.stat_681332047",
@@ -48897,6 +49054,7 @@
         "rune.stat_769129523",
         "rune.stat_770672621",
         "rune.stat_774059442",
+        "rune.stat_776287420",
         "rune.stat_789117908",
         "rune.stat_791928121",
         "rune.stat_803737631",
@@ -50278,6 +50436,8 @@
         "rune.stat_103706408",
         "rune.stat_1037193709",
         "rune.stat_1050105434",
+        "rune.stat_1062190843",
+        "rune.stat_1078570138",
         "rune.stat_1181501418",
         "rune.stat_1228682002",
         "rune.stat_124131830",
@@ -50300,6 +50460,7 @@
         "rune.stat_1702195217",
         "rune.stat_1755296234",
         "rune.stat_1779262102",
+        "rune.stat_1839315243",
         "rune.stat_185580205",
         "rune.stat_1879206848",
         "rune.stat_1895552497",
@@ -50307,6 +50468,7 @@
         "rune.stat_1936645603",
         "rune.stat_1940865751",
         "rune.stat_1963398329",
+        "rune.stat_1992191903",
         "rune.stat_1995345015",
         "rune.stat_2023107756",
         "rune.stat_2036307261",
@@ -50315,15 +50477,20 @@
         "rune.stat_2077615515",
         "rune.stat_2091621414",
         "rune.stat_210067635",
+        "rune.stat_2148999925",
         "rune.stat_2223678961",
         "rune.stat_2250533757",
+        "rune.stat_2296009672",
+        "rune.stat_2305301734",
         "rune.stat_2328443419",
+        "rune.stat_2336703514",
         "rune.stat_2339757871",
         "rune.stat_234296660",
         "rune.stat_2390027291",
         "rune.stat_2443032293",
         "rune.stat_2463230181",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2505884597",
         "rune.stat_2527686725",
         "rune.stat_2586152168",
@@ -50349,8 +50516,10 @@
         "rune.stat_3032590688",
         "rune.stat_3035971497",
         "rune.stat_3145796865",
+        "rune.stat_3148103963",
         "rune.stat_3166958180",
         "rune.stat_3261801346",
+        "rune.stat_3268281424",
         "rune.stat_3278136794",
         "rune.stat_328541901",
         "rune.stat_3299347043",
@@ -50394,6 +50563,7 @@
         "rune.stat_566086661",
         "rune.stat_602344904",
         "rune.stat_627339348",
+        "rune.stat_653358410",
         "rune.stat_666077204",
         "rune.stat_669069897",
         "rune.stat_681332047",
@@ -50405,6 +50575,7 @@
         "rune.stat_737908626",
         "rune.stat_762761075",
         "rune.stat_774059442",
+        "rune.stat_776287420",
         "rune.stat_789117908",
         "rune.stat_791928121",
         "rune.stat_803737631",
@@ -51948,6 +52119,7 @@
         "rune.stat_2310741722",
         "rune.stat_2353576063",
         "rune.stat_2392260628",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_258119672",
         "rune.stat_2650263616",
@@ -53157,6 +53329,7 @@
         "rune.stat_2103650854",
         "rune.stat_2174054121",
         "rune.stat_2353576063",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_258119672",
         "rune.stat_2704225257",
@@ -55352,6 +55525,7 @@
         "rune.stat_1379411836",
         "rune.stat_1381474422",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1392112423",
         "rune.stat_1416406066",
         "rune.stat_1444556985",
@@ -55389,6 +55563,7 @@
         "rune.stat_1963589548",
         "rune.stat_1978899297",
         "rune.stat_1984310483",
+        "rune.stat_1992191903",
         "rune.stat_1999910726",
         "rune.stat_2011656677",
         "rune.stat_201332984",
@@ -55396,11 +55571,14 @@
         "rune.stat_2041668411",
         "rune.stat_2074866941",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
         "rune.stat_2153364323",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2200571612",
+        "rune.stat_2203195791",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_2250533757",
         "rune.stat_226999623",
         "rune.stat_227523295",
@@ -55416,6 +55594,7 @@
         "rune.stat_2463230181",
         "rune.stat_2480498143",
         "rune.stat_2481353198",
+        "rune.stat_2487305362",
         "rune.stat_2511217560",
         "rune.stat_2524254339",
         "rune.stat_2547063279",
@@ -55517,6 +55696,7 @@
         "rune.stat_3973629633",
         "rune.stat_3981240776",
         "rune.stat_3984865854",
+        "rune.stat_3985867204",
         "rune.stat_4052037485",
         "rune.stat_4058681894",
         "rune.stat_4065951768",
@@ -55525,6 +55705,7 @@
         "rune.stat_4095671657",
         "rune.stat_4111745607",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_4258409981",
@@ -57430,17 +57611,21 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1984310483",
+        "rune.stat_1992191903",
         "rune.stat_1999910726",
         "rune.stat_201332984",
         "rune.stat_2023107756",
         "rune.stat_2074866941",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
+        "rune.stat_2203195791",
         "rune.stat_226999623",
         "rune.stat_2310741722",
         "rune.stat_2339757871",
         "rune.stat_234296660",
         "rune.stat_2353576063",
         "rune.stat_2392260628",
+        "rune.stat_2487305362",
         "rune.stat_2524254339",
         "rune.stat_2547063279",
         "rune.stat_2635559734",
@@ -58289,6 +58474,7 @@
         "rune.stat_1228682002",
         "rune.stat_1238227257",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1496740334",
         "rune.stat_1556124492",
         "rune.stat_1585886916",
@@ -58302,6 +58488,7 @@
         "rune.stat_1963589548",
         "rune.stat_2011656677",
         "rune.stat_2041668411",
+        "rune.stat_2139847597",
         "rune.stat_2200571612",
         "rune.stat_2250533757",
         "rune.stat_227523295",
@@ -59112,6 +59299,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -59159,6 +59347,7 @@
         "rune.stat_4052037485",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -60063,8 +60252,10 @@
         "rune.stat_1999910726",
         "rune.stat_2074866941",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
         "rune.stat_2153364323",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_227523295",
         "rune.stat_2310741722",
         "rune.stat_2339757871",
@@ -60120,6 +60311,7 @@
         "rune.stat_3917489142",
         "rune.stat_3972229254",
         "rune.stat_3981240776",
+        "rune.stat_3985867204",
         "rune.stat_4052037485",
         "rune.stat_4058681894",
         "rune.stat_4080418644",
@@ -67698,6 +67890,7 @@
         "fractured.stat_2954116742|29514",
         "fractured.stat_2954116742|29527",
         "fractured.stat_2954116742|29762",
+        "fractured.stat_2954116742|29800",
         "fractured.stat_2954116742|29899",
         "fractured.stat_2954116742|2999",
         "fractured.stat_2954116742|30132",
@@ -68356,6 +68549,7 @@
         "rune.stat_234296660",
         "rune.stat_2353576063",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2709367754",
         "rune.stat_280731498",
@@ -69006,8 +69200,10 @@
         "explicit.stat_1031644647",
         "explicit.stat_1083387327",
         "explicit.stat_1084853859",
+        "explicit.stat_1109460697",
         "explicit.stat_1133965702",
         "explicit.stat_1174954559",
+        "explicit.stat_1183698646",
         "explicit.stat_120737942",
         "explicit.stat_1210760818",
         "explicit.stat_1228222525",
@@ -69023,6 +69219,7 @@
         "explicit.stat_1671376347",
         "explicit.stat_1710200734",
         "explicit.stat_1769611692",
+        "explicit.stat_181823691",
         "explicit.stat_1825943485",
         "explicit.stat_1940774881",
         "explicit.stat_2017682521",
@@ -69047,9 +69244,11 @@
         "explicit.stat_2816104578",
         "explicit.stat_28208665",
         "explicit.stat_2839545956",
+        "explicit.stat_2852112245",
         "explicit.stat_2889272422",
         "explicit.stat_2890355696",
         "explicit.stat_2895378479",
+        "explicit.stat_2905096233",
         "explicit.stat_2923486259",
         "explicit.stat_3039133122",
         "explicit.stat_3042527515",
@@ -69066,13 +69265,16 @@
         "explicit.stat_3418590244",
         "explicit.stat_3465791711",
         "explicit.stat_3490187949",
+        "explicit.stat_3520418269",
         "explicit.stat_3550168289",
         "explicit.stat_358129101",
+        "explicit.stat_3653794255",
         "explicit.stat_3762913035",
         "explicit.stat_3793155082",
         "explicit.stat_3815617979",
         "explicit.stat_3836551197",
         "explicit.stat_3860150265",
+        "explicit.stat_3871299443",
         "explicit.stat_3873704640",
         "explicit.stat_3937291366",
         "explicit.stat_395808938",
@@ -69092,8 +69294,8 @@
         "explicit.stat_632698321",
         "explicit.stat_664606484",
         "explicit.stat_689816330",
+        "explicit.stat_779964546",
         "explicit.stat_890040946",
-        "explicit.stat_900933517",
         "explicit.stat_937291386",
         "explicit.stat_944630113",
         "fractured.stat_1671376347",
@@ -70122,10 +70324,12 @@
         "explicit.stat_1054098949",
         "explicit.stat_1083387327",
         "explicit.stat_1084853859",
+        "explicit.stat_1109460697",
         "explicit.stat_1133965702",
         "explicit.stat_115425161",
         "explicit.stat_1168851547",
         "explicit.stat_1174954559",
+        "explicit.stat_1183698646",
         "explicit.stat_120737942",
         "explicit.stat_1210760818",
         "explicit.stat_1228222525",
@@ -70150,6 +70354,7 @@
         "explicit.stat_1710200734",
         "explicit.stat_1751584857",
         "explicit.stat_1769611692",
+        "explicit.stat_181823691",
         "explicit.stat_1825943485",
         "explicit.stat_1879340377",
         "explicit.stat_1890519597",
@@ -70190,10 +70395,12 @@
         "explicit.stat_2816104578",
         "explicit.stat_28208665",
         "explicit.stat_2839545956",
+        "explicit.stat_2852112245",
         "explicit.stat_2887760183",
         "explicit.stat_2889272422",
         "explicit.stat_2890355696",
         "explicit.stat_2895378479",
+        "explicit.stat_2905096233",
         "explicit.stat_2923486259",
         "explicit.stat_2975078312",
         "explicit.stat_3039133122",
@@ -70216,15 +70423,18 @@
         "explicit.stat_3477720557",
         "explicit.stat_3490187949",
         "explicit.stat_349586058",
+        "explicit.stat_3520418269",
         "explicit.stat_3550168289",
         "explicit.stat_358129101",
         "explicit.stat_360553763",
+        "explicit.stat_3653794255",
         "explicit.stat_3762913035",
         "explicit.stat_3793155082",
         "explicit.stat_3796523155",
         "explicit.stat_3815617979",
         "explicit.stat_3836551197",
         "explicit.stat_3860150265",
+        "explicit.stat_3871299443",
         "explicit.stat_3873704640",
         "explicit.stat_3877264671",
         "explicit.stat_3909654181",
@@ -70252,8 +70462,8 @@
         "explicit.stat_632698321",
         "explicit.stat_664606484",
         "explicit.stat_689816330",
+        "explicit.stat_779964546",
         "explicit.stat_890040946",
-        "explicit.stat_900933517",
         "explicit.stat_92381065",
         "explicit.stat_937291386",
         "explicit.stat_944630113",
@@ -79206,11 +79416,11 @@
       "kind": "logical",
       "id": "Weapons"
     },
-    "brain rattler runemastered studded greatclub": {
+    "brain rattler runeforged studded greatclub": {
       "kind": "logical",
       "id": "Weapons"
     },
-    "brain rattler runeforged studded greatclub": {
+    "brain rattler runemastered studded greatclub": {
       "kind": "logical",
       "id": "Weapons"
     },
@@ -79226,11 +79436,11 @@
       "kind": "logical",
       "id": "Weapons"
     },
-    "brynhand's mark runemastered wooden club": {
+    "brynhand's mark runeforged wooden club": {
       "kind": "logical",
       "id": "Weapons"
     },
-    "brynhand's mark runeforged wooden club": {
+    "brynhand's mark runemastered wooden club": {
       "kind": "logical",
       "id": "Weapons"
     },
@@ -79354,11 +79564,11 @@
       "kind": "logical",
       "id": "Weapons"
     },
-    "hoghunt runemastered felled greatclub": {
+    "hoghunt runeforged felled greatclub": {
       "kind": "logical",
       "id": "Weapons"
     },
-    "hoghunt runeforged felled greatclub": {
+    "hoghunt runemastered felled greatclub": {
       "kind": "logical",
       "id": "Weapons"
     },
@@ -79366,11 +79576,11 @@
       "kind": "logical",
       "id": "Weapons"
     },
-    "hrimnor's hymn runemastered oak greathammer": {
+    "hrimnor's hymn runeforged oak greathammer": {
       "kind": "logical",
       "id": "Weapons"
     },
-    "hrimnor's hymn runeforged oak greathammer": {
+    "hrimnor's hymn runemastered oak greathammer": {
       "kind": "logical",
       "id": "Weapons"
     },
@@ -79394,25 +79604,17 @@
       "kind": "logical",
       "id": "Weapons"
     },
-    "incomplete charred shortsword": {
-      "kind": "logical",
-      "id": "Weapons"
-    },
     "incomplete hook axe": {
       "kind": "logical",
       "id": "Weapons"
     },
-    "incomplete splintered flail": {
-      "kind": "page",
-      "id": "Flails"
+    "incomplete charred shortsword": {
+      "kind": "logical",
+      "id": "Weapons"
     },
     "incomplete splitting greataxe": {
       "kind": "logical",
       "id": "Weapons"
-    },
-    "incomplete chain flail": {
-      "kind": "page",
-      "id": "Flails"
     },
     "incomplete bearded axe": {
       "kind": "logical",
@@ -79422,19 +79624,31 @@
       "kind": "logical",
       "id": "Weapons"
     },
+    "incomplete splintered flail": {
+      "kind": "page",
+      "id": "Flails"
+    },
+    "incomplete chain flail": {
+      "kind": "page",
+      "id": "Flails"
+    },
     "incomplete simple dagger": {
       "kind": "page",
       "id": "Daggers"
+    },
+    "incomplete skinning knife": {
+      "kind": "page",
+      "id": "Daggers"
+    },
+    "incomplete iron greatsword": {
+      "kind": "logical",
+      "id": "Weapons"
     },
     "incomplete broadsword": {
       "kind": "logical",
       "id": "Weapons"
     },
     "incomplete executioner greataxe": {
-      "kind": "logical",
-      "id": "Weapons"
-    },
-    "incomplete iron greatsword": {
       "kind": "logical",
       "id": "Weapons"
     },
@@ -79453,10 +79667,6 @@
     "incomplete rippled greatsword": {
       "kind": "logical",
       "id": "Weapons"
-    },
-    "incomplete skinning knife": {
-      "kind": "page",
-      "id": "Daggers"
     },
     "incomplete moon dagger": {
       "kind": "page",
@@ -79610,11 +79820,11 @@
       "kind": "page",
       "id": "Crossbows"
     },
-    "rampart raptor runemastered tense crossbow": {
+    "rampart raptor runeforged tense crossbow": {
       "kind": "page",
       "id": "Crossbows"
     },
-    "rampart raptor runeforged tense crossbow": {
+    "rampart raptor runemastered tense crossbow": {
       "kind": "page",
       "id": "Crossbows"
     },
@@ -94835,6 +95045,7 @@
         "fractured.stat_2954116742|29514",
         "fractured.stat_2954116742|29527",
         "fractured.stat_2954116742|29762",
+        "fractured.stat_2954116742|29800",
         "fractured.stat_2954116742|29899",
         "fractured.stat_2954116742|2999",
         "fractured.stat_2954116742|30132",
@@ -98476,6 +98687,7 @@
         "implicit.stat_3325883026",
         "implicit.stat_4080418644",
         "rune.stat_2174054121",
+        "rune.stat_2487305362",
         "rune.stat_3032590688",
         "rune.stat_3166958180",
         "rune.stat_3261801346",
@@ -113832,6 +114044,7 @@
         "rune.stat_1671376347",
         "rune.stat_1782086450",
         "rune.stat_2103650854",
+        "rune.stat_2487305362",
         "rune.stat_2709367754",
         "rune.stat_2748665614",
         "rune.stat_2891184298",
@@ -119705,6 +119918,7 @@
     "Delirium Fog in Map dissipates #% slower",
     "Delirium Fog in Map lasts # additional seconds before dissipating",
     "Delirium Fog in Map spawns #% increased Fracturing Mirrors",
+    "Delirium Fog in Map spawns #% increased Mirror Shards",
     "Delirium Fog in Map spawns #% increased MirrorShards",
     "Delirium Fog in your Maps never dissipates",
     "Delirium Monsters in Area have #% increased Pack Size",
@@ -119799,10 +120013,16 @@
     "Excess Life Recovery added as Guard for # seconds",
     "Excess Life Recovery from Leech is applied to Energy Shield",
     "Expedition Monsters in your Maps spawn with half of their Life missing",
+    "Expeditions contain # Additional Boss encased in ice in Map",
     "Expeditions contain # Additional Bosses encased in ice in Map",
     "Expeditions contain # Additional Verisium Sentries in Map",
+    "Expeditions contain # Additional Verisium Sentry in Map",
+    "Expeditions contain # Vaal Relic in Map",
     "Expeditions contain # Vaal Relics in Map",
+    "Expeditions contain # buried Strongbox in Map",
     "Expeditions contain # buried Strongboxes in Map",
+    "Expeditions have #% Surpassing chance to Duplicate Runic Monsters in Map",
+    "Expeditions have #% Surpassing chance to contain an additional Verisium Remnant",
     "Expeditions have +#% Surpassing chance to Duplicate Runic Monsters in Map",
     "Expeditions have +#% Surpassing chance to contain an additional Verisium Remnant",
     "Expeditions in Area have # Remnants",
@@ -120986,6 +121206,7 @@
     "The Merchant has # additional Choices",
     "The Merchant has an additional Choice",
     "The first # unearthed Runic Monsters will be Rare Monsters in Map",
+    "The first unearthed Runic Monster will be a Rare Monster in Map",
     "This Flask cannot be Used but applies its Effect constantly",
     "This Weapon's Critical Hit Chance is #%",
     "This item gains bonuses from Socketed Items as though it was Boots",
@@ -121040,6 +121261,7 @@
     "Used when you take Lightning damage from a Hit",
     "Using a Mana Flask grants Guard equal to #% of Flask's recovery amount for # seconds",
     "Vaal Pact",
+    "Verisium Remnants have #% chance to add an additional Runic Modifier in Map",
     "Verisium Remnants have +#% chance to add an additional Runic Modifier in Map",
     "Virtuous",
     "Warcries Empower # additional Attacks",
@@ -124120,6 +124342,7 @@
     "explicit.stat_1104825894",
     "explicit.stat_1106321864",
     "explicit.stat_110659965",
+    "explicit.stat_1109460697",
     "explicit.stat_111835965",
     "explicit.stat_1119086588",
     "explicit.stat_1120862500",
@@ -124162,6 +124385,7 @@
     "explicit.stat_1180552088",
     "explicit.stat_1181419800",
     "explicit.stat_1181501418",
+    "explicit.stat_1183698646",
     "explicit.stat_1185341308",
     "explicit.stat_1195319608",
     "explicit.stat_1195849808",
@@ -124456,6 +124680,7 @@
     "explicit.stat_1810907437",
     "explicit.stat_1811130680",
     "explicit.stat_1816894864",
+    "explicit.stat_181823691",
     "explicit.stat_1818915622",
     "explicit.stat_1823942939",
     "explicit.stat_1825943485",
@@ -124962,6 +125187,7 @@
     "explicit.stat_2840989393",
     "explicit.stat_2843214518",
     "explicit.stat_2849546516",
+    "explicit.stat_2852112245",
     "explicit.stat_2853314994",
     "explicit.stat_2854751904",
     "explicit.stat_2856328513",
@@ -124996,6 +125222,7 @@
     "explicit.stat_2898517796",
     "explicit.stat_2901213448",
     "explicit.stat_2901986750",
+    "explicit.stat_2905096233",
     "explicit.stat_2905515354",
     "explicit.stat_2907381231",
     "explicit.stat_2910761524",
@@ -126202,6 +126429,7 @@
     "explicit.stat_3517228691",
     "explicit.stat_3518087336",
     "explicit.stat_3518449420",
+    "explicit.stat_3520418269",
     "explicit.stat_352044736",
     "explicit.stat_3523867985",
     "explicit.stat_3526763442",
@@ -126266,6 +126494,7 @@
     "explicit.stat_3642528642|8",
     "explicit.stat_3647242059",
     "explicit.stat_3650992555",
+    "explicit.stat_3653794255",
     "explicit.stat_3655769732",
     "explicit.stat_3658708511",
     "explicit.stat_3665922113",
@@ -126394,6 +126623,7 @@
     "explicit.stat_3865605585",
     "explicit.stat_3868118796",
     "explicit.stat_3868746097",
+    "explicit.stat_3871299443",
     "explicit.stat_3871530702",
     "explicit.stat_3872034802",
     "explicit.stat_3872306017",
@@ -126444,6 +126674,7 @@
     "explicit.stat_3962278098",
     "explicit.stat_3962960008",
     "explicit.stat_3963171183",
+    "explicit.stat_3963944561",
     "explicit.stat_3969608626",
     "explicit.stat_3971919056",
     "explicit.stat_3972229254",
@@ -126983,6 +127214,7 @@
     "explicit.stat_774059442",
     "explicit.stat_774222208",
     "explicit.stat_775597083",
+    "explicit.stat_779964546",
     "explicit.stat_782941180",
     "explicit.stat_789117908",
     "explicit.stat_78985352",
@@ -127596,6 +127828,7 @@
     "fractured.stat_2954116742|29514",
     "fractured.stat_2954116742|29527",
     "fractured.stat_2954116742|29762",
+    "fractured.stat_2954116742|29800",
     "fractured.stat_2954116742|29899",
     "fractured.stat_2954116742|2999",
     "fractured.stat_2954116742|30132",
@@ -128551,7 +128784,9 @@
     "rune.stat_1039491398",
     "rune.stat_1050105434",
     "rune.stat_10502714",
+    "rune.stat_1062190843",
     "rune.stat_1073847159",
+    "rune.stat_1078570138",
     "rune.stat_1083521623",
     "rune.stat_1092987622",
     "rune.stat_11014011",
@@ -128590,6 +128825,7 @@
     "rune.stat_1379411836",
     "rune.stat_1381474422",
     "rune.stat_1382805233",
+    "rune.stat_138373935",
     "rune.stat_1386257341",
     "rune.stat_1392112423",
     "rune.stat_1396011622",
@@ -128663,6 +128899,7 @@
     "rune.stat_1816212773",
     "rune.stat_1817052494",
     "rune.stat_1823959929",
+    "rune.stat_1839315243",
     "rune.stat_185580205",
     "rune.stat_1857162058",
     "rune.stat_1871622140",
@@ -128687,6 +128924,7 @@
     "rune.stat_1981392722",
     "rune.stat_1984310483",
     "rune.stat_1984345909",
+    "rune.stat_1992191903",
     "rune.stat_1995345015",
     "rune.stat_1998951374",
     "rune.stat_1999910726",
@@ -128708,18 +128946,22 @@
     "rune.stat_2103650854",
     "rune.stat_2122116143",
     "rune.stat_2134854700",
+    "rune.stat_2139847597",
+    "rune.stat_2148999925",
     "rune.stat_2153364323",
     "rune.stat_2174054121",
     "rune.stat_2174462855",
     "rune.stat_217649179",
     "rune.stat_2191621386",
     "rune.stat_2200571612",
+    "rune.stat_2203195791",
     "rune.stat_2211478554",
     "rune.stat_2223678961",
     "rune.stat_2231410646",
     "rune.stat_2233558630",
     "rune.stat_2241849004",
     "rune.stat_2246411426",
+    "rune.stat_2247017114",
     "rune.stat_2248594298",
     "rune.stat_2250533757",
     "rune.stat_2269618934",
@@ -128729,11 +128971,14 @@
     "rune.stat_2280525771",
     "rune.stat_2291075173",
     "rune.stat_2293111154",
+    "rune.stat_2296009672",
     "rune.stat_2301852600",
+    "rune.stat_2305301734",
     "rune.stat_2310741722",
     "rune.stat_232299587",
     "rune.stat_2328443419",
     "rune.stat_2336012075",
+    "rune.stat_2336703514",
     "rune.stat_2339757871",
     "rune.stat_2339851060",
     "rune.stat_2342427527",
@@ -128757,6 +129002,7 @@
     "rune.stat_2463230181",
     "rune.stat_2480498143",
     "rune.stat_2481353198",
+    "rune.stat_2487305362",
     "rune.stat_2502507413",
     "rune.stat_2505884597",
     "rune.stat_2511217560",
@@ -128859,6 +129105,7 @@
     "rune.stat_3143918757",
     "rune.stat_3144895835",
     "rune.stat_3145796865",
+    "rune.stat_3148103963",
     "rune.stat_3151560620",
     "rune.stat_3155261831",
     "rune.stat_315791320",
@@ -128871,6 +129118,7 @@
     "rune.stat_3257561708",
     "rune.stat_3261801346",
     "rune.stat_3266426611",
+    "rune.stat_3268281424",
     "rune.stat_326965591",
     "rune.stat_3278136794",
     "rune.stat_328541901",
@@ -128976,6 +129224,7 @@
     "rune.stat_3973629633",
     "rune.stat_3981240776",
     "rune.stat_3984865854",
+    "rune.stat_3985867204",
     "rune.stat_3986710072",
     "rune.stat_3990135792",
     "rune.stat_4010677958",
@@ -129002,6 +129251,7 @@
     "rune.stat_4129869957",
     "rune.stat_416040624",
     "rune.stat_4168500604",
+    "rune.stat_4169430079",
     "rune.stat_4200448078",
     "rune.stat_4217453078",
     "rune.stat_4220027924",
@@ -129046,6 +129296,7 @@
     "rune.stat_632743438",
     "rune.stat_635535560",
     "rune.stat_649025131",
+    "rune.stat_653358410",
     "rune.stat_666077204",
     "rune.stat_669069897",
     "rune.stat_674141348",
@@ -129072,6 +129323,7 @@
     "rune.stat_769693350",
     "rune.stat_770672621",
     "rune.stat_774059442",
+    "rune.stat_776287420",
     "rune.stat_782230869",
     "rune.stat_789117908",
     "rune.stat_791928121",
@@ -167689,6 +167941,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -167730,6 +167983,7 @@
         "rune.stat_3972229254",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -167835,6 +168089,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -167876,6 +168131,7 @@
         "rune.stat_3972229254",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -167976,6 +168232,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -168017,6 +168274,7 @@
         "rune.stat_3972229254",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -168116,6 +168374,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -168157,6 +168416,7 @@
         "rune.stat_3972229254",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -168261,6 +168521,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -168302,6 +168563,7 @@
         "rune.stat_3972229254",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -168409,6 +168671,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -168450,6 +168713,7 @@
         "rune.stat_3972229254",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -168553,6 +168817,7 @@
         "rune.stat_1963398329",
         "rune.stat_1963589548",
         "rune.stat_1978899297",
+        "rune.stat_2139847597",
         "rune.stat_2174054121",
         "rune.stat_2191621386",
         "rune.stat_2310741722",
@@ -168594,6 +168859,7 @@
         "rune.stat_3972229254",
         "rune.stat_4080418644",
         "rune.stat_416040624",
+        "rune.stat_4169430079",
         "rune.stat_4217453078",
         "rune.stat_4220027924",
         "rune.stat_458438597",
@@ -168683,6 +168949,7 @@
         "rune.stat_1228682002",
         "rune.stat_1238227257",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1496740334",
         "rune.stat_1556124492",
         "rune.stat_1585886916",
@@ -168695,6 +168962,7 @@
         "rune.stat_1963589548",
         "rune.stat_2011656677",
         "rune.stat_2041668411",
+        "rune.stat_2139847597",
         "rune.stat_2200571612",
         "rune.stat_2250533757",
         "rune.stat_2301852600",
@@ -168818,6 +169086,7 @@
         "rune.stat_1228682002",
         "rune.stat_1238227257",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1496740334",
         "rune.stat_1556124492",
         "rune.stat_1585886916",
@@ -168830,6 +169099,7 @@
         "rune.stat_1963589548",
         "rune.stat_2011656677",
         "rune.stat_2041668411",
+        "rune.stat_2139847597",
         "rune.stat_2200571612",
         "rune.stat_2250533757",
         "rune.stat_2301852600",
@@ -168950,6 +169220,7 @@
         "rune.stat_1228682002",
         "rune.stat_1238227257",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1496740334",
         "rune.stat_1556124492",
         "rune.stat_1585886916",
@@ -168962,6 +169233,7 @@
         "rune.stat_1963589548",
         "rune.stat_2011656677",
         "rune.stat_2041668411",
+        "rune.stat_2139847597",
         "rune.stat_2200571612",
         "rune.stat_2250533757",
         "rune.stat_2301852600",
@@ -169083,6 +169355,7 @@
         "rune.stat_1228682002",
         "rune.stat_1238227257",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1496740334",
         "rune.stat_1556124492",
         "rune.stat_1585886916",
@@ -169095,6 +169368,7 @@
         "rune.stat_1963589548",
         "rune.stat_2011656677",
         "rune.stat_2041668411",
+        "rune.stat_2139847597",
         "rune.stat_2200571612",
         "rune.stat_2250533757",
         "rune.stat_2301852600",
@@ -169218,6 +169492,7 @@
         "rune.stat_1228682002",
         "rune.stat_1238227257",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1496740334",
         "rune.stat_1556124492",
         "rune.stat_1585886916",
@@ -169230,6 +169505,7 @@
         "rune.stat_1963589548",
         "rune.stat_2011656677",
         "rune.stat_2041668411",
+        "rune.stat_2139847597",
         "rune.stat_2200571612",
         "rune.stat_2250533757",
         "rune.stat_2301852600",
@@ -169353,6 +169629,7 @@
         "rune.stat_1228682002",
         "rune.stat_1238227257",
         "rune.stat_1382805233",
+        "rune.stat_138373935",
         "rune.stat_1496740334",
         "rune.stat_1556124492",
         "rune.stat_1585886916",
@@ -169365,6 +169642,7 @@
         "rune.stat_1963589548",
         "rune.stat_2011656677",
         "rune.stat_2041668411",
+        "rune.stat_2139847597",
         "rune.stat_2200571612",
         "rune.stat_2250533757",
         "rune.stat_2301852600",
@@ -169524,6 +169802,7 @@
         "rune.stat_2223678961",
         "rune.stat_2463230181",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2616640048",
@@ -169796,6 +170075,7 @@
         "rune.stat_2077615515",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2694482655",
@@ -169951,6 +170231,7 @@
         "rune.stat_2077615515",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2616640048",
@@ -170090,6 +170371,7 @@
         "rune.stat_2077615515",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2694482655",
@@ -170159,8 +170441,7 @@
         "explicit.stat_4279535856",
         "explicit.stat_551040294",
         "explicit.stat_588512487",
-        "explicit.stat_689816330",
-        "explicit.stat_900933517"
+        "explicit.stat_689816330"
       ],
       "other": [
         "explicit.stat_1671376347",
@@ -170543,18 +170824,27 @@
       ],
       "suffix": [
         "explicit.stat_1083387327",
+        "explicit.stat_1109460697",
+        "explicit.stat_1183698646",
         "explicit.stat_1352729973",
         "explicit.stat_1640965354",
+        "explicit.stat_181823691",
         "explicit.stat_1825943485",
         "explicit.stat_267210597",
         "explicit.stat_2777224821",
+        "explicit.stat_2852112245",
+        "explicit.stat_2905096233",
         "explicit.stat_3039133122",
         "explicit.stat_3240183538",
         "explicit.stat_3371085671",
+        "explicit.stat_3520418269",
+        "explicit.stat_3653794255",
         "explicit.stat_3815617979",
+        "explicit.stat_3871299443",
         "explicit.stat_4279535856",
         "explicit.stat_588512487",
-        "explicit.stat_689816330"
+        "explicit.stat_689816330",
+        "explicit.stat_779964546"
       ],
       "other": [
         "explicit.stat_1671376347",
@@ -170664,6 +170954,7 @@
         "rune.stat_2077615515",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2694482655",
@@ -170911,6 +171202,8 @@
         "rune.stat_1999910726",
         "rune.stat_201332984",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
+        "rune.stat_2203195791",
         "rune.stat_226999623",
         "rune.stat_2310741722",
         "rune.stat_234296660",
@@ -171084,6 +171377,8 @@
         "rune.stat_1999910726",
         "rune.stat_201332984",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
+        "rune.stat_2203195791",
         "rune.stat_226999623",
         "rune.stat_2310741722",
         "rune.stat_234296660",
@@ -171253,6 +171548,8 @@
         "rune.stat_1999910726",
         "rune.stat_201332984",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
+        "rune.stat_2203195791",
         "rune.stat_226999623",
         "rune.stat_2310741722",
         "rune.stat_234296660",
@@ -171419,6 +171716,8 @@
         "rune.stat_1999910726",
         "rune.stat_201332984",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
+        "rune.stat_2203195791",
         "rune.stat_226999623",
         "rune.stat_2310741722",
         "rune.stat_234296660",
@@ -171589,6 +171888,8 @@
         "rune.stat_1999910726",
         "rune.stat_201332984",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
+        "rune.stat_2203195791",
         "rune.stat_226999623",
         "rune.stat_2310741722",
         "rune.stat_234296660",
@@ -171761,6 +172062,8 @@
         "rune.stat_1999910726",
         "rune.stat_201332984",
         "rune.stat_2103650854",
+        "rune.stat_2139847597",
+        "rune.stat_2203195791",
         "rune.stat_226999623",
         "rune.stat_2310741722",
         "rune.stat_234296660",
@@ -171919,7 +172222,9 @@
         "rune.stat_1984310483",
         "rune.stat_1999910726",
         "rune.stat_2074866941",
+        "rune.stat_2139847597",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_227523295",
         "rune.stat_2310741722",
         "rune.stat_2392260628",
@@ -171959,6 +172264,7 @@
         "rune.stat_386720106",
         "rune.stat_3903510399",
         "rune.stat_3917489142",
+        "rune.stat_3985867204",
         "rune.stat_4058681894",
         "rune.stat_4080418644",
         "rune.stat_4111745607",
@@ -172088,7 +172394,9 @@
         "rune.stat_1984310483",
         "rune.stat_1999910726",
         "rune.stat_2074866941",
+        "rune.stat_2139847597",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_227523295",
         "rune.stat_2310741722",
         "rune.stat_2392260628",
@@ -172128,6 +172436,7 @@
         "rune.stat_386720106",
         "rune.stat_3903510399",
         "rune.stat_3917489142",
+        "rune.stat_3985867204",
         "rune.stat_4058681894",
         "rune.stat_4080418644",
         "rune.stat_4111745607",
@@ -172252,7 +172561,9 @@
         "rune.stat_1984310483",
         "rune.stat_1999910726",
         "rune.stat_2074866941",
+        "rune.stat_2139847597",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_227523295",
         "rune.stat_2310741722",
         "rune.stat_2392260628",
@@ -172292,6 +172603,7 @@
         "rune.stat_386720106",
         "rune.stat_3903510399",
         "rune.stat_3917489142",
+        "rune.stat_3985867204",
         "rune.stat_4058681894",
         "rune.stat_4080418644",
         "rune.stat_4111745607",
@@ -172419,7 +172731,9 @@
         "rune.stat_1984310483",
         "rune.stat_1999910726",
         "rune.stat_2074866941",
+        "rune.stat_2139847597",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_227523295",
         "rune.stat_2310741722",
         "rune.stat_2392260628",
@@ -172459,6 +172773,7 @@
         "rune.stat_386720106",
         "rune.stat_3903510399",
         "rune.stat_3917489142",
+        "rune.stat_3985867204",
         "rune.stat_4058681894",
         "rune.stat_4080418644",
         "rune.stat_4111745607",
@@ -172591,7 +172906,9 @@
         "rune.stat_1984310483",
         "rune.stat_1999910726",
         "rune.stat_2074866941",
+        "rune.stat_2139847597",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_227523295",
         "rune.stat_2310741722",
         "rune.stat_2392260628",
@@ -172631,6 +172948,7 @@
         "rune.stat_386720106",
         "rune.stat_3903510399",
         "rune.stat_3917489142",
+        "rune.stat_3985867204",
         "rune.stat_4058681894",
         "rune.stat_4080418644",
         "rune.stat_4111745607",
@@ -172761,7 +173079,9 @@
         "rune.stat_1984310483",
         "rune.stat_1999910726",
         "rune.stat_2074866941",
+        "rune.stat_2139847597",
         "rune.stat_2231410646",
+        "rune.stat_2247017114",
         "rune.stat_227523295",
         "rune.stat_2310741722",
         "rune.stat_2392260628",
@@ -172801,6 +173121,7 @@
         "rune.stat_386720106",
         "rune.stat_3903510399",
         "rune.stat_3917489142",
+        "rune.stat_3985867204",
         "rune.stat_4058681894",
         "rune.stat_4080418644",
         "rune.stat_4111745607",
@@ -173029,6 +173350,7 @@
         "rune.stat_2077615515",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2694482655",
@@ -173181,6 +173503,7 @@
         "rune.stat_2223678961",
         "rune.stat_2293111154",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2694482655",
@@ -173322,6 +173645,7 @@
         "rune.stat_2077615515",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2694482655",
@@ -173513,6 +173837,7 @@
         "rune.stat_2223678961",
         "rune.stat_2443032293",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2694482655",
@@ -174067,6 +174392,8 @@
         "explicit.stat_4220027924",
         "rune.stat_101878827",
         "rune.stat_1020945697",
+        "rune.stat_1062190843",
+        "rune.stat_1078570138",
         "rune.stat_1250712710",
         "rune.stat_1433896639",
         "rune.stat_1539508682",
@@ -174076,14 +174403,20 @@
         "rune.stat_1779262102",
         "rune.stat_1798257884",
         "rune.stat_1805182458",
+        "rune.stat_1839315243",
         "rune.stat_185580205",
         "rune.stat_1881314095",
         "rune.stat_1911097163",
         "rune.stat_1963398329",
+        "rune.stat_1992191903",
         "rune.stat_1998951374",
+        "rune.stat_2148999925",
         "rune.stat_2211478554",
         "rune.stat_2250533757",
+        "rune.stat_2296009672",
+        "rune.stat_2305301734",
         "rune.stat_2310741722",
+        "rune.stat_2336703514",
         "rune.stat_234296660",
         "rune.stat_2390027291",
         "rune.stat_2586152168",
@@ -174098,9 +174431,11 @@
         "rune.stat_3057012405",
         "rune.stat_3091578504",
         "rune.stat_3145796865",
+        "rune.stat_3148103963",
         "rune.stat_3151560620",
         "rune.stat_315791320",
         "rune.stat_3261801346",
+        "rune.stat_3268281424",
         "rune.stat_328541901",
         "rune.stat_3299347043",
         "rune.stat_3329501096",
@@ -174120,10 +174455,12 @@
         "rune.stat_540694930",
         "rune.stat_602344904",
         "rune.stat_632743438",
+        "rune.stat_653358410",
         "rune.stat_666077204",
         "rune.stat_718638445",
         "rune.stat_731781020",
         "rune.stat_762761075",
+        "rune.stat_776287420",
         "rune.stat_805298720"
       ]
     },
@@ -174590,6 +174927,7 @@
         "rune.stat_2077615515",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2616640048",
@@ -174723,6 +175061,8 @@
         "implicit.stat_473429811",
         "rune.stat_1020945697",
         "rune.stat_1050105434",
+        "rune.stat_1062190843",
+        "rune.stat_1078570138",
         "rune.stat_1228682002",
         "rune.stat_124131830",
         "rune.stat_1433896639",
@@ -174731,11 +175071,17 @@
         "rune.stat_1676950499",
         "rune.stat_1693515857",
         "rune.stat_1779262102",
+        "rune.stat_1839315243",
         "rune.stat_185580205",
         "rune.stat_1936645603",
         "rune.stat_1963398329",
+        "rune.stat_1992191903",
         "rune.stat_2074866941",
+        "rune.stat_2148999925",
+        "rune.stat_2296009672",
+        "rune.stat_2305301734",
         "rune.stat_2328443419",
+        "rune.stat_2336703514",
         "rune.stat_2339757871",
         "rune.stat_2390027291",
         "rune.stat_2505884597",
@@ -174750,7 +175096,9 @@
         "rune.stat_2974417149",
         "rune.stat_3015669065",
         "rune.stat_3145796865",
+        "rune.stat_3148103963",
         "rune.stat_3261801346",
+        "rune.stat_3268281424",
         "rune.stat_3278136794",
         "rune.stat_328541901",
         "rune.stat_3299347043",
@@ -174770,11 +175118,13 @@
         "rune.stat_4236566306",
         "rune.stat_473429811",
         "rune.stat_602344904",
+        "rune.stat_653358410",
         "rune.stat_718638445",
         "rune.stat_731403740",
         "rune.stat_731781020",
         "rune.stat_737908626",
         "rune.stat_762761075",
+        "rune.stat_776287420",
         "rune.stat_789117908",
         "rune.stat_805298720",
         "rune.stat_983749596"
@@ -174887,6 +175237,7 @@
         "rune.stat_2077615515",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2694482655",
@@ -175616,6 +175967,7 @@
         "rune.stat_2077615515",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2694482655",
@@ -175766,6 +176118,7 @@
         "rune.stat_2077615515",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2694482655",
@@ -175909,6 +176262,7 @@
         "rune.stat_2077615515",
         "rune.stat_2223678961",
         "rune.stat_2480498143",
+        "rune.stat_2487305362",
         "rune.stat_2527686725",
         "rune.stat_2608793552",
         "rune.stat_2694482655",
@@ -176076,6 +176430,8 @@
         "implicit.stat_473429811",
         "rune.stat_1020945697",
         "rune.stat_1050105434",
+        "rune.stat_1062190843",
+        "rune.stat_1078570138",
         "rune.stat_1228682002",
         "rune.stat_124131830",
         "rune.stat_1433896639",
@@ -176084,10 +176440,16 @@
         "rune.stat_1676950499",
         "rune.stat_1693515857",
         "rune.stat_1779262102",
+        "rune.stat_1839315243",
         "rune.stat_185580205",
         "rune.stat_1963398329",
+        "rune.stat_1992191903",
         "rune.stat_2074866941",
+        "rune.stat_2148999925",
         "rune.stat_227523295",
+        "rune.stat_2296009672",
+        "rune.stat_2305301734",
+        "rune.stat_2336703514",
         "rune.stat_2339757871",
         "rune.stat_2390027291",
         "rune.stat_2505884597",
@@ -176103,7 +176465,9 @@
         "rune.stat_2974417149",
         "rune.stat_3015669065",
         "rune.stat_3145796865",
+        "rune.stat_3148103963",
         "rune.stat_3261801346",
+        "rune.stat_3268281424",
         "rune.stat_3278136794",
         "rune.stat_328541901",
         "rune.stat_3299347043",
@@ -176125,12 +176489,14 @@
         "rune.stat_4236566306",
         "rune.stat_473429811",
         "rune.stat_602344904",
+        "rune.stat_653358410",
         "rune.stat_704409219",
         "rune.stat_718638445",
         "rune.stat_731403740",
         "rune.stat_731781020",
         "rune.stat_737908626",
         "rune.stat_762761075",
+        "rune.stat_776287420",
         "rune.stat_789117908",
         "rune.stat_805298720",
         "rune.stat_983749596"
@@ -177563,7 +177929,7 @@
         "zh_CN": "配置 活靶子",
         "zh_TW": "配置待宰羔羊",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -177749,7 +178115,7 @@
       },
       "crafted.stat_2954116742|14258": {
         "en": "Allocates Puppet Master chance",
-        "zh_CN": "配置 隐秘之手",
+        "zh_CN": "配置 傀儡大师几率",
         "zh_TW": "配置魁儡大師機率",
         "sources": {
           "zh_CN": "exact_id",
@@ -178094,7 +178460,7 @@
         "zh_CN": "配置 空手入白刃",
         "zh_TW": "配置捕刃者",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -178103,7 +178469,7 @@
         "zh_CN": "配置 将军的铁壁",
         "zh_TW": "配置將軍的束縛",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -178310,7 +178676,7 @@
         "zh_CN": "配置 先祖的愈合",
         "zh_TW": "配置先祖治癒",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -178814,7 +179180,7 @@
         "zh_CN": "配置 赏金猎人",
         "zh_TW": "配置賞金獵人",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -179138,7 +179504,7 @@
         "zh_CN": "配置 血肉回收",
         "zh_TW": "配置肉塊回收",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -179373,7 +179739,7 @@
         "zh_TW": "配置高貴之狼",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "crafted.stat_2954116742|27491": {
@@ -179759,7 +180125,7 @@
         "zh_CN": "配置 熵能化身",
         "zh_TW": "配置熵熱化身",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -179822,7 +180188,7 @@
         "zh_CN": "配置 原始防护",
         "zh_TW": "配置原始守護",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -180362,7 +180728,7 @@
         "zh_CN": "配置 刀山火海",
         "zh_TW": "配置深入其中",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -180524,7 +180890,7 @@
         "zh_CN": "配置 训诫",
         "zh_TW": "配置告誡者",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -181289,7 +181655,7 @@
         "zh_CN": "配置 掘墓人",
         "zh_TW": "配置掘墓者",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -181415,7 +181781,7 @@
         "zh_CN": "配置 夺目眩光",
         "zh_TW": "配置致盲閃光",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -181604,7 +181970,7 @@
         "zh_CN": "配置 荆棘之肤",
         "zh_TW": "配置荊棘之皮",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "exact_id"
         }
       },
@@ -181721,7 +182087,7 @@
         "zh_CN": "配置 模范训练",
         "zh_TW": "配置紀律訓練",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -182000,7 +182366,7 @@
         "zh_CN": "配置 近身射击",
         "zh_TW": "配置短距離射擊",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -182288,7 +182654,7 @@
         "zh_CN": "配置 鲜血输注",
         "zh_TW": "配置鮮血傳輸",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -182387,7 +182753,7 @@
         "zh_CN": "配置 分裂之劲",
         "zh_TW": "配置分裂力量",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -182540,7 +182906,7 @@
         "zh_CN": "配置 蛮力",
         "zh_TW": "配置殘忍力量",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -182549,7 +182915,7 @@
         "zh_CN": "配置 封锁区域",
         "zh_TW": "配置區域控制",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -183062,7 +183428,7 @@
         "zh_CN": "配置 高效装填",
         "zh_TW": "配置高效裝填",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -183395,7 +183761,7 @@
         "zh_CN": "配置 坚韧集结",
         "zh_TW": "配置強化士氣",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -183422,7 +183788,7 @@
         "zh_CN": "配置 斜掠偏转",
         "zh_TW": "配置斜擦偏斜",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -183728,7 +184094,7 @@
         "zh_CN": "配置 熟能生巧",
         "zh_TW": "配置熟能生巧",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -184148,7 +184514,7 @@
       },
       "crafted.stat_2954116742|62210": {
         "en": "Allocates Puppet Master chance",
-        "zh_CN": "配置 无尽之舞",
+        "zh_CN": "配置 傀儡大师几率",
         "zh_TW": "配置魁儡大師機率",
         "sources": {
           "zh_CN": "exact_id",
@@ -184565,7 +184931,7 @@
         "zh_CN": "配置 连环炸药",
         "zh_TW": "配置連續爆炸",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "exact_id"
         }
       },
@@ -185336,7 +185702,7 @@
       },
       "crafted.stat_3377888098": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间提高 #%",
+        "zh_CN": "技能效果持续时间延长 #%",
         "zh_TW": "增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -185751,7 +186117,7 @@
       "crafted.stat_541021467": {
         "en": "Debilitate Enemies on Hit while you have an Emerald and a Sapphire socketed in your tree",
         "zh_CN": "当你镶嵌有一颗翡翠和一颗蓝玉时，击中会使敌人疲惫",
-        "zh_TW": "若插槽中的鑲嵌碧綠翠雲和藍寶石，擊中時虛弱敵人",
+        "zh_TW": "若你的天賦樹中鑲嵌了一顆綠寶石和藍寶石，擊中時虛弱敵人",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -188864,7 +189230,7 @@
       },
       "desecrated.stat_2594634307": {
         "en": "Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "印记技能的技能效果持续时间提高 #%",
+        "zh_CN": "印记技能的技能效果持续时间延长 #%",
         "zh_TW": "印記技能增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -189399,7 +189765,7 @@
         "zh_TW": "範圍內核心天賦也會賦予 增加#%致盲效果",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "desecrated.stat_2923486259": {
@@ -189692,7 +190058,7 @@
       },
       "desecrated.stat_3113764475": {
         "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
+        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
         "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -190178,7 +190544,7 @@
       },
       "desecrated.stat_3377888098": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间提高 #%",
+        "zh_CN": "技能效果持续时间延长 #%",
         "zh_TW": "增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -191537,7 +191903,7 @@
       },
       "desecrated.stat_4162678661": {
         "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
+        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
         "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -193841,7 +194207,7 @@
       },
       "enchant.stat_2954116742|14258": {
         "en": "Allocates Puppet Master chance",
-        "zh_CN": "配置 隐秘之手",
+        "zh_CN": "配置 傀儡大师几率",
         "zh_TW": "配置魁儡大師機率",
         "sources": {
           "zh_CN": "exact_id",
@@ -200240,7 +200606,7 @@
       },
       "enchant.stat_2954116742|62210": {
         "en": "Allocates Puppet Master chance",
-        "zh_CN": "配置 无尽之舞",
+        "zh_CN": "配置 傀儡大师几率",
         "zh_TW": "配置魁儡大師機率",
         "sources": {
           "zh_CN": "exact_id",
@@ -201302,7 +201668,7 @@
       },
       "enchant.stat_3377888098": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间提高 #%",
+        "zh_CN": "技能效果持续时间延长 #%",
         "zh_TW": "增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -201413,7 +201779,7 @@
         "zh_CN": "点燃强度提高 #%",
         "zh_TW": "增加#%點燃幅度",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -202362,6 +202728,15 @@
           "zh_TW": "exact_id"
         }
       },
+      "explicit.stat_1109460697": {
+        "en": "Expeditions contain 1 Additional Verisium Sentry in Map",
+        "zh_CN": "地图内的先祖秘藏额外包含 1 个维金哨兵",
+        "zh_TW": "地圖中的探險含有1個額外維里西姆守望",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
       "explicit.stat_111835965": {
         "en": "Notable Passive Skills in Radius also grant #% increased Attack Speed with Quarterstaves",
         "zh_CN": "范围内的核心天赋同时提供 节杖的攻击速度提高 #%",
@@ -202735,6 +203110,15 @@
         "en": "# to Maximum Rage",
         "zh_CN": "# 怒火上限",
         "zh_TW": "#層最大盛怒",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
+      "explicit.stat_1183698646": {
+        "en": "Expeditions contain 1 Additional Boss encased in ice in Map",
+        "zh_CN": "地图内的先祖秘藏额外包含 1 个被坚冰包裹的首领",
+        "zh_TW": "地圖中的探險含有1個額外封存於冰霜中的頭目",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -203525,7 +203909,7 @@
       },
       "explicit.stat_1367999357": {
         "en": "Non-Channelling Skills have #% increased Spell Critical Hit Chance per 100 maximum Mana",
-        "zh_CN": "每 100 点魔力上限使非吟唱法术的暴击率提高 #%",
+        "zh_CN": "每 100 点魔力上限使非吟唱技能的法术暴击几率提高 #%",
         "zh_TW": "每100最大魔力，增加#%非引導技能的法術暴擊率",
         "sources": {
           "zh_CN": "exact_id",
@@ -205381,6 +205765,15 @@
         "en": "Enemies Chilled by your Hits increase damage taken by Chill Magnitude",
         "zh_CN": "被你的击中冰缓的敌人受到的伤害提高，取决于冰缓强度",
         "zh_TW": "被你的擊中所冰緩的敵人根據冰緩幅度增加承受傷害",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
+      "explicit.stat_181823691": {
+        "en": "Expeditions contain 1 buried Strongbox in Map",
+        "zh_CN": "地图内的先祖秘藏包含 1 个埋藏的保险箱",
+        "zh_TW": "地圖中的探險含有1個埋藏的保險箱",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -208781,7 +209174,7 @@
       },
       "explicit.stat_2594634307": {
         "en": "Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "印记技能的技能效果持续时间提高 #%",
+        "zh_CN": "印记技能的技能效果持续时间延长 #%",
         "zh_TW": "印記技能增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -209609,10 +210002,10 @@
       },
       "explicit.stat_2771095426": {
         "en": "Gain #% of damage as Fire damage per 1% Chance to Block",
-        "zh_CN": "Gain #% of damage as Fire damage per 1% Chance to Block",
+        "zh_CN": "每 1% 格挡几率获得相当于伤害 #% 的火焰伤害",
         "zh_TW": "每擁有1%格擋率，獲得等同於#%傷害的火焰傷害",
         "sources": {
-          "zh_CN": "fallback",
+          "zh_CN": "exact_id",
           "zh_TW": "exact_id"
         }
       },
@@ -209940,6 +210333,15 @@
           "zh_TW": "exact_id"
         }
       },
+      "explicit.stat_2852112245": {
+        "en": "Expeditions contain 1 Vaal Relic in Map",
+        "zh_CN": "地图内的先祖秘藏包含 1 个瓦尔遗物",
+        "zh_TW": "地圖中的探險含有1個瓦爾遺物",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
       "explicit.stat_2853314994": {
         "en": "Regenerate # Rage per second",
         "zh_CN": "怒火每秒再生 #",
@@ -210241,6 +210643,15 @@
         "en": "#% to all Elemental Resistances",
         "zh_CN": "所有元素抗性 #%",
         "zh_TW": "#%全元素抗性",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
+      "explicit.stat_2905096233": {
+        "en": "#% increased Expedition Monster Rarity in Map",
+        "zh_CN": "地图内的先祖秘藏怪物稀有度提高 #%",
+        "zh_TW": "增加#%地圖中的探險怪物稀有度",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -211013,7 +211424,7 @@
       },
       "explicit.stat_2954116742|14258": {
         "en": "Allocates Puppet Master chance",
-        "zh_CN": "配置 隐秘之手",
+        "zh_CN": "配置 傀儡大师几率",
         "zh_TW": "配置魁儡大師機率",
         "sources": {
           "zh_CN": "exact_id",
@@ -212637,7 +213048,7 @@
         "zh_TW": "配置高貴之狼",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "explicit.stat_2954116742|27491": {
@@ -214985,7 +215396,7 @@
         "zh_CN": "配置 模范训练",
         "zh_TW": "配置紀律訓練",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -217412,7 +217823,7 @@
       },
       "explicit.stat_2954116742|62210": {
         "en": "Allocates Puppet Master chance",
-        "zh_CN": "配置 无尽之舞",
+        "zh_CN": "配置 傀儡大师几率",
         "zh_TW": "配置魁儡大師機率",
         "sources": {
           "zh_CN": "exact_id",
@@ -218672,11 +219083,11 @@
       },
       "explicit.stat_3039133122": {
         "en": "#% increased Expedition Explosive Area of Effect in Map",
-        "zh_CN": "#% increased Expedition Explosive Area of Effect in Map",
-        "zh_TW": "#% increased Expedition Explosive Area of Effect in Map",
+        "zh_CN": "地图内先祖秘藏爆炸范围提高 #%",
+        "zh_TW": "增加#%地圖中探險炸藥的範圍效果",
         "sources": {
-          "zh_CN": "fallback",
-          "zh_TW": "fallback"
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
         }
       },
       "explicit.stat_3040571529": {
@@ -218960,7 +219371,7 @@
       },
       "explicit.stat_3076483222|61382": {
         "en": "Sacrifice up to 2 Divine Orbs to receive double on Trial completion",
-        "zh_CN": "献祭最多 3 神圣石 个，完成试炼时可获得双倍返还",
+        "zh_CN": "献祭最多 2 神圣石 个，完成试炼时可获得双倍返还",
         "zh_TW": "獻祭最多2 顆神聖石，以在完成試煉時獲得兩倍獎勵",
         "sources": {
           "zh_CN": "exact_id",
@@ -219122,7 +219533,7 @@
       },
       "explicit.stat_3113764475": {
         "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
+        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
         "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -220256,7 +220667,7 @@
       },
       "explicit.stat_3377888098": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间提高 #%",
+        "zh_CN": "技能效果持续时间延长 #%",
         "zh_TW": "增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -221100,6 +221511,15 @@
           "zh_TW": "exact_id"
         }
       },
+      "explicit.stat_3520418269": {
+        "en": "Monsters from Verisium Remnants drop #% increased Verisium",
+        "zh_CN": "维金残片生成的怪物掉落的维金数量提高 #%",
+        "zh_TW": "增加#%維里西姆遺物怪物掉落的維里西姆",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
       "explicit.stat_352044736": {
         "en": "Every Rage also grants #% increased Stun Threshold",
         "zh_CN": "每一点怒火还会使晕眩阈值提高 #%",
@@ -221400,7 +221820,7 @@
       "explicit.stat_3598729471": {
         "en": "You can only Socket Emerald Jewels in this item",
         "zh_CN": "你只能在该物品中镶嵌翡翠珠宝",
-        "zh_TW": "你只能在這件物品上鑲嵌翡翠珠寶",
+        "zh_TW": "你只能在這件物品上鑲嵌綠寶石",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -221671,6 +222091,15 @@
         "en": "Debuffs you inflict have #% increased Slow Magnitude",
         "zh_CN": "你造成的减益的减速强度提高 #%",
         "zh_TW": "你施加的減益效果增加#%緩速幅度",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
+      "explicit.stat_3653794255": {
+        "en": "Expeditions have +#% Surpassing chance to contain an additional Verisium Remnant",
+        "zh_CN": "先祖秘藏有 +#% 的溢出几率包含一个额外的维金残片",
+        "zh_TW": "探險擁有+#%滿溢機率含有額外一個維里西姆遺物",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -222828,6 +223257,15 @@
           "zh_TW": "exact_id"
         }
       },
+      "explicit.stat_3871299443": {
+        "en": "Verisium Remnants have +#% chance to add an additional Runic Modifier in Map",
+        "zh_CN": "地图内的维金残片有 +#% 的几率添加一个额外的符文词缀",
+        "zh_TW": "地圖中的維里西姆遺物擁有+#%機率添加一條額外符文詞綴",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
       "explicit.stat_3871530702": {
         "en": "Conquered Attribute Passive Skills also grant # to Strength",
         "zh_CN": "被抑制的属性天赋技能还会提供 # 点力量",
@@ -223145,11 +223583,11 @@
       },
       "explicit.stat_3937291366": {
         "en": "#% chance to add a Vaal Beacon Unique Monster to the Map",
-        "zh_CN": "#% chance to add a Vaal Beacon Unique Monster to the Map",
-        "zh_TW": "#% chance to add a Vaal Beacon Unique Monster to the Map",
+        "zh_CN": "有 #% 的几率为地图增加一个瓦尔灯塔传奇怪物",
+        "zh_TW": "有#%機率為地圖新增一名瓦爾烽塔傳奇怪物",
         "sources": {
-          "zh_CN": "fallback",
-          "zh_TW": "fallback"
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
         }
       },
       "explicit.stat_3939216292": {
@@ -223273,6 +223711,15 @@
         "en": "Targets affected by Abyssal Wasting you inflict are Blinded",
         "zh_CN": "受到你施加的深渊耗散影响的目标陷入致盲状态",
         "zh_TW": "受你施加的深淵耗損影響的目標被致盲",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
+      "explicit.stat_3963944561": {
+        "en": "The first unearthed Runic Monster will be a Rare Monster in Map",
+        "zh_CN": "地图内最先被开掘的符文怪物将为稀有怪物",
+        "zh_TW": "地圖中首名出土的符文怪物會是稀有怪物",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -224045,7 +224492,7 @@
       },
       "explicit.stat_4162678661": {
         "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
+        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
         "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -227214,7 +227661,7 @@
       "explicit.stat_541021467": {
         "en": "Debilitate Enemies on Hit while you have an Emerald and a Sapphire socketed in your tree",
         "zh_CN": "当你镶嵌有一颗翡翠和一颗蓝玉时，击中会使敌人疲惫",
-        "zh_TW": "若插槽中的鑲嵌碧綠翠雲和藍寶石，擊中時虛弱敵人",
+        "zh_TW": "若你的天賦樹中鑲嵌了一顆綠寶石和藍寶石，擊中時虛弱敵人",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -228129,6 +228576,15 @@
           "zh_TW": "exact_id"
         }
       },
+      "explicit.stat_779964546": {
+        "en": "Expeditions have +#% Surpassing chance to Duplicate Runic Monsters in Map",
+        "zh_CN": "地图内的先祖秘藏有 +#% 的溢出几率复制符文怪物",
+        "zh_TW": "探險擁有+#%滿溢機率複製地圖中的符文怪物",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
       "explicit.stat_782941180": {
         "en": "#% of Spell Damage Leeched as Life",
         "zh_CN": "法术伤害的 #% 转化为生命偷取",
@@ -228652,8 +229108,8 @@
         }
       },
       "explicit.stat_900933517": {
-        "en": "Delirium Fog in Map spawns #% increased MirrorShards",
-        "zh_CN": "地图中的惊悸迷雾生成的破溃之镜碎片数量提高 #%",
+        "en": "Delirium Fog in Map spawns #% increased Mirror Shards",
+        "zh_CN": "地图中的惊悸迷雾生成的破溃之镜碎片提高 #%",
         "zh_TW": "地圖中的譫妄迷霧增加#%裂鏡碎片的生成量",
         "sources": {
           "zh_CN": "exact_id",
@@ -228770,7 +229226,7 @@
       },
       "explicit.stat_933768533": {
         "en": "#% increased Global Armour, Evasion and Energy Shield per Socket filled",
-        "zh_CN": "每个镶嵌的插槽全局护甲，闪避与能量护盾提高 #%",
+        "zh_CN": "每个镶嵌的插槽使全局护甲，闪避与能量护盾提高 #%",
         "zh_TW": "每鑲嵌一個插槽，增加#%全域護甲、閃備與能量護盾",
         "sources": {
           "zh_CN": "exact_id",
@@ -229773,7 +230229,7 @@
         "zh_TW": "+#最大魁儡大師層數",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_1485480327": {
@@ -230871,7 +231327,7 @@
         "zh_TW": "擲彈技能有+#次冷卻使用次數",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_2254480358": {
@@ -231033,7 +231489,7 @@
         "zh_TW": "增加#%暈眩累積",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_2416650879": {
@@ -231326,7 +231782,7 @@
       },
       "fractured.stat_2594634307": {
         "en": "Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "印记技能的技能效果持续时间提高 #%",
+        "zh_CN": "印记技能的技能效果持续时间延长 #%",
         "zh_TW": "印記技能增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -233643,6 +234099,15 @@
         "zh_TW": "配置喉鳴咆哮",
         "sources": {
           "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_2954116742|29800": {
+        "en": "Allocates Shocking Limit",
+        "zh_CN": "配置 电震上限",
+        "zh_TW": "配置感電上限",
+        "sources": {
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -237725,7 +238190,7 @@
       },
       "fractured.stat_3113764475": {
         "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
+        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
         "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -238139,7 +238604,7 @@
       },
       "fractured.stat_3377888098": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间提高 #%",
+        "zh_CN": "技能效果持续时间延长 #%",
         "zh_TW": "增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -238349,7 +238814,7 @@
         "zh_CN": "区域内有冰缓地面",
         "zh_TW": "區域會有多塊冰緩地面",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -239228,7 +239693,7 @@
       },
       "fractured.stat_4162678661": {
         "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
+        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
         "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -239339,7 +239804,7 @@
         "zh_CN": "击中时有 #% 的几率额外积累一次连击",
         "zh_TW": "擊中時有#%機率額外累積一個連擊",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -239562,7 +240027,7 @@
       "fractured.stat_541021467": {
         "en": "Debilitate Enemies on Hit while you have an Emerald and a Sapphire socketed in your tree",
         "zh_CN": "当你镶嵌有一颗翡翠和一颗蓝玉时，击中会使敌人疲惫",
-        "zh_TW": "若插槽中的鑲嵌碧綠翠雲和藍寶石，擊中時虛弱敵人",
+        "zh_TW": "若你的天賦樹中鑲嵌了一顆綠寶石和藍寶石，擊中時虛弱敵人",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -242009,7 +242474,7 @@
       },
       "pseudo.pseudo_total_all_elemental_resistances": {
         "en": "+#% total to all Elemental Resistances",
-        "zh_CN": "+#% 总最大元素抗性",
+        "zh_CN": "+#% 全元素抗性",
         "zh_TW": "+#% 元素抗性",
         "sources": {
           "zh_CN": "exact_id",
@@ -242045,7 +242510,7 @@
       },
       "pseudo.pseudo_total_dexterity": {
         "en": "+# total to Dexterity",
-        "zh_CN": "+#% 敏捷",
+        "zh_CN": "+# 敏捷",
         "zh_TW": "+# 敏捷",
         "sources": {
           "zh_CN": "exact_id",
@@ -242081,7 +242546,7 @@
       },
       "pseudo.pseudo_total_intelligence": {
         "en": "+# total to Intelligence",
-        "zh_CN": "+#% 智慧",
+        "zh_CN": "+# 智慧",
         "zh_TW": "+# 智慧",
         "sources": {
           "zh_CN": "exact_id",
@@ -242126,7 +242591,7 @@
       },
       "pseudo.pseudo_total_strength": {
         "en": "+# total to Strength",
-        "zh_CN": "+#% 力量",
+        "zh_CN": "+# 力量",
         "zh_TW": "+# 力量",
         "sources": {
           "zh_CN": "exact_id",
@@ -242241,6 +242706,15 @@
           "zh_TW": "fallback"
         }
       },
+      "rune.stat_1062190843": {
+        "en": "# to Level of all Storm Skill Gems",
+        "zh_CN": "所有风暴技能宝石等级提高 #",
+        "zh_TW": "# to Level of all Storm Skill Gems",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "fallback"
+        }
+      },
       "rune.stat_1073847159": {
         "en": "# to Spirit per Idol socketed in your Equipment",
         "zh_CN": "你的装备中每镶嵌一个雕像，# 点精魂",
@@ -242248,6 +242722,15 @@
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
+        }
+      },
+      "rune.stat_1078570138": {
+        "en": "# to Level of all Hazard Skill Gems",
+        "zh_CN": "所有危害技能宝石等级提高 #",
+        "zh_TW": "# to Level of all Hazard Skill Gems",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "fallback"
         }
       },
       "rune.stat_1083521623": {
@@ -242345,8 +242828,8 @@
         "zh_CN": "装备身体护甲的能量护盾提高 #%",
         "zh_TW": "增加#%已裝備身體護甲的能量護盾",
         "sources": {
-          "zh_CN": "same_bare_and_template",
-          "zh_TW": "same_bare_and_template"
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_1197632982": {
@@ -242444,7 +242927,7 @@
         "zh_CN": "每点力量使护甲 +1",
         "zh_TW": "每1力量+1護甲值",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -242590,6 +243073,15 @@
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
+        }
+      },
+      "rune.stat_138373935": {
+        "en": "#% to Chaos Resistance for each Corrupted Item Equipped",
+        "zh_CN": "每个已装备的腐化物品使混沌抗性 #%",
+        "zh_TW": "#% to Chaos Resistance for each Corrupted Item Equipped",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "fallback"
         }
       },
       "rune.stat_1386257341": {
@@ -242765,11 +243257,11 @@
       },
       "rune.stat_1519474779": {
         "en": "#% increased Effect of Non-Damaging Ailments on you",
-        "zh_CN": "#% increased Effect of Non-Damaging Ailments on you",
-        "zh_TW": "#% increased Effect of Non-Damaging Ailments on you",
+        "zh_CN": "你受到的非伤害性异常状态的效果提高 #%",
+        "zh_TW": "增加#%你身上的非傷害型異常狀態效果",
         "sources": {
-          "zh_CN": "fallback",
-          "zh_TW": "fallback"
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_1519615863": {
@@ -242783,10 +243275,10 @@
       },
       "rune.stat_1524834794": {
         "en": "Bonded: #% increased Damage per 15 Strength",
-        "zh_CN": "羁绊：每 # 点力量可使伤害提高 #%",
-        "zh_TW": "命定:每#點力量增加#%傷害",
+        "zh_CN": "羁绊： 每 15 点力量可使伤害提高 #%",
+        "zh_TW": "Bonded: #% increased Damage per 15 Strength",
         "sources": {
-          "zh_CN": "fallback",
+          "zh_CN": "exact_id",
           "zh_TW": "fallback"
         }
       },
@@ -243249,6 +243741,15 @@
           "zh_TW": "exact_id"
         }
       },
+      "rune.stat_1839315243": {
+        "en": "# to Level of all Slam Skill Gems",
+        "zh_CN": "所有猛击技能宝石等级提高 #",
+        "zh_TW": "# to Level of all Slam Skill Gems",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "fallback"
+        }
+      },
       "rune.stat_185580205": {
         "en": "Charms gain # charge per Second",
         "zh_CN": "咒符每秒获得 # 次充能",
@@ -243465,6 +243966,15 @@
           "zh_TW": "exact_id"
         }
       },
+      "rune.stat_1992191903": {
+        "en": "# to Level of all Mark Skills",
+        "zh_CN": "# 所有印记技能等级",
+        "zh_TW": "#所有印記技能等級",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
       "rune.stat_1995345015": {
         "en": "Gain maximum Runic Ward equal to #% of this Weapon's maximum damage",
         "zh_CN": "获得等同于该武器伤害上限 #% 的符文结界上限",
@@ -243654,6 +244164,24 @@
           "zh_TW": "exact_id"
         }
       },
+      "rune.stat_2139847597": {
+        "en": "Corrupting will always result in change",
+        "zh_CN": "腐化必定会改变",
+        "zh_TW": "汙染的結果總會是改變",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
+      "rune.stat_2148999925": {
+        "en": "# to Level of all Warcry Skill Gems",
+        "zh_CN": "所有战吼技能宝石等级提高 #",
+        "zh_TW": "#全部戰吼技能寶石等級",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
       "rune.stat_2153364323": {
         "en": "# Intelligence Requirement",
         "zh_CN": "# 智慧需求",
@@ -243708,6 +244236,15 @@
           "zh_TW": "exact_id"
         }
       },
+      "rune.stat_2203195791": {
+        "en": "#% increased Skill Speed for each Corrupted Item Equipped",
+        "zh_CN": "每有一件已装备的腐化物品，技能速度提高 #%",
+        "zh_TW": "#% increased Skill Speed for each Corrupted Item Equipped",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "fallback"
+        }
+      },
       "rune.stat_2211478554": {
         "en": "If you would gain a Frenzy Charge, Allies in your Presence gain that Charge instead",
         "zh_CN": "若你可以获得狂怒球，则在场的友军直接获得相应的能量球",
@@ -243757,6 +244294,15 @@
         "en": "Bonded: #% increased maximum Life",
         "zh_CN": "羁绊： 生命上限提高 #%",
         "zh_TW": "命定: 增加#%最大生命",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
+      "rune.stat_2247017114": {
+        "en": "#% increased Spirit for each Corrupted Item Equipped",
+        "zh_CN": "每件已装备的被腐化物品使精魂提高 #%",
+        "zh_TW": "每裝備一件已汙染物品，即增加#%精魂",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -243843,10 +244389,28 @@
           "zh_TW": "exact_id"
         }
       },
+      "rune.stat_2296009672": {
+        "en": "# to Level of all Plant Skill Gems",
+        "zh_CN": "所有植物技能宝石等级提高 #",
+        "zh_TW": "#全部植物技能寶石等級",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
       "rune.stat_2301852600": {
         "en": "Deal #% of Overkill damage to enemies within 2 metres of the enemy killed",
         "zh_CN": "对被击败的敌人 2 米内的敌人造成相当于溢出伤害 #% 的伤害",
         "zh_TW": "對被擊殺敵人2公尺內的敵人造成等同於溢出傷害#%的傷害",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
+      "rune.stat_2305301734": {
+        "en": "# to Level of all Strike Skill Gems",
+        "zh_CN": "所有打击技能宝石等级提高 #",
+        "zh_TW": "#全部風暴技能寶石等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -243883,6 +244447,15 @@
         "en": "Bonded: #% increased Mana Cost Efficiency",
         "zh_CN": "羁绊： 魔力消耗效能提高 #%",
         "zh_TW": "命定: 增加#%魔力消耗效用",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
+      "rune.stat_2336703514": {
+        "en": "# to Level of all Totem Skill Gems",
+        "zh_CN": "所有图腾主动技能石等级 #",
+        "zh_TW": "#全部圖騰技能寶石的等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -244095,6 +244668,15 @@
           "zh_TW": "exact_id"
         }
       },
+      "rune.stat_2487305362": {
+        "en": "#% increased Magnitude of Poison you inflict",
+        "zh_CN": "你造成的中毒强度提高 #%",
+        "zh_TW": "增加#%你所施加之中毒的幅度",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
       "rune.stat_2502507413": {
         "en": "Bonded: #% increased Fire Damage",
         "zh_CN": "羁绊： 火焰伤害提高 #%",
@@ -244136,7 +244718,7 @@
         "zh_CN": "你造成的感电强度提高 #%",
         "zh_TW": "增加#%你所施加之感電的幅度",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -245013,6 +245595,15 @@
           "zh_TW": "exact_id"
         }
       },
+      "rune.stat_3148103963": {
+        "en": "# to Level of all Nova Skill Gems",
+        "zh_CN": "所有新星技能宝石等级提高 #",
+        "zh_TW": "#全部新星技能寶石等級",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
       "rune.stat_3151560620": {
         "en": "#% increased Damage per each different Companion in your Presence",
         "zh_CN": "在场每有一种不同的伙伴，伤害提高 #%",
@@ -245054,8 +245645,8 @@
         "zh_CN": "装备法器的能量护盾提高 #%",
         "zh_TW": "增加#%來自已裝備法器的能量護盾",
         "sources": {
-          "zh_CN": "same_bare_and_template",
-          "zh_TW": "same_bare_and_template"
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_3175163625": {
@@ -245116,6 +245707,15 @@
         "en": "Bonded: #% increased Thorns damage",
         "zh_CN": "羁绊： 荆棘伤害提高 #%",
         "zh_TW": "命定: 增加#%荊棘傷害",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
+      "rune.stat_3268281424": {
+        "en": "# to Level of all Grenade Skill Gems",
+        "zh_CN": "所有榴弹技能宝石等级提高 #",
+        "zh_TW": "#全部擲彈技能寶石等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -245330,7 +245930,7 @@
       },
       "rune.stat_3377888098": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间提高 #%",
+        "zh_CN": "技能效果持续时间延长 #%",
         "zh_TW": "增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -245792,8 +246392,8 @@
         "zh_CN": "点燃强度提高 #%",
         "zh_TW": "增加#%點燃幅度",
         "sources": {
-          "zh_CN": "same_bare_and_template",
-          "zh_TW": "same_bare_and_template"
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_3793026369": {
@@ -246066,6 +246666,15 @@
           "zh_TW": "exact_id"
         }
       },
+      "rune.stat_3985867204": {
+        "en": "#% increased Pin duration",
+        "zh_CN": "定身持续时间提高 #%",
+        "zh_TW": "#% increased Pin duration",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "fallback"
+        }
+      },
       "rune.stat_3986710072": {
         "en": "Bonded: # to Maximum Frenzy Charges",
         "zh_CN": "羁绊： 狂怒球数量上限 #",
@@ -246188,7 +246797,7 @@
         "zh_CN": "投射物击中地形时有 #% 的几率额外连锁一次",
         "zh_TW": "投射物有#%機率從地形額外連鎖一次",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -246295,6 +246904,15 @@
         "en": "Bonded: #% increased Life and Mana Recovery from Flasks",
         "zh_CN": "羁绊： 药剂的生命和魔力回复提高 #%",
         "zh_TW": "命定: 增加#%藥劑的生命和魔力恢復",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
+      "rune.stat_4169430079": {
+        "en": "#% increased Maximum Life for each Corrupted Item Equipped",
+        "zh_CN": "每已装备一件腐化物品，生命上限提高 #%",
+        "zh_TW": "每一個已裝備的已汙染物品，增加#%最大生命",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -246696,6 +247314,15 @@
           "zh_TW": "exact_id"
         }
       },
+      "rune.stat_653358410": {
+        "en": "# to Level of all Wind Skill Gems",
+        "zh_CN": "所有风系技能宝石等级提高 #",
+        "zh_TW": "#全部疾風技能寶石等級",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
+        }
+      },
       "rune.stat_666077204": {
         "en": "Companions have #% increased Attack Speed",
         "zh_CN": "伙伴的攻击速度提高 #%",
@@ -246797,7 +247424,7 @@
       },
       "rune.stat_726496846": {
         "en": "Idols socketed in this item gain the benefits of their Bonded modifiers",
-        "zh_CN": "镶嵌在该物品上的雕像获得其自身的绑定词缀的强化效果",
+        "zh_CN": "镶嵌在该物品上的雕像获得其自身的羁绊词缀的强化效果",
         "zh_TW": "鑲嵌在此物品中的魔偶獲得其命定詞綴的加成效果",
         "sources": {
           "zh_CN": "exact_id",
@@ -246928,6 +247555,15 @@
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
+        }
+      },
+      "rune.stat_776287420": {
+        "en": "# to Level of all Herald Skill Gems",
+        "zh_CN": "所有捷技能宝石等级提高 #",
+        "zh_TW": "# to Level of all Herald Skill Gems",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "fallback"
         }
       },
       "rune.stat_782230869": {
@@ -247247,7 +247883,7 @@
       },
       "rune.stat_967155385": {
         "en": "Prevent #% of Damage from Deflected Hits if you've\nDeflected no Hits Recently",
-        "zh_CN": "若你近期没有偏转击中，避免 #% 的\n偏转击中伤害",
+        "zh_CN": "若你近期没有受到偏转击中，避免 #% 的\n偏转击中伤害",
         "zh_TW": "若你近期沒有偏斜擊中，\n避免#%來自偏斜擊中的傷害",
         "sources": {
           "zh_CN": "exact_id",
@@ -247310,10 +247946,10 @@
       },
       "rune.stat_995044379": {
         "en": "# to maximum Mana per 3 Item Armour on Equipped Helmet",
-        "zh_CN": "# to maximum Mana per 3 Item Armour on Equipped Helmet",
+        "zh_CN": "已装备的头盔每有 3 点物品护甲，魔力上限 #",
         "zh_TW": "# to maximum Mana per 3 Item Armour on Equipped Helmet",
         "sources": {
-          "zh_CN": "fallback",
+          "zh_CN": "exact_id",
           "zh_TW": "fallback"
         }
       },
@@ -248534,7 +249170,7 @@
       },
       "sanctum.stat_3134588943": {
         "en": "#% increased chance to avoid Honour loss from Enemy Melee Hits",
-        "zh_CN": "被敌人近战击中时避免失去荣誉的几率提高 #%",
+        "zh_CN": "被敌人近战击中时避免失去坚毅的几率提高 #%",
         "zh_TW": "增加#%避免因敵人近戰擊中而失去榮譽的機率",
         "sources": {
           "zh_CN": "exact_id",
@@ -249976,18 +250612,18 @@
     "coverage": {
       "stats": {
         "zh_CN": {
-          "matched": 8087,
-          "total": 8186,
-          "ratio": 0.987906,
-          "exactId": 7452,
-          "sameBareAndTemplate": 635
+          "matched": 8123,
+          "total": 8216,
+          "ratio": 0.988681,
+          "exactId": 7522,
+          "sameBareAndTemplate": 601
         },
         "zh_TW": {
-          "matched": 8093,
-          "total": 8186,
-          "ratio": 0.988639,
-          "exactId": 5839,
-          "sameBareAndTemplate": 2254
+          "matched": 8119,
+          "total": 8216,
+          "ratio": 0.988194,
+          "exactId": 5872,
+          "sameBareAndTemplate": 2247
         }
       },
       "items": {
@@ -250002,9 +250638,9 @@
           "ratio": 1.0
         },
         "supplemental": {
-          "matched": 891,
-          "total": 3887,
-          "ratio": 0.229226
+          "matched": 904,
+          "total": 3900,
+          "ratio": 0.231795
         },
         "gems": {
           "zh_CN": {
@@ -250073,7 +250709,7 @@
       }
     },
     "poe2dbKeystoneStatCount": 33,
-    "poe2dbModifierStatCount": 12,
+    "poe2dbModifierStatCount": 11,
     "items": {
       "Aberrant Sledge": {
         "en": "Aberrant Sledge",
@@ -258350,10 +258986,25 @@
         "zh_CN": "持久鏖战",
         "zh_TW": "損耗"
       },
+      "Atziri's Soul Core of Alacrity": {
+        "en": "Atziri's Soul Core of Alacrity",
+        "zh_CN": "阿兹里的敏捷灵核",
+        "zh_TW": "阿茲里的敏捷靈魂核心"
+      },
       "Atziri's Soul Core of Devotion": {
         "en": "Atziri's Soul Core of Devotion",
-        "zh_CN": "Atziris_Soul_Core_of_Devotion",
+        "zh_CN": "阿兹里的奉献灵核",
         "zh_TW": "阿茲里的奉獻靈魂核心"
+      },
+      "Atziri's Soul Core of Inoculation": {
+        "en": "Atziri's Soul Core of Inoculation",
+        "zh_CN": "阿兹里的免疫灵核",
+        "zh_TW": "阿茲里的免疫靈魂核心"
+      },
+      "Atziri's Soul Core of Vitality": {
+        "en": "Atziri's Soul Core of Vitality",
+        "zh_CN": "阿兹里的活力灵核",
+        "zh_TW": "阿茲里的活力靈魂核心"
       },
       "Azmeri Reliquary Key": {
         "en": "Azmeri Reliquary Key",
@@ -259490,25 +260141,70 @@
         "zh_CN": "钢铁符文",
         "zh_TW": "鍛鐵符文"
       },
+      "Jiquani's Soul Core of Abundance": {
+        "en": "Jiquani's Soul Core of Abundance",
+        "zh_CN": "佳华尼的丰饶灵核",
+        "zh_TW": "吉卡尼的豐饒靈魂核心"
+      },
+      "Jiquani's Soul Core of Automation": {
+        "en": "Jiquani's Soul Core of Automation",
+        "zh_CN": "佳华尼的自动灵核",
+        "zh_TW": "吉卡尼的自動化靈魂核心"
+      },
+      "Jiquani's Soul Core of Malediction": {
+        "en": "Jiquani's Soul Core of Malediction",
+        "zh_CN": "佳华尼的诅咒灵核",
+        "zh_TW": "吉卡尼的惡語靈魂核心"
+      },
+      "Jiquani's Soul Core of Munitions": {
+        "en": "Jiquani's Soul Core of Munitions",
+        "zh_CN": "佳华尼的弹药灵核",
+        "zh_TW": "吉卡尼的彈藥靈魂核心"
+      },
       "Jiquani's Soul Core of Quaking": {
         "en": "Jiquani's Soul Core of Quaking",
-        "zh_CN": "Jiquanis_Soul_Core_of_Quaking",
+        "zh_CN": "佳华尼的震颤灵核",
         "zh_TW": "吉卡尼的震顫靈魂核心"
       },
       "Jiquani's Soul Core of Radiance": {
         "en": "Jiquani's Soul Core of Radiance",
-        "zh_CN": "Jiquanis_Soul_Core_of_Radiance",
+        "zh_CN": "佳华尼的辐照灵核",
         "zh_TW": "吉卡尼的輝耀靈魂核心"
+      },
+      "Jiquani's Soul Core of Rallying": {
+        "en": "Jiquani's Soul Core of Rallying",
+        "zh_CN": "佳华尼的集结灵核",
+        "zh_TW": "吉卡尼的號召靈魂核心"
+      },
+      "Jiquani's Soul Core of Rippling": {
+        "en": "Jiquani's Soul Core of Rippling",
+        "zh_CN": "佳华尼的涟漪灵核",
+        "zh_TW": "吉卡尼的漣漪靈魂核心"
       },
       "Jiquani's Soul Core of Severing": {
         "en": "Jiquani's Soul Core of Severing",
-        "zh_CN": "Jiquanis_Soul_Core_of_Severing",
+        "zh_CN": "佳华尼的切断灵核",
         "zh_TW": "吉卡尼的斷切靈魂核心"
+      },
+      "Jiquani's Soul Core of Snares": {
+        "en": "Jiquani's Soul Core of Snares",
+        "zh_CN": "佳华尼的陷阱灵核",
+        "zh_TW": "吉卡尼的陷阱靈魂核心"
       },
       "Jiquani's Soul Core of Squalls": {
         "en": "Jiquani's Soul Core of Squalls",
-        "zh_CN": "Jiquanis_Soul_Core_of_Squalls",
+        "zh_CN": "佳华尼的暴风灵核",
         "zh_TW": "吉卡尼的狂風靈魂核心"
+      },
+      "Jiquani's Soul Core of Targeting": {
+        "en": "Jiquani's Soul Core of Targeting",
+        "zh_CN": "佳华尼的瞄准灵核",
+        "zh_TW": "吉卡尼的索敵靈魂核心"
+      },
+      "Jiquani's Soul Core of Thundering": {
+        "en": "Jiquani's Soul Core of Thundering",
+        "zh_CN": "佳华尼的雷鸣灵核",
+        "zh_TW": "吉卡尼的雷鳴靈魂核心"
       },
       "Jiquani's Thesis": {
         "en": "Jiquani's Thesis",
@@ -259517,7 +260213,7 @@
       },
       "Kamasa's Orb of Sacrifice": {
         "en": "Kamasa's Orb of Sacrifice",
-        "zh_CN": "渎神献祭宝珠",
+        "zh_CN": "卡马萨之献祭宝珠",
         "zh_TW": "卡瑪薩奉獻寶珠"
       },
       "Katla's Gloom": {
@@ -259537,7 +260233,7 @@
       },
       "Kopec's Orb of Sacrifice": {
         "en": "Kopec's Orb of Sacrifice",
-        "zh_CN": "强固献祭宝珠",
+        "zh_CN": "科佩克之献祭宝珠",
         "zh_TW": "科佩克奉獻寶珠"
       },
       "Kurgal's Gaze": {
@@ -260072,7 +260768,7 @@
       },
       "Liquid Verisium": {
         "en": "Liquid Verisium",
-        "zh_CN": "Liquid Verisium",
+        "zh_CN": "液态维金",
         "zh_TW": "液態維里西姆"
       },
       "Lunar Assault": {
@@ -261025,6 +261721,11 @@
         "zh_CN": "符文碎片",
         "zh_TW": "符文斷片"
       },
+      "Sacred Bloom": {
+        "en": "Sacred Bloom",
+        "zh_CN": "神圣之花",
+        "zh_TW": "聖綻之花"
+      },
       "Saqawal's Rune of Erosion": {
         "en": "Saqawal's Rune of Erosion",
         "zh_CN": "萨奇沃的碎砾符文",
@@ -261822,12 +262523,12 @@
       },
       "Yaomac's Orb of Sacrifice": {
         "en": "Yaomac's Orb of Sacrifice",
-        "zh_CN": "残暴献祭宝珠",
+        "zh_CN": "约马克之献祭宝珠",
         "zh_TW": "堯馬克奉獻寶珠"
       },
       "Yugul's Orb of Sacrifice": {
         "en": "Yugul's Orb of Sacrifice",
-        "zh_CN": "皇家献祭宝珠",
+        "zh_CN": "尤格尔之献祭宝珠",
         "zh_TW": "伊果奉獻寶珠"
       },
       "Zalatl's Soul Core of Insulation": {
@@ -265806,6 +266507,21 @@
         "zh_CN": "所有火焰法术技能等级 #",
         "zh_TW": "全部火焰法術技能等級#"
       },
+      "# to Level of all Grenade Skill Gems": {
+        "en": "# to Level of all Grenade Skill Gems",
+        "zh_CN": "所有榴弹技能宝石等级提高 #",
+        "zh_TW": "#全部擲彈技能寶石等級"
+      },
+      "# to Level of all Hazard Skill Gems": {
+        "en": "# to Level of all Hazard Skill Gems",
+        "zh_CN": "所有危害技能宝石等级提高 #",
+        "zh_TW": "# to Level of all Hazard Skill Gems"
+      },
+      "# to Level of all Herald Skill Gems": {
+        "en": "# to Level of all Herald Skill Gems",
+        "zh_CN": "所有捷技能宝石等级提高 #",
+        "zh_TW": "# to Level of all Herald Skill Gems"
+      },
       "# to Level of all Lightning Skills": {
         "en": "# to Level of all Lightning Skills",
         "zh_CN": "所有闪电技能等级 #",
@@ -265831,10 +266547,20 @@
         "zh_CN": "所有召唤生物技能等级 #",
         "zh_TW": "全部召喚物技能等級#"
       },
+      "# to Level of all Nova Skill Gems": {
+        "en": "# to Level of all Nova Skill Gems",
+        "zh_CN": "所有新星技能宝石等级提高 #",
+        "zh_TW": "#全部新星技能寶石等級"
+      },
       "# to Level of all Physical Spell Skills": {
         "en": "# to Level of all Physical Spell Skills",
         "zh_CN": "所有物理法术技能等级 #",
         "zh_TW": "全部物理法術技能等級#"
+      },
+      "# to Level of all Plant Skill Gems": {
+        "en": "# to Level of all Plant Skill Gems",
+        "zh_CN": "所有植物技能宝石等级提高 #",
+        "zh_TW": "#全部植物技能寶石等級"
       },
       "# to Level of all Projectile Skills": {
         "en": "# to Level of all Projectile Skills",
@@ -265846,10 +266572,40 @@
         "zh_CN": "所有技能等级 #",
         "zh_TW": "全部技能寶石等級#"
       },
+      "# to Level of all Slam Skill Gems": {
+        "en": "# to Level of all Slam Skill Gems",
+        "zh_CN": "所有猛击技能宝石等级提高 #",
+        "zh_TW": "# to Level of all Slam Skill Gems"
+      },
       "# to Level of all Spell Skills": {
         "en": "# to Level of all Spell Skills",
         "zh_CN": "所有法术技能等级 #",
         "zh_TW": "全部法術技能等級#"
+      },
+      "# to Level of all Storm Skill Gems": {
+        "en": "# to Level of all Storm Skill Gems",
+        "zh_CN": "所有风暴技能宝石等级提高 #",
+        "zh_TW": "# to Level of all Storm Skill Gems"
+      },
+      "# to Level of all Strike Skill Gems": {
+        "en": "# to Level of all Strike Skill Gems",
+        "zh_CN": "所有打击技能宝石等级提高 #",
+        "zh_TW": "#全部風暴技能寶石等級"
+      },
+      "# to Level of all Totem Skill Gems": {
+        "en": "# to Level of all Totem Skill Gems",
+        "zh_CN": "所有图腾主动技能石等级 #",
+        "zh_TW": "#全部圖騰技能寶石的等級"
+      },
+      "# to Level of all Warcry Skill Gems": {
+        "en": "# to Level of all Warcry Skill Gems",
+        "zh_CN": "所有战吼技能宝石等级提高 #",
+        "zh_TW": "#全部戰吼技能寶石等級"
+      },
+      "# to Level of all Wind Skill Gems": {
+        "en": "# to Level of all Wind Skill Gems",
+        "zh_CN": "所有风系技能宝石等级提高 #",
+        "zh_TW": "#全部疾風技能寶石等級"
       },
       "# to Limit for Elemental Skills": {
         "en": "# to Limit for Elemental Skills",
@@ -265983,7 +266739,7 @@
       },
       "# to maximum Mana per 3 Item Armour on Equipped Helmet": {
         "en": "# to maximum Mana per 3 Item Armour on Equipped Helmet",
-        "zh_CN": "# to maximum Mana per 3 Item Armour on Equipped Helmet",
+        "zh_CN": "已装备的头盔每有 3 点物品护甲，魔力上限 #",
         "zh_TW": "# to maximum Mana per 3 Item Armour on Equipped Helmet"
       },
       "# to maximum Mana per Socket filled": {
@@ -266283,8 +267039,8 @@
       },
       "#% chance to add a Vaal Beacon Unique Monster to the Map": {
         "en": "#% chance to add a Vaal Beacon Unique Monster to the Map",
-        "zh_CN": "#% chance to add a Vaal Beacon Unique Monster to the Map",
-        "zh_TW": "#% chance to add a Vaal Beacon Unique Monster to the Map"
+        "zh_CN": "有 #% 的几率为地图增加一个瓦尔灯塔传奇怪物",
+        "zh_TW": "有#%機率為地圖新增一名瓦爾烽塔傳奇怪物"
       },
       "#% chance to avoid Projectiles": {
         "en": "#% chance to avoid Projectiles",
@@ -267123,8 +267879,8 @@
       },
       "#% increased Effect of Non-Damaging Ailments on you": {
         "en": "#% increased Effect of Non-Damaging Ailments on you",
-        "zh_CN": "#% increased Effect of Non-Damaging Ailments on you",
-        "zh_TW": "#% increased Effect of Non-Damaging Ailments on you"
+        "zh_CN": "你受到的非伤害性异常状态的效果提高 #%",
+        "zh_TW": "增加#%你身上的非傷害型異常狀態效果"
       },
       "#% increased Effect of Notable Passive Skills in Radius": {
         "en": "#% increased Effect of Notable Passive Skills in Radius",
@@ -267263,8 +268019,8 @@
       },
       "#% increased Expedition Explosive Area of Effect in Map": {
         "en": "#% increased Expedition Explosive Area of Effect in Map",
-        "zh_CN": "#% increased Expedition Explosive Area of Effect in Map",
-        "zh_TW": "#% increased Expedition Explosive Area of Effect in Map"
+        "zh_CN": "地图内先祖秘藏爆炸范围提高 #%",
+        "zh_TW": "增加#%地圖中探險炸藥的範圍效果"
       },
       "#% increased Expedition Explosive Placement Range": {
         "en": "#% increased Expedition Explosive Placement Range",
@@ -267275,6 +268031,11 @@
         "en": "#% increased Expedition Explosive Radius",
         "zh_CN": "先祖秘藏爆炸范围提高 #%",
         "zh_TW": "#%增加包含的探險爆炸範圍"
+      },
+      "#% increased Expedition Monster Rarity in Map": {
+        "en": "#% increased Expedition Monster Rarity in Map",
+        "zh_CN": "地图内的先祖秘藏怪物稀有度提高 #%",
+        "zh_TW": "增加#%地圖中的探險怪物稀有度"
       },
       "#% increased Explicit Chaos Modifier magnitudes": {
         "en": "#% increased Explicit Chaos Modifier magnitudes",
@@ -267398,7 +268159,7 @@
       },
       "#% increased Global Armour, Evasion and Energy Shield per Socket filled": {
         "en": "#% increased Global Armour, Evasion and Energy Shield per Socket filled",
-        "zh_CN": "每个镶嵌的插槽全局护甲，闪避与能量护盾提高 #%",
+        "zh_CN": "每个镶嵌的插槽使全局护甲，闪避与能量护盾提高 #%",
         "zh_TW": "每鑲嵌一個插槽，增加#%全域護甲、閃備與能量護盾"
       },
       "#% increased Global Evasion Rating when on Low Life": {
@@ -267866,6 +268627,11 @@
         "zh_CN": "定身积蓄值提高 #%",
         "zh_TW": "增加#%釘身累積"
       },
+      "#% increased Pin duration": {
+        "en": "#% increased Pin duration",
+        "zh_CN": "定身持续时间提高 #%",
+        "zh_TW": "#% increased Pin duration"
+      },
       "#% increased Poison Duration": {
         "en": "#% increased Poison Duration",
         "zh_CN": "中毒持续时间提高 #%",
@@ -268063,7 +268829,7 @@
       },
       "#% increased Skill Effect Duration": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间提高 #%",
+        "zh_CN": "技能效果持续时间延长 #%",
         "zh_TW": "增加#%技能效果持續時間"
       },
       "#% increased Skill Effect Duration with Plant Skills": {
@@ -268075,6 +268841,11 @@
         "en": "#% increased Skill Speed",
         "zh_CN": "技能速度提高 #%",
         "zh_TW": "增加#%技能速度"
+      },
+      "#% increased Skill Speed for each Corrupted Item Equipped": {
+        "en": "#% increased Skill Speed for each Corrupted Item Equipped",
+        "zh_CN": "每有一件已装备的腐化物品，技能速度提高 #%",
+        "zh_TW": "#% increased Skill Speed for each Corrupted Item Equipped"
       },
       "#% increased Skill Speed if you've consumed a Frenzy Charge Recently": {
         "en": "#% increased Skill Speed if you've consumed a Frenzy Charge Recently",
@@ -268160,6 +268931,11 @@
         "en": "#% increased Spirit Reservation Efficiency of Skills",
         "zh_CN": "技能的精魂保留效能提高 #%",
         "zh_TW": "技能增加#%精魂保留效用"
+      },
+      "#% increased Spirit for each Corrupted Item Equipped": {
+        "en": "#% increased Spirit for each Corrupted Item Equipped",
+        "zh_CN": "每件已装备的被腐化物品使精魂提高 #%",
+        "zh_TW": "每裝備一件已汙染物品，即增加#%精魂"
       },
       "#% increased Spirit per socketed Grand Spectrum": {
         "en": "#% increased Spirit per socketed Grand Spectrum",
@@ -268383,7 +269159,7 @@
       },
       "#% increased chance to avoid Honour loss from Enemy Melee Hits": {
         "en": "#% increased chance to avoid Honour loss from Enemy Melee Hits",
-        "zh_CN": "被敌人近战击中时避免失去荣誉的几率提高 #%",
+        "zh_CN": "被敌人近战击中时避免失去坚毅的几率提高 #%",
         "zh_TW": "增加#%避免因敵人近戰擊中而失去榮譽的機率"
       },
       "#% increased chance to inflict Ailments": {
@@ -269010,6 +269786,11 @@
         "en": "#% to Chaos Resistance",
         "zh_CN": "混沌抗性 #%",
         "zh_TW": "#%混沌抗性"
+      },
+      "#% to Chaos Resistance for each Corrupted Item Equipped": {
+        "en": "#% to Chaos Resistance for each Corrupted Item Equipped",
+        "zh_CN": "每个已装备的腐化物品使混沌抗性 #%",
+        "zh_TW": "#% to Chaos Resistance for each Corrupted Item Equipped"
       },
       "#% to Chaos Resistance per Socket filled": {
         "en": "#% to Chaos Resistance per Socket filled",
@@ -270443,17 +271224,17 @@
       },
       "+# total to Dexterity": {
         "en": "+# total to Dexterity",
-        "zh_CN": "+#% 敏捷",
+        "zh_CN": "+# 敏捷",
         "zh_TW": "+# 敏捷"
       },
       "+# total to Intelligence": {
         "en": "+# total to Intelligence",
-        "zh_CN": "+#% 智慧",
+        "zh_CN": "+# 智慧",
         "zh_TW": "+# 智慧"
       },
       "+# total to Strength": {
         "en": "+# total to Strength",
-        "zh_CN": "+#% 力量",
+        "zh_CN": "+# 力量",
         "zh_TW": "+# 力量"
       },
       "+# total to all Attributes": {
@@ -270503,7 +271284,7 @@
       },
       "+#% total to all Elemental Resistances": {
         "en": "+#% total to all Elemental Resistances",
-        "zh_CN": "+#% 总最大元素抗性",
+        "zh_CN": "+#% 全元素抗性",
         "zh_TW": "+#% 元素抗性"
       },
       "+1 to Armour per Strength": {
@@ -274096,6 +274877,11 @@
         "zh_CN": "配置 肺部穿刺",
         "zh_TW": "配置肺部破壞"
       },
+      "Allocates Puppet Master chance": {
+        "en": "Allocates Puppet Master chance",
+        "zh_CN": "配置 傀儡大师几率",
+        "zh_TW": "配置魁儡大師機率"
+      },
       "Allocates Pure Chaos": {
         "en": "Allocates Pure Chaos",
         "zh_CN": "配置 纯粹混沌",
@@ -276556,10 +277342,25 @@
         "zh_CN": "阿兹里的焦躁",
         "zh_TW": "阿茲里的不耐"
       },
+      "Atziri's Soul Core of Alacrity": {
+        "en": "Atziri's Soul Core of Alacrity",
+        "zh_CN": "阿兹里的敏捷灵核",
+        "zh_TW": "阿茲里的敏捷靈魂核心"
+      },
       "Atziri's Soul Core of Devotion": {
         "en": "Atziri's Soul Core of Devotion",
-        "zh_CN": "Atziris_Soul_Core_of_Devotion",
+        "zh_CN": "阿兹里的奉献灵核",
         "zh_TW": "阿茲里的奉獻靈魂核心"
+      },
+      "Atziri's Soul Core of Inoculation": {
+        "en": "Atziri's Soul Core of Inoculation",
+        "zh_CN": "阿兹里的免疫灵核",
+        "zh_TW": "阿茲里的免疫靈魂核心"
+      },
+      "Atziri's Soul Core of Vitality": {
+        "en": "Atziri's Soul Core of Vitality",
+        "zh_CN": "阿兹里的活力灵核",
+        "zh_TW": "阿茲里的活力靈魂核心"
       },
       "Augment": {
         "en": "Augment",
@@ -277423,8 +278224,8 @@
       },
       "Bonded: #% increased Damage per 15 Strength": {
         "en": "Bonded: #% increased Damage per 15 Strength",
-        "zh_CN": "羁绊：每 # 点力量可使伤害提高 #%",
-        "zh_TW": "命定:每#點力量增加#%傷害"
+        "zh_CN": "羁绊： 每 15 点力量可使伤害提高 #%",
+        "zh_TW": "Bonded: #% increased Damage per 15 Strength"
       },
       "Bonded: #% increased Damage while Shapeshifted": {
         "en": "Bonded: #% increased Damage while Shapeshifted",
@@ -278353,7 +279154,7 @@
       },
       "Breach": {
         "en": "Breach",
-        "zh_CN": "深渊",
+        "zh_CN": "裂隙",
         "zh_TW": "裂痕聯盟"
       },
       "Breach Hives in Map have an additional wave of Hiveborn Monsters": {
@@ -279806,6 +280607,11 @@
         "zh_CN": "腐化战吼 II",
         "zh_TW": "汙染戰吼 II"
       },
+      "Corrupting will always result in change": {
+        "en": "Corrupting will always result in change",
+        "zh_CN": "腐化必定会改变",
+        "zh_TW": "汙染的結果總會是改變"
+      },
       "Corsair Cap": {
         "en": "Corsair Cap",
         "zh_CN": "海贼帽",
@@ -280439,7 +281245,7 @@
       "Debilitate Enemies on Hit while you have an Emerald and a Sapphire socketed in your tree": {
         "en": "Debilitate Enemies on Hit while you have an Emerald and a Sapphire socketed in your tree",
         "zh_CN": "当你镶嵌有一颗翡翠和一颗蓝玉时，击中会使敌人疲惫",
-        "zh_TW": "若插槽中的鑲嵌碧綠翠雲和藍寶石，擊中時虛弱敵人"
+        "zh_TW": "若你的天賦樹中鑲嵌了一顆綠寶石和藍寶石，擊中時虛弱敵人"
       },
       "Debuffs on you expire #% faster": {
         "en": "Debuffs on you expire #% faster",
@@ -280581,9 +281387,9 @@
         "zh_CN": "区域内的惊悸迷雾生成的破溃之镜数量提高 #%",
         "zh_TW": "增加#%區域中譫妄之霧產生的破裂之鏡"
       },
-      "Delirium Fog in Map spawns #% increased MirrorShards": {
-        "en": "Delirium Fog in Map spawns #% increased MirrorShards",
-        "zh_CN": "地图中的惊悸迷雾生成的破溃之镜碎片数量提高 #%",
+      "Delirium Fog in Map spawns #% increased Mirror Shards": {
+        "en": "Delirium Fog in Map spawns #% increased Mirror Shards",
+        "zh_CN": "地图中的惊悸迷雾生成的破溃之镜碎片提高 #%",
         "zh_TW": "地圖中的譫妄迷霧增加#%裂鏡碎片的生成量"
       },
       "Delirium Fog in your Maps never dissipates": {
@@ -281931,6 +282737,36 @@
         "zh_CN": "先祖秘藏石板",
         "zh_TW": "探險碑牌"
       },
+      "Expeditions contain 1 Additional Boss encased in ice in Map": {
+        "en": "Expeditions contain 1 Additional Boss encased in ice in Map",
+        "zh_CN": "地图内的先祖秘藏额外包含 1 个被坚冰包裹的首领",
+        "zh_TW": "地圖中的探險含有1個額外封存於冰霜中的頭目"
+      },
+      "Expeditions contain 1 Additional Verisium Sentry in Map": {
+        "en": "Expeditions contain 1 Additional Verisium Sentry in Map",
+        "zh_CN": "地图内的先祖秘藏额外包含 1 个维金哨兵",
+        "zh_TW": "地圖中的探險含有1個額外維里西姆守望"
+      },
+      "Expeditions contain 1 Vaal Relic in Map": {
+        "en": "Expeditions contain 1 Vaal Relic in Map",
+        "zh_CN": "地图内的先祖秘藏包含 1 个瓦尔遗物",
+        "zh_TW": "地圖中的探險含有1個瓦爾遺物"
+      },
+      "Expeditions contain 1 buried Strongbox in Map": {
+        "en": "Expeditions contain 1 buried Strongbox in Map",
+        "zh_CN": "地图内的先祖秘藏包含 1 个埋藏的保险箱",
+        "zh_TW": "地圖中的探險含有1個埋藏的保險箱"
+      },
+      "Expeditions have +#% Surpassing chance to Duplicate Runic Monsters in Map": {
+        "en": "Expeditions have +#% Surpassing chance to Duplicate Runic Monsters in Map",
+        "zh_CN": "地图内的先祖秘藏有 +#% 的溢出几率复制符文怪物",
+        "zh_TW": "探險擁有+#%滿溢機率複製地圖中的符文怪物"
+      },
+      "Expeditions have +#% Surpassing chance to contain an additional Verisium Remnant": {
+        "en": "Expeditions have +#% Surpassing chance to contain an additional Verisium Remnant",
+        "zh_CN": "先祖秘藏有 +#% 的溢出几率包含一个额外的维金残片",
+        "zh_TW": "探險擁有+#%滿溢機率含有額外一個維里西姆遺物"
+      },
       "Expeditions in Area have # Remnants": {
         "en": "Expeditions in Area have # Remnants",
         "zh_CN": "区域内的先祖秘藏残骸 #",
@@ -282888,7 +283724,7 @@
       },
       "Gain #% of damage as Fire damage per 1% Chance to Block": {
         "en": "Gain #% of damage as Fire damage per 1% Chance to Block",
-        "zh_CN": "Gain #% of damage as Fire damage per 1% Chance to Block",
+        "zh_CN": "每 1% 格挡几率获得相当于伤害 #% 的火焰伤害",
         "zh_TW": "每擁有1%格擋率，獲得等同於#%傷害的火焰傷害"
       },
       "Gain #% of damage as Fire damage per 2% Chance to Block": {
@@ -285548,7 +286384,7 @@
       },
       "Idols socketed in this item gain the benefits of their Bonded modifiers": {
         "en": "Idols socketed in this item gain the benefits of their Bonded modifiers",
-        "zh_CN": "镶嵌在该物品上的雕像获得其自身的绑定词缀的强化效果",
+        "zh_CN": "镶嵌在该物品上的雕像获得其自身的羁绊词缀的强化效果",
         "zh_TW": "鑲嵌在此物品中的魔偶獲得其命定詞綴的加成效果"
       },
       "If Map was not previously Irradiated, completing Map adds Irradiation instead": {
@@ -286116,25 +286952,70 @@
         "zh_CN": "铃鸣法器",
         "zh_TW": "響聲法器"
       },
+      "Jiquani's Soul Core of Abundance": {
+        "en": "Jiquani's Soul Core of Abundance",
+        "zh_CN": "佳华尼的丰饶灵核",
+        "zh_TW": "吉卡尼的豐饒靈魂核心"
+      },
+      "Jiquani's Soul Core of Automation": {
+        "en": "Jiquani's Soul Core of Automation",
+        "zh_CN": "佳华尼的自动灵核",
+        "zh_TW": "吉卡尼的自動化靈魂核心"
+      },
+      "Jiquani's Soul Core of Malediction": {
+        "en": "Jiquani's Soul Core of Malediction",
+        "zh_CN": "佳华尼的诅咒灵核",
+        "zh_TW": "吉卡尼的惡語靈魂核心"
+      },
+      "Jiquani's Soul Core of Munitions": {
+        "en": "Jiquani's Soul Core of Munitions",
+        "zh_CN": "佳华尼的弹药灵核",
+        "zh_TW": "吉卡尼的彈藥靈魂核心"
+      },
       "Jiquani's Soul Core of Quaking": {
         "en": "Jiquani's Soul Core of Quaking",
-        "zh_CN": "Jiquanis_Soul_Core_of_Quaking",
+        "zh_CN": "佳华尼的震颤灵核",
         "zh_TW": "吉卡尼的震顫靈魂核心"
       },
       "Jiquani's Soul Core of Radiance": {
         "en": "Jiquani's Soul Core of Radiance",
-        "zh_CN": "Jiquanis_Soul_Core_of_Radiance",
+        "zh_CN": "佳华尼的辐照灵核",
         "zh_TW": "吉卡尼的輝耀靈魂核心"
+      },
+      "Jiquani's Soul Core of Rallying": {
+        "en": "Jiquani's Soul Core of Rallying",
+        "zh_CN": "佳华尼的集结灵核",
+        "zh_TW": "吉卡尼的號召靈魂核心"
+      },
+      "Jiquani's Soul Core of Rippling": {
+        "en": "Jiquani's Soul Core of Rippling",
+        "zh_CN": "佳华尼的涟漪灵核",
+        "zh_TW": "吉卡尼的漣漪靈魂核心"
       },
       "Jiquani's Soul Core of Severing": {
         "en": "Jiquani's Soul Core of Severing",
-        "zh_CN": "Jiquanis_Soul_Core_of_Severing",
+        "zh_CN": "佳华尼的切断灵核",
         "zh_TW": "吉卡尼的斷切靈魂核心"
+      },
+      "Jiquani's Soul Core of Snares": {
+        "en": "Jiquani's Soul Core of Snares",
+        "zh_CN": "佳华尼的陷阱灵核",
+        "zh_TW": "吉卡尼的陷阱靈魂核心"
       },
       "Jiquani's Soul Core of Squalls": {
         "en": "Jiquani's Soul Core of Squalls",
-        "zh_CN": "Jiquanis_Soul_Core_of_Squalls",
+        "zh_CN": "佳华尼的暴风灵核",
         "zh_TW": "吉卡尼的狂風靈魂核心"
+      },
+      "Jiquani's Soul Core of Targeting": {
+        "en": "Jiquani's Soul Core of Targeting",
+        "zh_CN": "佳华尼的瞄准灵核",
+        "zh_TW": "吉卡尼的索敵靈魂核心"
+      },
+      "Jiquani's Soul Core of Thundering": {
+        "en": "Jiquani's Soul Core of Thundering",
+        "zh_CN": "佳华尼的雷鸣灵核",
+        "zh_TW": "吉卡尼的雷鳴靈魂核心"
       },
       "Jiquani's Thesis": {
         "en": "Jiquani's Thesis",
@@ -286165,6 +287046,11 @@
         "en": "Kalisa's Crescendo",
         "zh_CN": "卡莉莎的强音",
         "zh_TW": "卡莉莎的漸強"
+      },
+      "Kamasa's Orb of Sacrifice": {
+        "en": "Kamasa's Orb of Sacrifice",
+        "zh_CN": "卡马萨之献祭宝珠",
+        "zh_TW": "卡瑪薩奉獻寶珠"
       },
       "Kamasan Tiara": {
         "en": "Kamasan Tiara",
@@ -286235,6 +287121,11 @@
         "en": "Kolr's Hunt",
         "zh_CN": "克尔的狩猎",
         "zh_TW": "克洛爾的狩獵"
+      },
+      "Kopec's Orb of Sacrifice": {
+        "en": "Kopec's Orb of Sacrifice",
+        "zh_CN": "科佩克之献祭宝珠",
+        "zh_TW": "科佩克奉獻寶珠"
       },
       "Kris Knife": {
         "en": "Kris Knife",
@@ -287251,6 +288142,11 @@
         "zh_CN": "液化偏执",
         "zh_TW": "液態偏執"
       },
+      "Liquid Verisium": {
+        "en": "Liquid Verisium",
+        "zh_CN": "液态维金",
+        "zh_TW": "液態維里西姆"
+      },
       "Listed": {
         "en": "Listed",
         "zh_CN": "已上架",
@@ -287668,7 +288564,7 @@
       },
       "Mark Skills have #% increased Skill Effect Duration": {
         "en": "Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "印记技能的技能效果持续时间提高 #%",
+        "zh_CN": "印记技能的技能效果持续时间延长 #%",
         "zh_TW": "印記技能增加#%技能效果持續時間"
       },
       "Mark Skills have #% increased Use Speed": {
@@ -288171,6 +289067,11 @@
         "zh_CN": "怪物可以发射 # 个额外投射物",
         "zh_TW": "怪物發射#個額外投射物"
       },
+      "Monsters from Verisium Remnants drop #% increased Verisium": {
+        "en": "Monsters from Verisium Remnants drop #% increased Verisium",
+        "zh_CN": "维金残片生成的怪物掉落的维金数量提高 #%",
+        "zh_TW": "增加#%維里西姆遺物怪物掉落的維里西姆"
+      },
       "Monsters gain #% of maximum Life as Extra maximum Energy Shield": {
         "en": "Monsters gain #% of maximum Life as Extra maximum Energy Shield",
         "zh_CN": "怪物将生命上限的 #% 转化为额外能量护盾上限",
@@ -288448,7 +289349,7 @@
       },
       "Non-Channelling Skills have #% increased Spell Critical Hit Chance per 100 maximum Mana": {
         "en": "Non-Channelling Skills have #% increased Spell Critical Hit Chance per 100 maximum Mana",
-        "zh_CN": "每 100 点魔力上限使非吟唱法术的暴击率提高 #%",
+        "zh_CN": "每 100 点魔力上限使非吟唱技能的法术暴击几率提高 #%",
         "zh_TW": "每100最大魔力，增加#%非引導技能的法術暴擊率"
       },
       "Non-Channelling Spells cost an additional #% of your maximum Life": {
@@ -288773,7 +289674,7 @@
       },
       "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration": {
         "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
+        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
         "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間"
       },
       "Notable Passive Skills in Radius also grant #% increased Skill Speed while Shapeshifted": {
@@ -290653,7 +291554,7 @@
       },
       "Prevent #% of Damage from Deflected Hits if you've\nDeflected no Hits Recently": {
         "en": "Prevent #% of Damage from Deflected Hits if you've\nDeflected no Hits Recently",
-        "zh_CN": "若你近期没有偏转击中，避免 #% 的\n偏转击中伤害",
+        "zh_CN": "若你近期没有受到偏转击中，避免 #% 的\n偏转击中伤害",
         "zh_TW": "若你近期沒有偏斜擊中，\n避免#%來自偏斜擊中的傷害"
       },
       "Price with Note": {
@@ -295406,6 +296307,11 @@
         "zh_CN": "圣礼束衣",
         "zh_TW": "聖禮長袍"
       },
+      "Sacred Bloom": {
+        "en": "Sacred Bloom",
+        "zh_CN": "神圣之花",
+        "zh_TW": "聖綻之花"
+      },
       "Sacred Focus": {
         "en": "Sacred Focus",
         "zh_CN": "圣洁法器",
@@ -295468,7 +296374,7 @@
       },
       "Sacrifice up to 2 Divine Orbs to receive double on Trial completion": {
         "en": "Sacrifice up to 2 Divine Orbs to receive double on Trial completion",
-        "zh_CN": "献祭最多 3 神圣石 个，完成试炼时可获得双倍返还",
+        "zh_CN": "献祭最多 2 神圣石 个，完成试炼时可获得双倍返还",
         "zh_TW": "獻祭最多2 顆神聖石，以在完成試煉時獲得兩倍獎勵"
       },
       "Sacrifice up to 20 Arcanist's Etchers to receive double on Trial completion": {
@@ -296718,7 +297624,7 @@
       },
       "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration": {
         "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
+        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
         "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間"
       },
       "Small Passive Skills in Radius also grant Mark Skills have #% increased Use Speed": {
@@ -298016,6 +298922,11 @@
         "zh_CN": "重铸三耀之火",
         "zh_TW": "再鑄三曲"
       },
+      "The first unearthed Runic Monster will be a Rare Monster in Map": {
+        "en": "The first unearthed Runic Monster will be a Rare Monster in Map",
+        "zh_CN": "地图内最先被开掘的符文怪物将为稀有怪物",
+        "zh_TW": "地圖中首名出土的符文怪物會是稀有怪物"
+      },
       "This Flask cannot be Used but applies its Effect constantly": {
         "en": "This Flask cannot be Used but applies its Effect constantly",
         "zh_CN": "此药剂无法使用，但效果持续生效",
@@ -299276,6 +300187,11 @@
         "zh_CN": "维金化形",
         "zh_TW": "維里西姆顯化"
       },
+      "Verisium Remnants have +#% chance to add an additional Runic Modifier in Map": {
+        "en": "Verisium Remnants have +#% chance to add an additional Runic Modifier in Map",
+        "zh_CN": "地图内的维金残片有 +#% 的几率添加一个额外的符文词缀",
+        "zh_TW": "地圖中的維里西姆遺物擁有+#%機率添加一條額外符文詞綴"
+      },
       "Vermeil Circlet": {
         "en": "Vermeil Circlet",
         "zh_CN": "朱砂头冠",
@@ -300146,6 +301062,11 @@
         "zh_CN": "索伏的葬火",
         "zh_TW": "索伏的燃焰"
       },
+      "Yaomac's Orb of Sacrifice": {
+        "en": "Yaomac's Orb of Sacrifice",
+        "zh_CN": "约马克之献祭宝珠",
+        "zh_TW": "堯馬克奉獻寶珠"
+      },
       "Yes": {
         "en": "Yes",
         "zh_CN": "是",
@@ -300219,7 +301140,7 @@
       "You can only Socket Emerald Jewels in this item": {
         "en": "You can only Socket Emerald Jewels in this item",
         "zh_CN": "你只能在该物品中镶嵌翡翠珠宝",
-        "zh_TW": "你只能在這件物品上鑲嵌翡翠珠寶"
+        "zh_TW": "你只能在這件物品上鑲嵌綠寶石"
       },
       "You can only Socket Ruby Jewels in this item": {
         "en": "You can only Socket Ruby Jewels in this item",
@@ -300415,6 +301336,11 @@
         "en": "Your speed is unaffected by Slows",
         "zh_CN": "你的速度不受减速效果影响",
         "zh_TW": "你的速度不受緩速影響"
+      },
+      "Yugul's Orb of Sacrifice": {
+        "en": "Yugul's Orb of Sacrifice",
+        "zh_CN": "尤格尔之献祭宝珠",
+        "zh_TW": "伊果奉獻寶珠"
       },
       "Zalatl's Soul Core of Insulation": {
         "en": "Zalatl's Soul Core of Insulation",
@@ -300822,6 +301748,26 @@
         "en": "Atziri's Impatience",
         "zh_CN": "阿兹里的焦躁",
         "zh_TW": "阿茲里的不耐"
+      },
+      "atziris-soul-core-of-alacrity": {
+        "en": "Atziri's Soul Core of Alacrity",
+        "zh_CN": "阿兹里的敏捷灵核",
+        "zh_TW": "阿茲里的敏捷靈魂核心"
+      },
+      "atziris-soul-core-of-devotion": {
+        "en": "Atziri's Soul Core of Devotion",
+        "zh_CN": "阿兹里的奉献灵核",
+        "zh_TW": "阿茲里的奉獻靈魂核心"
+      },
+      "atziris-soul-core-of-inoculation": {
+        "en": "Atziri's Soul Core of Inoculation",
+        "zh_CN": "阿兹里的免疫灵核",
+        "zh_TW": "阿茲里的免疫靈魂核心"
+      },
+      "atziris-soul-core-of-vitality": {
+        "en": "Atziri's Soul Core of Vitality",
+        "zh_CN": "阿兹里的活力灵核",
+        "zh_TW": "阿茲里的活力靈魂核心"
       },
       "aug": {
         "en": "Orb of Augmentation",
@@ -301787,6 +302733,71 @@
         "en": "Ixchel's Torment",
         "zh_CN": "伊克切尔的折磨",
         "zh_TW": "薩雷許的折磨"
+      },
+      "jiquanis-soul-core-of-abundance": {
+        "en": "Jiquani's Soul Core of Abundance",
+        "zh_CN": "佳华尼的丰饶灵核",
+        "zh_TW": "吉卡尼的豐饒靈魂核心"
+      },
+      "jiquanis-soul-core-of-automation": {
+        "en": "Jiquani's Soul Core of Automation",
+        "zh_CN": "佳华尼的自动灵核",
+        "zh_TW": "吉卡尼的自動化靈魂核心"
+      },
+      "jiquanis-soul-core-of-malediction": {
+        "en": "Jiquani's Soul Core of Malediction",
+        "zh_CN": "佳华尼的诅咒灵核",
+        "zh_TW": "吉卡尼的惡語靈魂核心"
+      },
+      "jiquanis-soul-core-of-munitions": {
+        "en": "Jiquani's Soul Core of Munitions",
+        "zh_CN": "佳华尼的弹药灵核",
+        "zh_TW": "吉卡尼的彈藥靈魂核心"
+      },
+      "jiquanis-soul-core-of-quaking": {
+        "en": "Jiquani's Soul Core of Quaking",
+        "zh_CN": "佳华尼的震颤灵核",
+        "zh_TW": "吉卡尼的震顫靈魂核心"
+      },
+      "jiquanis-soul-core-of-radiance": {
+        "en": "Jiquani's Soul Core of Radiance",
+        "zh_CN": "佳华尼的辐照灵核",
+        "zh_TW": "吉卡尼的輝耀靈魂核心"
+      },
+      "jiquanis-soul-core-of-rallying": {
+        "en": "Jiquani's Soul Core of Rallying",
+        "zh_CN": "佳华尼的集结灵核",
+        "zh_TW": "吉卡尼的號召靈魂核心"
+      },
+      "jiquanis-soul-core-of-rippling": {
+        "en": "Jiquani's Soul Core of Rippling",
+        "zh_CN": "佳华尼的涟漪灵核",
+        "zh_TW": "吉卡尼的漣漪靈魂核心"
+      },
+      "jiquanis-soul-core-of-severing": {
+        "en": "Jiquani's Soul Core of Severing",
+        "zh_CN": "佳华尼的切断灵核",
+        "zh_TW": "吉卡尼的斷切靈魂核心"
+      },
+      "jiquanis-soul-core-of-snares": {
+        "en": "Jiquani's Soul Core of Snares",
+        "zh_CN": "佳华尼的陷阱灵核",
+        "zh_TW": "吉卡尼的陷阱靈魂核心"
+      },
+      "jiquanis-soul-core-of-squalls": {
+        "en": "Jiquani's Soul Core of Squalls",
+        "zh_CN": "佳华尼的暴风灵核",
+        "zh_TW": "吉卡尼的狂風靈魂核心"
+      },
+      "jiquanis-soul-core-of-targeting": {
+        "en": "Jiquani's Soul Core of Targeting",
+        "zh_CN": "佳华尼的瞄准灵核",
+        "zh_TW": "吉卡尼的索敵靈魂核心"
+      },
+      "jiquanis-soul-core-of-thundering": {
+        "en": "Jiquani's Soul Core of Thundering",
+        "zh_CN": "佳华尼的雷鸣灵核",
+        "zh_TW": "吉卡尼的雷鳴靈魂核心"
       },
       "jiquanis-thesis": {
         "en": "Jiquani's Thesis",
@@ -303212,6 +304223,11 @@
         "en": "Runic Splinter",
         "zh_CN": "符文碎片",
         "zh_TW": "符文斷片"
+      },
+      "sacred-bloom": {
+        "en": "Sacred Bloom",
+        "zh_CN": "神圣之花",
+        "zh_TW": "聖綻之花"
       },
       "sandstorm-visage": {
         "en": "Zarokh's Reliquary Key: Sandstorm Visage",
@@ -305226,10 +306242,28 @@
           "zh_TW": "阿茲里的不耐"
         },
         {
+          "id": "Atziri's Soul Core of Alacrity",
+          "en": "Atziri's Soul Core of Alacrity",
+          "zh_CN": "阿兹里的敏捷灵核",
+          "zh_TW": "阿茲里的敏捷靈魂核心"
+        },
+        {
           "id": "Atziri's Soul Core of Devotion",
           "en": "Atziri's Soul Core of Devotion",
-          "zh_CN": "Atziris_Soul_Core_of_Devotion",
+          "zh_CN": "阿兹里的奉献灵核",
           "zh_TW": "阿茲里的奉獻靈魂核心"
+        },
+        {
+          "id": "Atziri's Soul Core of Inoculation",
+          "en": "Atziri's Soul Core of Inoculation",
+          "zh_CN": "阿兹里的免疫灵核",
+          "zh_TW": "阿茲里的免疫靈魂核心"
+        },
+        {
+          "id": "Atziri's Soul Core of Vitality",
+          "en": "Atziri's Soul Core of Vitality",
+          "zh_CN": "阿兹里的活力灵核",
+          "zh_TW": "阿茲里的活力靈魂核心"
         },
         {
           "id": "Austere Garb",
@@ -310926,28 +311960,82 @@
           "zh_TW": "響聲法器"
         },
         {
+          "id": "Jiquani's Soul Core of Abundance",
+          "en": "Jiquani's Soul Core of Abundance",
+          "zh_CN": "佳华尼的丰饶灵核",
+          "zh_TW": "吉卡尼的豐饒靈魂核心"
+        },
+        {
+          "id": "Jiquani's Soul Core of Automation",
+          "en": "Jiquani's Soul Core of Automation",
+          "zh_CN": "佳华尼的自动灵核",
+          "zh_TW": "吉卡尼的自動化靈魂核心"
+        },
+        {
+          "id": "Jiquani's Soul Core of Malediction",
+          "en": "Jiquani's Soul Core of Malediction",
+          "zh_CN": "佳华尼的诅咒灵核",
+          "zh_TW": "吉卡尼的惡語靈魂核心"
+        },
+        {
+          "id": "Jiquani's Soul Core of Munitions",
+          "en": "Jiquani's Soul Core of Munitions",
+          "zh_CN": "佳华尼的弹药灵核",
+          "zh_TW": "吉卡尼的彈藥靈魂核心"
+        },
+        {
           "id": "Jiquani's Soul Core of Quaking",
           "en": "Jiquani's Soul Core of Quaking",
-          "zh_CN": "Jiquanis_Soul_Core_of_Quaking",
+          "zh_CN": "佳华尼的震颤灵核",
           "zh_TW": "吉卡尼的震顫靈魂核心"
         },
         {
           "id": "Jiquani's Soul Core of Radiance",
           "en": "Jiquani's Soul Core of Radiance",
-          "zh_CN": "Jiquanis_Soul_Core_of_Radiance",
+          "zh_CN": "佳华尼的辐照灵核",
           "zh_TW": "吉卡尼的輝耀靈魂核心"
+        },
+        {
+          "id": "Jiquani's Soul Core of Rallying",
+          "en": "Jiquani's Soul Core of Rallying",
+          "zh_CN": "佳华尼的集结灵核",
+          "zh_TW": "吉卡尼的號召靈魂核心"
+        },
+        {
+          "id": "Jiquani's Soul Core of Rippling",
+          "en": "Jiquani's Soul Core of Rippling",
+          "zh_CN": "佳华尼的涟漪灵核",
+          "zh_TW": "吉卡尼的漣漪靈魂核心"
         },
         {
           "id": "Jiquani's Soul Core of Severing",
           "en": "Jiquani's Soul Core of Severing",
-          "zh_CN": "Jiquanis_Soul_Core_of_Severing",
+          "zh_CN": "佳华尼的切断灵核",
           "zh_TW": "吉卡尼的斷切靈魂核心"
+        },
+        {
+          "id": "Jiquani's Soul Core of Snares",
+          "en": "Jiquani's Soul Core of Snares",
+          "zh_CN": "佳华尼的陷阱灵核",
+          "zh_TW": "吉卡尼的陷阱靈魂核心"
         },
         {
           "id": "Jiquani's Soul Core of Squalls",
           "en": "Jiquani's Soul Core of Squalls",
-          "zh_CN": "Jiquanis_Soul_Core_of_Squalls",
+          "zh_CN": "佳华尼的暴风灵核",
           "zh_TW": "吉卡尼的狂風靈魂核心"
+        },
+        {
+          "id": "Jiquani's Soul Core of Targeting",
+          "en": "Jiquani's Soul Core of Targeting",
+          "zh_CN": "佳华尼的瞄准灵核",
+          "zh_TW": "吉卡尼的索敵靈魂核心"
+        },
+        {
+          "id": "Jiquani's Soul Core of Thundering",
+          "en": "Jiquani's Soul Core of Thundering",
+          "zh_CN": "佳华尼的雷鸣灵核",
+          "zh_TW": "吉卡尼的雷鳴靈魂核心"
         },
         {
           "id": "Jiquani's Thesis",
@@ -310988,7 +312076,7 @@
         {
           "id": "Kamasa's Orb of Sacrifice",
           "en": "Kamasa's Orb of Sacrifice",
-          "zh_CN": "渎神献祭宝珠",
+          "zh_CN": "卡马萨之献祭宝珠",
           "zh_TW": "卡瑪薩奉獻寶珠"
         },
         {
@@ -311066,7 +312154,7 @@
         {
           "id": "Kopec's Orb of Sacrifice",
           "en": "Kopec's Orb of Sacrifice",
-          "zh_CN": "强固献祭宝珠",
+          "zh_CN": "科佩克之献祭宝珠",
           "zh_TW": "科佩克奉獻寶珠"
         },
         {
@@ -311984,7 +313072,7 @@
         {
           "id": "Liquid Verisium",
           "en": "Liquid Verisium",
-          "zh_CN": "Liquid Verisium",
+          "zh_CN": "液态维金",
           "zh_TW": "液態維里西姆"
         },
         {
@@ -319020,6 +320108,12 @@
           "zh_TW": "聖禮長袍"
         },
         {
+          "id": "Sacred Bloom",
+          "en": "Sacred Bloom",
+          "zh_CN": "神圣之花",
+          "zh_TW": "聖綻之花"
+        },
+        {
           "id": "Sacred Focus",
           "en": "Sacred Focus",
           "zh_CN": "圣洁法器",
@@ -322634,13 +323728,13 @@
         {
           "id": "Yaomac's Orb of Sacrifice",
           "en": "Yaomac's Orb of Sacrifice",
-          "zh_CN": "残暴献祭宝珠",
+          "zh_CN": "约马克之献祭宝珠",
           "zh_TW": "堯馬克奉獻寶珠"
         },
         {
           "id": "Yugul's Orb of Sacrifice",
           "en": "Yugul's Orb of Sacrifice",
-          "zh_CN": "皇家献祭宝珠",
+          "zh_CN": "尤格尔之献祭宝珠",
           "zh_TW": "伊果奉獻寶珠"
         },
         {
@@ -328220,6 +329314,24 @@
           "zh_TW": "全部火焰法術技能等級#"
         },
         {
+          "id": "rune.stat_3268281424",
+          "en": "# to Level of all Grenade Skill Gems",
+          "zh_CN": "所有榴弹技能宝石等级提高 #",
+          "zh_TW": "#全部擲彈技能寶石等級"
+        },
+        {
+          "id": "rune.stat_1078570138",
+          "en": "# to Level of all Hazard Skill Gems",
+          "zh_CN": "所有危害技能宝石等级提高 #",
+          "zh_TW": "# to Level of all Hazard Skill Gems"
+        },
+        {
+          "id": "rune.stat_776287420",
+          "en": "# to Level of all Herald Skill Gems",
+          "zh_CN": "所有捷技能宝石等级提高 #",
+          "zh_TW": "# to Level of all Herald Skill Gems"
+        },
+        {
           "id": "explicit.stat_1147690586",
           "en": "# to Level of all Lightning Skills",
           "zh_CN": "所有闪电技能等级 #",
@@ -328269,6 +329381,12 @@
         },
         {
           "id": "fractured.stat_1992191903",
+          "en": "# to Level of all Mark Skills",
+          "zh_CN": "# 所有印记技能等级",
+          "zh_TW": "#所有印記技能等級"
+        },
+        {
+          "id": "rune.stat_1992191903",
           "en": "# to Level of all Mark Skills",
           "zh_CN": "# 所有印记技能等级",
           "zh_TW": "#所有印記技能等級"
@@ -328328,6 +329446,12 @@
           "zh_TW": "全部召喚物技能等級#"
         },
         {
+          "id": "rune.stat_3148103963",
+          "en": "# to Level of all Nova Skill Gems",
+          "zh_CN": "所有新星技能宝石等级提高 #",
+          "zh_TW": "#全部新星技能寶石等級"
+        },
+        {
           "id": "desecrated.stat_1600707273",
           "en": "# to Level of all Physical Spell Skills",
           "zh_CN": "所有物理法术技能等级 #",
@@ -328350,6 +329474,12 @@
           "en": "# to Level of all Physical Spell Skills",
           "zh_CN": "所有物理法术技能等级 #",
           "zh_TW": "全部物理法術技能等級#"
+        },
+        {
+          "id": "rune.stat_2296009672",
+          "en": "# to Level of all Plant Skill Gems",
+          "zh_CN": "所有植物技能宝石等级提高 #",
+          "zh_TW": "#全部植物技能寶石等級"
         },
         {
           "id": "desecrated.stat_1202301673",
@@ -328388,6 +329518,12 @@
           "zh_TW": "全部技能寶石等級#"
         },
         {
+          "id": "rune.stat_1839315243",
+          "en": "# to Level of all Slam Skill Gems",
+          "zh_CN": "所有猛击技能宝石等级提高 #",
+          "zh_TW": "# to Level of all Slam Skill Gems"
+        },
+        {
           "id": "crafted.stat_124131830",
           "en": "# to Level of all Spell Skills",
           "zh_CN": "所有法术技能等级 #",
@@ -328416,6 +329552,36 @@
           "en": "# to Level of all Spell Skills",
           "zh_CN": "所有法术技能等级 #",
           "zh_TW": "全部法術技能等級#"
+        },
+        {
+          "id": "rune.stat_1062190843",
+          "en": "# to Level of all Storm Skill Gems",
+          "zh_CN": "所有风暴技能宝石等级提高 #",
+          "zh_TW": "# to Level of all Storm Skill Gems"
+        },
+        {
+          "id": "rune.stat_2305301734",
+          "en": "# to Level of all Strike Skill Gems",
+          "zh_CN": "所有打击技能宝石等级提高 #",
+          "zh_TW": "#全部風暴技能寶石等級"
+        },
+        {
+          "id": "rune.stat_2336703514",
+          "en": "# to Level of all Totem Skill Gems",
+          "zh_CN": "所有图腾主动技能石等级 #",
+          "zh_TW": "#全部圖騰技能寶石的等級"
+        },
+        {
+          "id": "rune.stat_2148999925",
+          "en": "# to Level of all Warcry Skill Gems",
+          "zh_CN": "所有战吼技能宝石等级提高 #",
+          "zh_TW": "#全部戰吼技能寶石等級"
+        },
+        {
+          "id": "rune.stat_653358410",
+          "en": "# to Level of all Wind Skill Gems",
+          "zh_CN": "所有风系技能宝石等级提高 #",
+          "zh_TW": "#全部疾風技能寶石等級"
         },
         {
           "id": "explicit.stat_2157870819",
@@ -328648,7 +329814,7 @@
         {
           "id": "rune.stat_995044379",
           "en": "# to maximum Mana per 3 Item Armour on Equipped Helmet",
-          "zh_CN": "# to maximum Mana per 3 Item Armour on Equipped Helmet",
+          "zh_CN": "已装备的头盔每有 3 点物品护甲，魔力上限 #",
           "zh_TW": "# to maximum Mana per 3 Item Armour on Equipped Helmet"
         },
         {
@@ -329284,8 +330450,8 @@
         {
           "id": "explicit.stat_3937291366",
           "en": "#% chance to add a Vaal Beacon Unique Monster to the Map",
-          "zh_CN": "#% chance to add a Vaal Beacon Unique Monster to the Map",
-          "zh_TW": "#% chance to add a Vaal Beacon Unique Monster to the Map"
+          "zh_CN": "有 #% 的几率为地图增加一个瓦尔灯塔传奇怪物",
+          "zh_TW": "有#%機率為地圖新增一名瓦爾烽塔傳奇怪物"
         },
         {
           "id": "explicit.stat_1009412152",
@@ -330970,7 +332136,7 @@
         {
           "id": "sanctum.stat_3134588943",
           "en": "#% increased chance to avoid Honour loss from Enemy Melee Hits",
-          "zh_CN": "被敌人近战击中时避免失去荣誉的几率提高 #%",
+          "zh_CN": "被敌人近战击中时避免失去坚毅的几率提高 #%",
           "zh_TW": "增加#%避免因敵人近戰擊中而失去榮譽的機率"
         },
         {
@@ -332266,8 +333432,8 @@
         {
           "id": "rune.stat_1519474779",
           "en": "#% increased Effect of Non-Damaging Ailments on you",
-          "zh_CN": "#% increased Effect of Non-Damaging Ailments on you",
-          "zh_TW": "#% increased Effect of Non-Damaging Ailments on you"
+          "zh_CN": "你受到的非伤害性异常状态的效果提高 #%",
+          "zh_TW": "增加#%你身上的非傷害型異常狀態效果"
         },
         {
           "id": "desecrated.stat_4234573345",
@@ -332782,8 +333948,8 @@
         {
           "id": "explicit.stat_3039133122",
           "en": "#% increased Expedition Explosive Area of Effect in Map",
-          "zh_CN": "#% increased Expedition Explosive Area of Effect in Map",
-          "zh_TW": "#% increased Expedition Explosive Area of Effect in Map"
+          "zh_CN": "地图内先祖秘藏爆炸范围提高 #%",
+          "zh_TW": "增加#%地圖中探險炸藥的範圍效果"
         },
         {
           "id": "explicit.stat_1539368271",
@@ -332808,6 +333974,12 @@
           "en": "#% increased Expedition Explosive Radius",
           "zh_CN": "先祖秘藏爆炸范围提高 #%",
           "zh_TW": "#%增加包含的探險爆炸範圍"
+        },
+        {
+          "id": "explicit.stat_2905096233",
+          "en": "#% increased Expedition Monster Rarity in Map",
+          "zh_CN": "地图内的先祖秘藏怪物稀有度提高 #%",
+          "zh_TW": "增加#%地圖中的探險怪物稀有度"
         },
         {
           "id": "explicit.stat_3666934677",
@@ -333334,7 +334506,7 @@
         {
           "id": "explicit.stat_933768533",
           "en": "#% increased Global Armour, Evasion and Energy Shield per Socket filled",
-          "zh_CN": "每个镶嵌的插槽全局护甲，闪避与能量护盾提高 #%",
+          "zh_CN": "每个镶嵌的插槽使全局护甲，闪避与能量护盾提高 #%",
           "zh_TW": "每鑲嵌一個插槽，增加#%全域護甲、閃備與能量護盾"
         },
         {
@@ -334010,6 +335182,12 @@
           "zh_TW": "增加#%你所施加之中毒的幅度"
         },
         {
+          "id": "rune.stat_2487305362",
+          "en": "#% increased Magnitude of Poison you inflict",
+          "zh_CN": "你造成的中毒强度提高 #%",
+          "zh_TW": "增加#%你所施加之中毒的幅度"
+        },
+        {
           "id": "explicit.stat_1864159246",
           "en": "#% increased Magnitude of Poison you inflict on targets that are not Poisoned",
           "zh_CN": "目标未中毒时，你造成的中毒强度提高 #%",
@@ -334383,6 +335561,12 @@
         },
         {
           "id": "implicit.stat_4169430079",
+          "en": "#% increased Maximum Life for each Corrupted Item Equipped",
+          "zh_CN": "每已装备一件腐化物品，生命上限提高 #%",
+          "zh_TW": "每一個已裝備的已汙染物品，增加#%最大生命"
+        },
+        {
+          "id": "rune.stat_4169430079",
           "en": "#% increased Maximum Life for each Corrupted Item Equipped",
           "zh_CN": "每已装备一件腐化物品，生命上限提高 #%",
           "zh_TW": "每一個已裝備的已汙染物品，增加#%最大生命"
@@ -334940,6 +336124,12 @@
           "zh_TW": "增加#%釘身累積"
         },
         {
+          "id": "rune.stat_3985867204",
+          "en": "#% increased Pin duration",
+          "zh_CN": "定身持续时间提高 #%",
+          "zh_TW": "#% increased Pin duration"
+        },
+        {
           "id": "desecrated.stat_2011656677",
           "en": "#% increased Poison Duration",
           "zh_CN": "中毒持续时间提高 #%",
@@ -335482,37 +336672,37 @@
         {
           "id": "crafted.stat_3377888098",
           "en": "#% increased Skill Effect Duration",
-          "zh_CN": "技能效果持续时间提高 #%",
+          "zh_CN": "技能效果持续时间延长 #%",
           "zh_TW": "增加#%技能效果持續時間"
         },
         {
           "id": "desecrated.stat_3377888098",
           "en": "#% increased Skill Effect Duration",
-          "zh_CN": "技能效果持续时间提高 #%",
+          "zh_CN": "技能效果持续时间延长 #%",
           "zh_TW": "增加#%技能效果持續時間"
         },
         {
           "id": "enchant.stat_3377888098",
           "en": "#% increased Skill Effect Duration",
-          "zh_CN": "技能效果持续时间提高 #%",
+          "zh_CN": "技能效果持续时间延长 #%",
           "zh_TW": "增加#%技能效果持續時間"
         },
         {
           "id": "explicit.stat_3377888098",
           "en": "#% increased Skill Effect Duration",
-          "zh_CN": "技能效果持续时间提高 #%",
+          "zh_CN": "技能效果持续时间延长 #%",
           "zh_TW": "增加#%技能效果持續時間"
         },
         {
           "id": "fractured.stat_3377888098",
           "en": "#% increased Skill Effect Duration",
-          "zh_CN": "技能效果持续时间提高 #%",
+          "zh_CN": "技能效果持续时间延长 #%",
           "zh_TW": "增加#%技能效果持續時間"
         },
         {
           "id": "rune.stat_3377888098",
           "en": "#% increased Skill Effect Duration",
-          "zh_CN": "技能效果持续时间提高 #%",
+          "zh_CN": "技能效果持续时间延长 #%",
           "zh_TW": "增加#%技能效果持續時間"
         },
         {
@@ -335544,6 +336734,12 @@
           "en": "#% increased Skill Speed",
           "zh_CN": "技能速度提高 #%",
           "zh_TW": "增加#%技能速度"
+        },
+        {
+          "id": "rune.stat_2203195791",
+          "en": "#% increased Skill Speed for each Corrupted Item Equipped",
+          "zh_CN": "每有一件已装备的腐化物品，技能速度提高 #%",
+          "zh_TW": "#% increased Skill Speed for each Corrupted Item Equipped"
         },
         {
           "id": "desecrated.stat_3313255158",
@@ -335844,6 +337040,12 @@
           "en": "#% increased Spirit",
           "zh_CN": "该装备精魂提高 #%",
           "zh_TW": "增加#%精魂"
+        },
+        {
+          "id": "rune.stat_2247017114",
+          "en": "#% increased Spirit for each Corrupted Item Equipped",
+          "zh_CN": "每件已装备的被腐化物品使精魂提高 #%",
+          "zh_TW": "每裝備一件已汙染物品，即增加#%精魂"
         },
         {
           "id": "explicit.stat_1430165758",
@@ -337614,6 +338816,12 @@
           "en": "#% to Chaos Resistance",
           "zh_CN": "混沌抗性 #%",
           "zh_TW": "#%混沌抗性"
+        },
+        {
+          "id": "rune.stat_138373935",
+          "en": "#% to Chaos Resistance for each Corrupted Item Equipped",
+          "zh_CN": "每个已装备的腐化物品使混沌抗性 #%",
+          "zh_TW": "#% to Chaos Resistance for each Corrupted Item Equipped"
         },
         {
           "id": "explicit.stat_1123023256",
@@ -339772,19 +340980,19 @@
         {
           "id": "pseudo.pseudo_total_dexterity",
           "en": "+# total to Dexterity",
-          "zh_CN": "+#% 敏捷",
+          "zh_CN": "+# 敏捷",
           "zh_TW": "+# 敏捷"
         },
         {
           "id": "pseudo.pseudo_total_intelligence",
           "en": "+# total to Intelligence",
-          "zh_CN": "+#% 智慧",
+          "zh_CN": "+# 智慧",
           "zh_TW": "+# 智慧"
         },
         {
           "id": "pseudo.pseudo_total_strength",
           "en": "+# total to Strength",
-          "zh_CN": "+#% 力量",
+          "zh_CN": "+# 力量",
           "zh_TW": "+# 力量"
         },
         {
@@ -339826,7 +341034,7 @@
         {
           "id": "pseudo.pseudo_total_all_elemental_resistances",
           "en": "+#% total to all Elemental Resistances",
-          "zh_CN": "+#% 总最大元素抗性",
+          "zh_CN": "+#% 全元素抗性",
           "zh_TW": "+#% 元素抗性"
         },
         {
@@ -354280,37 +355488,37 @@
         {
           "id": "crafted.stat_2954116742|14258",
           "en": "Allocates Puppet Master chance",
-          "zh_CN": "配置 隐秘之手",
+          "zh_CN": "配置 傀儡大师几率",
           "zh_TW": "配置魁儡大師機率"
         },
         {
           "id": "crafted.stat_2954116742|62210",
           "en": "Allocates Puppet Master chance",
-          "zh_CN": "配置 无尽之舞",
+          "zh_CN": "配置 傀儡大师几率",
           "zh_TW": "配置魁儡大師機率"
         },
         {
           "id": "enchant.stat_2954116742|14258",
           "en": "Allocates Puppet Master chance",
-          "zh_CN": "配置 隐秘之手",
+          "zh_CN": "配置 傀儡大师几率",
           "zh_TW": "配置魁儡大師機率"
         },
         {
           "id": "enchant.stat_2954116742|62210",
           "en": "Allocates Puppet Master chance",
-          "zh_CN": "配置 无尽之舞",
+          "zh_CN": "配置 傀儡大师几率",
           "zh_TW": "配置魁儡大師機率"
         },
         {
           "id": "explicit.stat_2954116742|14258",
           "en": "Allocates Puppet Master chance",
-          "zh_CN": "配置 隐秘之手",
+          "zh_CN": "配置 傀儡大师几率",
           "zh_TW": "配置魁儡大師機率"
         },
         {
           "id": "explicit.stat_2954116742|62210",
           "en": "Allocates Puppet Master chance",
-          "zh_CN": "配置 无尽之舞",
+          "zh_CN": "配置 傀儡大师几率",
           "zh_TW": "配置魁儡大師機率"
         },
         {
@@ -356031,6 +357239,12 @@
         },
         {
           "id": "explicit.stat_2954116742|29800",
+          "en": "Allocates Shocking Limit",
+          "zh_CN": "配置 电震上限",
+          "zh_TW": "配置感電上限"
+        },
+        {
+          "id": "fractured.stat_2954116742|29800",
           "en": "Allocates Shocking Limit",
           "zh_CN": "配置 电震上限",
           "zh_TW": "配置感電上限"
@@ -361696,8 +362910,8 @@
         {
           "id": "rune.stat_1524834794",
           "en": "Bonded: #% increased Damage per 15 Strength",
-          "zh_CN": "羁绊：每 # 点力量可使伤害提高 #%",
-          "zh_TW": "命定:每#點力量增加#%傷害"
+          "zh_CN": "羁绊： 每 15 点力量可使伤害提高 #%",
+          "zh_TW": "Bonded: #% increased Damage per 15 Strength"
         },
         {
           "id": "rune.stat_3412619569",
@@ -363650,6 +364864,12 @@
           "zh_TW": "無法對你造成腐化之血"
         },
         {
+          "id": "rune.stat_2139847597",
+          "en": "Corrupting will always result in change",
+          "zh_CN": "腐化必定会改变",
+          "zh_TW": "汙染的結果總會是改變"
+        },
+        {
           "id": "explicit.stat_891466814",
           "en": "Create a Fragment of Divinity in your Presence every 4 seconds",
           "zh_CN": "在你的在场范围内，每 4 秒创造一个神圣碎片",
@@ -364019,19 +365239,19 @@
           "id": "crafted.stat_541021467",
           "en": "Debilitate Enemies on Hit while you have an Emerald and a Sapphire socketed in your tree",
           "zh_CN": "当你镶嵌有一颗翡翠和一颗蓝玉时，击中会使敌人疲惫",
-          "zh_TW": "若插槽中的鑲嵌碧綠翠雲和藍寶石，擊中時虛弱敵人"
+          "zh_TW": "若你的天賦樹中鑲嵌了一顆綠寶石和藍寶石，擊中時虛弱敵人"
         },
         {
           "id": "explicit.stat_541021467",
           "en": "Debilitate Enemies on Hit while you have an Emerald and a Sapphire socketed in your tree",
           "zh_CN": "当你镶嵌有一颗翡翠和一颗蓝玉时，击中会使敌人疲惫",
-          "zh_TW": "若插槽中的鑲嵌碧綠翠雲和藍寶石，擊中時虛弱敵人"
+          "zh_TW": "若你的天賦樹中鑲嵌了一顆綠寶石和藍寶石，擊中時虛弱敵人"
         },
         {
           "id": "fractured.stat_541021467",
           "en": "Debilitate Enemies on Hit while you have an Emerald and a Sapphire socketed in your tree",
           "zh_CN": "当你镶嵌有一颗翡翠和一颗蓝玉时，击中会使敌人疲惫",
-          "zh_TW": "若插槽中的鑲嵌碧綠翠雲和藍寶石，擊中時虛弱敵人"
+          "zh_TW": "若你的天賦樹中鑲嵌了一顆綠寶石和藍寶石，擊中時虛弱敵人"
         },
         {
           "id": "desecrated.stat_1238227257",
@@ -364155,8 +365375,8 @@
         },
         {
           "id": "explicit.stat_900933517",
-          "en": "Delirium Fog in Map spawns #% increased MirrorShards",
-          "zh_CN": "地图中的惊悸迷雾生成的破溃之镜碎片数量提高 #%",
+          "en": "Delirium Fog in Map spawns #% increased Mirror Shards",
+          "zh_CN": "地图中的惊悸迷雾生成的破溃之镜碎片提高 #%",
           "zh_TW": "地圖中的譫妄迷霧增加#%裂鏡碎片的生成量"
         },
         {
@@ -364764,6 +365984,42 @@
           "en": "Expedition Monsters in your Maps spawn with half of their Life missing",
           "zh_CN": "你地图中的先祖秘藏怪物产生时额外失去一半生命值",
           "zh_TW": "在你的地圖內，探險怪物生成時缺少一半的生命"
+        },
+        {
+          "id": "explicit.stat_1183698646",
+          "en": "Expeditions contain 1 Additional Boss encased in ice in Map",
+          "zh_CN": "地图内的先祖秘藏额外包含 1 个被坚冰包裹的首领",
+          "zh_TW": "地圖中的探險含有1個額外封存於冰霜中的頭目"
+        },
+        {
+          "id": "explicit.stat_1109460697",
+          "en": "Expeditions contain 1 Additional Verisium Sentry in Map",
+          "zh_CN": "地图内的先祖秘藏额外包含 1 个维金哨兵",
+          "zh_TW": "地圖中的探險含有1個額外維里西姆守望"
+        },
+        {
+          "id": "explicit.stat_181823691",
+          "en": "Expeditions contain 1 buried Strongbox in Map",
+          "zh_CN": "地图内的先祖秘藏包含 1 个埋藏的保险箱",
+          "zh_TW": "地圖中的探險含有1個埋藏的保險箱"
+        },
+        {
+          "id": "explicit.stat_2852112245",
+          "en": "Expeditions contain 1 Vaal Relic in Map",
+          "zh_CN": "地图内的先祖秘藏包含 1 个瓦尔遗物",
+          "zh_TW": "地圖中的探險含有1個瓦爾遺物"
+        },
+        {
+          "id": "explicit.stat_3653794255",
+          "en": "Expeditions have +#% Surpassing chance to contain an additional Verisium Remnant",
+          "zh_CN": "先祖秘藏有 +#% 的溢出几率包含一个额外的维金残片",
+          "zh_TW": "探險擁有+#%滿溢機率含有額外一個維里西姆遺物"
+        },
+        {
+          "id": "explicit.stat_779964546",
+          "en": "Expeditions have +#% Surpassing chance to Duplicate Runic Monsters in Map",
+          "zh_CN": "地图内的先祖秘藏有 +#% 的溢出几率复制符文怪物",
+          "zh_TW": "探險擁有+#%滿溢機率複製地圖中的符文怪物"
         },
         {
           "id": "explicit.stat_3753446846",
@@ -365422,7 +366678,7 @@
         {
           "id": "explicit.stat_2771095426",
           "en": "Gain #% of damage as Fire damage per 1% Chance to Block",
-          "zh_CN": "Gain #% of damage as Fire damage per 1% Chance to Block",
+          "zh_CN": "每 1% 格挡几率获得相当于伤害 #% 的火焰伤害",
           "zh_TW": "每擁有1%格擋率，獲得等同於#%傷害的火焰傷害"
         },
         {
@@ -367540,7 +368796,7 @@
         {
           "id": "rune.stat_726496846",
           "en": "Idols socketed in this item gain the benefits of their Bonded modifiers",
-          "zh_CN": "镶嵌在该物品上的雕像获得其自身的绑定词缀的强化效果",
+          "zh_CN": "镶嵌在该物品上的雕像获得其自身的羁绊词缀的强化效果",
           "zh_TW": "鑲嵌在此物品中的魔偶獲得其命定詞綴的加成效果"
         },
         {
@@ -368596,19 +369852,19 @@
         {
           "id": "desecrated.stat_2594634307",
           "en": "Mark Skills have #% increased Skill Effect Duration",
-          "zh_CN": "印记技能的技能效果持续时间提高 #%",
+          "zh_CN": "印记技能的技能效果持续时间延长 #%",
           "zh_TW": "印記技能增加#%技能效果持續時間"
         },
         {
           "id": "explicit.stat_2594634307",
           "en": "Mark Skills have #% increased Skill Effect Duration",
-          "zh_CN": "印记技能的技能效果持续时间提高 #%",
+          "zh_CN": "印记技能的技能效果持续时间延长 #%",
           "zh_TW": "印記技能增加#%技能效果持續時間"
         },
         {
           "id": "fractured.stat_2594634307",
           "en": "Mark Skills have #% increased Skill Effect Duration",
-          "zh_CN": "印记技能的技能效果持续时间提高 #%",
+          "zh_CN": "印记技能的技能效果持续时间延长 #%",
           "zh_TW": "印記技能增加#%技能效果持續時間"
         },
         {
@@ -369422,6 +370678,12 @@
           "zh_TW": "怪物發射#個額外投射物"
         },
         {
+          "id": "explicit.stat_3520418269",
+          "en": "Monsters from Verisium Remnants drop #% increased Verisium",
+          "zh_CN": "维金残片生成的怪物掉落的维金数量提高 #%",
+          "zh_TW": "增加#%維里西姆遺物怪物掉落的維里西姆"
+        },
+        {
           "id": "desecrated.stat_2887760183",
           "en": "Monsters gain #% of maximum Life as Extra maximum Energy Shield",
           "zh_CN": "怪物将生命上限的 #% 转化为额外能量护盾上限",
@@ -369802,7 +371064,7 @@
         {
           "id": "explicit.stat_1367999357",
           "en": "Non-Channelling Skills have #% increased Spell Critical Hit Chance per 100 maximum Mana",
-          "zh_CN": "每 100 点魔力上限使非吟唱法术的暴击率提高 #%",
+          "zh_CN": "每 100 点魔力上限使非吟唱技能的法术暴击几率提高 #%",
           "zh_TW": "每100最大魔力，增加#%非引導技能的法術暴擊率"
         },
         {
@@ -370954,19 +372216,19 @@
         {
           "id": "desecrated.stat_3113764475",
           "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-          "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
+          "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
           "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間"
         },
         {
           "id": "explicit.stat_3113764475",
           "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-          "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
+          "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
           "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間"
         },
         {
           "id": "fractured.stat_3113764475",
           "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-          "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
+          "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
           "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間"
         },
         {
@@ -372382,7 +373644,7 @@
         {
           "id": "rune.stat_967155385",
           "en": "Prevent #% of Damage from Deflected Hits if you've\nDeflected no Hits Recently",
-          "zh_CN": "若你近期没有偏转击中，避免 #% 的\n偏转击中伤害",
+          "zh_CN": "若你近期没有受到偏转击中，避免 #% 的\n偏转击中伤害",
           "zh_TW": "若你近期沒有偏斜擊中，\n避免#%來自偏斜擊中的傷害"
         },
         {
@@ -373276,7 +374538,7 @@
         {
           "id": "explicit.stat_3076483222|61382",
           "en": "Sacrifice up to 2 Divine Orbs to receive double on Trial completion",
-          "zh_CN": "献祭最多 3 神圣石 个，完成试炼时可获得双倍返还",
+          "zh_CN": "献祭最多 2 神圣石 个，完成试炼时可获得双倍返还",
           "zh_TW": "獻祭最多2 顆神聖石，以在完成試煉時獲得兩倍獎勵"
         },
         {
@@ -374998,19 +376260,19 @@
         {
           "id": "desecrated.stat_4162678661",
           "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-          "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
+          "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
           "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間"
         },
         {
           "id": "explicit.stat_4162678661",
           "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-          "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
+          "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
           "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間"
         },
         {
           "id": "fractured.stat_4162678661",
           "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-          "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
+          "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
           "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間"
         },
         {
@@ -375422,6 +376684,12 @@
           "zh_TW": "對你的冰緩效果反轉"
         },
         {
+          "id": "explicit.stat_3963944561",
+          "en": "The first unearthed Runic Monster will be a Rare Monster in Map",
+          "zh_CN": "地图内最先被开掘的符文怪物将为稀有怪物",
+          "zh_TW": "地圖中首名出土的符文怪物會是稀有怪物"
+        },
+        {
           "id": "sanctum.stat_1175354969",
           "en": "The Herald of the Scourge drops an additional Invocation",
           "zh_CN": "天灾先驱利西亚额外掉落一个祈求",
@@ -375824,6 +377092,12 @@
           "zh_TW": "瓦爾冥約"
         },
         {
+          "id": "explicit.stat_3871299443",
+          "en": "Verisium Remnants have +#% chance to add an additional Runic Modifier in Map",
+          "zh_CN": "地图内的维金残片有 +#% 的几率添加一个额外的符文词缀",
+          "zh_TW": "地圖中的維里西姆遺物擁有+#%機率添加一條額外符文詞綴"
+        },
+        {
           "id": "explicit.stat_1132041585",
           "en": "Virtuous",
           "zh_CN": "Virtuous",
@@ -376055,7 +377329,7 @@
           "id": "explicit.stat_3598729471",
           "en": "You can only Socket Emerald Jewels in this item",
           "zh_CN": "你只能在该物品中镶嵌翡翠珠宝",
-          "zh_TW": "你只能在這件物品上鑲嵌翡翠珠寶"
+          "zh_TW": "你只能在這件物品上鑲嵌綠寶石"
         },
         {
           "id": "explicit.stat_4031148736",
@@ -376813,13 +378087,13 @@
     },
     "coverage": {
       "zh_CN": {
-        "matched": 12254,
-        "total": 12276,
-        "ratio": 0.998208
+        "matched": 12315,
+        "total": 12319,
+        "ratio": 0.999675
       },
       "zh_TW": {
-        "matched": 12276,
-        "total": 12276,
+        "matched": 12319,
+        "total": 12319,
         "ratio": 1.0
       }
     },
