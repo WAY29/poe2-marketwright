@@ -14,6 +14,8 @@
     ·
     <a href="https://github.com/WAY29/poe2-marketwright/releases">Download a release</a>
     ·
+    <a href="https://microsoftedge.microsoft.com/addons/detail/kbcfabjloebicakengmjfeapbbmncaom">Microsoft Edge Add-ons</a>
+    ·
     <a href="https://github.com/WAY29/poe2-marketwright/issues">Report an issue</a>
   </p>
 
