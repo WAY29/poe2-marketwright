@@ -10,13 +10,10 @@
   <p>《流放之路 2》官方市集的 Chromium 浏览器扩展。</p>
 
   <p>
-    <a href="#features"><strong>查看功能</strong></a>
-    ·
-    <a href="https://github.com/WAY29/poe2-marketwright/releases">下载发布包</a>
-    ·
-    <a href="https://microsoftedge.microsoft.com/addons/detail/kbcfabjloebicakengmjfeapbbmncaom">Microsoft Edge 扩展商店</a>
-    ·
-    <a href="https://github.com/WAY29/poe2-marketwright/issues">报告问题</a>
+    <a href="#features"><img src="https://img.shields.io/badge/%E6%9F%A5%E7%9C%8B-%E5%8A%9F%E8%83%BD-B08D57?style=for-the-badge" alt="查看功能"></a>
+    <a href="https://github.com/WAY29/poe2-marketwright/releases"><img src="https://img.shields.io/github/v/release/WAY29/poe2-marketwright?style=for-the-badge&amp;label=%E4%B8%8B%E8%BD%BD&amp;color=B08D57&amp;logo=github" alt="下载最新发布包"></a>
+    <a href="https://microsoftedge.microsoft.com/addons/detail/kbcfabjloebicakengmjfeapbbmncaom"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fkbcfabjloebicakengmjfeapbbmncaom&amp;query=%24.version&amp;label=Edge&amp;color=0078D7&amp;logo=microsoftedge&amp;logoColor=white&amp;style=for-the-badge" alt="Microsoft Edge 扩展商店版本"></a>
+    <a href="https://github.com/WAY29/poe2-marketwright/issues"><img src="https://img.shields.io/github/issues/WAY29/poe2-marketwright?style=for-the-badge&amp;label=%E6%8A%A5%E5%91%8A%20%E9%97%AE%E9%A2%98&amp;color=B08D57&amp;logo=github" alt="报告问题"></a>
   </p>
 
   <p>

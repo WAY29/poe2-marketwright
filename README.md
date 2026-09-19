@@ -10,13 +10,10 @@
   <p>A Chromium browser extension for the official Path of Exile 2 Trade site.</p>
 
   <p>
-    <a href="#features"><strong>Explore features</strong></a>
-    ·
-    <a href="https://github.com/WAY29/poe2-marketwright/releases">Download a release</a>
-    ·
-    <a href="https://microsoftedge.microsoft.com/addons/detail/kbcfabjloebicakengmjfeapbbmncaom">Microsoft Edge Add-ons</a>
-    ·
-    <a href="https://github.com/WAY29/poe2-marketwright/issues">Report an issue</a>
+    <a href="#features"><img src="https://img.shields.io/badge/Explore-Features-B08D57?style=for-the-badge" alt="Explore features"></a>
+    <a href="https://github.com/WAY29/poe2-marketwright/releases"><img src="https://img.shields.io/github/v/release/WAY29/poe2-marketwright?style=for-the-badge&amp;label=Download&amp;color=B08D57&amp;logo=github" alt="Download the latest release"></a>
+    <a href="https://microsoftedge.microsoft.com/addons/detail/kbcfabjloebicakengmjfeapbbmncaom"><img src="https://img.shields.io/badge/dynamic/json?url=https%3A%2F%2Fmicrosoftedge.microsoft.com%2Faddons%2Fgetproductdetailsbycrxid%2Fkbcfabjloebicakengmjfeapbbmncaom&amp;query=%24.version&amp;label=Edge&amp;color=0078D7&amp;logo=microsoftedge&amp;logoColor=white&amp;style=for-the-badge" alt="Microsoft Edge Add-ons version"></a>
+    <a href="https://github.com/WAY29/poe2-marketwright/issues"><img src="https://img.shields.io/github/issues/WAY29/poe2-marketwright?style=for-the-badge&amp;label=Report%20Issue&amp;color=B08D57&amp;logo=github" alt="Report an issue"></a>
   </p>
 
   <p>
