@@ -14,7 +14,7 @@
     uiLanguage: null,
     pageLanguage: null,
     pageTranslationEnabled: true,
-    filteringEnabled: true,
+    filteringEnabled: false,
     tierEnabled: true,
     tierMode: "minimum",
     pobCopyEnabled: true,

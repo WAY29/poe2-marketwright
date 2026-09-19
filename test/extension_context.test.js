@@ -38,7 +38,7 @@ test("save state ignores invalidated extension context", async () => {
   assert.deepStrictEqual(result, {"resolved": true});
 });
 
-test("global language prefers the saved choice and migrates browser language", async () => {
+test("saved state defaults filtering off, preserves choices, and migrates browser language", async () => {
   const bootstrapCall = `  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`;
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
   source = source.replace(
@@ -63,13 +63,17 @@ test("global language prefers the saved choice and migrates browser language", a
   const hooks = sandbox.window.__testHooks;
   const migrated = await hooks.loadState();
   sandbox.chrome.storage.local.get = async () => ({
-    poe2Trade2AffixFilterState: { uiLanguage: "zh_CN" }
+    poe2Trade2AffixFilterState: { uiLanguage: "zh_CN", filteringEnabled: false }
   });
   const saved = await hooks.loadState();
   sandbox.chrome.storage.local.get = async () => ({
-    poe2Trade2AffixFilterState: { uiLanguage: "zh_CN", pageLanguage: "zh_TW_en" }
+    poe2Trade2AffixFilterState: { uiLanguage: "zh_CN", pageLanguage: "zh_TW_en", filteringEnabled: true }
   });
   const split = await hooks.loadState();
+  sandbox.chrome.storage.local.get = async () => ({
+    poe2Trade2AffixFilterState: { enabled: true }
+  });
+  const legacy = await hooks.loadState();
   const result = structuredClone({
     migrated: migrated.uiLanguage,
     saved: saved.uiLanguage,
@@ -78,6 +82,7 @@ test("global language prefers the saved choice and migrates browser language", a
     splitPageLanguage: split.pageLanguage,
     tierEnabled: migrated.tierEnabled,
     tierMode: migrated.tierMode,
+    filtering: [migrated.filteringEnabled, saved.filteringEnabled, split.filteringEnabled, legacy.filteringEnabled],
     normalized: hooks.resolveUiLanguage("unsupported")
   });
   assert.deepStrictEqual(result, {
@@ -88,6 +93,7 @@ test("global language prefers the saved choice and migrates browser language", a
       splitPageLanguage: "zh_TW_en",
       tierEnabled: true,
       tierMode: "minimum",
+      filtering: [false, false, true, true],
       normalized: "zh_TW"
   });
 });
