@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "generatedAt": "2026-09-18T16:09:20.390286+00:00",
+  "generatedAt": "2026-09-19T01:31:48.600185+00:00",
   "source": "https://poe2db.tw/us/Modifiers",
   "tradeStatsSource": "https://www.pathofexile.com/api/trade2/data/stats",
   "displayMetadataSources": {
@@ -79616,25 +79616,25 @@
       "kind": "logical",
       "id": "Weapons"
     },
-    "incomplete bearded axe": {
-      "kind": "logical",
-      "id": "Weapons"
-    },
     "incomplete corroded longsword": {
       "kind": "logical",
       "id": "Weapons"
-    },
-    "incomplete splintered flail": {
-      "kind": "page",
-      "id": "Flails"
     },
     "incomplete chain flail": {
       "kind": "page",
       "id": "Flails"
     },
+    "incomplete bearded axe": {
+      "kind": "logical",
+      "id": "Weapons"
+    },
     "incomplete simple dagger": {
       "kind": "page",
       "id": "Daggers"
+    },
+    "incomplete splintered flail": {
+      "kind": "page",
+      "id": "Flails"
     },
     "incomplete skinning knife": {
       "kind": "page",
@@ -182114,7 +182114,7 @@
         "zh_CN": "配置 扰乱威势",
         "zh_TW": "配置擾亂光環",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -239679,7 +239679,7 @@
         "zh_TW": "增加#%戰吼冷卻時間恢復率",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_416040624": {
@@ -250615,15 +250615,15 @@
           "matched": 8123,
           "total": 8216,
           "ratio": 0.988681,
-          "exactId": 7522,
-          "sameBareAndTemplate": 601
+          "exactId": 7523,
+          "sameBareAndTemplate": 600
         },
         "zh_TW": {
           "matched": 8119,
           "total": 8216,
           "ratio": 0.988194,
-          "exactId": 5872,
-          "sameBareAndTemplate": 2247
+          "exactId": 5873,
+          "sameBareAndTemplate": 2246
         }
       },
       "items": {
