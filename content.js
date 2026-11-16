@@ -190,7 +190,8 @@
     ".result",
     ".item",
     ".item-popup",
-    ".itemPopupContainer"
+    ".itemPopupContainer",
+    ".filter-title-clickable"
   ].join(",");
   const TRADE_LOCALIZATION_EXCLUDED_SELECTOR = [
     "[data-field='account']",
@@ -199,7 +200,13 @@
     ".result-note",
     ".listing-account",
     ".seller",
-    ".profile"
+    ".profile",
+    ".poe2-marketwright-pob-copy-button",
+    ".poe2-marketwright-favorite-button",
+    ".poe2-marketwright-affix-viewer-button",
+    ".poe2-marketwright-affix-viewer-panel",
+    ".poe2-marketwright-currency-conversion",
+    ".poe2-marketwright-currency-conversion-value"
   ].join(",");
   const TRADE_LOCALIZATION_SOURCE_KEY = "__poe2MarketwrightSourceText";
   const TRADE_LOCALIZATION_RENDER_KEY = "__poe2MarketwrightRenderedText";
@@ -651,7 +658,9 @@
     controlListenerTimer: null,
     refreshTimer: null,
     bridgeStats: null,
+    bridgeSelection: null,
     bridgePayloadSignature: "",
+    bridgeSearchRecordsSent: false,
     tierBridgeMappingsSent: false,
     tierBridgeSignature: "",
     tradeSearchSnapshots: new Map(),
@@ -6328,12 +6337,16 @@
 
   function isTradeResultLocalizationMutation(record) {
     return isTradeResultLocalizationNode(record?.target) ||
-      Array.from(record?.addedNodes || []).some(isTradeResultLocalizationNode);
+      Array.from(record?.addedNodes || []).some((node) =>
+        isTradeResultLocalizationNode(node) ||
+        (node?.nodeType === 1 && !isExcludedTradeLocalizationElement(node) &&
+          Boolean(node.querySelector?.(".filter-title-clickable"))));
   }
 
   function isTradeResultLocalizationNode(node) {
     const element = node?.nodeType === 1 ? node : node?.parentElement;
-    return Boolean(element?.matches?.(TRADE_RESULT_LOCALIZATION_SELECTOR) || element?.closest?.(TRADE_RESULT_LOCALIZATION_SELECTOR));
+    return Boolean(element && !isExcludedTradeLocalizationElement(element) &&
+      (element.matches?.(TRADE_RESULT_LOCALIZATION_SELECTOR) || element.closest?.(TRADE_RESULT_LOCALIZATION_SELECTOR)));
   }
 
   function localizeTradeElement(element) {
@@ -6576,9 +6589,10 @@
     if (!text) {
       return source;
     }
+    const bilingualLabel = Boolean(element?.closest?.(".filter-title-clickable"));
     const override = getTradeTermLocalizationOverride(text);
     if (override) {
-      return `${leading}${getLocalizedTradePageText(override, text, false)}${trailing}`;
+      return `${leading}${getLocalizedTradePageText(override, text, bilingualLabel)}${trailing}`;
     }
     if (!runtime.tradeLocalization) {
       return source;
@@ -6590,13 +6604,13 @@
     }
     const exact = runtime.tradeLocalization.strings?.[text] || runtime.tradeLocalization.clientStrings?.[text];
     if (exact) {
-      return `${leading}${getLocalizedTradePageText(exact, text, false)}${trailing}`;
+      return `${leading}${getLocalizedTradePageText(exact, text, bilingualLabel)}${trailing}`;
     }
     const label = text.match(/^(.+?)(:\s*)$/);
     const labelRecord = runtime.tradeLocalization.strings?.[label?.[1] || ""] ||
       runtime.tradeLocalization.clientStrings?.[label?.[1] || ""];
     if (labelRecord) {
-      return `${leading}${getLocalizedTradePageText(labelRecord, label[1], false)}${label[2]}${trailing}`;
+      return `${leading}${getLocalizedTradePageText(labelRecord, label[1], bilingualLabel)}${label[2]}${trailing}`;
     }
     const gemTooltipText = getLocalizedGemTooltipText(text, element);
     if (gemTooltipText) {
@@ -6604,16 +6618,16 @@
     }
     const optionText = runtime.tradeLocalization.optionStrings?.[text];
     if (optionText) {
-      return `${leading}${getLocalizedTradePageText(optionText, text, false)}${trailing}`;
+      return `${leading}${getLocalizedTradePageText(optionText, text, bilingualLabel)}${trailing}`;
     }
     const prefixedOption = text.match(/^(.*?\s-\s)(.+)$/);
     const prefixedOptionText = runtime.tradeLocalization.optionStrings?.[prefixedOption?.[2] || ""];
     if (prefixedOptionText) {
-      return `${leading}${prefixedOption[1]}${getLocalizedTradePageText(prefixedOptionText, prefixedOption[2], false)}${trailing}`;
+      return `${leading}${prefixedOption[1]}${getLocalizedTradePageText(prefixedOptionText, prefixedOption[2], bilingualLabel)}${trailing}`;
     }
     const item = runtime.tradeSearchRecords.items?.find((record) => record?.en === text);
     return item
-      ? `${leading}${getLocalizedTradePageText(item, text, false)}${trailing}`
+      ? `${leading}${getLocalizedTradePageText(item, text, bilingualLabel)}${trailing}`
       : source;
   }
 
@@ -7105,10 +7119,15 @@
     bindTradeInteractionListeners();
     bindQuickAddListeners();
 
-    const observer = new MutationObserver(() => {
-      scheduleControlListenerRefresh();
+    const observer = new MutationObserver((records) => {
+      const selector = "input.multiselect__input";
+      if (records.some((record) => [...record.addedNodes, ...record.removedNodes].some((node) =>
+        node.nodeType === 1 && (node.matches?.(selector) || node.querySelector?.(selector))
+      ))) {
+        scheduleControlListenerRefresh();
+      }
     });
-    observer.observe(document.querySelector(TRADE_ROOT_SELECTOR) || document.documentElement, {
+    observer.observe(document.documentElement, {
       childList: true,
       subtree: true
     });
@@ -7189,6 +7208,9 @@
     }
 
     const quickAdd = runtime.quickAdd;
+    if (quickAdd.active && quickAdd.group?.isConnected === false) {
+      disableQuickAdd();
+    }
     if (quickAdd.active && quickAdd.group) {
       const input = findQuickAddInput(quickAdd.group);
       if (input) {
@@ -7238,14 +7260,20 @@
   }
 
   function renderQuickAddCommitControl() {
-    for (const control of document.querySelectorAll?.(".poe2-marketwright-quick-add-batch-control") || []) {
-      control.remove();
-    }
     const quickAdd = runtime.quickAdd;
     const root = quickAdd.active && quickAdd.stagedCount > 0
       ? quickAdd.target?.closest(STAT_FILTER_ADD_MULTISELECT_SELECTOR)
       : null;
     const wrapper = root?.querySelector(".multiselect__content-wrapper");
+    const controls = Array.from(document.querySelectorAll?.(".poe2-marketwright-quick-add-batch-control") || []);
+    const label = t("quickAddCommit", quickAdd.stagedCount);
+    if (controls.length === 1 && controls[0].parentElement === wrapper &&
+        controls[0].querySelector("button")?.textContent === label) {
+      return;
+    }
+    for (const control of controls) {
+      control.remove();
+    }
     if (!wrapper) {
       return;
     }
@@ -7253,7 +7281,7 @@
     control.className = "poe2-marketwright-quick-add-batch-control";
     const button = document.createElement("button");
     button.type = "button";
-    button.textContent = t("quickAddCommit", quickAdd.stagedCount);
+    button.textContent = label;
     control.appendChild(button);
     wrapper.appendChild(control);
   }
@@ -7494,7 +7522,7 @@
 
   function scheduleControlListenerRefresh() {
     if (runtime.controlListenerTimer) {
-      clearTimeout(runtime.controlListenerTimer);
+      return;
     }
     runtime.controlListenerTimer = window.setTimeout(() => {
       runtime.controlListenerTimer = null;
@@ -7571,6 +7599,9 @@
 
       const payload = event.data.payload || {};
       runtime.bridgeStats = payload.filterStats || null;
+      if (payload.selection) {
+        runtime.bridgeSelection = payload.selection;
+      }
       if (runtime.data && runtime.ui.root) {
         scheduleRefresh();
       }
@@ -7708,6 +7739,17 @@
   }
 
   function inferActiveSelection() {
+    if (runtime.bridgeSelection) {
+      const { name, type, category } = runtime.bridgeSelection;
+      const itemType = getTradeQueryItemText(type);
+      const itemName = getTradeQueryItemText(name);
+      const itemSelection = inferSelectionFromTexts([
+        [itemName, itemType].filter(Boolean).join(" "), itemType
+      ], { allowCategories: false });
+      const categoryRecord = runtime.tradeSearchRecords.categories.find((record) => record.id === category);
+      const categorySelection = inferSelectionFromTexts([categoryRecord?.en || ""], { allowItems: false });
+      return chooseActiveSelection(itemSelection, categorySelection);
+    }
     const categorySelection = inferCategorySelectionFromTypeFilterDom();
     const itemSelection = inferItemSelectionFromSearchBoxDom();
 
@@ -8858,6 +8900,7 @@
       runtime.state.filteringEnabled &&
         ((allowedPatterns && allowedPatterns.size > 0) || (allowedStatIds && allowedStatIds.size > 0))
     );
+    const includeSearchRecords = !runtime.bridgeSearchRecordsSent && Boolean(runtime.tradeLocalization);
     const payload = {
       enabled,
       pobCopyEnabled: Boolean(runtime.state.pobCopyEnabled),
@@ -8870,6 +8913,7 @@
       filterOptionTexts: runtime.tradeLocalization?.filterOptions || {},
       leagueOptionTexts: runtime.tradeLocalization?.leagueOptions || {},
       staticEntryTexts: runtime.tradeLocalization?.staticEntryTexts || {},
+      ...(includeSearchRecords ? { searchRecords: runtime.tradeSearchRecords } : {}),
       allowedKeys: enabled ? Array.from(allowedPatterns || []) : [],
       allowedStatIds: enabled ? Array.from(allowedStatIds || []) : [],
       allKeys: Array.from(runtime.allPatterns),
@@ -8892,10 +8936,11 @@
       payload.allKeys.join("|"),
       payload.allStatIds.join("|")
     ].join(":");
-    if (signature === runtime.bridgePayloadSignature) {
+    if (signature === runtime.bridgePayloadSignature && !includeSearchRecords) {
       return;
     }
     runtime.bridgePayloadSignature = signature;
+    runtime.bridgeSearchRecordsSent ||= includeSearchRecords;
 
     window.postMessage(
       {

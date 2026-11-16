@@ -2069,6 +2069,20 @@
   display: none !important;
 }
 
+.iconContainer:has(> button[class^="poe2-marketwright-"]) {
+  position: relative;
+  width: max-content;
+  left: 50%;
+  transform: translateX(-50%);
+  white-space: nowrap;
+}
+
+.iconContainer:has(> button[class^="poe2-marketwright-"]) > .icon {
+  display: block;
+  width: max-content;
+  margin-inline: auto;
+}
+
 .poe2-marketwright-pob-copy-button,
 .poe2-marketwright-favorite-button,
 .poe2-marketwright-affix-viewer-button {

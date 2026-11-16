@@ -181,6 +181,173 @@ test("page bridge applies native multi-token search only to item and stat select
   assert.equal(parent.underline("金光戒指", "金 戒指"), "<strong>金</strong>光<strong>戒指</strong>");
 });
 
+test("page bridge patches Vue 3 search accessors and resolves both component markers", () => {
+  const source = fs.readFileSync("page-bridge.js", "utf8")
+    .replace(`  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`, "")
+    .replace(/\n\}\)\(\);\s*$/, "\n  window.__testHooks = { patchWhitespaceSearchFilter, getVueComponentFromElement, runtime };\n})();");
+  const sandbox = { window: { addEventListener() {}, postMessage() {} }, console };
+  vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
+  const hooks = sandbox.window.__testHooks;
+  const ctx = {};
+  const component = {
+    $: { ctx },
+    $el: { matches() { return true; } },
+    search: "ring gold",
+    options: [{ text: "Gold Ring" }, { text: "Gold Amulet" }],
+    internalSearch: true,
+    customLabel(option) { return option.text; },
+    optionsLimit: 100
+  };
+  Object.defineProperty(ctx, "filteredOptions", { configurable: true, get() { return ["native"]; } });
+  assert.equal(hooks.patchWhitespaceSearchFilter(component), true);
+  assert.deepEqual(structuredClone(ctx.filteredOptions), [{ text: "Gold Ring" }]);
+  assert.equal(component.search, "ring gold");
+  assert.equal(hooks.patchWhitespaceSearchFilter(component), true);
+  component.search = "ring";
+  assert.deepEqual(ctx.filteredOptions, ["native"]);
+  component.search = "~ring gold";
+  assert.deepEqual(ctx.filteredOptions, ["native"]);
+  assert.equal(hooks.getVueComponentFromElement({ __vue__: component }), component);
+  assert.equal(hooks.getVueComponentFromElement({ parentElement: { __vueParentComponent: { proxy: component } } }), component);
+  assert.equal(hooks.getVueComponentFromElement({ __vueParentComponent: {} }), null);
+  const parentElement = {};
+  const element = { parentElement };
+  const child = { $el: element };
+  hooks.runtime.app = { $el: parentElement, $children: [child] };
+  assert.equal(hooks.getVueComponentFromElement({ parentElement: element }), child);
+  assert.equal(hooks.getVueComponentFromElement({}), null);
+  Object.defineProperty(ctx, "filteredOptions", { configurable: false });
+  assert.equal(hooks.patchWhitespaceSearchFilter({ ...component, $: { ctx } }), false);
+});
+
+test("native searches use aliases for the same item, stat, and category without replacing options", () => {
+  const source = fs.readFileSync("page-bridge.js", "utf8")
+    .replace(`  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`, "")
+    .replace(/\n\}\)\(\);\s*$/, "\n  window.__testHooks = { patchWhitespaceSearchFilter, updateTradeSearchAliases };\n})();");
+  const sandbox = { window: { addEventListener() {}, postMessage() {} }, console };
+  vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.updateTradeSearchAliases({
+    items: [
+      { en: "Crimson Amulet", zh_CN: "赤红项链", zh_TW: "赤紅項鍊" },
+      { en: "Andvarius Gold Ring", zh_CN: "安德瓦里乌斯 金光戒指", zh_TW: "貪慾之記 金光戒指" }
+    ],
+    stats: [{ id: "explicit.stat_life", en: "+# to maximum Life", zh_CN: "+# 最大生命", zh_TW: "+# 最大生命" }],
+    categories: [{ id: "accessory.amulet", en: "Amulet", zh_CN: "项链", zh_TW: "項鍊" }]
+  });
+  const amulet = { type: "Crimson Amulet", text: "赤紅項鍊" };
+  const unique = { type: "Gold Ring", name: "Andvarius", flags: { unique: true }, text: "貪慾之記 金光戒指" };
+  const unknown = { type: "Crimson Amulet", flags: { unique: true }, text: "Unknown Unique" };
+  const life = { id: "explicit.stat_life", text: "+# 最大生命" };
+  const category = { id: "accessory.amulet", text: "項鍊" };
+  for (const [option, query, item] of [
+    [amulet, "赤红项链", true], [amulet, "amulet crimson", true],
+    [unique, "安德瓦里乌斯", true], [life, "life maximum", false], [category, "项链", false]
+  ]) {
+    const component = {
+      search: query,
+      $el: { matches() { return item; } },
+      options: [option, unknown],
+      internalSearch: true,
+      customLabel(entry) { return entry.text; },
+      optionsLimit: 100,
+      _computedWatchers: { filteredOptions: { getter() { return []; } } }
+    };
+    assert.equal(hooks.patchWhitespaceSearchFilter(component), true);
+    assert.deepEqual(component._computedWatchers.filteredOptions.getter.call(component), [option]);
+    component.search = "definitely missing";
+    assert.deepEqual(Array.from(component._computedWatchers.filteredOptions.getter.call(component)), []);
+  }
+
+  const component = {
+    search: "~amulet 赤红",
+    $el: { matches() { return true; } },
+    options: [{ label: "Amulets", entries: [amulet, unknown] }],
+    groupValues: "entries",
+    groupLabel: "label",
+    internalSearch: true,
+    taggable: true,
+    hideSelected: true,
+    customLabel(entry) { return entry.text; },
+    isNotSelected(entry) { return entry !== unique; },
+    isExistingOption() { return false; },
+    flatAndStrip(groups) {
+      return groups.flatMap((group) => [{ $isLabel: true, $groupLabel: group.label }, ...group.entries]);
+    },
+    optionsLimit: 3,
+    _computedWatchers: { filteredOptions: { getter() { return []; } } }
+  };
+  hooks.patchWhitespaceSearchFilter(component);
+  const filtered = component._computedWatchers.filteredOptions.getter.call(component);
+  assert.equal(filtered.length, 3);
+  assert.equal(filtered[0].isTag, true);
+  assert.equal(filtered[1].$groupLabel, "Amulets");
+  assert.equal(filtered[2], amulet);
+  assert.equal(amulet.type, "Crimson Amulet");
+  assert.equal(amulet.text, "赤紅項鍊");
+});
+
+test("page bridge publishes committed item and category selection independently of input text", () => {
+  const source = fs.readFileSync("page-bridge.js", "utf8")
+    .replace(`  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`, "")
+    .replace(/\n\}\)\(\);\s*$/, "\n  window.__testHooks = { captureTradeApp };\n})();");
+  const watchers = [];
+  const messages = [];
+  const app = {
+    $data: { static_: { knownStats: [] } },
+    query: { type: "Gold Ring", filters: { type_filters: { filters: { category: { option: "accessory.ring" } } } } },
+    $watch(getter, callback) { watchers.push({ getter, callback }); }
+  };
+  const sandbox = { window: { app, addEventListener() {}, postMessage(message) { messages.push(message); } }, console };
+  vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
+  assert.equal(sandbox.window.__testHooks.captureTradeApp(), true);
+  assert.equal(sandbox.window.__testHooks.captureTradeApp(), true);
+  assert.equal(watchers.length, 1);
+  const selection = watchers[0].getter();
+  app.search = "uncommitted text";
+  assert.equal(watchers[0].getter(), selection);
+  watchers[0].callback();
+  assert.deepEqual(structuredClone(messages.at(-1).payload.selection), {
+    name: "", type: "Gold Ring", category: "accessory.ring"
+  });
+  app.query = {};
+  watchers[0].callback();
+  assert.deepEqual(structuredClone(messages.at(-1).payload.selection), { name: "", type: "", category: "" });
+});
+
+test("automatic selection uses committed native identities when selected options are not rendered", () => {
+  const source = fs.readFileSync("content.js", "utf8")
+    .replace(`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`, "")
+    .replace(/\n\}\)\(\);\s*$/, "\n  window.__testHooks = { inferActiveSelection, runtime };\n})();");
+  const sandbox = { window: { addEventListener() {} }, document: {}, location: { pathname: "/trade2" }, console, chrome: {} };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.data = {
+    itemNameToSelection: {
+      "gold ring": { kind: "page", id: "Rings" },
+      "andvarius gold ring": { kind: "page", id: "Rings", uniqueItemType: "Andvarius Gold Ring" }
+    },
+    itemNameToPage: {},
+    logicalCategories: { Gloves: { pageSlugs: ["Gloves_str", "Gloves_dex"] } }
+  };
+  hooks.runtime.categoryAliasToSelection = { gloves: { kind: "logical", id: "Gloves" } };
+  hooks.runtime.tradeSearchRecords.categories = [{ id: "armour.gloves", en: "Gloves" }];
+  hooks.runtime.bridgeSelection = { type: "Gold Ring" };
+  assert.equal(hooks.inferActiveSelection().id, "Rings");
+  hooks.runtime.bridgeSelection = { type: { option: "Gold Ring" } };
+  assert.equal(hooks.inferActiveSelection().id, "Rings");
+  hooks.runtime.bridgeSelection = { category: "armour.gloves" };
+  assert.equal(hooks.inferActiveSelection().id, "Gloves");
+  hooks.runtime.bridgeSelection = { type: "Gold Ring", category: "armour.gloves" };
+  assert.equal(hooks.inferActiveSelection().id, "Gloves");
+  hooks.runtime.bridgeSelection = { name: "Andvarius", type: "Gold Ring", category: "armour.gloves" };
+  assert.equal(hooks.inferActiveSelection().uniqueItemType, "Andvarius Gold Ring");
+  hooks.runtime.bridgeSelection = {};
+  assert.equal(hooks.inferActiveSelection(), null);
+  hooks.runtime.bridgeSelection = { category: "unknown.category", type: "Unknown Item" };
+  assert.equal(hooks.inferActiveSelection(), null);
+});
+
 test("page bridge limits Tier options to the selected exact category", () => {
   const bootstrapCall = `  waitForTradeApp();\n  installTradeApiHook();\n  notifyReady();`;
   let source = fs
@@ -259,6 +426,24 @@ test("tier observer watches documentElement so remounted #trade still refreshes"
   assert.equal(observed[0].target.id, "documentElement");
   assert.equal(observed[0].options.childList, true);
   assert.equal(observed[0].options.subtree, true);
+
+  const contentSource = fs.readFileSync("content.js", "utf8")
+    .replace(`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`, "")
+    .replace(/\n\}\)\(\);\s*$/, `
+  bindFavoriteStorageSync = bindFavoritesPanelMessages = bindTradeControlListeners =
+    bindTradeInteractionListeners = bindQuickAddListeners = () => {};
+  window.__testHooks = { bindGlobalListeners };
+})();`);
+  const contentSandbox = {
+    ...sandbox,
+    document: sandbox.window.document,
+    location: { pathname: "/trade2" },
+    chrome: {}
+  };
+  vm.runInNewContext(contentSource, contentSandbox, { filename: "content.js" });
+  contentSandbox.window.__testHooks.bindGlobalListeners();
+  assert.equal(observed.length, 2);
+  assert.equal(observed[1].target, documentElement);
 });
 
 test("page bridge localizes Trade status, price, and league options", () => {
@@ -618,7 +803,8 @@ test("page bridge stages a content-marked stat option without an active root mar
   option.classes.add("multiselect__option");
   option.attributes["data-poe2-marketwright-quick-add-stage"] = "test-stage";
   const statGroup = { group: { id: 2 }, selectFilter() {} };
-  root.__vue__ = {
+  const component = {
+    $el: root,
     $parent: statGroup,
     filteredOptions: [{ $isLabel: true }, { id: "explicit.stat_life" }],
     $refs: {
@@ -646,6 +832,7 @@ test("page bridge stages a content-marked stat option without an active root mar
     console
   };
   vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
+  sandbox.window.__testHooks.runtime.app = { $children: [component] };
 
   assert.equal(sandbox.window.__testHooks.stageQuickAddMarkedOption("test-stage"), true);
   assert.equal(option.attributes["data-poe2-marketwright-quick-add-stage"], undefined);
@@ -783,7 +970,6 @@ test("page bridge inserts a Tier selector for a Vue stat filter and updates min"
   const maxInput = new FakeInput(document);
   const filterBody = new FakeElement(document);
   filter = {
-    __vue__: { filter: { id: "explicit.stat_3032590688" } },
     parentElement: null,
     children: [filterBody],
     insertBefore(control, before) {
@@ -825,6 +1011,7 @@ test("page bridge inserts a Tier selector for a Vue stat filter and updates min"
   };
   vm.runInNewContext(source, sandbox, { filename: "page-bridge.js" });
   const hooks = sandbox.window.__testHooks;
+  hooks.runtime.app = { $children: [{ $el: filter, filter: { id: "explicit.stat_3032590688" } }] };
   hooks.runtime.tierMappings = {
     Rings: {
       "explicit.stat_3032590688": [
@@ -848,6 +1035,16 @@ test("page bridge inserts a Tier selector for a Vue stat filter and updates min"
   assert.equal(select.size, 2);
   assert.deepEqual(select.children.map((option) => option.textContent), ["Rings T1", "Rings T2"]);
 
+  let text = trigger.textContent;
+  let textWrites = 0;
+  Object.defineProperty(trigger, "textContent", {
+    get() { return text; },
+    set(value) { textWrites += 1; text = value; }
+  });
+  hooks.refreshTierControls();
+  hooks.refreshTierControls();
+  assert.equal(textWrites, 0);
+
   hooks.installTierControls();
   trigger.dispatchEvent(new FakeEvent("click"));
   assert.equal(control.classList.contains("poe2-marketwright-tier-control-open"), true);
@@ -859,6 +1056,7 @@ test("page bridge inserts a Tier selector for a Vue stat filter and updates min"
   assert.equal(input.value, "20.6");
   assert.equal(maxInput.value, "");
   assert.equal(trigger.textContent, "T1");
+  assert.equal(textWrites, 1);
 
   select.value = "Rings:2";
   select.dispatchEvent(new FakeEvent("change"));
@@ -966,7 +1164,7 @@ test("quick add restores the native stat input and follows the active stat group
   let source = fs.readFileSync("content.js", "utf8").replace(bootstrapCall, "");
   source = source.replace(
     /\n\}\)\(\);\s*$/,
-    "\n  window.__testHooks = { bindQuickAddListeners, enableQuickAdd, toggleQuickAdd, captureQuickAddSelection, handleQuickAddFocus, handleQuickAddKeydown, updateQuickAddQuery, runtime };\n})();"
+    "\n  window.__testHooks = { bindQuickAddListeners, enableQuickAdd, toggleQuickAdd, captureQuickAddSelection, handleQuickAddFocus, handleQuickAddKeydown, updateQuickAddQuery, refreshQuickAddControls, runtime };\n})();"
   );
 
   class FakeEvent {
@@ -1155,6 +1353,62 @@ test("quick add restores the native stat input and follows the active stat group
   hooks.enableQuickAdd(replacement);
   assert.equal(hooks.toggleQuickAdd(replacement), false);
   assert.equal(hooks.runtime.quickAdd.active, false);
+  hooks.enableQuickAdd(inputB);
+  hooks.runtime.quickAdd.stagedCount = 1;
+  groupB.isConnected = false;
+  hooks.refreshQuickAddControls();
+  assert.equal(hooks.runtime.quickAdd.active, false);
+  assert.equal(hooks.runtime.quickAdd.stagedCount, 0);
+});
+
+test("quick-add controls do not mutate the DOM again when the staged count has not changed", () => {
+  const source = fs.readFileSync("content.js", "utf8")
+    .replace(`  bootstrap().catch((error) => handleAsyncError(error, "bootstrap"));`, "")
+    .replace(/\n\}\)\(\);\s*$/, "\n  window.__testHooks = { renderQuickAddCommitControl, runtime };\n})();");
+  const controls = [];
+  let mutations = 0;
+  const wrapper = {
+    appendChild(control) {
+      mutations += 1;
+      control.parentElement = wrapper;
+      controls.push(control);
+    }
+  };
+  const sandbox = {
+    window: { addEventListener() {} },
+    document: {
+      querySelectorAll() { return controls; },
+      createElement() {
+        return {
+          appendChild(button) { this.button = button; },
+          querySelector() { return this.button; },
+          remove() {
+            mutations += 1;
+            controls.splice(controls.indexOf(this), 1);
+          }
+        };
+      }
+    },
+    location: { pathname: "/trade2" },
+    console,
+    chrome: {}
+  };
+  vm.runInNewContext(source, sandbox, { filename: "content.js" });
+  const hooks = sandbox.window.__testHooks;
+  hooks.runtime.quickAdd.active = true;
+  hooks.runtime.quickAdd.stagedCount = 1;
+  hooks.runtime.quickAdd.target = { closest() { return { querySelector() { return wrapper; } }; } };
+  hooks.renderQuickAddCommitControl();
+  const initialMutations = mutations;
+  hooks.renderQuickAddCommitControl();
+  assert.equal(mutations, initialMutations);
+  hooks.runtime.quickAdd.stagedCount = 2;
+  hooks.renderQuickAddCommitControl();
+  assert.equal(controls.length, 1);
+  assert.ok(mutations > initialMutations);
+  const changedMutations = mutations;
+  hooks.renderQuickAddCommitControl();
+  assert.equal(mutations, changedMutations);
 });
 
 test("page bridge hides unmatched known stats but keeps related pseudo", async () => {

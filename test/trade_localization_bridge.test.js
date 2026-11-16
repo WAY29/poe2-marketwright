@@ -198,6 +198,7 @@ test("native filter cache renders bilingual category, rarity, and sale options",
       result: [
         {
           id: "type_filters",
+          title: "Type Filters",
           filters: [
             {
               id: "category",
@@ -213,6 +214,7 @@ test("native filter cache renders bilingual category, rarity, and sale options",
         },
         {
           id: "trade_filters",
+          title: "Trade Filters",
           filters: [
             {
               id: "sale_type",
@@ -233,6 +235,8 @@ test("native filter cache renders bilingual category, rarity, and sale options",
       locale: "zh_TW",
       bilingual: true,
       strings: {
+        "Type Filters": { zh_TW: "類別過濾" },
+        "Trade Filters": { zh_TW: "交易過濾" },
         "Item Category": { zh_TW: "道具分類" },
         Any: { zh_TW: "任何" },
         Bow: { zh_TW: "弓" },
@@ -250,6 +254,7 @@ test("native filter cache renders bilingual category, rarity, and sale options",
     result: [
       {
         id: "type_filters",
+        title: "類別過濾 (Type Filters)",
         filters: [
           {
             id: "category",
@@ -265,6 +270,7 @@ test("native filter cache renders bilingual category, rarity, and sale options",
       },
       {
         id: "trade_filters",
+        title: "交易過濾 (Trade Filters)",
         filters: [
           {
             id: "sale_type",
@@ -399,6 +405,30 @@ test("document-start bootstrap publishes static client text before native cache 
     statGroups: {},
     statusOptions: {}
   });
+});
+
+test("bootstrap rebuilds caches written before filter titles were localized", () => {
+  const source = fs.readFileSync("trade-localization-bootstrap.js", "utf8").replace(
+    /\n  bootstrap\(\)\.catch\(\(error\) => \{[\s\S]*?\n  \}\);\n\}\)\(\);\s*$/,
+    "\n  window.__testHooks = { getCacheVersion, hasCurrentNativeTradeCaches };\n})();"
+  );
+  const marker = "poe2-marketwright:trade-native-search-localization";
+  const stored = new Map([
+    [marker, "1.21.2:7:zh_TW:bilingual"],
+    ...["items", "stats", "data", "filters"].map((name) => [`lscache-trade2${name}`, "{}"])
+  ]);
+  const sandbox = {
+    window: {},
+    chrome: { runtime: { getManifest() { return { version: "1.21.2" }; } } },
+    localStorage: { getItem(key) { return stored.get(key) || null; } },
+    console
+  };
+  vm.runInNewContext(source, sandbox, { filename: "trade-localization-bootstrap.js" });
+  const hooks = sandbox.window.__testHooks;
+  const version = hooks.getCacheVersion({ version: 7 }, "zh_TW", true);
+  assert.equal(hooks.hasCurrentNativeTradeCaches(version), false);
+  stored.set(marker, version);
+  assert.equal(hooks.hasCurrentNativeTradeCaches(version), true);
 });
 
 test("client stat-group localization uses 如果 for the If relationship", () => {

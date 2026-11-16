@@ -98,7 +98,7 @@
     }
     const localized = {};
     for (const [key, value] of Object.entries(payload)) {
-      localized[key] = (key === "text" || key === "label") && typeof value === "string"
+      localized[key] = (key === "text" || key === "label" || key === "title") && typeof value === "string"
         ? localizeStaticValue(value, config)
         : localizeTradeTextPayload(value, config);
     }

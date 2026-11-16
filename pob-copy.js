@@ -165,7 +165,6 @@
     let enabled = options.enabled !== false;
     let started = false;
     let observer = null;
-    let rescanTimer = null;
 
     const storeResults = (data) => {
       if (!data || !Array.isArray(data.result)) {
@@ -274,8 +273,15 @@
       if (!enabled) {
         return;
       }
-      if (root instanceof Element && root.matches("div.row[data-id]")) {
-        injectButton(root);
+      if (root instanceof Element) {
+        if (!root.isConnected) {
+          return;
+        }
+        const row = root.closest("div.row[data-id]");
+        if (row) {
+          injectButton(row);
+          return;
+        }
       }
       root.querySelectorAll?.("div.row[data-id]").forEach(injectButton);
     };
@@ -401,17 +407,21 @@
         if (!enabled) {
           return;
         }
+        const roots = new Set();
         for (const mutation of mutations) {
-          mutation.addedNodes.forEach((node) => {
-            if (node.nodeType !== Node.ELEMENT_NODE) {
-              return;
+          const row = mutation.target.closest?.("div.row[data-id]");
+          if (row) {
+            roots.add(row);
+          }
+          for (const node of mutation.addedNodes) {
+            if (node.nodeType === Node.ELEMENT_NODE) {
+              roots.add(node.closest("div.row[data-id]") || node);
             }
-            scanAndInject(node);
-          });
+          }
         }
+        roots.forEach(scanAndInject);
       });
-      observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
-      rescanTimer = window.setInterval(scanAndInject, 2000);
+      observer.observe(document.documentElement, { childList: true, subtree: true });
     };
 
     return { start, setEnabled, setLabels, handleApiMessage, storeResults };

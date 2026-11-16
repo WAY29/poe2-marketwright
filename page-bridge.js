@@ -122,6 +122,8 @@
 
   const runtime = {
     app: null,
+    appObserver: null,
+    selectionWatchApp: null,
     originalKnownStats: null,
     lastPayload: {
       enabled: false,
@@ -144,6 +146,7 @@
     whitespaceSearchFocusBound: false,
     whitespaceSearchWatchers: new WeakSet(),
     whitespaceSearchUnderlines: new WeakMap(),
+    tradeSearchAliases: { items: new Map(), stats: new Map(), categories: new Map() },
     tierMappings: {},
     tierPageLabels: {},
     tierPageId: null,
@@ -250,6 +253,9 @@
     }
 
     runtime.lastPayload = { ...runtime.lastPayload, ...(event.data.payload || {}) };
+    if (event.data.payload?.searchRecords) {
+      updateTradeSearchAliases(event.data.payload.searchRecords);
+    }
     applyKnownStatsFilter();
     localizeTradeOptions();
     installWhitespaceSearch();
@@ -263,12 +269,21 @@
 
   function waitForTradeApp() {
     if (captureTradeApp()) {
+      runtime.appObserver?.disconnect();
+      runtime.appObserver = null;
       applyKnownStatsFilter();
       notifyState();
       return;
     }
 
-    window.setTimeout(waitForTradeApp, 250);
+    if (!window.document?.documentElement) {
+      window.document?.addEventListener("DOMContentLoaded", waitForTradeApp, { once: true });
+      return;
+    }
+    if (!runtime.appObserver) {
+      runtime.appObserver = new MutationObserver(waitForTradeApp);
+      runtime.appObserver.observe(window.document.documentElement, { childList: true, subtree: true });
+    }
   }
 
   function captureTradeApp() {
@@ -279,6 +294,10 @@
     }
 
     runtime.app = app;
+    if (runtime.selectionWatchApp !== app && typeof app.$watch === "function") {
+      runtime.selectionWatchApp = app;
+      app.$watch(() => JSON.stringify(getTradeSelection()), notifyState);
+    }
     installQuickAddBatchCommitHandler();
     if (!runtime.originalKnownStats) {
       runtime.originalKnownStats = cloneKnownStats(staticData.knownStats);
@@ -535,12 +554,25 @@
   }
 
   function getVueComponentFromElement(element) {
+    const ancestors = [];
     for (let current = element; current; current = current.parentElement) {
-      if (current.__vue__) {
-        return current.__vue__;
+      const component = current.__vue__ || current.__vueParentComponent?.proxy;
+      if (component) {
+        return component;
       }
+      ancestors.push(current);
     }
-    return null;
+    let nearest = null;
+    let nearestDepth = ancestors.length;
+    // Production Vue builds omit DOM markers; public component roots remain available.
+    visitVueComponents(runtime.app, (component) => {
+      const depth = ancestors.indexOf(component.$el);
+      if (depth >= 0 && depth <= nearestDepth) {
+        nearest = component;
+        nearestDepth = depth;
+      }
+    });
+    return nearest;
   }
 
   function stageQuickAddMarkedOption(token) {
@@ -704,12 +736,32 @@
     if (runtime.tierObserver) {
       return;
     }
-    runtime.tierObserver = new MutationObserver(scheduleTierControlRefresh);
+    runtime.tierObserver = new MutationObserver((records) => {
+      if (records.some(isTierControlMutation)) {
+        scheduleTierControlRefresh();
+      }
+    });
     // documentElement survives Trade remounting #trade; watching #trade missed newly added rows.
     runtime.tierObserver.observe(document.documentElement, {
       childList: true,
       subtree: true
     });
+  }
+
+  function isTierControlMutation(record) {
+    if (record.target?.closest?.(`.${TIER_CONTROL_CLASS}, .${CORRUPTED_GEM_LEVEL_CONTROL_CLASS}`)) {
+      return false;
+    }
+    const filter = record.target?.closest?.(TIER_FILTER_SELECTOR);
+    if (filter?.querySelector?.("input.minmax")) {
+      return true;
+    }
+    const selector = ".search-advanced-pane, .filter-group, .filter, input.minmax";
+    return [...record.addedNodes, ...record.removedNodes].some((node) =>
+      node.nodeType === 1 &&
+      !node.matches?.(`.${CORRUPTED_GEM_LEVEL_CONTROL_CLASS}`) &&
+      (node.matches?.(selector) || node.querySelector?.(selector))
+    );
   }
 
   function scheduleTierControlRefresh() {
@@ -1074,7 +1126,10 @@
     select.value = option ? getTierOptionValue(option) : "";
     select.title = option ? `${runtime.tierLabel} ${option.label}` : runtime.tierLabel;
     if (trigger) {
-      trigger.textContent = option ? `T${option.tier}` : "T";
+      const label = option ? `T${option.tier}` : "T";
+      if (trigger.textContent !== label) {
+        trigger.textContent = label;
+      }
       trigger.title = select.title;
     }
   }
@@ -1137,13 +1192,42 @@
   }
 
   function isWhitespaceSearchTarget(component) {
-    if (!component?._computedWatchers?.filteredOptions) {
+    const descriptor = component?.$?.ctx && Object.getOwnPropertyDescriptor(component.$.ctx, "filteredOptions");
+    if (typeof component?._computedWatchers?.filteredOptions?.getter !== "function" &&
+        !(descriptor?.configurable && typeof descriptor.get === "function")) {
       return false;
     }
     if (component.$el?.matches?.(ITEM_SEARCH_ROOT_SELECTOR)) {
       return true;
     }
-    return hasFilterableStatOptions(component.options);
+    return hasFilterableStatOptions(component.options) ||
+      component.options?.some((option) => runtime.tradeSearchAliases.categories.has(String(option?.id || "")));
+  }
+
+  function updateTradeSearchAliases(records) {
+    for (const kind of ["items", "stats", "categories"]) {
+      const aliases = new Map();
+      for (const record of Array.isArray(records[kind]) ? records[kind] : []) {
+        const id = String(kind === "items" ? record?.en || "" : record?.id || "");
+        if (!id) {
+          continue;
+        }
+        aliases.set(id, Array.from(new Set([
+          ...(aliases.get(id) || []),
+          record.en, record.zh_CN, record.zh_TW
+        ].filter((text) => typeof text === "string" && text))));
+      }
+      runtime.tradeSearchAliases[kind] = aliases;
+    }
+  }
+
+  function getTradeSearchOptionAliases(option) {
+    const item = option?.type && (option.name || !option.flags)
+      ? [option.name, option.type].filter(Boolean).join(" ")
+      : "";
+    return runtime.tradeSearchAliases.items.get(item) ||
+      runtime.tradeSearchAliases.stats.get(String(option?.id || "")) ||
+      runtime.tradeSearchAliases.categories.get(String(option?.id || "")) || [];
   }
 
   function hasFilterableStatOptions(options) {
@@ -1186,37 +1270,58 @@
 
     patchWhitespaceSearchUnderline(component);
 
-    const watcher = component._computedWatchers.filteredOptions;
-    if (runtime.whitespaceSearchWatchers.has(watcher) || typeof watcher.getter !== "function") {
-      return runtime.whitespaceSearchWatchers.has(watcher);
+    const watcher = component._computedWatchers?.filteredOptions;
+    const context = watcher || component.$.ctx;
+    if (runtime.whitespaceSearchWatchers.has(context)) {
+      return true;
     }
 
-    const originalGetter = watcher.getter;
-    watcher.getter = function (...args) {
+    const descriptor = watcher ? null : Object.getOwnPropertyDescriptor(context, "filteredOptions");
+    const originalGetter = watcher ? watcher.getter : descriptor.get;
+    const getter = function (...args) {
       const target = typeof this?.search === "string" ? this : component;
       const replacement = getNativeWhitespaceSearchQuery(target.search);
-      if (!replacement) {
+      const aliases = Object.values(runtime.tradeSearchAliases).some((index) => index.size > 0);
+      if (!target.search || (!replacement && !aliases)) {
         return originalGetter.apply(target, args);
       }
       try {
-        return getWhitespaceSearchFilteredOptions(target, replacement);
+        return getWhitespaceSearchFilteredOptions(target, replacement || target.search, aliases);
       } catch (error) {
         return originalGetter.apply(target, args);
       }
     };
-    runtime.whitespaceSearchWatchers.add(watcher);
+    if (watcher) {
+      watcher.getter = getter;
+      watcher.dirty = true;
+    } else {
+      Object.defineProperty(context, "filteredOptions", { ...descriptor, get: getter });
+    }
+    runtime.whitespaceSearchWatchers.add(context);
+    component.$forceUpdate?.();
     return true;
   }
 
-  function getWhitespaceSearchFilteredOptions(component, query) {
+  function getWhitespaceSearchFilteredOptions(component, query, aliases = false) {
     const search = String(component.search || "");
     const normalizedQuery = query.toLowerCase();
     let options = component.options.concat();
 
     if (component.internalSearch) {
-      options = component.groupValues
-        ? component.filterAndFlat(options, normalizedQuery, component.label)
-        : options.filter((option) => matchesNativeSearch(component.customLabel(option, component.label), normalizedQuery));
+      const matches = (option) => matchesNativeSearch(
+        [component.customLabel(option, component.label), ...(aliases ? getTradeSearchOptionAliases(option) : [])].join(" "),
+        normalizedQuery
+      );
+      if (component.groupValues && aliases) {
+        options = component.flatAndStrip(options.map((group) => ({
+          ...group,
+          [component.groupValues]: (group[component.groupValues] || []).filter(matches)
+        })).filter((group) => group[component.groupValues].length));
+      } else {
+        options = component.groupValues
+          ? component.filterAndFlat(options, normalizedQuery, component.label)
+          : options.filter(matches);
+      }
       if (component.hideSelected) {
         options = options.filter(component.isNotSelected);
       }
@@ -1887,13 +1992,23 @@
     );
   }
 
+  function getTradeSelection() {
+    const query = runtime.app?.query || {};
+    return {
+      name: query.name || "",
+      type: query.type || "",
+      category: query.filters?.type_filters?.filters?.category?.option || ""
+    };
+  }
+
   function notifyState() {
     window.postMessage(
       {
         source: SOURCE,
         type: STATE_TYPE,
         payload: {
-          filterStats: runtime.lastFilterStats
+          filterStats: runtime.lastFilterStats,
+          selection: getTradeSelection()
         }
       },
       "*"

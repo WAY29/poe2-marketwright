@@ -99,7 +99,6 @@
     const inFlightEnglishFetches = new Set();
     let started = false;
     let observer = null;
-    let rescanTimer = null;
     let openRow = null;
     let openHost = null;
     let openPanelElement = null;
@@ -235,8 +234,11 @@
       if (!(row instanceof Element)) {
         return;
       }
+      if (row.querySelector(`.${BUTTON_CLASS}`)) {
+        return;
+      }
       const { item, groups } = getItemContext(row);
-      if (!item || !groups.length || row.querySelector(`.${BUTTON_CLASS}`)) {
+      if (!item || !groups.length) {
         return;
       }
       const left = row.querySelector(".left");
@@ -267,11 +269,17 @@
     };
 
     const scanAndInject = (root = document) => {
-      if (root instanceof Element && root.matches("div.row[data-id]")) {
-        injectButton(root);
+      if (root instanceof Element) {
+        if (!root.isConnected) {
+          return;
+        }
+        const row = root.closest("div.row[data-id]");
+        if (row) {
+          injectButton(row);
+          return;
+        }
       }
       root.querySelectorAll?.("div.row[data-id]").forEach(injectButton);
-      document.querySelectorAll?.(`.${BUTTON_CLASS}`).forEach(updateButton);
     };
 
     const storeResults = (data) => {
@@ -284,6 +292,7 @@
         }
       }
       scanAndInject();
+      document.querySelectorAll(`.${BUTTON_CLASS}`).forEach(updateButton);
     };
 
     const getFallbackQueryId = () => {
@@ -367,9 +376,22 @@
       document.addEventListener("keydown", handleDocumentKeydown);
       window.postMessage({ source: BRIDGE_SOURCE, type: BRIDGE_REQUEST_TYPE }, "*");
       scanAndInject();
-      observer = new MutationObserver((mutations) => mutations.forEach((mutation) => scanAndInject(mutation.target)));
-      observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
-      rescanTimer = window.setInterval(scanAndInject, 2000);
+      observer = new MutationObserver((mutations) => {
+        const roots = new Set();
+        for (const mutation of mutations) {
+          const row = mutation.target.closest?.("div.row[data-id]");
+          if (row) {
+            roots.add(row);
+          }
+          for (const node of mutation.addedNodes) {
+            if (node instanceof Element) {
+              roots.add(node.closest("div.row[data-id]") || node);
+            }
+          }
+        }
+        roots.forEach(scanAndInject);
+      });
+      observer.observe(document.documentElement, { childList: true, subtree: true });
     };
 
     return { start, storeResults, handleMessage };

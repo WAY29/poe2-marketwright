@@ -141,7 +141,6 @@
     let activeLeague = null;
     let activeSearchUrl = null;
     let observer = null;
-    let rescanTimer = null;
 
     const setActiveLeague = (league, searchUrl = null) => {
       if (typeof league !== "string" || !league.trim()) {
@@ -382,6 +381,7 @@
       if (!anchor) {
         return;
       }
+      row.querySelectorAll(`.${VALUE_CLASS}, .${VALUE_BREAK_CLASS}`).forEach((node) => node.remove());
       const controls = document.createElement("span");
       controls.className = CONTROL_CLASS;
       controls.dataset.itemId = itemId;
@@ -434,8 +434,15 @@
       if (!enabled) {
         return;
       }
-      if (root instanceof Element && root.matches("div.row[data-id]")) {
-        injectControls(root);
+      if (root instanceof Element) {
+        if (!root.isConnected) {
+          return;
+        }
+        const row = root.closest("div.row[data-id]");
+        if (row) {
+          injectControls(row);
+          return;
+        }
       }
       root.querySelectorAll?.("div.row[data-id]").forEach(injectControls);
     };
@@ -467,10 +474,8 @@
         return;
       }
       const { type, league, body, queryId, searchUrl, tradeUrl } = event.data;
+      syncLeagueFromPageUrl();
       const messageLeague = tools.resolveMessageLeague(league, activeLeague);
-      if (messageLeague) {
-        setActiveLeague(messageLeague, typeof searchUrl === "string" ? searchUrl : activeSearchUrl);
-      }
       if (type === "fetch" && typeof body === "string") {
         try {
           storeResults(JSON.parse(body), messageLeague, {
@@ -533,25 +538,29 @@
       }
       started = true;
       window.addEventListener("message", handleMessage);
+      window.addEventListener("popstate", syncLeagueFromPageUrl);
+      window.addEventListener("hashchange", syncLeagueFromPageUrl);
       syncLeagueFromPageUrl();
       scanAndInject();
       observer = new MutationObserver((mutations) => {
         if (!enabled) {
           return;
         }
+        const roots = new Set();
         for (const mutation of mutations) {
-          mutation.addedNodes.forEach((node) => {
+          const row = mutation.target.closest?.("div.row[data-id]");
+          if (row) {
+            roots.add(row);
+          }
+          for (const node of mutation.addedNodes) {
             if (node instanceof Element) {
-              scanAndInject(node);
+              roots.add(node.closest("div.row[data-id]") || node);
             }
-          });
+          }
         }
+        roots.forEach(scanAndInject);
       });
-      observer.observe(document.body || document.documentElement, { childList: true, subtree: true });
-      rescanTimer = window.setInterval(() => {
-        syncLeagueFromPageUrl();
-        scanAndInject();
-      }, 2000);
+      observer.observe(document.documentElement, { childList: true, subtree: true });
     };
 
     return {

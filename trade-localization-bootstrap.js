@@ -5,6 +5,7 @@
   const CACHE_MESSAGE_TYPE = "POE2_MARKETWRIGHT_TRADE_ITEM_CACHE";
   const CLIENT_LOCALIZATION_TYPE = "POE2_MARKETWRIGHT_TRADE_CLIENT_LOCALIZATION";
   const CACHE_MARKER_KEY = "poe2-marketwright:trade-native-search-localization";
+  const CACHE_FORMAT_VERSION = 2;
   const TRADE_DATASETS = Object.freeze({
     items: "lscache-trade2items",
     stats: "lscache-trade2stats",
@@ -39,7 +40,7 @@
 
   function getCacheVersion(bundle, locale, bilingual) {
     const extensionVersion = chrome.runtime.getManifest?.().version || "development";
-    return `${extensionVersion}:${bundle.version || 1}:${locale}:${bilingual ? "bilingual" : "localized"}`;
+    return `${extensionVersion}:${bundle.version || 1}:${CACHE_FORMAT_VERSION}:${locale}:${bilingual ? "bilingual" : "localized"}`;
   }
 
   function hasCurrentNativeTradeCaches(cacheVersion) {
