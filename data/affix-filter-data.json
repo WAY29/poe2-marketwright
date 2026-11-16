@@ -1,6 +1,6 @@
 {
   "version": 7,
-  "generatedAt": "2026-09-19T01:31:48.600185+00:00",
+  "generatedAt": "2026-11-16T05:56:11.199540+00:00",
   "source": "https://poe2db.tw/us/Modifiers",
   "tradeStatsSource": "https://www.pathofexile.com/api/trade2/data/stats",
   "displayMetadataSources": {
@@ -2036,6 +2036,7 @@
         "fractured.stat_589361270",
         "fractured.stat_591105508",
         "fractured.stat_718638445",
+        "fractured.stat_731781020",
         "fractured.stat_736967255",
         "fractured.stat_737908626",
         "fractured.stat_789117908",
@@ -4451,6 +4452,7 @@
         "fractured.stat_4097212302",
         "fractured.stat_4220027924",
         "fractured.stat_718638445",
+        "fractured.stat_731781020",
         "fractured.stat_736967255",
         "fractured.stat_770672621",
         "fractured.stat_789117908",
@@ -7209,6 +7211,7 @@
         "fractured.stat_591105508",
         "fractured.stat_656461285",
         "fractured.stat_718638445",
+        "fractured.stat_731781020",
         "fractured.stat_736967255",
         "fractured.stat_737908626",
         "fractured.stat_789117908",
@@ -13409,6 +13412,7 @@
         "fractured.stat_54812069",
         "fractured.stat_644456512",
         "fractured.stat_680068163",
+        "fractured.stat_731781020",
         "fractured.stat_770672621",
         "fractured.stat_789117908",
         "fractured.stat_809229260",
@@ -41013,12 +41017,14 @@
         "fractured.stat_2954116742|13407",
         "fractured.stat_2954116742|13457",
         "fractured.stat_2954116742|13482",
+        "fractured.stat_2954116742|13489",
         "fractured.stat_2954116742|13515",
         "fractured.stat_2954116742|1352",
         "fractured.stat_2954116742|13542",
         "fractured.stat_2954116742|13724",
         "fractured.stat_2954116742|13738",
         "fractured.stat_2954116742|13823",
+        "fractured.stat_2954116742|13844",
         "fractured.stat_2954116742|13895",
         "fractured.stat_2954116742|13980",
         "fractured.stat_2954116742|14211",
@@ -41077,6 +41083,7 @@
         "fractured.stat_2954116742|18485",
         "fractured.stat_2954116742|18496",
         "fractured.stat_2954116742|18505",
+        "fractured.stat_2954116742|1861",
         "fractured.stat_2954116742|19044",
         "fractured.stat_2954116742|19125",
         "fractured.stat_2954116742|19156",
@@ -41123,6 +41130,7 @@
         "fractured.stat_2954116742|2335",
         "fractured.stat_2954116742|23362",
         "fractured.stat_2954116742|23427",
+        "fractured.stat_2954116742|2344",
         "fractured.stat_2954116742|23630",
         "fractured.stat_2954116742|23736",
         "fractured.stat_2954116742|23738",
@@ -41131,6 +41139,7 @@
         "fractured.stat_2954116742|2394",
         "fractured.stat_2954116742|23940",
         "fractured.stat_2954116742|2397",
+        "fractured.stat_2954116742|24062",
         "fractured.stat_2954116742|24087",
         "fractured.stat_2954116742|24120",
         "fractured.stat_2954116742|24240",
@@ -41200,6 +41209,7 @@
         "fractured.stat_2954116742|30546",
         "fractured.stat_2954116742|30562",
         "fractured.stat_2954116742|30720",
+        "fractured.stat_2954116742|31129",
         "fractured.stat_2954116742|31172",
         "fractured.stat_2954116742|31175",
         "fractured.stat_2954116742|31189",
@@ -41220,6 +41230,7 @@
         "fractured.stat_2954116742|32507",
         "fractured.stat_2954116742|32664",
         "fractured.stat_2954116742|32721",
+        "fractured.stat_2954116742|32932",
         "fractured.stat_2954116742|32951",
         "fractured.stat_2954116742|32976",
         "fractured.stat_2954116742|33059",
@@ -41244,6 +41255,7 @@
         "fractured.stat_2954116742|35369",
         "fractured.stat_2954116742|35477",
         "fractured.stat_2954116742|35560",
+        "fractured.stat_2954116742|35564",
         "fractured.stat_2954116742|35581",
         "fractured.stat_2954116742|35618",
         "fractured.stat_2954116742|3567",
@@ -41323,6 +41335,7 @@
         "fractured.stat_2954116742|41580",
         "fractured.stat_2954116742|41753",
         "fractured.stat_2954116742|41811",
+        "fractured.stat_2954116742|41905",
         "fractured.stat_2954116742|41972",
         "fractured.stat_2954116742|42036",
         "fractured.stat_2954116742|42045",
@@ -41342,6 +41355,7 @@
         "fractured.stat_2954116742|43088",
         "fractured.stat_2954116742|43090",
         "fractured.stat_2954116742|43139",
+        "fractured.stat_2954116742|43250",
         "fractured.stat_2954116742|4331",
         "fractured.stat_2954116742|43423",
         "fractured.stat_2954116742|43633",
@@ -41367,6 +41381,7 @@
         "fractured.stat_2954116742|45632",
         "fractured.stat_2954116742|45713",
         "fractured.stat_2954116742|45751",
+        "fractured.stat_2954116742|4579",
         "fractured.stat_2954116742|46024",
         "fractured.stat_2954116742|46060",
         "fractured.stat_2954116742|46124",
@@ -41376,11 +41391,13 @@
         "fractured.stat_2954116742|46296",
         "fractured.stat_2954116742|46365",
         "fractured.stat_2954116742|46384",
+        "fractured.stat_2954116742|46499",
         "fractured.stat_2954116742|4661",
         "fractured.stat_2954116742|46692",
         "fractured.stat_2954116742|46696",
         "fractured.stat_2954116742|4673",
         "fractured.stat_2954116742|46972",
+        "fractured.stat_2954116742|47088",
         "fractured.stat_2954116742|4709",
         "fractured.stat_2954116742|4716",
         "fractured.stat_2954116742|47270",
@@ -41398,6 +41415,7 @@
         "fractured.stat_2954116742|4810",
         "fractured.stat_2954116742|48103",
         "fractured.stat_2954116742|48215",
+        "fractured.stat_2954116742|48240",
         "fractured.stat_2954116742|48418",
         "fractured.stat_2954116742|48524",
         "fractured.stat_2954116742|48565",
@@ -41407,6 +41425,7 @@
         "fractured.stat_2954116742|48699",
         "fractured.stat_2954116742|48734",
         "fractured.stat_2954116742|49088",
+        "fractured.stat_2954116742|4931",
         "fractured.stat_2954116742|49356",
         "fractured.stat_2954116742|49550",
         "fractured.stat_2954116742|4959",
@@ -41521,6 +41540,8 @@
         "fractured.stat_2954116742|59208",
         "fractured.stat_2954116742|59214",
         "fractured.stat_2954116742|59303",
+        "fractured.stat_2954116742|59387",
+        "fractured.stat_2954116742|59433",
         "fractured.stat_2954116742|59541",
         "fractured.stat_2954116742|59720",
         "fractured.stat_2954116742|60034",
@@ -41536,6 +41557,7 @@
         "fractured.stat_2954116742|61112",
         "fractured.stat_2954116742|6133",
         "fractured.stat_2954116742|61338",
+        "fractured.stat_2954116742|61354",
         "fractured.stat_2954116742|61404",
         "fractured.stat_2954116742|61444",
         "fractured.stat_2954116742|61601",
@@ -41617,6 +41639,7 @@
         "fractured.stat_2954116742|9472",
         "fractured.stat_2954116742|9535",
         "fractured.stat_2954116742|9736",
+        "fractured.stat_2954116742|9863",
         "fractured.stat_2954116742|9908",
         "fractured.stat_2954116742|9928",
         "fractured.stat_2954116742|9968",
@@ -46997,6 +47020,7 @@
         "fractured.stat_709508406",
         "fractured.stat_712554801",
         "fractured.stat_718638445",
+        "fractured.stat_731781020",
         "fractured.stat_736967255",
         "fractured.stat_737908626",
         "fractured.stat_748522257",
@@ -48800,6 +48824,7 @@
         "fractured.stat_691932474",
         "fractured.stat_709508406",
         "fractured.stat_718638445",
+        "fractured.stat_731781020",
         "fractured.stat_736967255",
         "fractured.stat_737908626",
         "fractured.stat_748522257",
@@ -50347,6 +50372,7 @@
         "fractured.stat_709508406",
         "fractured.stat_712554801",
         "fractured.stat_718638445",
+        "fractured.stat_731781020",
         "fractured.stat_736967255",
         "fractured.stat_737908626",
         "fractured.stat_748522257",
@@ -52012,6 +52038,7 @@
         "fractured.stat_681332047",
         "fractured.stat_707457662",
         "fractured.stat_73032170",
+        "fractured.stat_731781020",
         "fractured.stat_736967255",
         "fractured.stat_737908626",
         "fractured.stat_758893621",
@@ -67715,12 +67742,14 @@
         "fractured.stat_2954116742|13407",
         "fractured.stat_2954116742|13457",
         "fractured.stat_2954116742|13482",
+        "fractured.stat_2954116742|13489",
         "fractured.stat_2954116742|13515",
         "fractured.stat_2954116742|1352",
         "fractured.stat_2954116742|13542",
         "fractured.stat_2954116742|13724",
         "fractured.stat_2954116742|13738",
         "fractured.stat_2954116742|13823",
+        "fractured.stat_2954116742|13844",
         "fractured.stat_2954116742|13895",
         "fractured.stat_2954116742|13980",
         "fractured.stat_2954116742|14211",
@@ -67779,6 +67808,7 @@
         "fractured.stat_2954116742|18485",
         "fractured.stat_2954116742|18496",
         "fractured.stat_2954116742|18505",
+        "fractured.stat_2954116742|1861",
         "fractured.stat_2954116742|19044",
         "fractured.stat_2954116742|19125",
         "fractured.stat_2954116742|19156",
@@ -67825,6 +67855,7 @@
         "fractured.stat_2954116742|2335",
         "fractured.stat_2954116742|23362",
         "fractured.stat_2954116742|23427",
+        "fractured.stat_2954116742|2344",
         "fractured.stat_2954116742|23630",
         "fractured.stat_2954116742|23736",
         "fractured.stat_2954116742|23738",
@@ -67833,6 +67864,7 @@
         "fractured.stat_2954116742|2394",
         "fractured.stat_2954116742|23940",
         "fractured.stat_2954116742|2397",
+        "fractured.stat_2954116742|24062",
         "fractured.stat_2954116742|24087",
         "fractured.stat_2954116742|24120",
         "fractured.stat_2954116742|24240",
@@ -67902,6 +67934,7 @@
         "fractured.stat_2954116742|30546",
         "fractured.stat_2954116742|30562",
         "fractured.stat_2954116742|30720",
+        "fractured.stat_2954116742|31129",
         "fractured.stat_2954116742|31172",
         "fractured.stat_2954116742|31175",
         "fractured.stat_2954116742|31189",
@@ -67922,6 +67955,7 @@
         "fractured.stat_2954116742|32507",
         "fractured.stat_2954116742|32664",
         "fractured.stat_2954116742|32721",
+        "fractured.stat_2954116742|32932",
         "fractured.stat_2954116742|32951",
         "fractured.stat_2954116742|32976",
         "fractured.stat_2954116742|33059",
@@ -67946,6 +67980,7 @@
         "fractured.stat_2954116742|35369",
         "fractured.stat_2954116742|35477",
         "fractured.stat_2954116742|35560",
+        "fractured.stat_2954116742|35564",
         "fractured.stat_2954116742|35581",
         "fractured.stat_2954116742|35618",
         "fractured.stat_2954116742|3567",
@@ -68025,6 +68060,7 @@
         "fractured.stat_2954116742|41580",
         "fractured.stat_2954116742|41753",
         "fractured.stat_2954116742|41811",
+        "fractured.stat_2954116742|41905",
         "fractured.stat_2954116742|41972",
         "fractured.stat_2954116742|42036",
         "fractured.stat_2954116742|42045",
@@ -68044,6 +68080,7 @@
         "fractured.stat_2954116742|43088",
         "fractured.stat_2954116742|43090",
         "fractured.stat_2954116742|43139",
+        "fractured.stat_2954116742|43250",
         "fractured.stat_2954116742|4331",
         "fractured.stat_2954116742|43423",
         "fractured.stat_2954116742|43633",
@@ -68069,6 +68106,7 @@
         "fractured.stat_2954116742|45632",
         "fractured.stat_2954116742|45713",
         "fractured.stat_2954116742|45751",
+        "fractured.stat_2954116742|4579",
         "fractured.stat_2954116742|46024",
         "fractured.stat_2954116742|46060",
         "fractured.stat_2954116742|46124",
@@ -68078,11 +68116,13 @@
         "fractured.stat_2954116742|46296",
         "fractured.stat_2954116742|46365",
         "fractured.stat_2954116742|46384",
+        "fractured.stat_2954116742|46499",
         "fractured.stat_2954116742|4661",
         "fractured.stat_2954116742|46692",
         "fractured.stat_2954116742|46696",
         "fractured.stat_2954116742|4673",
         "fractured.stat_2954116742|46972",
+        "fractured.stat_2954116742|47088",
         "fractured.stat_2954116742|4709",
         "fractured.stat_2954116742|4716",
         "fractured.stat_2954116742|47270",
@@ -68100,6 +68140,7 @@
         "fractured.stat_2954116742|4810",
         "fractured.stat_2954116742|48103",
         "fractured.stat_2954116742|48215",
+        "fractured.stat_2954116742|48240",
         "fractured.stat_2954116742|48418",
         "fractured.stat_2954116742|48524",
         "fractured.stat_2954116742|48565",
@@ -68109,6 +68150,7 @@
         "fractured.stat_2954116742|48699",
         "fractured.stat_2954116742|48734",
         "fractured.stat_2954116742|49088",
+        "fractured.stat_2954116742|4931",
         "fractured.stat_2954116742|49356",
         "fractured.stat_2954116742|49550",
         "fractured.stat_2954116742|4959",
@@ -68223,6 +68265,8 @@
         "fractured.stat_2954116742|59208",
         "fractured.stat_2954116742|59214",
         "fractured.stat_2954116742|59303",
+        "fractured.stat_2954116742|59387",
+        "fractured.stat_2954116742|59433",
         "fractured.stat_2954116742|59541",
         "fractured.stat_2954116742|59720",
         "fractured.stat_2954116742|60034",
@@ -68238,6 +68282,7 @@
         "fractured.stat_2954116742|61112",
         "fractured.stat_2954116742|6133",
         "fractured.stat_2954116742|61338",
+        "fractured.stat_2954116742|61354",
         "fractured.stat_2954116742|61404",
         "fractured.stat_2954116742|61444",
         "fractured.stat_2954116742|61601",
@@ -68319,6 +68364,7 @@
         "fractured.stat_2954116742|9472",
         "fractured.stat_2954116742|9535",
         "fractured.stat_2954116742|9736",
+        "fractured.stat_2954116742|9863",
         "fractured.stat_2954116742|9908",
         "fractured.stat_2954116742|9928",
         "fractured.stat_2954116742|9968",
@@ -79600,7 +79646,7 @@
       "kind": "page",
       "id": "Daggers"
     },
-    "incomplete dull hatchet": {
+    "incomplete charred shortsword": {
       "kind": "logical",
       "id": "Weapons"
     },
@@ -79608,7 +79654,7 @@
       "kind": "logical",
       "id": "Weapons"
     },
-    "incomplete charred shortsword": {
+    "incomplete dull hatchet": {
       "kind": "logical",
       "id": "Weapons"
     },
@@ -79620,17 +79666,13 @@
       "kind": "logical",
       "id": "Weapons"
     },
-    "incomplete chain flail": {
-      "kind": "page",
-      "id": "Flails"
-    },
-    "incomplete bearded axe": {
-      "kind": "logical",
-      "id": "Weapons"
-    },
     "incomplete simple dagger": {
       "kind": "page",
       "id": "Daggers"
+    },
+    "incomplete iron greatsword": {
+      "kind": "logical",
+      "id": "Weapons"
     },
     "incomplete splintered flail": {
       "kind": "page",
@@ -79640,15 +79682,7 @@
       "kind": "page",
       "id": "Daggers"
     },
-    "incomplete iron greatsword": {
-      "kind": "logical",
-      "id": "Weapons"
-    },
     "incomplete broadsword": {
-      "kind": "logical",
-      "id": "Weapons"
-    },
-    "incomplete executioner greataxe": {
       "kind": "logical",
       "id": "Weapons"
     },
@@ -79656,11 +79690,27 @@
       "kind": "logical",
       "id": "Weapons"
     },
-    "incomplete broad greatsword": {
+    "incomplete executioner greataxe": {
       "kind": "logical",
       "id": "Weapons"
     },
     "incomplete arched greataxe": {
+      "kind": "logical",
+      "id": "Weapons"
+    },
+    "incomplete chain flail": {
+      "kind": "page",
+      "id": "Flails"
+    },
+    "incomplete holy flail": {
+      "kind": "page",
+      "id": "Flails"
+    },
+    "incomplete bearded axe": {
+      "kind": "logical",
+      "id": "Weapons"
+    },
+    "incomplete broad greatsword": {
       "kind": "logical",
       "id": "Weapons"
     },
@@ -79671,10 +79721,6 @@
     "incomplete moon dagger": {
       "kind": "page",
       "id": "Daggers"
-    },
-    "incomplete holy flail": {
-      "kind": "page",
-      "id": "Flails"
     },
     "incomplete hunting spear": {
       "kind": "page",
@@ -94870,12 +94916,14 @@
         "fractured.stat_2954116742|13407",
         "fractured.stat_2954116742|13457",
         "fractured.stat_2954116742|13482",
+        "fractured.stat_2954116742|13489",
         "fractured.stat_2954116742|13515",
         "fractured.stat_2954116742|1352",
         "fractured.stat_2954116742|13542",
         "fractured.stat_2954116742|13724",
         "fractured.stat_2954116742|13738",
         "fractured.stat_2954116742|13823",
+        "fractured.stat_2954116742|13844",
         "fractured.stat_2954116742|13895",
         "fractured.stat_2954116742|13980",
         "fractured.stat_2954116742|14211",
@@ -94934,6 +94982,7 @@
         "fractured.stat_2954116742|18485",
         "fractured.stat_2954116742|18496",
         "fractured.stat_2954116742|18505",
+        "fractured.stat_2954116742|1861",
         "fractured.stat_2954116742|19044",
         "fractured.stat_2954116742|19125",
         "fractured.stat_2954116742|19156",
@@ -94980,6 +95029,7 @@
         "fractured.stat_2954116742|2335",
         "fractured.stat_2954116742|23362",
         "fractured.stat_2954116742|23427",
+        "fractured.stat_2954116742|2344",
         "fractured.stat_2954116742|23630",
         "fractured.stat_2954116742|23736",
         "fractured.stat_2954116742|23738",
@@ -94988,6 +95038,7 @@
         "fractured.stat_2954116742|2394",
         "fractured.stat_2954116742|23940",
         "fractured.stat_2954116742|2397",
+        "fractured.stat_2954116742|24062",
         "fractured.stat_2954116742|24087",
         "fractured.stat_2954116742|24120",
         "fractured.stat_2954116742|24240",
@@ -95057,6 +95108,7 @@
         "fractured.stat_2954116742|30546",
         "fractured.stat_2954116742|30562",
         "fractured.stat_2954116742|30720",
+        "fractured.stat_2954116742|31129",
         "fractured.stat_2954116742|31172",
         "fractured.stat_2954116742|31175",
         "fractured.stat_2954116742|31189",
@@ -95077,6 +95129,7 @@
         "fractured.stat_2954116742|32507",
         "fractured.stat_2954116742|32664",
         "fractured.stat_2954116742|32721",
+        "fractured.stat_2954116742|32932",
         "fractured.stat_2954116742|32951",
         "fractured.stat_2954116742|32976",
         "fractured.stat_2954116742|33059",
@@ -95101,6 +95154,7 @@
         "fractured.stat_2954116742|35369",
         "fractured.stat_2954116742|35477",
         "fractured.stat_2954116742|35560",
+        "fractured.stat_2954116742|35564",
         "fractured.stat_2954116742|35581",
         "fractured.stat_2954116742|35618",
         "fractured.stat_2954116742|3567",
@@ -95180,6 +95234,7 @@
         "fractured.stat_2954116742|41580",
         "fractured.stat_2954116742|41753",
         "fractured.stat_2954116742|41811",
+        "fractured.stat_2954116742|41905",
         "fractured.stat_2954116742|41972",
         "fractured.stat_2954116742|42036",
         "fractured.stat_2954116742|42045",
@@ -95199,6 +95254,7 @@
         "fractured.stat_2954116742|43088",
         "fractured.stat_2954116742|43090",
         "fractured.stat_2954116742|43139",
+        "fractured.stat_2954116742|43250",
         "fractured.stat_2954116742|4331",
         "fractured.stat_2954116742|43423",
         "fractured.stat_2954116742|43633",
@@ -95224,6 +95280,7 @@
         "fractured.stat_2954116742|45632",
         "fractured.stat_2954116742|45713",
         "fractured.stat_2954116742|45751",
+        "fractured.stat_2954116742|4579",
         "fractured.stat_2954116742|46024",
         "fractured.stat_2954116742|46060",
         "fractured.stat_2954116742|46124",
@@ -95233,11 +95290,13 @@
         "fractured.stat_2954116742|46296",
         "fractured.stat_2954116742|46365",
         "fractured.stat_2954116742|46384",
+        "fractured.stat_2954116742|46499",
         "fractured.stat_2954116742|4661",
         "fractured.stat_2954116742|46692",
         "fractured.stat_2954116742|46696",
         "fractured.stat_2954116742|4673",
         "fractured.stat_2954116742|46972",
+        "fractured.stat_2954116742|47088",
         "fractured.stat_2954116742|4709",
         "fractured.stat_2954116742|4716",
         "fractured.stat_2954116742|47270",
@@ -95255,6 +95314,7 @@
         "fractured.stat_2954116742|4810",
         "fractured.stat_2954116742|48103",
         "fractured.stat_2954116742|48215",
+        "fractured.stat_2954116742|48240",
         "fractured.stat_2954116742|48418",
         "fractured.stat_2954116742|48524",
         "fractured.stat_2954116742|48565",
@@ -95264,6 +95324,7 @@
         "fractured.stat_2954116742|48699",
         "fractured.stat_2954116742|48734",
         "fractured.stat_2954116742|49088",
+        "fractured.stat_2954116742|4931",
         "fractured.stat_2954116742|49356",
         "fractured.stat_2954116742|49550",
         "fractured.stat_2954116742|4959",
@@ -95378,6 +95439,8 @@
         "fractured.stat_2954116742|59208",
         "fractured.stat_2954116742|59214",
         "fractured.stat_2954116742|59303",
+        "fractured.stat_2954116742|59387",
+        "fractured.stat_2954116742|59433",
         "fractured.stat_2954116742|59541",
         "fractured.stat_2954116742|59720",
         "fractured.stat_2954116742|60034",
@@ -95393,6 +95456,7 @@
         "fractured.stat_2954116742|61112",
         "fractured.stat_2954116742|6133",
         "fractured.stat_2954116742|61338",
+        "fractured.stat_2954116742|61354",
         "fractured.stat_2954116742|61404",
         "fractured.stat_2954116742|61444",
         "fractured.stat_2954116742|61601",
@@ -95474,6 +95538,7 @@
         "fractured.stat_2954116742|9472",
         "fractured.stat_2954116742|9535",
         "fractured.stat_2954116742|9736",
+        "fractured.stat_2954116742|9863",
         "fractured.stat_2954116742|9908",
         "fractured.stat_2954116742|9928",
         "fractured.stat_2954116742|9968",
@@ -96584,6 +96649,7 @@
         "fractured.stat_1836676211",
         "fractured.stat_2081918629",
         "fractured.stat_328541901",
+        "fractured.stat_731781020",
         "implicit.stat_1416292992",
         "implicit.stat_1458343515",
         "implicit.stat_1836676211",
@@ -97893,6 +97959,7 @@
         "fractured.stat_4080418644",
         "fractured.stat_51994685",
         "fractured.stat_680068163",
+        "fractured.stat_731781020",
         "implicit.stat_1050105434",
         "implicit.stat_1416292992",
         "implicit.stat_2392260628",
@@ -106271,6 +106338,7 @@
         "fractured.stat_3299347043",
         "fractured.stat_51994685",
         "fractured.stat_680068163",
+        "fractured.stat_731781020",
         "implicit.stat_1050105434",
         "implicit.stat_1416292992",
         "implicit.stat_2392260628",
@@ -127653,12 +127721,14 @@
     "fractured.stat_2954116742|13407",
     "fractured.stat_2954116742|13457",
     "fractured.stat_2954116742|13482",
+    "fractured.stat_2954116742|13489",
     "fractured.stat_2954116742|13515",
     "fractured.stat_2954116742|1352",
     "fractured.stat_2954116742|13542",
     "fractured.stat_2954116742|13724",
     "fractured.stat_2954116742|13738",
     "fractured.stat_2954116742|13823",
+    "fractured.stat_2954116742|13844",
     "fractured.stat_2954116742|13895",
     "fractured.stat_2954116742|13980",
     "fractured.stat_2954116742|14211",
@@ -127717,6 +127787,7 @@
     "fractured.stat_2954116742|18485",
     "fractured.stat_2954116742|18496",
     "fractured.stat_2954116742|18505",
+    "fractured.stat_2954116742|1861",
     "fractured.stat_2954116742|19044",
     "fractured.stat_2954116742|19125",
     "fractured.stat_2954116742|19156",
@@ -127763,6 +127834,7 @@
     "fractured.stat_2954116742|2335",
     "fractured.stat_2954116742|23362",
     "fractured.stat_2954116742|23427",
+    "fractured.stat_2954116742|2344",
     "fractured.stat_2954116742|23630",
     "fractured.stat_2954116742|23736",
     "fractured.stat_2954116742|23738",
@@ -127771,6 +127843,7 @@
     "fractured.stat_2954116742|2394",
     "fractured.stat_2954116742|23940",
     "fractured.stat_2954116742|2397",
+    "fractured.stat_2954116742|24062",
     "fractured.stat_2954116742|24087",
     "fractured.stat_2954116742|24120",
     "fractured.stat_2954116742|24240",
@@ -127840,6 +127913,7 @@
     "fractured.stat_2954116742|30546",
     "fractured.stat_2954116742|30562",
     "fractured.stat_2954116742|30720",
+    "fractured.stat_2954116742|31129",
     "fractured.stat_2954116742|31172",
     "fractured.stat_2954116742|31175",
     "fractured.stat_2954116742|31189",
@@ -127860,6 +127934,7 @@
     "fractured.stat_2954116742|32507",
     "fractured.stat_2954116742|32664",
     "fractured.stat_2954116742|32721",
+    "fractured.stat_2954116742|32932",
     "fractured.stat_2954116742|32951",
     "fractured.stat_2954116742|32976",
     "fractured.stat_2954116742|33059",
@@ -127884,6 +127959,7 @@
     "fractured.stat_2954116742|35369",
     "fractured.stat_2954116742|35477",
     "fractured.stat_2954116742|35560",
+    "fractured.stat_2954116742|35564",
     "fractured.stat_2954116742|35581",
     "fractured.stat_2954116742|35618",
     "fractured.stat_2954116742|3567",
@@ -127963,6 +128039,7 @@
     "fractured.stat_2954116742|41580",
     "fractured.stat_2954116742|41753",
     "fractured.stat_2954116742|41811",
+    "fractured.stat_2954116742|41905",
     "fractured.stat_2954116742|41972",
     "fractured.stat_2954116742|42036",
     "fractured.stat_2954116742|42045",
@@ -127982,6 +128059,7 @@
     "fractured.stat_2954116742|43088",
     "fractured.stat_2954116742|43090",
     "fractured.stat_2954116742|43139",
+    "fractured.stat_2954116742|43250",
     "fractured.stat_2954116742|4331",
     "fractured.stat_2954116742|43423",
     "fractured.stat_2954116742|43633",
@@ -128007,6 +128085,7 @@
     "fractured.stat_2954116742|45632",
     "fractured.stat_2954116742|45713",
     "fractured.stat_2954116742|45751",
+    "fractured.stat_2954116742|4579",
     "fractured.stat_2954116742|46024",
     "fractured.stat_2954116742|46060",
     "fractured.stat_2954116742|46124",
@@ -128016,11 +128095,13 @@
     "fractured.stat_2954116742|46296",
     "fractured.stat_2954116742|46365",
     "fractured.stat_2954116742|46384",
+    "fractured.stat_2954116742|46499",
     "fractured.stat_2954116742|4661",
     "fractured.stat_2954116742|46692",
     "fractured.stat_2954116742|46696",
     "fractured.stat_2954116742|4673",
     "fractured.stat_2954116742|46972",
+    "fractured.stat_2954116742|47088",
     "fractured.stat_2954116742|4709",
     "fractured.stat_2954116742|4716",
     "fractured.stat_2954116742|47270",
@@ -128038,6 +128119,7 @@
     "fractured.stat_2954116742|4810",
     "fractured.stat_2954116742|48103",
     "fractured.stat_2954116742|48215",
+    "fractured.stat_2954116742|48240",
     "fractured.stat_2954116742|48418",
     "fractured.stat_2954116742|48524",
     "fractured.stat_2954116742|48565",
@@ -128047,6 +128129,7 @@
     "fractured.stat_2954116742|48699",
     "fractured.stat_2954116742|48734",
     "fractured.stat_2954116742|49088",
+    "fractured.stat_2954116742|4931",
     "fractured.stat_2954116742|49356",
     "fractured.stat_2954116742|49550",
     "fractured.stat_2954116742|4959",
@@ -128161,6 +128244,8 @@
     "fractured.stat_2954116742|59208",
     "fractured.stat_2954116742|59214",
     "fractured.stat_2954116742|59303",
+    "fractured.stat_2954116742|59387",
+    "fractured.stat_2954116742|59433",
     "fractured.stat_2954116742|59541",
     "fractured.stat_2954116742|59720",
     "fractured.stat_2954116742|60034",
@@ -128176,6 +128261,7 @@
     "fractured.stat_2954116742|61112",
     "fractured.stat_2954116742|6133",
     "fractured.stat_2954116742|61338",
+    "fractured.stat_2954116742|61354",
     "fractured.stat_2954116742|61404",
     "fractured.stat_2954116742|61444",
     "fractured.stat_2954116742|61601",
@@ -128257,6 +128343,7 @@
     "fractured.stat_2954116742|9472",
     "fractured.stat_2954116742|9535",
     "fractured.stat_2954116742|9736",
+    "fractured.stat_2954116742|9863",
     "fractured.stat_2954116742|9908",
     "fractured.stat_2954116742|9928",
     "fractured.stat_2954116742|9968",
@@ -128517,6 +128604,7 @@
     "fractured.stat_715957346",
     "fractured.stat_718638445",
     "fractured.stat_73032170",
+    "fractured.stat_731781020",
     "fractured.stat_734614379",
     "fractured.stat_736967255",
     "fractured.stat_737908626",
@@ -176811,7 +176899,7 @@
       "crafted.stat_124131830": {
         "en": "# to Level of all Spell Skills",
         "zh_CN": "所有法术技能等级 #",
-        "zh_TW": "全部法術技能等級#",
+        "zh_TW": "#全部法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -177270,7 +177358,7 @@
       "crafted.stat_2162097452": {
         "en": "# to Level of all Minion Skills",
         "zh_CN": "所有召唤生物技能等级 #",
-        "zh_TW": "全部召喚物技能等級#",
+        "zh_TW": "#全部召喚物技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -177603,7 +177691,7 @@
       "crafted.stat_2954116742|10265": {
         "en": "Allocates Javelin",
         "zh_CN": "配置 标枪",
-        "zh_TW": "配置長矛：傷害核心",
+        "zh_TW": "配置標槍",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -177687,7 +177775,7 @@
         "zh_TW": "配置防禦姿態",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "crafted.stat_2954116742|10727": {
@@ -177695,7 +177783,7 @@
         "zh_CN": "配置 鼓舞施法",
         "zh_TW": "配置鼓舞詠唱",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -177768,7 +177856,7 @@
         "zh_TW": "配置火山皮膚",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "crafted.stat_2954116742|11376": {
@@ -178017,7 +178105,7 @@
       "crafted.stat_2954116742|13542": {
         "en": "Allocates Loose Flesh",
         "zh_CN": "配置 松弛之躯",
-        "zh_TW": "配置鬆散肌肉",
+        "zh_TW": "配置鬆弛血肉",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -178199,7 +178287,7 @@
         "zh_CN": "配置 逞勇之姿",
         "zh_TW": "配置雙刃之力",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -178442,7 +178530,7 @@
         "zh_CN": "配置 制导射击",
         "zh_TW": "配置精確射擊",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -178505,7 +178593,7 @@
         "zh_CN": "配置 实用军械",
         "zh_TW": "配置實用軍械",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -178595,7 +178683,7 @@
         "zh_CN": "配置 战术撤退",
         "zh_TW": "配置戰術性撤退",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -178658,7 +178746,7 @@
         "zh_CN": "配置 失血",
         "zh_TW": "配置出血致死",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -178721,7 +178809,7 @@
         "zh_CN": "配置 符文战盔",
         "zh_TW": "配置符文堅盔",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -178821,7 +178909,7 @@
         "zh_TW": "配置如履薄冰",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "crafted.stat_2954116742|19955": {
@@ -179315,7 +179403,7 @@
         "zh_CN": "配置 永恒灌注",
         "zh_TW": "配置永恆灌注",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -179324,7 +179412,7 @@
         "zh_CN": "配置 心灵坚毅",
         "zh_TW": "配置強韌心理",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -179333,7 +179421,7 @@
         "zh_CN": "配置 操纵时光",
         "zh_TW": "配置時間操縱",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "exact_id"
         }
       },
@@ -179765,7 +179853,7 @@
         "zh_CN": "配置 触染秘能",
         "zh_TW": "配置秘能之觸",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -180080,7 +180168,7 @@
         "zh_CN": "配置 高效装置",
         "zh_TW": "配置效率裝置",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -180251,7 +180339,7 @@
         "zh_CN": "配置 报复",
         "zh_TW": "配置復仇",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -180269,7 +180357,7 @@
         "zh_CN": "配置 福尔的庇护",
         "zh_TW": "配置福爾的守護",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -180467,7 +180555,7 @@
         "zh_CN": "配置 深度创伤",
         "zh_TW": "配置深層創傷",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -180539,7 +180627,7 @@
         "zh_CN": "配置 专注吟唱",
         "zh_TW": "配置重點引導",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -180629,7 +180717,7 @@
         "zh_CN": "配置 春回大地",
         "zh_TW": "配置巨量恢復",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -180737,7 +180825,7 @@
         "zh_CN": "配置 生命脉轮",
         "zh_TW": "配置生命脈輪",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -180906,7 +180994,7 @@
       "crafted.stat_2954116742|35966": {
         "en": "Allocates Heart Tissue",
         "zh_CN": "配置 心源强健",
-        "zh_TW": "配置心臟疾病",
+        "zh_TW": "配置心臟組織",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -180980,7 +181068,7 @@
         "zh_CN": "配置 冈姆祝福",
         "zh_TW": "配置岡姆之祝",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -181106,7 +181194,7 @@
         "zh_CN": "配置 完全康复",
         "zh_TW": "配置完全恢復",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -181176,7 +181264,7 @@
       "crafted.stat_2954116742|38111": {
         "en": "Allocates Pliable Flesh",
         "zh_CN": "配置 坚韧血肉",
-        "zh_TW": "配置可塑肉體",
+        "zh_TW": "配置柔韌血肉",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -181457,7 +181545,7 @@
         "zh_CN": "配置 倒刺护甲",
         "zh_TW": "配置尖刺護甲",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -181664,7 +181752,7 @@
         "zh_CN": "配置 巨熊之皮",
         "zh_TW": "配置巨熊獸皮",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -181746,7 +181834,7 @@
         "zh_TW": "配置無影行蹤",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "crafted.stat_2954116742|42245": {
@@ -181772,7 +181860,7 @@
         "zh_CN": "配置 灵视脉轮",
         "zh_TW": "配置視野脈輪",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -181788,7 +181876,7 @@
       "crafted.stat_2954116742|4238": {
         "en": "Allocates Versatile Arms",
         "zh_CN": "配置 全能神兵",
-        "zh_TW": "配置萬能雙手",
+        "zh_TW": "配置萬用武器",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -181880,7 +181968,7 @@
         "zh_CN": "配置 苦痛血祸",
         "zh_TW": "配置慘痛災禍",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -182007,7 +182095,7 @@
         "zh_TW": "配置融化烈焰",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "crafted.stat_2954116742|43944": {
@@ -182123,7 +182211,7 @@
         "zh_CN": "配置 自制禁欲",
         "zh_TW": "配置自我苦行",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -182186,7 +182274,7 @@
         "zh_CN": "配置 穿射箭矢",
         "zh_TW": "配置穿射箭矢",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -182438,7 +182526,7 @@
         "zh_CN": "配置 笨重猛击",
         "zh_TW": "配置巨力猛擊",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -182501,7 +182589,7 @@
         "zh_CN": "配置 巨神兵器",
         "zh_TW": "配置巨無霸武器",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -182724,7 +182812,7 @@
       "crafted.stat_2954116742|48774": {
         "en": "Allocates Taut Flesh",
         "zh_CN": "配置 紧绷之躯",
-        "zh_TW": "配置繃緊肌肉",
+        "zh_TW": "配置緊繃血肉",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -182798,7 +182886,7 @@
         "zh_CN": "配置 怒火难平",
         "zh_TW": "配置經久之怒",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -182834,7 +182922,7 @@
         "zh_CN": "配置 碎裂晶体",
         "zh_TW": "配置碎裂水晶",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -182960,7 +183048,7 @@
         "zh_CN": "配置 冻结上限",
         "zh_TW": "配置冰凍上限",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -183059,8 +183147,8 @@
         "zh_CN": "配置 视若无睹",
         "zh_TW": "配置隱蔽",
         "sources": {
-          "zh_CN": "same_bare_and_template",
-          "zh_TW": "same_bare_and_template"
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
         }
       },
       "crafted.stat_2954116742|51606": {
@@ -183149,7 +183237,7 @@
         "zh_CN": "配置 受训偏转",
         "zh_TW": "配置受訓偏斜",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -183176,7 +183264,7 @@
         "zh_CN": "配置 法球之秘",
         "zh_TW": "配置球體秘術",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -183383,7 +183471,7 @@
         "zh_CN": "配置 闪烁幻影",
         "zh_TW": "配置閃亮幻象",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "exact_id"
         }
       },
@@ -183392,7 +183480,7 @@
         "zh_CN": "配置 抗争的象征",
         "zh_TW": "配置衛道之符",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -183456,7 +183544,7 @@
         "zh_TW": "配置堅不可摧",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "crafted.stat_2954116742|53935": {
@@ -183581,7 +183669,7 @@
         "zh_CN": "配置 破片",
         "zh_TW": "配置彈片",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -183671,7 +183759,7 @@
         "zh_CN": "配置 守望之塔",
         "zh_TW": "配置看守塔",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -183698,7 +183786,7 @@
         "zh_CN": "配置 寒冰之壁",
         "zh_TW": "配置冰牆",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -183825,7 +183913,7 @@
         "zh_TW": "配置奇術發動機",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "crafted.stat_2954116742|56714": {
@@ -183939,7 +184027,7 @@
       "crafted.stat_2954116742|57110": {
         "en": "Allocates Infused Flesh",
         "zh_CN": "配置 血肉灌注",
-        "zh_TW": "配置注入肉體",
+        "zh_TW": "配置灌注血肉",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -184083,7 +184171,7 @@
       "crafted.stat_2954116742|58215": {
         "en": "Allocates Sanguimantic Rituals",
         "zh_CN": "配置 赤红仪式",
-        "zh_TW": "配置血咒儀式",
+        "zh_TW": "配置占血儀式",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -184247,7 +184335,7 @@
         "zh_CN": "配置 死亡化身",
         "zh_TW": "配置死亡的化身",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -184401,7 +184489,7 @@
         "zh_TW": "配置紅刃紀律",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "crafted.stat_2954116742|6133": {
@@ -184589,7 +184677,7 @@
         "zh_CN": "配置 深林守护",
         "zh_TW": "配置木林祝福",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -184761,7 +184849,7 @@
         "zh_TW": "配置戰鬥狂熱",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "crafted.stat_2954116742|64415": {
@@ -184851,7 +184939,7 @@
         "zh_TW": "配置無敵甲殼",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "crafted.stat_2954116742|6514": {
@@ -185417,14 +185505,14 @@
         "zh_CN": "配置 伊泽洛骑士",
         "zh_TW": "配置伊澤洛之騎士",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
       "crafted.stat_2954116742|9896": {
         "en": "Allocates Heartstopping Presence",
         "zh_CN": "配置 凝心气息",
-        "zh_TW": "配置停頓心跳",
+        "zh_TW": "配置懾心氣場",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -185444,7 +185532,7 @@
         "zh_CN": "配置 拥抱冰霜",
         "zh_TW": "配置擁抱冰霜",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -185496,7 +185584,7 @@
       "crafted.stat_3035140377": {
         "en": "# to Level of all Attack Skills",
         "zh_CN": "所有攻击技能等级 #",
-        "zh_TW": "全部攻擊技能等級#",
+        "zh_TW": "#全部攻擊技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -185702,7 +185790,7 @@
       },
       "crafted.stat_3377888098": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间延长 #%",
+        "zh_CN": "技能效果持续时间提高 #%",
         "zh_TW": "增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -186054,10 +186142,10 @@
       "crafted.stat_4259875040": {
         "en": "#% increased Magnitude of Impales inflicted with Spells",
         "zh_CN": "法术造成的穿刺强度提高 #%",
-        "zh_TW": "#% increased Magnitude of Impales inflicted with Spells",
+        "zh_TW": "增加#%法術所造成之穿刺的幅度",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "same_bare_and_template"
         }
       },
       "crafted.stat_4273473110": {
@@ -186801,7 +186889,7 @@
       "desecrated.stat_1202301673": {
         "en": "# to Level of all Projectile Skills",
         "zh_CN": "所有投射物技能等级 #",
-        "zh_TW": "全部投射物技能等級#",
+        "zh_TW": "#全部投射物技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -186819,7 +186907,7 @@
       "desecrated.stat_124131830": {
         "en": "# to Level of all Spell Skills",
         "zh_CN": "所有法术技能等级 #",
-        "zh_TW": "全部法術技能等級#",
+        "zh_TW": "#全部法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -187386,7 +187474,7 @@
       "desecrated.stat_1545858329": {
         "en": "# to Level of all Lightning Spell Skills",
         "zh_CN": "所有闪电法术技能等级 #",
-        "zh_TW": "全部閃電法術技能等級#",
+        "zh_TW": "#全部閃電法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -187503,7 +187591,7 @@
       "desecrated.stat_1600707273": {
         "en": "# to Level of all Physical Spell Skills",
         "zh_CN": "所有物理法术技能等级 #",
-        "zh_TW": "全部物理法術技能等級#",
+        "zh_TW": "#全部物理法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -188178,7 +188266,7 @@
       "desecrated.stat_1992191903": {
         "en": "# to Level of all Mark Skills",
         "zh_CN": "# 所有印记技能等级",
-        "zh_TW": "#所有印記技能等級",
+        "zh_TW": "#全部印記技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -188484,7 +188572,7 @@
       "desecrated.stat_2162097452": {
         "en": "# to Level of all Minion Skills",
         "zh_CN": "所有召唤生物技能等级 #",
-        "zh_TW": "全部召喚物技能等級#",
+        "zh_TW": "#全部召喚物技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -188592,7 +188680,7 @@
       "desecrated.stat_2254480358": {
         "en": "# to Level of all Cold Spell Skills",
         "zh_CN": "所有冰霜法术技能等级 #",
-        "zh_TW": "全部冰冷法術技能等級#",
+        "zh_TW": "#全部冰冷法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -189230,7 +189318,7 @@
       },
       "desecrated.stat_2594634307": {
         "en": "Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "印记技能的技能效果持续时间延长 #%",
+        "zh_CN": "印记技能的技能效果持续时间提高 #%",
         "zh_TW": "印記技能增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -190058,7 +190146,7 @@
       },
       "desecrated.stat_3113764475": {
         "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
+        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
         "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -190266,10 +190354,10 @@
       "desecrated.stat_3206904707": {
         "en": "#% increased Explicit Cold Modifier magnitudes",
         "zh_CN": "外延冰霜词缀增幅提高 #%",
-        "zh_TW": "#% increased Explicit Cold Modifier magnitudes",
+        "zh_TW": "增加#%變動冰冷詞綴的大小",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "same_bare_and_template"
         }
       },
       "desecrated.stat_321970274": {
@@ -190544,7 +190632,7 @@
       },
       "desecrated.stat_3377888098": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间延长 #%",
+        "zh_CN": "技能效果持续时间提高 #%",
         "zh_TW": "增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -190851,10 +190939,10 @@
       "desecrated.stat_3514984677": {
         "en": "#% increased Explicit Mana Modifier magnitudes",
         "zh_CN": "外延魔力词缀增幅提高 #%",
-        "zh_TW": "#% increased Explicit Mana Modifier magnitudes",
+        "zh_TW": "增加#%變動魔力詞綴的大小",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "exact_id"
         }
       },
       "desecrated.stat_3523867985": {
@@ -191903,7 +191991,7 @@
       },
       "desecrated.stat_4162678661": {
         "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
+        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
         "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -191967,7 +192055,7 @@
       "desecrated.stat_4226189338": {
         "en": "# to Level of all Chaos Spell Skills",
         "zh_CN": "所有混沌法术技能等级 #",
-        "zh_TW": "全部混沌法術技能等級#",
+        "zh_TW": "#全部混沌法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -192057,10 +192145,10 @@
       "desecrated.stat_4259875040": {
         "en": "#% increased Magnitude of Impales inflicted with Spells",
         "zh_CN": "法术造成的穿刺强度提高 #%",
-        "zh_TW": "#% increased Magnitude of Impales inflicted with Spells",
+        "zh_TW": "增加#%法術所造成之穿刺的幅度",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "exact_id"
         }
       },
       "desecrated.stat_4264952559": {
@@ -192462,7 +192550,7 @@
       "desecrated.stat_591105508": {
         "en": "# to Level of all Fire Spell Skills",
         "zh_CN": "所有火焰法术技能等级 #",
-        "zh_TW": "全部火焰法術技能等級#",
+        "zh_TW": "#全部火焰法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -193281,7 +193369,7 @@
       "enchant.stat_1545858329": {
         "en": "# to Level of all Lightning Spell Skills",
         "zh_CN": "所有闪电法术技能等级 #",
-        "zh_TW": "全部閃電法術技能等級#",
+        "zh_TW": "#全部閃電法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -193290,7 +193378,7 @@
       "enchant.stat_1600707273": {
         "en": "# to Level of all Physical Spell Skills",
         "zh_CN": "所有物理法术技能等级 #",
-        "zh_TW": "全部物理法術技能等級#",
+        "zh_TW": "#全部物理法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -193452,7 +193540,7 @@
       "enchant.stat_2162097452": {
         "en": "# to Level of all Minion Skills",
         "zh_CN": "所有召唤生物技能等级 #",
-        "zh_TW": "全部召喚物技能等級#",
+        "zh_TW": "#全部召喚物技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -193488,7 +193576,7 @@
       "enchant.stat_2254480358": {
         "en": "# to Level of all Cold Spell Skills",
         "zh_CN": "所有冰霜法术技能等级 #",
-        "zh_TW": "全部冰冷法術技能等級#",
+        "zh_TW": "#全部冰冷法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -193695,7 +193783,7 @@
       "enchant.stat_2954116742|10265": {
         "en": "Allocates Javelin",
         "zh_CN": "配置 标枪",
-        "zh_TW": "配置長矛：傷害核心",
+        "zh_TW": "配置標槍",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -194109,7 +194197,7 @@
       "enchant.stat_2954116742|13542": {
         "en": "Allocates Loose Flesh",
         "zh_CN": "配置 松弛之躯",
-        "zh_TW": "配置鬆散肌肉",
+        "zh_TW": "配置鬆弛血肉",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -196998,7 +197086,7 @@
       "enchant.stat_2954116742|35966": {
         "en": "Allocates Heart Tissue",
         "zh_CN": "配置 心源强健",
-        "zh_TW": "配置心臟疾病",
+        "zh_TW": "配置心臟組織",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -197268,7 +197356,7 @@
       "enchant.stat_2954116742|38111": {
         "en": "Allocates Pliable Flesh",
         "zh_CN": "配置 坚韧血肉",
-        "zh_TW": "配置可塑肉體",
+        "zh_TW": "配置柔韌血肉",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -197880,7 +197968,7 @@
       "enchant.stat_2954116742|4238": {
         "en": "Allocates Versatile Arms",
         "zh_CN": "配置 全能神兵",
-        "zh_TW": "配置萬能雙手",
+        "zh_TW": "配置萬用武器",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -198816,7 +198904,7 @@
       "enchant.stat_2954116742|48774": {
         "en": "Allocates Taut Flesh",
         "zh_CN": "配置 紧绷之躯",
-        "zh_TW": "配置繃緊肌肉",
+        "zh_TW": "配置緊繃血肉",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -200031,7 +200119,7 @@
       "enchant.stat_2954116742|57110": {
         "en": "Allocates Infused Flesh",
         "zh_CN": "配置 血肉灌注",
-        "zh_TW": "配置注入肉體",
+        "zh_TW": "配置灌注血肉",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -200175,7 +200263,7 @@
       "enchant.stat_2954116742|58215": {
         "en": "Allocates Sanguimantic Rituals",
         "zh_CN": "配置 赤红仪式",
-        "zh_TW": "配置血咒儀式",
+        "zh_TW": "配置占血儀式",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -201516,7 +201604,7 @@
       "enchant.stat_2954116742|9896": {
         "en": "Allocates Heartstopping Presence",
         "zh_CN": "配置 凝心气息",
-        "zh_TW": "配置停頓心跳",
+        "zh_TW": "配置懾心氣場",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -201668,7 +201756,7 @@
       },
       "enchant.stat_3377888098": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间延长 #%",
+        "zh_CN": "技能效果持续时间提高 #%",
         "zh_TW": "增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -201921,7 +202009,7 @@
       "enchant.stat_4226189338": {
         "en": "# to Level of all Chaos Spell Skills",
         "zh_CN": "所有混沌法术技能等级 #",
-        "zh_TW": "全部混沌法術技能等級#",
+        "zh_TW": "#全部混沌法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -201993,7 +202081,7 @@
       "enchant.stat_591105508": {
         "en": "# to Level of all Fire Spell Skills",
         "zh_CN": "所有火焰法术技能等级 #",
-        "zh_TW": "全部火焰法術技能等級#",
+        "zh_TW": "#全部火焰法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -202551,7 +202639,7 @@
       "explicit.stat_1078455967": {
         "en": "# to Level of all Cold Skills",
         "zh_CN": "所有冰霜技能等级 #",
-        "zh_TW": "全部冰冷技能等級#",
+        "zh_TW": "#全部冰冷技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -202893,7 +202981,7 @@
       "explicit.stat_1147690586": {
         "en": "# to Level of all Lightning Skills",
         "zh_CN": "所有闪电技能等级 #",
-        "zh_TW": "全部閃電技能等級#",
+        "zh_TW": "#全部閃電技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -203181,7 +203269,7 @@
       "explicit.stat_1202301673": {
         "en": "# to Level of all Projectile Skills",
         "zh_CN": "所有投射物技能等级 #",
-        "zh_TW": "全部投射物技能等級#",
+        "zh_TW": "#全部投射物技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -203298,7 +203386,7 @@
       "explicit.stat_124131830": {
         "en": "# to Level of all Spell Skills",
         "zh_CN": "所有法术技能等级 #",
-        "zh_TW": "全部法術技能等級#",
+        "zh_TW": "#全部法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -204702,7 +204790,7 @@
       "explicit.stat_1545858329": {
         "en": "# to Level of all Lightning Spell Skills",
         "zh_CN": "所有闪电法术技能等级 #",
-        "zh_TW": "全部閃電法術技能等級#",
+        "zh_TW": "#全部閃電法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -204954,7 +205042,7 @@
       "explicit.stat_1600707273": {
         "en": "# to Level of all Physical Spell Skills",
         "zh_CN": "所有物理法术技能等级 #",
-        "zh_TW": "全部物理法術技能等級#",
+        "zh_TW": "#全部物理法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -206385,7 +206473,7 @@
       "explicit.stat_1992191903": {
         "en": "# to Level of all Mark Skills",
         "zh_CN": "# 所有印记技能等级",
-        "zh_TW": "#所有印記技能等級",
+        "zh_TW": "#全部印記技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -207051,7 +207139,7 @@
       "explicit.stat_2162097452": {
         "en": "# to Level of all Minion Skills",
         "zh_CN": "所有召唤生物技能等级 #",
-        "zh_TW": "全部召喚物技能等級#",
+        "zh_TW": "#全部召喚物技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -207321,7 +207409,7 @@
       "explicit.stat_2254480358": {
         "en": "# to Level of all Cold Spell Skills",
         "zh_CN": "所有冰霜法术技能等级 #",
-        "zh_TW": "全部冰冷法術技能等級#",
+        "zh_TW": "#全部冰冷法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -208374,7 +208462,7 @@
       "explicit.stat_2422708892|9085": {
         "en": "Passives in Radius of Crimson Assault can be Allocated\nwithout being connected to your tree",
         "zh_CN": "猩红强袭范围内的天赋可以在\n未连结至天赋树的情况下配置",
-        "zh_TW": "範圍緋紅攻擊內的天賦可以在沒有連結你的天賦樹下被配置",
+        "zh_TW": "範圍緋紅突擊內的天賦可以在沒有連結你的天賦樹下被配置",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -209174,7 +209262,7 @@
       },
       "explicit.stat_2594634307": {
         "en": "Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "印记技能的技能效果持续时间延长 #%",
+        "zh_CN": "印记技能的技能效果持续时间提高 #%",
         "zh_TW": "印記技能增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -210912,7 +211000,7 @@
       "explicit.stat_2954116742|10265": {
         "en": "Allocates Javelin",
         "zh_CN": "配置 标枪",
-        "zh_TW": "配置長矛：傷害核心",
+        "zh_TW": "配置標槍",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -211326,7 +211414,7 @@
       "explicit.stat_2954116742|13542": {
         "en": "Allocates Loose Flesh",
         "zh_CN": "配置 松弛之躯",
-        "zh_TW": "配置鬆散肌肉",
+        "zh_TW": "配置鬆弛血肉",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -212030,7 +212118,7 @@
         "zh_CN": "配置 符文战盔",
         "zh_TW": "配置符文堅盔",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -213578,7 +213666,7 @@
         "zh_CN": "配置 福尔的庇护",
         "zh_TW": "配置福爾的守護",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -214215,7 +214303,7 @@
       "explicit.stat_2954116742|35966": {
         "en": "Allocates Heart Tissue",
         "zh_CN": "配置 心源强健",
-        "zh_TW": "配置心臟疾病",
+        "zh_TW": "配置心臟組織",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -214289,7 +214377,7 @@
         "zh_CN": "配置 冈姆祝福",
         "zh_TW": "配置岡姆之祝",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -214485,7 +214573,7 @@
       "explicit.stat_2954116742|38111": {
         "en": "Allocates Pliable Flesh",
         "zh_CN": "配置 坚韧血肉",
-        "zh_TW": "配置可塑肉體",
+        "zh_TW": "配置柔韌血肉",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -215097,7 +215185,7 @@
       "explicit.stat_2954116742|4238": {
         "en": "Allocates Versatile Arms",
         "zh_CN": "配置 全能神兵",
-        "zh_TW": "配置萬能雙手",
+        "zh_TW": "配置萬用武器",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -215316,7 +215404,7 @@
         "zh_TW": "配置融化烈焰",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "explicit.stat_2954116742|43944": {
@@ -216033,7 +216121,7 @@
       "explicit.stat_2954116742|48774": {
         "en": "Allocates Taut Flesh",
         "zh_CN": "配置 紧绷之躯",
-        "zh_TW": "配置繃緊肌肉",
+        "zh_TW": "配置緊繃血肉",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -216369,7 +216457,7 @@
         "zh_TW": "配置隱蔽",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "explicit.stat_2954116742|51606": {
@@ -217134,7 +217222,7 @@
         "zh_TW": "配置奇術發動機",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "explicit.stat_2954116742|56714": {
@@ -217248,7 +217336,7 @@
       "explicit.stat_2954116742|57110": {
         "en": "Allocates Infused Flesh",
         "zh_CN": "配置 血肉灌注",
-        "zh_TW": "配置注入肉體",
+        "zh_TW": "配置灌注血肉",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -217392,7 +217480,7 @@
       "explicit.stat_2954116742|58215": {
         "en": "Allocates Sanguimantic Rituals",
         "zh_CN": "配置 赤红仪式",
-        "zh_TW": "配置血咒儀式",
+        "zh_TW": "配置占血儀式",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -217556,7 +217644,7 @@
         "zh_CN": "配置 死亡化身",
         "zh_TW": "配置死亡的化身",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -217710,7 +217798,7 @@
         "zh_TW": "配置紅刃紀律",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "explicit.stat_2954116742|6133": {
@@ -218160,7 +218248,7 @@
         "zh_TW": "配置無敵甲殼",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "explicit.stat_2954116742|6514": {
@@ -218726,14 +218814,14 @@
         "zh_CN": "配置 伊泽洛骑士",
         "zh_TW": "配置伊澤洛之騎士",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
       "explicit.stat_2954116742|9896": {
         "en": "Allocates Heartstopping Presence",
         "zh_CN": "配置 凝心气息",
-        "zh_TW": "配置停頓心跳",
+        "zh_TW": "配置懾心氣場",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -219057,7 +219145,7 @@
       "explicit.stat_3035140377": {
         "en": "# to Level of all Attack Skills",
         "zh_CN": "所有攻击技能等级 #",
-        "zh_TW": "全部攻擊技能等級#",
+        "zh_TW": "#全部攻擊技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -219533,7 +219621,7 @@
       },
       "explicit.stat_3113764475": {
         "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
+        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
         "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -220020,10 +220108,10 @@
       "explicit.stat_3206904707": {
         "en": "#% increased Explicit Cold Modifier magnitudes",
         "zh_CN": "外延冰霜词缀增幅提高 #%",
-        "zh_TW": "#% increased Explicit Cold Modifier magnitudes",
+        "zh_TW": "增加#%變動冰冷詞綴的大小",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "exact_id"
         }
       },
       "explicit.stat_321765853": {
@@ -220667,7 +220755,7 @@
       },
       "explicit.stat_3377888098": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间延长 #%",
+        "zh_CN": "技能效果持续时间提高 #%",
         "zh_TW": "增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -221478,10 +221566,10 @@
       "explicit.stat_3514984677": {
         "en": "#% increased Explicit Mana Modifier magnitudes",
         "zh_CN": "外延魔力词缀增幅提高 #%",
-        "zh_TW": "#% increased Explicit Mana Modifier magnitudes",
+        "zh_TW": "增加#%變動魔力詞綴的大小",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "exact_id"
         }
       },
       "explicit.stat_3517228691": {
@@ -222288,7 +222376,7 @@
       "explicit.stat_3709513762": {
         "en": "# to Level of Elemental Weakness Skills",
         "zh_CN": "元素要害技能等级 #",
-        "zh_TW": "元素要害技能等級#",
+        "zh_TW": "#元素要害技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -222792,7 +222880,7 @@
       "explicit.stat_3831171903|13": {
         "en": "Conduit",
         "zh_CN": "能量连接",
-        "zh_TW": "能量連結",
+        "zh_TW": "Conduit",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -222837,7 +222925,7 @@
       "explicit.stat_3831171903|18": {
         "en": "Heartstopper",
         "zh_CN": "凝心者",
-        "zh_TW": "心靈永止",
+        "zh_TW": "Heartstopper",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -222846,7 +222934,7 @@
       "explicit.stat_3831171903|19": {
         "en": "Oasis",
         "zh_CN": "荒漠绿洲",
-        "zh_TW": "幻景綠洲",
+        "zh_TW": "Oasis",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -222900,7 +222988,7 @@
       "explicit.stat_3831171903|24": {
         "en": "Bulwark",
         "zh_CN": "壁垒",
-        "zh_TW": "守護",
+        "zh_TW": "Bulwark",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -222918,7 +223006,7 @@
       "explicit.stat_3831171903|26": {
         "en": "Crimson Assault",
         "zh_CN": "猩红强袭",
-        "zh_TW": "緋紅攻擊",
+        "zh_TW": "緋紅突擊",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -224492,7 +224580,7 @@
       },
       "explicit.stat_4162678661": {
         "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
+        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
         "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -224700,7 +224788,7 @@
       "explicit.stat_4226189338": {
         "en": "# to Level of all Chaos Spell Skills",
         "zh_CN": "所有混沌法术技能等级 #",
-        "zh_TW": "全部混沌法術技能等級#",
+        "zh_TW": "#全部混沌法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -224889,10 +224977,10 @@
       "explicit.stat_4259875040": {
         "en": "#% increased Magnitude of Impales inflicted with Spells",
         "zh_CN": "法术造成的穿刺强度提高 #%",
-        "zh_TW": "#% increased Magnitude of Impales inflicted with Spells",
+        "zh_TW": "增加#%法術所造成之穿刺的幅度",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "exact_id"
         }
       },
       "explicit.stat_4264952559": {
@@ -227877,7 +227965,7 @@
       "explicit.stat_591105508": {
         "en": "# to Level of all Fire Spell Skills",
         "zh_CN": "所有火焰法术技能等级 #",
-        "zh_TW": "全部火焰法術技能等級#",
+        "zh_TW": "#全部火焰法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -228165,7 +228253,7 @@
       "explicit.stat_67169579": {
         "en": "# to Level of all Chaos Skills",
         "zh_CN": "所有混沌技能等级 #",
-        "zh_TW": "全部混沌技能等級#",
+        "zh_TW": "#全部混沌技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -228696,7 +228784,7 @@
       "explicit.stat_805298720": {
         "en": "# to Level of all Curse Skills",
         "zh_CN": "所有诅咒技能等级 #",
-        "zh_TW": "全部詛咒技能等級#",
+        "zh_TW": "#全部詛咒技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -229226,7 +229314,7 @@
       },
       "explicit.stat_933768533": {
         "en": "#% increased Global Armour, Evasion and Energy Shield per Socket filled",
-        "zh_CN": "每个镶嵌的插槽使全局护甲，闪避与能量护盾提高 #%",
+        "zh_CN": "每个镶嵌的插槽全局护甲，闪避与能量护盾提高 #%",
         "zh_TW": "每鑲嵌一個插槽，增加#%全域護甲、閃備與能量護盾",
         "sources": {
           "zh_CN": "exact_id",
@@ -229830,7 +229918,7 @@
       "fractured.stat_1202301673": {
         "en": "# to Level of all Projectile Skills",
         "zh_CN": "所有投射物技能等级 #",
-        "zh_TW": "全部投射物技能等級#",
+        "zh_TW": "#全部投射物技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -229848,7 +229936,7 @@
       "fractured.stat_124131830": {
         "en": "# to Level of all Spell Skills",
         "zh_CN": "所有法术技能等级 #",
-        "zh_TW": "全部法術技能等級#",
+        "zh_TW": "#全部法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -230049,7 +230137,7 @@
         "zh_TW": "範圍內小型天賦也會賦予 增加#%近戰傷害",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_1347539079": {
@@ -230316,7 +230404,7 @@
       "fractured.stat_1545858329": {
         "en": "# to Level of all Lightning Spell Skills",
         "zh_CN": "所有闪电法术技能等级 #",
-        "zh_TW": "全部閃電法術技能等級#",
+        "zh_TW": "#全部閃電法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -230337,7 +230425,7 @@
         "zh_TW": "增加#%強化攻擊造成的傷害",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_1569159338": {
@@ -230433,7 +230521,7 @@
       "fractured.stat_1600707273": {
         "en": "# to Level of all Physical Spell Skills",
         "zh_CN": "所有物理法术技能等级 #",
-        "zh_TW": "全部物理法術技能等級#",
+        "zh_TW": "#全部物理法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -230625,7 +230713,7 @@
         "zh_TW": "增加#%護甲值破壞",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_1777421941": {
@@ -230706,7 +230794,7 @@
         "zh_TW": "召喚砲塔圖騰最大數量#",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_1829102168": {
@@ -230973,10 +231061,10 @@
       "fractured.stat_1992191903": {
         "en": "# to Level of all Mark Skills",
         "zh_CN": "# 所有印记技能等级",
-        "zh_TW": "#所有印記技能等級",
+        "zh_TW": "#全部印記技能等級",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_1994296038": {
@@ -230993,7 +231081,7 @@
         "zh_CN": "怪物的异常状态阈值提高 #%",
         "zh_TW": "增加#%怪物異常狀態門檻",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -231234,7 +231322,7 @@
       "fractured.stat_2162097452": {
         "en": "# to Level of all Minion Skills",
         "zh_CN": "所有召唤生物技能等级 #",
-        "zh_TW": "全部召喚物技能等級#",
+        "zh_TW": "#全部召喚物技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -231333,7 +231421,7 @@
       "fractured.stat_2254480358": {
         "en": "# to Level of all Cold Spell Skills",
         "zh_CN": "所有冰霜法术技能等级 #",
-        "zh_TW": "全部冰冷法術技能等級#",
+        "zh_TW": "#全部冰冷法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -231381,7 +231469,7 @@
         "zh_TW": "增加#%變動元素傷害詞綴的大小",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_2320654813": {
@@ -231596,7 +231684,7 @@
         "zh_CN": "范围内的核心天赋同时提供 混沌抗性 #%",
         "zh_TW": "範圍內核心天賦也會賦予 #%混沌抗性",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -231782,7 +231870,7 @@
       },
       "fractured.stat_2594634307": {
         "en": "Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "印记技能的技能效果持续时间延长 #%",
+        "zh_CN": "印记技能的技能效果持续时间提高 #%",
         "zh_TW": "印記技能增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -231804,7 +231892,7 @@
         "zh_TW": "增加#%護甲破壞持續時間",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_2638756573": {
@@ -231930,7 +232018,7 @@
         "zh_TW": "鬥旗技能增加#%持續時間",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_2726713579": {
@@ -232118,7 +232206,7 @@
         "zh_CN": "怪物将生命上限的 #% 转化为额外能量护盾上限",
         "zh_TW": "怪物獲得等同於最大生命#%的額外最大能量護盾",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -232233,7 +232321,7 @@
       "fractured.stat_2954116742|10265": {
         "en": "Allocates Javelin",
         "zh_CN": "配置 标枪",
-        "zh_TW": "配置長矛：傷害核心",
+        "zh_TW": "配置標槍",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -232289,7 +232377,7 @@
         "zh_CN": "配置 冰霜化身",
         "zh_TW": "配置寒霜化身",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -232352,7 +232440,7 @@
         "zh_CN": "配置 通灵之触",
         "zh_TW": "配置亡者之觸",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -232433,7 +232521,7 @@
         "zh_CN": "配置 迅闪雷暴",
         "zh_TW": "配置電光風暴",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -232527,6 +232615,15 @@
           "zh_TW": "same_bare_and_template"
         }
       },
+      "fractured.stat_2954116742|13489": {
+        "en": "Allocates Unbreakable",
+        "zh_CN": "配置 坚不可摧",
+        "zh_TW": "配置堅不可破",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
       "fractured.stat_2954116742|13515": {
         "en": "Allocates Stormwalker",
         "zh_CN": "配置 风暴行者",
@@ -232548,7 +232645,7 @@
       "fractured.stat_2954116742|13542": {
         "en": "Allocates Loose Flesh",
         "zh_CN": "配置 松弛之躯",
-        "zh_TW": "配置鬆散肌肉",
+        "zh_TW": "配置鬆弛血肉",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -232576,6 +232673,15 @@
         "en": "Allocates Controlling Magic",
         "zh_CN": "配置 支配魔法",
         "zh_TW": "配置操控魔法",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_2954116742|13844": {
+        "en": "Allocates Growing Peril",
+        "zh_CN": "配置 危在旦夕",
+        "zh_TW": "配置危境增長",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -232829,7 +232935,7 @@
         "zh_CN": "配置 呢喃不散",
         "zh_TW": "配置殘留低語",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -232838,7 +232944,7 @@
         "zh_CN": "配置 万事通",
         "zh_TW": "配置萬事通",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -233098,6 +233204,15 @@
         "en": "Allocates Crushing Verdict",
         "zh_CN": "配置 倾力裁决",
         "zh_TW": "配置毀滅裁決",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_2954116742|1861": {
+        "en": "Allocates Knight of Tarcus",
+        "zh_CN": "配置 塔库斯骑士",
+        "zh_TW": "配置塔克司之騎士",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -233517,6 +233632,15 @@
           "zh_TW": "same_bare_and_template"
         }
       },
+      "fractured.stat_2954116742|2344": {
+        "en": "Allocates Dimensional Weakspot",
+        "zh_CN": "配置 维度弱点",
+        "zh_TW": "配置維度弱點",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
       "fractured.stat_2954116742|23630": {
         "en": "Allocates Self Immolation",
         "zh_CN": "配置 自我献祭",
@@ -233584,6 +233708,15 @@
         "en": "Allocates Last Stand",
         "zh_CN": "配置 背水一战",
         "zh_TW": "配置最後一博",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_2954116742|24062": {
+        "en": "Allocates Immortal Infamy",
+        "zh_CN": "配置 不朽英名",
+        "zh_TW": "配置不朽惡名",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -234125,7 +234258,7 @@
         "zh_CN": "配置 终结弹幕",
         "zh_TW": "配置終極彈幕",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -234205,6 +234338,15 @@
         "en": "Allocates Entropic Incarnation",
         "zh_CN": "配置 熵能化身",
         "zh_TW": "配置熵熱化身",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_2954116742|31129": {
+        "en": "Allocates Lifelong Friend",
+        "zh_CN": "配置 终生的好友",
+        "zh_TW": "配置一生之友",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -234385,6 +234527,15 @@
         "en": "Allocates Distracted Target",
         "zh_CN": "配置 声东击西",
         "zh_TW": "配置干擾目標",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_2954116742|32932": {
+        "en": "Allocates Ichlotl's Inferno",
+        "zh_CN": "配置 伊柯洛塔的狱火",
+        "zh_TW": "配置伊克羅特之獄炎",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -234606,6 +234757,15 @@
           "zh_TW": "same_bare_and_template"
         }
       },
+      "fractured.stat_2954116742|35564": {
+        "en": "Allocates Turn the Clock Back",
+        "zh_CN": "配置 时光倒转",
+        "zh_TW": "配置時光倒流",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
       "fractured.stat_2954116742|35581": {
         "en": "Allocates Near at Hand",
         "zh_CN": "配置 探囊取物",
@@ -234690,7 +234850,7 @@
       "fractured.stat_2954116742|35966": {
         "en": "Allocates Heart Tissue",
         "zh_CN": "配置 心源强健",
-        "zh_TW": "配置心臟疾病",
+        "zh_TW": "配置心臟組織",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -234737,7 +234897,7 @@
         "zh_CN": "配置 邪恶愈合",
         "zh_TW": "配置惡毒療癒",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -234888,7 +235048,7 @@
       "fractured.stat_2954116742|38111": {
         "en": "Allocates Pliable Flesh",
         "zh_CN": "配置 坚韧血肉",
-        "zh_TW": "配置可塑肉體",
+        "zh_TW": "配置柔韌血肉",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -235016,7 +235176,7 @@
         "zh_CN": "配置 灌注上限",
         "zh_TW": "配置灌注上限",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -235295,7 +235455,7 @@
         "zh_CN": "配置 瘫痪打击",
         "zh_TW": "配置癱瘓打擊",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -235312,6 +235472,15 @@
         "en": "Allocates Shatter Palm",
         "zh_CN": "配置 溃裂掌",
         "zh_TW": "配置粉碎之掌",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_2954116742|41905": {
+        "en": "Allocates Gravedigger",
+        "zh_CN": "配置 掘墓人",
+        "zh_TW": "配置掘墓者",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -235410,7 +235579,7 @@
       "fractured.stat_2954116742|4238": {
         "en": "Allocates Versatile Arms",
         "zh_CN": "配置 全能神兵",
-        "zh_TW": "配置萬能雙手",
+        "zh_TW": "配置萬用武器",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -235466,7 +235635,7 @@
         "zh_CN": "配置 苦痛血祸",
         "zh_TW": "配置慘痛災禍",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -235485,6 +235654,15 @@
         "zh_TW": "配置風暴破壞者",
         "sources": {
           "zh_CN": "exact_id",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_2954116742|43250": {
+        "en": "Allocates Adaptive Skin",
+        "zh_CN": "配置 应变外观",
+        "zh_TW": "配置適應皮膚",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -235713,6 +235891,15 @@
           "zh_TW": "same_bare_and_template"
         }
       },
+      "fractured.stat_2954116742|4579": {
+        "en": "Allocates Unbothering Cold",
+        "zh_CN": "配置 无扰冰霜",
+        "zh_TW": "配置無礙嚴寒",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
       "fractured.stat_2954116742|46024": {
         "en": "Allocates Sigil of Lightning",
         "zh_CN": "配置 闪电法印",
@@ -235794,6 +235981,15 @@
           "zh_TW": "same_bare_and_template"
         }
       },
+      "fractured.stat_2954116742|46499": {
+        "en": "Allocates Guts",
+        "zh_CN": "配置 刚胆",
+        "zh_TW": "配置膽量",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
       "fractured.stat_2954116742|4661": {
         "en": "Allocates Inspiring Leader",
         "zh_CN": "配置 领袖英姿",
@@ -235834,6 +236030,15 @@
         "en": "Allocates Arcane Mixtures",
         "zh_CN": "配置 秘术灵药",
         "zh_TW": "配置秘能混合物",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_2954116742|47088": {
+        "en": "Allocates Sic 'Em",
+        "zh_CN": "配置 关门放狗",
+        "zh_TW": "配置禁錮他們",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -235992,6 +236197,15 @@
           "zh_TW": "same_bare_and_template"
         }
       },
+      "fractured.stat_2954116742|48240": {
+        "en": "Allocates Quick Recovery",
+        "zh_CN": "配置 快速回复",
+        "zh_TW": "配置快速回復",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
       "fractured.stat_2954116742|48418": {
         "en": "Allocates Hefty Unit",
         "zh_CN": "配置 魁梧壮士",
@@ -236073,6 +236287,15 @@
           "zh_TW": "same_bare_and_template"
         }
       },
+      "fractured.stat_2954116742|4931": {
+        "en": "Allocates Dependable Ward",
+        "zh_CN": "配置 可靠结界",
+        "zh_TW": "配置穩固護盾",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
       "fractured.stat_2954116742|49356": {
         "en": "Allocates First Principle of the Hollow",
         "zh_CN": "配置 虚空第一原理",
@@ -236132,7 +236355,7 @@
         "zh_CN": "配置 欢欣威严",
         "zh_TW": "配置振奮宏偉",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -236168,7 +236391,7 @@
         "zh_CN": "配置 头脑风暴",
         "zh_TW": "配置頭腦風暴",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -236690,7 +236913,7 @@
         "zh_CN": "配置 无情陨落",
         "zh_TW": "配置無情殞落者",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -236897,7 +237120,7 @@
         "zh_CN": "配置 博闻广记",
         "zh_TW": "配置博學的",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -237021,7 +237244,7 @@
       "fractured.stat_2954116742|58215": {
         "en": "Allocates Sanguimantic Rituals",
         "zh_CN": "配置 赤红仪式",
-        "zh_TW": "配置血咒儀式",
+        "zh_TW": "配置占血儀式",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -237096,6 +237319,24 @@
         "zh_TW": "配置幸運兔腳",
         "sources": {
           "zh_CN": "exact_id",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_2954116742|59387": {
+        "en": "Allocates Infusion of Power",
+        "zh_CN": "配置 力量灌注",
+        "zh_TW": "配置力量灌注",
+        "sources": {
+          "zh_CN": "exact_id",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_2954116742|59433": {
+        "en": "Allocates Thirst for Endurance",
+        "zh_CN": "配置 耐力饥渴",
+        "zh_TW": "配置耐力渴求",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -237231,6 +237472,15 @@
         "zh_TW": "配置閃電之息",
         "sources": {
           "zh_CN": "exact_id",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_2954116742|61354": {
+        "en": "Allocates Infernal Limit",
+        "zh_CN": "配置 炼狱上限",
+        "zh_TW": "配置煉獄上限",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -237923,7 +238173,7 @@
         "zh_CN": "配置 破雪者",
         "zh_TW": "配置冰雪穿透",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -237958,6 +238208,15 @@
         "en": "Allocates Insulated Treads",
         "zh_CN": "配置 绝能步伐",
         "zh_TW": "配置絕緣步伐",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_2954116742|9863": {
+        "en": "Allocates Knight of Izaro",
+        "zh_CN": "配置 伊泽洛骑士",
+        "zh_TW": "配置伊澤洛之騎士",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -238110,7 +238369,7 @@
       "fractured.stat_3035140377": {
         "en": "# to Level of all Attack Skills",
         "zh_CN": "所有攻击技能等级 #",
-        "zh_TW": "全部攻擊技能等級#",
+        "zh_TW": "#全部攻擊技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -238190,7 +238449,7 @@
       },
       "fractured.stat_3113764475": {
         "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
+        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
         "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -238353,10 +238612,10 @@
       "fractured.stat_3206904707": {
         "en": "#% increased Explicit Cold Modifier magnitudes",
         "zh_CN": "外延冰霜词缀增幅提高 #%",
-        "zh_TW": "#% increased Explicit Cold Modifier magnitudes",
+        "zh_TW": "增加#%變動冰冷詞綴的大小",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "same_bare_and_template"
         }
       },
       "fractured.stat_3222402650": {
@@ -238604,7 +238863,7 @@
       },
       "fractured.stat_3377888098": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间延长 #%",
+        "zh_CN": "技能效果持续时间提高 #%",
         "zh_TW": "增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -238839,10 +239098,10 @@
       "fractured.stat_3514984677": {
         "en": "#% increased Explicit Mana Modifier magnitudes",
         "zh_CN": "外延魔力词缀增幅提高 #%",
-        "zh_TW": "#% increased Explicit Mana Modifier magnitudes",
+        "zh_TW": "增加#%變動魔力詞綴的大小",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "same_bare_and_template"
         }
       },
       "fractured.stat_3518449420": {
@@ -238887,7 +239146,7 @@
         "zh_TW": "增加#%變動火焰詞綴的大小",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_3579898587": {
@@ -239192,7 +239451,7 @@
         "zh_CN": "怪物受到的诅咒效果总降 #%",
         "zh_TW": "怪物身上的詛咒具有#%更少效果",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -239282,7 +239541,7 @@
         "zh_CN": "若你在过去 8 秒内收集了一个火焰灌注，火焰伤害提高 #%",
         "zh_TW": "若你在過去8秒內拾起了火焰灌注，增加#%火焰傷害",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -239436,7 +239695,7 @@
         "zh_TW": "增加#%凋零幅度",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "fractured.stat_3981240776": {
@@ -239615,7 +239874,7 @@
         "zh_CN": "怪物的晕眩阈值提高 #%",
         "zh_TW": "增加#%怪物的暈眩門檻",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -239693,7 +239952,7 @@
       },
       "fractured.stat_4162678661": {
         "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
+        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
         "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -239766,7 +240025,7 @@
       "fractured.stat_4226189338": {
         "en": "# to Level of all Chaos Spell Skills",
         "zh_CN": "所有混沌法术技能等级 #",
-        "zh_TW": "全部混沌法術技能等級#",
+        "zh_TW": "#全部混沌法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -240126,7 +240385,7 @@
       "fractured.stat_591105508": {
         "en": "# to Level of all Fire Spell Skills",
         "zh_CN": "所有火焰法术技能等级 #",
-        "zh_TW": "全部火焰法術技能等級#",
+        "zh_TW": "#全部火焰法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -240298,6 +240557,15 @@
         "en": "Minions have #% increased Skill Speed with Command Skills",
         "zh_CN": "使用命令技能时，召唤生物的技能速度提高 #%",
         "zh_TW": "增加#%召喚物的號令技能速度",
+        "sources": {
+          "zh_CN": "same_bare_and_template",
+          "zh_TW": "same_bare_and_template"
+        }
+      },
+      "fractured.stat_731781020": {
+        "en": "Flasks gain # charges per Second",
+        "zh_CN": "药剂每秒获得 # 次充能",
+        "zh_TW": "藥劑每秒獲得#充能",
         "sources": {
           "zh_CN": "same_bare_and_template",
           "zh_TW": "same_bare_and_template"
@@ -240702,7 +240970,7 @@
       "implicit.stat_1078455967": {
         "en": "# to Level of all Cold Skills",
         "zh_CN": "所有冰霜技能等级 #",
-        "zh_TW": "全部冰冷技能等級#",
+        "zh_TW": "#全部冰冷技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -240831,7 +241099,7 @@
         "zh_TW": "暴擊擊中會二分",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "implicit.stat_1458343515": {
@@ -242790,7 +243058,7 @@
       "rune.stat_1147690586": {
         "en": "# to Level of all Lightning Skills",
         "zh_CN": "所有闪电技能等级 #",
-        "zh_TW": "全部閃電技能等級#",
+        "zh_TW": "#全部閃電技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -242817,10 +243085,10 @@
       "rune.stat_119336587": {
         "en": "Banners also grant #% of Life Regenerated per second to affected targets",
         "zh_CN": "旗帜同样使受影响目标每秒回复 #% 的生命",
-        "zh_TW": "Banners also grant #% of Life Regenerated per second to affected targets",
+        "zh_TW": "鬥旗同時賦予被其影響的目標#%每秒生命回復",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_1195319608": {
@@ -242871,7 +243139,7 @@
       "rune.stat_124131830": {
         "en": "# to Level of all Spell Skills",
         "zh_CN": "所有法术技能等级 #",
-        "zh_TW": "全部法術技能等級#",
+        "zh_TW": "#全部法術技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -243078,10 +243346,10 @@
       "rune.stat_138373935": {
         "en": "#% to Chaos Resistance for each Corrupted Item Equipped",
         "zh_CN": "每个已装备的腐化物品使混沌抗性 #%",
-        "zh_TW": "#% to Chaos Resistance for each Corrupted Item Equipped",
+        "zh_TW": "每一裝備的已汙染物品#%混沌抗性",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_1386257341": {
@@ -243329,10 +243597,10 @@
       },
       "rune.stat_1554054340": {
         "en": "Bonded: # Life Regeneration per second",
-        "zh_CN": "羁绊：生命每秒再生 #",
-        "zh_TW": "命定:#每秒生命回復",
+        "zh_CN": "羁绊： 生命每秒再生 #",
+        "zh_TW": "Bonded: # Life Regeneration per second",
         "sources": {
-          "zh_CN": "fallback",
+          "zh_CN": "exact_id",
           "zh_TW": "fallback"
         }
       },
@@ -243899,8 +244167,8 @@
         "zh_CN": "附加 # - # 物理伤害",
         "zh_TW": "附加#至#物理傷害",
         "sources": {
-          "zh_CN": "same_bare_and_template",
-          "zh_TW": "same_bare_and_template"
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_1947060170": {
@@ -243969,7 +244237,7 @@
       "rune.stat_1992191903": {
         "en": "# to Level of all Mark Skills",
         "zh_CN": "# 所有印记技能等级",
-        "zh_TW": "#所有印記技能等級",
+        "zh_TW": "#全部印記技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
@@ -244115,8 +244383,8 @@
         "zh_CN": "击中造成流血",
         "zh_TW": "擊中時會造成流血",
         "sources": {
-          "zh_CN": "same_bare_and_template",
-          "zh_TW": "same_bare_and_template"
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_2100249038": {
@@ -244239,10 +244507,10 @@
       "rune.stat_2203195791": {
         "en": "#% increased Skill Speed for each Corrupted Item Equipped",
         "zh_CN": "每有一件已装备的腐化物品，技能速度提高 #%",
-        "zh_TW": "#% increased Skill Speed for each Corrupted Item Equipped",
+        "zh_TW": "每裝備一件已汙染物品，即增加#%技能速度",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_2211478554": {
@@ -244410,7 +244678,7 @@
       "rune.stat_2305301734": {
         "en": "# to Level of all Strike Skill Gems",
         "zh_CN": "所有打击技能宝石等级提高 #",
-        "zh_TW": "#全部風暴技能寶石等級",
+        "zh_TW": "#全部打擊技能寶石等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -244581,7 +244849,7 @@
       "rune.stat_243313994": {
         "en": "Bonded: # to Level of all Attack Skills",
         "zh_CN": "羁绊： 所有攻击技能等级 #",
-        "zh_TW": "命定: 全部攻擊技能等級#",
+        "zh_TW": "命定: #全部攻擊技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -244719,7 +244987,7 @@
         "zh_TW": "增加#%你所施加之感電的幅度",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_2530800730": {
@@ -244868,10 +245136,10 @@
       },
       "rune.stat_2621116283": {
         "en": "Gain #% of damage as Fire damage per 2% Chance to Block",
-        "zh_CN": "每 #% 格挡几率获得相当于伤害 #% 的火焰伤害",
-        "zh_TW": "每擁有#%格擋率，獲得等同於#%傷害的火焰傷害",
+        "zh_CN": "每 2% 格挡几率获得相当于伤害 #% 的火焰伤害",
+        "zh_TW": "Gain #% of damage as Fire damage per 2% Chance to Block",
         "sources": {
-          "zh_CN": "fallback",
+          "zh_CN": "exact_id",
           "zh_TW": "fallback"
         }
       },
@@ -245237,10 +245505,10 @@
       },
       "rune.stat_2894111835": {
         "en": "Bonded: #% increased Presence Area of Effect",
-        "zh_CN": "羁绊：在场范围提高 #%",
-        "zh_TW": "命定:增加#%存在範圍的範圍效果",
+        "zh_CN": "羁绊： 在场范围提高 #%",
+        "zh_TW": "Bonded: #% increased Presence Area of Effect",
         "sources": {
-          "zh_CN": "fallback",
+          "zh_CN": "exact_id",
           "zh_TW": "fallback"
         }
       },
@@ -245616,7 +245884,7 @@
       "rune.stat_3155261831": {
         "en": "Bonded: # to Level of all Minion Skills",
         "zh_CN": "羁绊： 所有召唤生物技能等级 #",
-        "zh_TW": "命定: 全部召喚物技能等級#",
+        "zh_TW": "命定: #全部召喚物技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -245930,7 +246198,7 @@
       },
       "rune.stat_3377888098": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间延长 #%",
+        "zh_CN": "技能效果持续时间提高 #%",
         "zh_TW": "增加#%技能效果持續時間",
         "sources": {
           "zh_CN": "exact_id",
@@ -246311,7 +246579,7 @@
         "zh_CN": "举起盾牌时晕眩阈值翻倍",
         "zh_TW": "舉起盾牌時，暈眩門檻加倍",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -246669,10 +246937,10 @@
       "rune.stat_3985867204": {
         "en": "#% increased Pin duration",
         "zh_CN": "定身持续时间提高 #%",
-        "zh_TW": "#% increased Pin duration",
+        "zh_TW": "增加#%釘身持續時間",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_3986710072": {
@@ -246798,7 +247066,7 @@
         "zh_TW": "投射物有#%機率從地形額外連鎖一次",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "same_bare_and_template"
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_408302348": {
@@ -246849,7 +247117,7 @@
       "rune.stat_4111152445": {
         "en": "Bonded: # to Level of all Lightning Skills",
         "zh_CN": "羁绊： 所有闪电技能等级 #",
-        "zh_TW": "命定: 全部閃電技能等級#",
+        "zh_TW": "命定: #全部閃電技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -246995,7 +247263,7 @@
         "zh_CN": "稀有或传奇敌人每在场一秒，对其造成的击中伤害提高 #%，上限为 200%",
         "zh_TW": "當稀有和傳奇敵人處於你的存在範圍，每秒增加#%對其造成的擊中傷害，上限為200%",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -247040,7 +247308,7 @@
         "zh_CN": "生命再生率提高 #%",
         "zh_TW": "增加#%生命回復率",
         "sources": {
-          "zh_CN": "same_bare_and_template",
+          "zh_CN": "exact_id",
           "zh_TW": "same_bare_and_template"
         }
       },
@@ -247424,7 +247692,7 @@
       },
       "rune.stat_726496846": {
         "en": "Idols socketed in this item gain the benefits of their Bonded modifiers",
-        "zh_CN": "镶嵌在该物品上的雕像获得其自身的羁绊词缀的强化效果",
+        "zh_CN": "镶嵌在该物品上的雕像获得其自身的绑定词缀的强化效果",
         "zh_TW": "鑲嵌在此物品中的魔偶獲得其命定詞綴的加成效果",
         "sources": {
           "zh_CN": "exact_id",
@@ -247560,10 +247828,10 @@
       "rune.stat_776287420": {
         "en": "# to Level of all Herald Skill Gems",
         "zh_CN": "所有捷技能宝石等级提高 #",
-        "zh_TW": "# to Level of all Herald Skill Gems",
+        "zh_TW": "#全部捷光環技能寶石等級",
         "sources": {
           "zh_CN": "exact_id",
-          "zh_TW": "fallback"
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_782230869": {
@@ -247605,7 +247873,7 @@
       "rune.stat_805298720": {
         "en": "# to Level of all Curse Skills",
         "zh_CN": "所有诅咒技能等级 #",
-        "zh_TW": "全部詛咒技能等級#",
+        "zh_TW": "#全部詛咒技能等級",
         "sources": {
           "zh_CN": "exact_id",
           "zh_TW": "exact_id"
@@ -247703,11 +247971,11 @@
       },
       "rune.stat_841463428": {
         "en": "Bonded: #% increased Magnitude of Bleeding you inflict",
-        "zh_CN": "羁绊：你造成的流血强度提高 #%",
-        "zh_TW": "命定:增加#%你所施加之流血的幅度",
+        "zh_CN": "羁绊： 你造成的流血强度提高 #%",
+        "zh_TW": "命定: 增加#%你所施加之流血的幅度",
         "sources": {
-          "zh_CN": "fallback",
-          "zh_TW": "fallback"
+          "zh_CN": "exact_id",
+          "zh_TW": "exact_id"
         }
       },
       "rune.stat_851475033": {
@@ -247883,7 +248151,7 @@
       },
       "rune.stat_967155385": {
         "en": "Prevent #% of Damage from Deflected Hits if you've\nDeflected no Hits Recently",
-        "zh_CN": "若你近期没有受到偏转击中，避免 #% 的\n偏转击中伤害",
+        "zh_CN": "若你近期没有偏转击中，避免 #% 的\n偏转击中伤害",
         "zh_TW": "若你近期沒有偏斜擊中，\n避免#%來自偏斜擊中的傷害",
         "sources": {
           "zh_CN": "exact_id",
@@ -250612,18 +250880,18 @@
     "coverage": {
       "stats": {
         "zh_CN": {
-          "matched": 8123,
-          "total": 8216,
-          "ratio": 0.988681,
-          "exactId": 7523,
-          "sameBareAndTemplate": 600
+          "matched": 8147,
+          "total": 8236,
+          "ratio": 0.989194,
+          "exactId": 7605,
+          "sameBareAndTemplate": 542
         },
         "zh_TW": {
-          "matched": 8119,
-          "total": 8216,
-          "ratio": 0.988194,
-          "exactId": 5873,
-          "sameBareAndTemplate": 2246
+          "matched": 8154,
+          "total": 8236,
+          "ratio": 0.990044,
+          "exactId": 5915,
+          "sameBareAndTemplate": 2239
         }
       },
       "items": {
@@ -250638,9 +250906,9 @@
           "ratio": 1.0
         },
         "supplemental": {
-          "matched": 904,
-          "total": 3900,
-          "ratio": 0.231795
+          "matched": 905,
+          "total": 3901,
+          "ratio": 0.231992
         },
         "gems": {
           "zh_CN": {
@@ -250708,8 +250976,8 @@
         "zh_TW": "技能"
       }
     },
-    "poe2dbKeystoneStatCount": 33,
-    "poe2dbModifierStatCount": 11,
+    "poe2dbKeystoneStatCount": 0,
+    "poe2dbModifierStatCount": 7,
     "items": {
       "Aberrant Sledge": {
         "en": "Aberrant Sledge",
@@ -261886,6 +262154,11 @@
         "zh_CN": "提扎墨脱的灵核",
         "zh_TW": "薩摩特靈魂核心"
       },
+      "Soul Core of Vizoma": {
+        "en": "Soul Core of Vizoma",
+        "zh_CN": "维佐马的灵核",
+        "zh_TW": "威索瑪靈魂核心"
+      },
       "Soul Core of Xopec": {
         "en": "Soul Core of Xopec",
         "zh_CN": "肖佩克的灵核",
@@ -266435,7 +266708,7 @@
       "# to Level of Elemental Weakness Skills": {
         "en": "# to Level of Elemental Weakness Skills",
         "zh_CN": "元素要害技能等级 #",
-        "zh_TW": "元素要害技能等級#"
+        "zh_TW": "#元素要害技能等級"
       },
       "# to Level of Enfeeble Skills": {
         "en": "# to Level of Enfeeble Skills",
@@ -266455,27 +266728,27 @@
       "# to Level of all Attack Skills": {
         "en": "# to Level of all Attack Skills",
         "zh_CN": "所有攻击技能等级 #",
-        "zh_TW": "全部攻擊技能等級#"
+        "zh_TW": "#全部攻擊技能等級"
       },
       "# to Level of all Chaos Skills": {
         "en": "# to Level of all Chaos Skills",
         "zh_CN": "所有混沌技能等级 #",
-        "zh_TW": "全部混沌技能等級#"
+        "zh_TW": "#全部混沌技能等級"
       },
       "# to Level of all Chaos Spell Skills": {
         "en": "# to Level of all Chaos Spell Skills",
         "zh_CN": "所有混沌法术技能等级 #",
-        "zh_TW": "全部混沌法術技能等級#"
+        "zh_TW": "#全部混沌法術技能等級"
       },
       "# to Level of all Cold Skills": {
         "en": "# to Level of all Cold Skills",
         "zh_CN": "所有冰霜技能等级 #",
-        "zh_TW": "全部冰冷技能等級#"
+        "zh_TW": "#全部冰冷技能等級"
       },
       "# to Level of all Cold Spell Skills": {
         "en": "# to Level of all Cold Spell Skills",
         "zh_CN": "所有冰霜法术技能等级 #",
-        "zh_TW": "全部冰冷法術技能等級#"
+        "zh_TW": "#全部冰冷法術技能等級"
       },
       "# to Level of all Corrupted Skill Gems": {
         "en": "# to Level of all Corrupted Skill Gems",
@@ -266490,7 +266763,7 @@
       "# to Level of all Curse Skills": {
         "en": "# to Level of all Curse Skills",
         "zh_CN": "所有诅咒技能等级 #",
-        "zh_TW": "全部詛咒技能等級#"
+        "zh_TW": "#全部詛咒技能等級"
       },
       "# to Level of all Elemental Skills": {
         "en": "# to Level of all Elemental Skills",
@@ -266505,7 +266778,7 @@
       "# to Level of all Fire Spell Skills": {
         "en": "# to Level of all Fire Spell Skills",
         "zh_CN": "所有火焰法术技能等级 #",
-        "zh_TW": "全部火焰法術技能等級#"
+        "zh_TW": "#全部火焰法術技能等級"
       },
       "# to Level of all Grenade Skill Gems": {
         "en": "# to Level of all Grenade Skill Gems",
@@ -266520,22 +266793,22 @@
       "# to Level of all Herald Skill Gems": {
         "en": "# to Level of all Herald Skill Gems",
         "zh_CN": "所有捷技能宝石等级提高 #",
-        "zh_TW": "# to Level of all Herald Skill Gems"
+        "zh_TW": "#全部捷光環技能寶石等級"
       },
       "# to Level of all Lightning Skills": {
         "en": "# to Level of all Lightning Skills",
         "zh_CN": "所有闪电技能等级 #",
-        "zh_TW": "全部閃電技能等級#"
+        "zh_TW": "#全部閃電技能等級"
       },
       "# to Level of all Lightning Spell Skills": {
         "en": "# to Level of all Lightning Spell Skills",
         "zh_CN": "所有闪电法术技能等级 #",
-        "zh_TW": "全部閃電法術技能等級#"
+        "zh_TW": "#全部閃電法術技能等級"
       },
       "# to Level of all Mark Skills": {
         "en": "# to Level of all Mark Skills",
         "zh_CN": "# 所有印记技能等级",
-        "zh_TW": "#所有印記技能等級"
+        "zh_TW": "#全部印記技能等級"
       },
       "# to Level of all Melee Skills": {
         "en": "# to Level of all Melee Skills",
@@ -266545,7 +266818,7 @@
       "# to Level of all Minion Skills": {
         "en": "# to Level of all Minion Skills",
         "zh_CN": "所有召唤生物技能等级 #",
-        "zh_TW": "全部召喚物技能等級#"
+        "zh_TW": "#全部召喚物技能等級"
       },
       "# to Level of all Nova Skill Gems": {
         "en": "# to Level of all Nova Skill Gems",
@@ -266555,7 +266828,7 @@
       "# to Level of all Physical Spell Skills": {
         "en": "# to Level of all Physical Spell Skills",
         "zh_CN": "所有物理法术技能等级 #",
-        "zh_TW": "全部物理法術技能等級#"
+        "zh_TW": "#全部物理法術技能等級"
       },
       "# to Level of all Plant Skill Gems": {
         "en": "# to Level of all Plant Skill Gems",
@@ -266565,7 +266838,7 @@
       "# to Level of all Projectile Skills": {
         "en": "# to Level of all Projectile Skills",
         "zh_CN": "所有投射物技能等级 #",
-        "zh_TW": "全部投射物技能等級#"
+        "zh_TW": "#全部投射物技能等級"
       },
       "# to Level of all Skills": {
         "en": "# to Level of all Skills",
@@ -266580,7 +266853,7 @@
       "# to Level of all Spell Skills": {
         "en": "# to Level of all Spell Skills",
         "zh_CN": "所有法术技能等级 #",
-        "zh_TW": "全部法術技能等級#"
+        "zh_TW": "#全部法術技能等級"
       },
       "# to Level of all Storm Skill Gems": {
         "en": "# to Level of all Storm Skill Gems",
@@ -266590,7 +266863,7 @@
       "# to Level of all Strike Skill Gems": {
         "en": "# to Level of all Strike Skill Gems",
         "zh_CN": "所有打击技能宝石等级提高 #",
-        "zh_TW": "#全部風暴技能寶石等級"
+        "zh_TW": "#全部打擊技能寶石等級"
       },
       "# to Level of all Totem Skill Gems": {
         "en": "# to Level of all Totem Skill Gems",
@@ -268045,7 +268318,7 @@
       "#% increased Explicit Cold Modifier magnitudes": {
         "en": "#% increased Explicit Cold Modifier magnitudes",
         "zh_CN": "外延冰霜词缀增幅提高 #%",
-        "zh_TW": "#% increased Explicit Cold Modifier magnitudes"
+        "zh_TW": "增加#%變動冰冷詞綴的大小"
       },
       "#% increased Explicit Critical Modifier magnitudes": {
         "en": "#% increased Explicit Critical Modifier magnitudes",
@@ -268070,7 +268343,7 @@
       "#% increased Explicit Mana Modifier magnitudes": {
         "en": "#% increased Explicit Mana Modifier magnitudes",
         "zh_CN": "外延魔力词缀增幅提高 #%",
-        "zh_TW": "#% increased Explicit Mana Modifier magnitudes"
+        "zh_TW": "增加#%變動魔力詞綴的大小"
       },
       "#% increased Explicit Physical Modifier magnitudes": {
         "en": "#% increased Explicit Physical Modifier magnitudes",
@@ -268159,7 +268432,7 @@
       },
       "#% increased Global Armour, Evasion and Energy Shield per Socket filled": {
         "en": "#% increased Global Armour, Evasion and Energy Shield per Socket filled",
-        "zh_CN": "每个镶嵌的插槽使全局护甲，闪避与能量护盾提高 #%",
+        "zh_CN": "每个镶嵌的插槽全局护甲，闪避与能量护盾提高 #%",
         "zh_TW": "每鑲嵌一個插槽，增加#%全域護甲、閃備與能量護盾"
       },
       "#% increased Global Evasion Rating when on Low Life": {
@@ -268360,7 +268633,7 @@
       "#% increased Magnitude of Impales inflicted with Spells": {
         "en": "#% increased Magnitude of Impales inflicted with Spells",
         "zh_CN": "法术造成的穿刺强度提高 #%",
-        "zh_TW": "#% increased Magnitude of Impales inflicted with Spells"
+        "zh_TW": "增加#%法術所造成之穿刺的幅度"
       },
       "#% increased Magnitude of Non-Damaging Ailments you inflict": {
         "en": "#% increased Magnitude of Non-Damaging Ailments you inflict",
@@ -268630,7 +268903,7 @@
       "#% increased Pin duration": {
         "en": "#% increased Pin duration",
         "zh_CN": "定身持续时间提高 #%",
-        "zh_TW": "#% increased Pin duration"
+        "zh_TW": "增加#%釘身持續時間"
       },
       "#% increased Poison Duration": {
         "en": "#% increased Poison Duration",
@@ -268829,7 +269102,7 @@
       },
       "#% increased Skill Effect Duration": {
         "en": "#% increased Skill Effect Duration",
-        "zh_CN": "技能效果持续时间延长 #%",
+        "zh_CN": "技能效果持续时间提高 #%",
         "zh_TW": "增加#%技能效果持續時間"
       },
       "#% increased Skill Effect Duration with Plant Skills": {
@@ -268845,7 +269118,7 @@
       "#% increased Skill Speed for each Corrupted Item Equipped": {
         "en": "#% increased Skill Speed for each Corrupted Item Equipped",
         "zh_CN": "每有一件已装备的腐化物品，技能速度提高 #%",
-        "zh_TW": "#% increased Skill Speed for each Corrupted Item Equipped"
+        "zh_TW": "每裝備一件已汙染物品，即增加#%技能速度"
       },
       "#% increased Skill Speed if you've consumed a Frenzy Charge Recently": {
         "en": "#% increased Skill Speed if you've consumed a Frenzy Charge Recently",
@@ -269790,7 +270063,7 @@
       "#% to Chaos Resistance for each Corrupted Item Equipped": {
         "en": "#% to Chaos Resistance for each Corrupted Item Equipped",
         "zh_CN": "每个已装备的腐化物品使混沌抗性 #%",
-        "zh_TW": "#% to Chaos Resistance for each Corrupted Item Equipped"
+        "zh_TW": "每一裝備的已汙染物品#%混沌抗性"
       },
       "#% to Chaos Resistance per Socket filled": {
         "en": "#% to Chaos Resistance per Socket filled",
@@ -273765,7 +274038,7 @@
       "Allocates Heart Tissue": {
         "en": "Allocates Heart Tissue",
         "zh_CN": "配置 心源强健",
-        "zh_TW": "配置心臟疾病"
+        "zh_TW": "配置心臟組織"
       },
       "Allocates Heartbreaking": {
         "en": "Allocates Heartbreaking",
@@ -273780,7 +274053,7 @@
       "Allocates Heartstopping Presence": {
         "en": "Allocates Heartstopping Presence",
         "zh_CN": "配置 凝心气息",
-        "zh_TW": "配置停頓心跳"
+        "zh_TW": "配置懾心氣場"
       },
       "Allocates Heatproof": {
         "en": "Allocates Heatproof",
@@ -274010,7 +274283,7 @@
       "Allocates Infused Flesh": {
         "en": "Allocates Infused Flesh",
         "zh_CN": "配置 血肉灌注",
-        "zh_TW": "配置注入肉體"
+        "zh_TW": "配置灌注血肉"
       },
       "Allocates Infused Limits": {
         "en": "Allocates Infused Limits",
@@ -274145,7 +274418,7 @@
       "Allocates Javelin": {
         "en": "Allocates Javelin",
         "zh_CN": "配置 标枪",
-        "zh_TW": "配置長矛：傷害核心"
+        "zh_TW": "配置標槍"
       },
       "Allocates Kaom's Blessing": {
         "en": "Allocates Kaom's Blessing",
@@ -274315,7 +274588,7 @@
       "Allocates Loose Flesh": {
         "en": "Allocates Loose Flesh",
         "zh_CN": "配置 松弛之躯",
-        "zh_TW": "配置鬆散肌肉"
+        "zh_TW": "配置鬆弛血肉"
       },
       "Allocates Lord of Horrors": {
         "en": "Allocates Lord of Horrors",
@@ -274725,7 +274998,7 @@
       "Allocates Pliable Flesh": {
         "en": "Allocates Pliable Flesh",
         "zh_CN": "配置 坚韧血肉",
-        "zh_TW": "配置可塑肉體"
+        "zh_TW": "配置柔韌血肉"
       },
       "Allocates Pocket Sand": {
         "en": "Allocates Pocket Sand",
@@ -275135,7 +275408,7 @@
       "Allocates Sanguimantic Rituals": {
         "en": "Allocates Sanguimantic Rituals",
         "zh_CN": "配置 赤红仪式",
-        "zh_TW": "配置血咒儀式"
+        "zh_TW": "配置占血儀式"
       },
       "Allocates Sanguine Tolerance": {
         "en": "Allocates Sanguine Tolerance",
@@ -275720,7 +275993,7 @@
       "Allocates Taut Flesh": {
         "en": "Allocates Taut Flesh",
         "zh_CN": "配置 紧绷之躯",
-        "zh_TW": "配置繃緊肌肉"
+        "zh_TW": "配置緊繃血肉"
       },
       "Allocates Tempered Defences": {
         "en": "Allocates Tempered Defences",
@@ -276085,7 +276358,7 @@
       "Allocates Versatile Arms": {
         "en": "Allocates Versatile Arms",
         "zh_CN": "配置 全能神兵",
-        "zh_TW": "配置萬能雙手"
+        "zh_TW": "配置萬用武器"
       },
       "Allocates Viciousness": {
         "en": "Allocates Viciousness",
@@ -277490,7 +277763,7 @@
       "Banners also grant #% of Life Regenerated per second to affected targets": {
         "en": "Banners also grant #% of Life Regenerated per second to affected targets",
         "zh_CN": "旗帜同样使受影响目标每秒回复 #% 的生命",
-        "zh_TW": "Banners also grant #% of Life Regenerated per second to affected targets"
+        "zh_TW": "鬥旗同時賦予被其影響的目標#%每秒生命回復"
       },
       "Banners always have maximum Valour": {
         "en": "Banners always have maximum Valour",
@@ -277949,8 +278222,8 @@
       },
       "Bonded: # Life Regeneration per second": {
         "en": "Bonded: # Life Regeneration per second",
-        "zh_CN": "羁绊：生命每秒再生 #",
-        "zh_TW": "命定:#每秒生命回復"
+        "zh_CN": "羁绊： 生命每秒再生 #",
+        "zh_TW": "Bonded: # Life Regeneration per second"
       },
       "Bonded: # Maximum Life per Level": {
         "en": "Bonded: # Maximum Life per Level",
@@ -277980,17 +278253,17 @@
       "Bonded: # to Level of all Attack Skills": {
         "en": "Bonded: # to Level of all Attack Skills",
         "zh_CN": "羁绊： 所有攻击技能等级 #",
-        "zh_TW": "命定: 全部攻擊技能等級#"
+        "zh_TW": "命定: #全部攻擊技能等級"
       },
       "Bonded: # to Level of all Lightning Skills": {
         "en": "Bonded: # to Level of all Lightning Skills",
         "zh_CN": "羁绊： 所有闪电技能等级 #",
-        "zh_TW": "命定: 全部閃電技能等級#"
+        "zh_TW": "命定: #全部閃電技能等級"
       },
       "Bonded: # to Level of all Minion Skills": {
         "en": "Bonded: # to Level of all Minion Skills",
         "zh_CN": "羁绊： 所有召唤生物技能等级 #",
-        "zh_TW": "命定: 全部召喚物技能等級#"
+        "zh_TW": "命定: #全部召喚物技能等級"
       },
       "Bonded: # to Maximum Endurance Charges": {
         "en": "Bonded: # to Maximum Endurance Charges",
@@ -278384,8 +278657,8 @@
       },
       "Bonded: #% increased Magnitude of Bleeding you inflict": {
         "en": "Bonded: #% increased Magnitude of Bleeding you inflict",
-        "zh_CN": "羁绊：你造成的流血强度提高 #%",
-        "zh_TW": "命定:增加#%你所施加之流血的幅度"
+        "zh_CN": "羁绊： 你造成的流血强度提高 #%",
+        "zh_TW": "命定: 增加#%你所施加之流血的幅度"
       },
       "Bonded: #% increased Magnitude of Non-Damaging Ailments you inflict": {
         "en": "Bonded: #% increased Magnitude of Non-Damaging Ailments you inflict",
@@ -278434,8 +278707,8 @@
       },
       "Bonded: #% increased Presence Area of Effect": {
         "en": "Bonded: #% increased Presence Area of Effect",
-        "zh_CN": "羁绊：在场范围提高 #%",
-        "zh_TW": "命定:增加#%存在範圍的範圍效果"
+        "zh_CN": "羁绊： 在场范围提高 #%",
+        "zh_TW": "Bonded: #% increased Presence Area of Effect"
       },
       "Bonded: #% increased Projectile Damage": {
         "en": "Bonded: #% increased Projectile Damage",
@@ -279370,7 +279643,7 @@
       "Bulwark": {
         "en": "Bulwark",
         "zh_CN": "壁垒",
-        "zh_TW": "守護"
+        "zh_TW": "Bulwark"
       },
       "Bulwark Greaves": {
         "en": "Bulwark Greaves",
@@ -280360,7 +280633,7 @@
       "Conduit": {
         "en": "Conduit",
         "zh_CN": "能量连接",
-        "zh_TW": "能量連結"
+        "zh_TW": "Conduit"
       },
       "Conjurer Mantle": {
         "en": "Conjurer Mantle",
@@ -280775,7 +281048,7 @@
       "Crimson Assault": {
         "en": "Crimson Assault",
         "zh_CN": "猩红强袭",
-        "zh_TW": "緋紅攻擊"
+        "zh_TW": "緋紅突擊"
       },
       "Critical Chance": {
         "en": "Critical Chance",
@@ -283729,8 +284002,8 @@
       },
       "Gain #% of damage as Fire damage per 2% Chance to Block": {
         "en": "Gain #% of damage as Fire damage per 2% Chance to Block",
-        "zh_CN": "每 #% 格挡几率获得相当于伤害 #% 的火焰伤害",
-        "zh_TW": "每擁有#%格擋率，獲得等同於#%傷害的火焰傷害"
+        "zh_CN": "每 2% 格挡几率获得相当于伤害 #% 的火焰伤害",
+        "zh_TW": "Gain #% of damage as Fire damage per 2% Chance to Block"
       },
       "Gain #% of maximum Life as Extra maximum Energy Shield": {
         "en": "Gain #% of maximum Life as Extra maximum Energy Shield",
@@ -285875,7 +286148,7 @@
       "Heartstopper": {
         "en": "Heartstopper",
         "zh_CN": "凝心者",
-        "zh_TW": "心靈永止"
+        "zh_TW": "Heartstopper"
       },
       "Heartwood Shortbow": {
         "en": "Heartwood Shortbow",
@@ -286384,7 +286657,7 @@
       },
       "Idols socketed in this item gain the benefits of their Bonded modifiers": {
         "en": "Idols socketed in this item gain the benefits of their Bonded modifiers",
-        "zh_CN": "镶嵌在该物品上的雕像获得其自身的羁绊词缀的强化效果",
+        "zh_CN": "镶嵌在该物品上的雕像获得其自身的绑定词缀的强化效果",
         "zh_TW": "鑲嵌在此物品中的魔偶獲得其命定詞綴的加成效果"
       },
       "If Map was not previously Irradiated, completing Map adds Irradiation instead": {
@@ -286506,6 +286779,11 @@
         "en": "Includes base value, local modifiers, and maximum quality",
         "zh_CN": "包括基础数值、本地词缀、最大品质",
         "zh_TW": "包含基礎值、區域詞綴和最大品質"
+      },
+      "Includes sockets with Socket-Bound Augments": {
+        "en": "Includes sockets with Socket-Bound Augments",
+        "zh_CN": "包含装有插槽绑定增幅器的插槽",
+        "zh_TW": "包含帶有插槽綁定增幅的插槽"
       },
       "Increased Item Rarity": {
         "en": "Increased Item Rarity",
@@ -287511,11 +287789,6 @@
         "en": "Legacy of Jade",
         "zh_CN": "青玉 继承",
         "zh_TW": "翠玉之遺"
-      },
-      "Legacy of Keeper of the Arc": {
-        "en": "Legacy of Keeper of the Arc",
-        "zh_CN": "弧光守护者之遗产",
-        "zh_TW": "傳承．電弧守護者"
       },
       "Legacy of Kingsguard": {
         "en": "Legacy of Kingsguard",
@@ -288564,7 +288837,7 @@
       },
       "Mark Skills have #% increased Skill Effect Duration": {
         "en": "Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "印记技能的技能效果持续时间延长 #%",
+        "zh_CN": "印记技能的技能效果持续时间提高 #%",
         "zh_TW": "印記技能增加#%技能效果持續時間"
       },
       "Mark Skills have #% increased Use Speed": {
@@ -289674,7 +289947,7 @@
       },
       "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration": {
         "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
+        "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
         "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間"
       },
       "Notable Passive Skills in Radius also grant #% increased Skill Speed while Shapeshifted": {
@@ -289950,7 +290223,7 @@
       "Oasis": {
         "en": "Oasis",
         "zh_CN": "荒漠绿洲",
-        "zh_TW": "幻景綠洲"
+        "zh_TW": "Oasis"
       },
       "Obliterator Bow": {
         "en": "Obliterator Bow",
@@ -290675,7 +290948,7 @@
       "Passives in Radius of Crimson Assault can be Allocated\nwithout being connected to your tree": {
         "en": "Passives in Radius of Crimson Assault can be Allocated\nwithout being connected to your tree",
         "zh_CN": "猩红强袭范围内的天赋可以在\n未连结至天赋树的情况下配置",
-        "zh_TW": "範圍緋紅攻擊內的天賦可以在沒有連結你的天賦樹下被配置"
+        "zh_TW": "範圍緋紅突擊內的天賦可以在沒有連結你的天賦樹下被配置"
       },
       "Passives in Radius of Dance with Death can be Allocated\nwithout being connected to your tree": {
         "en": "Passives in Radius of Dance with Death can be Allocated\nwithout being connected to your tree",
@@ -291554,7 +291827,7 @@
       },
       "Prevent #% of Damage from Deflected Hits if you've\nDeflected no Hits Recently": {
         "en": "Prevent #% of Damage from Deflected Hits if you've\nDeflected no Hits Recently",
-        "zh_CN": "若你近期没有受到偏转击中，避免 #% 的\n偏转击中伤害",
+        "zh_CN": "若你近期没有偏转击中，避免 #% 的\n偏转击中伤害",
         "zh_TW": "若你近期沒有偏斜擊中，\n避免#%來自偏斜擊中的傷害"
       },
       "Price with Note": {
@@ -297624,7 +297897,7 @@
       },
       "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration": {
         "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
+        "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
         "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間"
       },
       "Small Passive Skills in Radius also grant Mark Skills have #% increased Use Speed": {
@@ -297841,6 +298114,11 @@
         "en": "Soul Core of Tzamoto",
         "zh_CN": "提扎墨脱的灵核",
         "zh_TW": "薩摩特靈魂核心"
+      },
+      "Soul Core of Vizoma": {
+        "en": "Soul Core of Vizoma",
+        "zh_CN": "维佐马的灵核",
+        "zh_TW": "威索瑪靈魂核心"
       },
       "Soul Core of Xopec": {
         "en": "Soul Core of Xopec",
@@ -299131,6 +299409,11 @@
         "en": "Tornado Shot",
         "zh_CN": "龙卷射击",
         "zh_TW": "龍捲射擊"
+      },
+      "Total Augment Sockets": {
+        "en": "Total Augment Sockets",
+        "zh_CN": "总增幅器插槽",
+        "zh_TW": "總增幅插槽"
       },
       "Totemic Greatclub": {
         "en": "Totemic Greatclub",
@@ -303042,7 +303325,7 @@
       "legacy-of-keeper-of-the-arc": {
         "en": "Legacy of Keeper of the Arc",
         "zh_CN": "弧光守护者之遗产",
-        "zh_TW": "傳承．電弧守護者"
+        "zh_TW": "傳承．弧之守護者"
       },
       "legacy-of-kingsguard": {
         "en": "Legacy of Kingsguard",
@@ -321050,6 +321333,12 @@
           "zh_TW": "薩摩特靈魂核心"
         },
         {
+          "id": "Soul Core of Vizoma",
+          "en": "Soul Core of Vizoma",
+          "zh_CN": "维佐马的灵核",
+          "zh_TW": "威索瑪靈魂核心"
+        },
+        {
           "id": "Soul Core of Xopec",
           "en": "Soul Core of Xopec",
           "zh_CN": "肖佩克的灵核",
@@ -329173,85 +329462,85 @@
           "id": "crafted.stat_3035140377",
           "en": "# to Level of all Attack Skills",
           "zh_CN": "所有攻击技能等级 #",
-          "zh_TW": "全部攻擊技能等級#"
+          "zh_TW": "#全部攻擊技能等級"
         },
         {
           "id": "explicit.stat_3035140377",
           "en": "# to Level of all Attack Skills",
           "zh_CN": "所有攻击技能等级 #",
-          "zh_TW": "全部攻擊技能等級#"
+          "zh_TW": "#全部攻擊技能等級"
         },
         {
           "id": "fractured.stat_3035140377",
           "en": "# to Level of all Attack Skills",
           "zh_CN": "所有攻击技能等级 #",
-          "zh_TW": "全部攻擊技能等級#"
+          "zh_TW": "#全部攻擊技能等級"
         },
         {
           "id": "explicit.stat_67169579",
           "en": "# to Level of all Chaos Skills",
           "zh_CN": "所有混沌技能等级 #",
-          "zh_TW": "全部混沌技能等級#"
+          "zh_TW": "#全部混沌技能等級"
         },
         {
           "id": "desecrated.stat_4226189338",
           "en": "# to Level of all Chaos Spell Skills",
           "zh_CN": "所有混沌法术技能等级 #",
-          "zh_TW": "全部混沌法術技能等級#"
+          "zh_TW": "#全部混沌法術技能等級"
         },
         {
           "id": "enchant.stat_4226189338",
           "en": "# to Level of all Chaos Spell Skills",
           "zh_CN": "所有混沌法术技能等级 #",
-          "zh_TW": "全部混沌法術技能等級#"
+          "zh_TW": "#全部混沌法術技能等級"
         },
         {
           "id": "explicit.stat_4226189338",
           "en": "# to Level of all Chaos Spell Skills",
           "zh_CN": "所有混沌法术技能等级 #",
-          "zh_TW": "全部混沌法術技能等級#"
+          "zh_TW": "#全部混沌法術技能等級"
         },
         {
           "id": "fractured.stat_4226189338",
           "en": "# to Level of all Chaos Spell Skills",
           "zh_CN": "所有混沌法术技能等级 #",
-          "zh_TW": "全部混沌法術技能等級#"
+          "zh_TW": "#全部混沌法術技能等級"
         },
         {
           "id": "explicit.stat_1078455967",
           "en": "# to Level of all Cold Skills",
           "zh_CN": "所有冰霜技能等级 #",
-          "zh_TW": "全部冰冷技能等級#"
+          "zh_TW": "#全部冰冷技能等級"
         },
         {
           "id": "implicit.stat_1078455967",
           "en": "# to Level of all Cold Skills",
           "zh_CN": "所有冰霜技能等级 #",
-          "zh_TW": "全部冰冷技能等級#"
+          "zh_TW": "#全部冰冷技能等級"
         },
         {
           "id": "desecrated.stat_2254480358",
           "en": "# to Level of all Cold Spell Skills",
           "zh_CN": "所有冰霜法术技能等级 #",
-          "zh_TW": "全部冰冷法術技能等級#"
+          "zh_TW": "#全部冰冷法術技能等級"
         },
         {
           "id": "enchant.stat_2254480358",
           "en": "# to Level of all Cold Spell Skills",
           "zh_CN": "所有冰霜法术技能等级 #",
-          "zh_TW": "全部冰冷法術技能等級#"
+          "zh_TW": "#全部冰冷法術技能等級"
         },
         {
           "id": "explicit.stat_2254480358",
           "en": "# to Level of all Cold Spell Skills",
           "zh_CN": "所有冰霜法术技能等级 #",
-          "zh_TW": "全部冰冷法術技能等級#"
+          "zh_TW": "#全部冰冷法術技能等級"
         },
         {
           "id": "fractured.stat_2254480358",
           "en": "# to Level of all Cold Spell Skills",
           "zh_CN": "所有冰霜法术技能等级 #",
-          "zh_TW": "全部冰冷法術技能等級#"
+          "zh_TW": "#全部冰冷法術技能等級"
         },
         {
           "id": "implicit.stat_2251279027",
@@ -329269,13 +329558,13 @@
           "id": "explicit.stat_805298720",
           "en": "# to Level of all Curse Skills",
           "zh_CN": "所有诅咒技能等级 #",
-          "zh_TW": "全部詛咒技能等級#"
+          "zh_TW": "#全部詛咒技能等級"
         },
         {
           "id": "rune.stat_805298720",
           "en": "# to Level of all Curse Skills",
           "zh_CN": "所有诅咒技能等级 #",
-          "zh_TW": "全部詛咒技能等級#"
+          "zh_TW": "#全部詛咒技能等級"
         },
         {
           "id": "explicit.stat_2901213448",
@@ -329293,25 +329582,25 @@
           "id": "desecrated.stat_591105508",
           "en": "# to Level of all Fire Spell Skills",
           "zh_CN": "所有火焰法术技能等级 #",
-          "zh_TW": "全部火焰法術技能等級#"
+          "zh_TW": "#全部火焰法術技能等級"
         },
         {
           "id": "enchant.stat_591105508",
           "en": "# to Level of all Fire Spell Skills",
           "zh_CN": "所有火焰法术技能等级 #",
-          "zh_TW": "全部火焰法術技能等級#"
+          "zh_TW": "#全部火焰法術技能等級"
         },
         {
           "id": "explicit.stat_591105508",
           "en": "# to Level of all Fire Spell Skills",
           "zh_CN": "所有火焰法术技能等级 #",
-          "zh_TW": "全部火焰法術技能等級#"
+          "zh_TW": "#全部火焰法術技能等級"
         },
         {
           "id": "fractured.stat_591105508",
           "en": "# to Level of all Fire Spell Skills",
           "zh_CN": "所有火焰法术技能等级 #",
-          "zh_TW": "全部火焰法術技能等級#"
+          "zh_TW": "#全部火焰法術技能等級"
         },
         {
           "id": "rune.stat_3268281424",
@@ -329329,67 +329618,67 @@
           "id": "rune.stat_776287420",
           "en": "# to Level of all Herald Skill Gems",
           "zh_CN": "所有捷技能宝石等级提高 #",
-          "zh_TW": "# to Level of all Herald Skill Gems"
+          "zh_TW": "#全部捷光環技能寶石等級"
         },
         {
           "id": "explicit.stat_1147690586",
           "en": "# to Level of all Lightning Skills",
           "zh_CN": "所有闪电技能等级 #",
-          "zh_TW": "全部閃電技能等級#"
+          "zh_TW": "#全部閃電技能等級"
         },
         {
           "id": "rune.stat_1147690586",
           "en": "# to Level of all Lightning Skills",
           "zh_CN": "所有闪电技能等级 #",
-          "zh_TW": "全部閃電技能等級#"
+          "zh_TW": "#全部閃電技能等級"
         },
         {
           "id": "desecrated.stat_1545858329",
           "en": "# to Level of all Lightning Spell Skills",
           "zh_CN": "所有闪电法术技能等级 #",
-          "zh_TW": "全部閃電法術技能等級#"
+          "zh_TW": "#全部閃電法術技能等級"
         },
         {
           "id": "enchant.stat_1545858329",
           "en": "# to Level of all Lightning Spell Skills",
           "zh_CN": "所有闪电法术技能等级 #",
-          "zh_TW": "全部閃電法術技能等級#"
+          "zh_TW": "#全部閃電法術技能等級"
         },
         {
           "id": "explicit.stat_1545858329",
           "en": "# to Level of all Lightning Spell Skills",
           "zh_CN": "所有闪电法术技能等级 #",
-          "zh_TW": "全部閃電法術技能等級#"
+          "zh_TW": "#全部閃電法術技能等級"
         },
         {
           "id": "fractured.stat_1545858329",
           "en": "# to Level of all Lightning Spell Skills",
           "zh_CN": "所有闪电法术技能等级 #",
-          "zh_TW": "全部閃電法術技能等級#"
+          "zh_TW": "#全部閃電法術技能等級"
         },
         {
           "id": "desecrated.stat_1992191903",
           "en": "# to Level of all Mark Skills",
           "zh_CN": "# 所有印记技能等级",
-          "zh_TW": "#所有印記技能等級"
+          "zh_TW": "#全部印記技能等級"
         },
         {
           "id": "explicit.stat_1992191903",
           "en": "# to Level of all Mark Skills",
           "zh_CN": "# 所有印记技能等级",
-          "zh_TW": "#所有印記技能等級"
+          "zh_TW": "#全部印記技能等級"
         },
         {
           "id": "fractured.stat_1992191903",
           "en": "# to Level of all Mark Skills",
           "zh_CN": "# 所有印记技能等级",
-          "zh_TW": "#所有印記技能等級"
+          "zh_TW": "#全部印記技能等級"
         },
         {
           "id": "rune.stat_1992191903",
           "en": "# to Level of all Mark Skills",
           "zh_CN": "# 所有印记技能等级",
-          "zh_TW": "#所有印記技能等級"
+          "zh_TW": "#全部印記技能等級"
         },
         {
           "id": "desecrated.stat_9187492",
@@ -329419,31 +329708,31 @@
           "id": "crafted.stat_2162097452",
           "en": "# to Level of all Minion Skills",
           "zh_CN": "所有召唤生物技能等级 #",
-          "zh_TW": "全部召喚物技能等級#"
+          "zh_TW": "#全部召喚物技能等級"
         },
         {
           "id": "desecrated.stat_2162097452",
           "en": "# to Level of all Minion Skills",
           "zh_CN": "所有召唤生物技能等级 #",
-          "zh_TW": "全部召喚物技能等級#"
+          "zh_TW": "#全部召喚物技能等級"
         },
         {
           "id": "enchant.stat_2162097452",
           "en": "# to Level of all Minion Skills",
           "zh_CN": "所有召唤生物技能等级 #",
-          "zh_TW": "全部召喚物技能等級#"
+          "zh_TW": "#全部召喚物技能等級"
         },
         {
           "id": "explicit.stat_2162097452",
           "en": "# to Level of all Minion Skills",
           "zh_CN": "所有召唤生物技能等级 #",
-          "zh_TW": "全部召喚物技能等級#"
+          "zh_TW": "#全部召喚物技能等級"
         },
         {
           "id": "fractured.stat_2162097452",
           "en": "# to Level of all Minion Skills",
           "zh_CN": "所有召唤生物技能等级 #",
-          "zh_TW": "全部召喚物技能等級#"
+          "zh_TW": "#全部召喚物技能等級"
         },
         {
           "id": "rune.stat_3148103963",
@@ -329455,25 +329744,25 @@
           "id": "desecrated.stat_1600707273",
           "en": "# to Level of all Physical Spell Skills",
           "zh_CN": "所有物理法术技能等级 #",
-          "zh_TW": "全部物理法術技能等級#"
+          "zh_TW": "#全部物理法術技能等級"
         },
         {
           "id": "enchant.stat_1600707273",
           "en": "# to Level of all Physical Spell Skills",
           "zh_CN": "所有物理法术技能等级 #",
-          "zh_TW": "全部物理法術技能等級#"
+          "zh_TW": "#全部物理法術技能等級"
         },
         {
           "id": "explicit.stat_1600707273",
           "en": "# to Level of all Physical Spell Skills",
           "zh_CN": "所有物理法术技能等级 #",
-          "zh_TW": "全部物理法術技能等級#"
+          "zh_TW": "#全部物理法術技能等級"
         },
         {
           "id": "fractured.stat_1600707273",
           "en": "# to Level of all Physical Spell Skills",
           "zh_CN": "所有物理法术技能等级 #",
-          "zh_TW": "全部物理法術技能等級#"
+          "zh_TW": "#全部物理法術技能等級"
         },
         {
           "id": "rune.stat_2296009672",
@@ -329485,19 +329774,19 @@
           "id": "desecrated.stat_1202301673",
           "en": "# to Level of all Projectile Skills",
           "zh_CN": "所有投射物技能等级 #",
-          "zh_TW": "全部投射物技能等級#"
+          "zh_TW": "#全部投射物技能等級"
         },
         {
           "id": "explicit.stat_1202301673",
           "en": "# to Level of all Projectile Skills",
           "zh_CN": "所有投射物技能等级 #",
-          "zh_TW": "全部投射物技能等級#"
+          "zh_TW": "#全部投射物技能等級"
         },
         {
           "id": "fractured.stat_1202301673",
           "en": "# to Level of all Projectile Skills",
           "zh_CN": "所有投射物技能等级 #",
-          "zh_TW": "全部投射物技能等級#"
+          "zh_TW": "#全部投射物技能等級"
         },
         {
           "id": "desecrated.stat_4283407333",
@@ -329527,31 +329816,31 @@
           "id": "crafted.stat_124131830",
           "en": "# to Level of all Spell Skills",
           "zh_CN": "所有法术技能等级 #",
-          "zh_TW": "全部法術技能等級#"
+          "zh_TW": "#全部法術技能等級"
         },
         {
           "id": "desecrated.stat_124131830",
           "en": "# to Level of all Spell Skills",
           "zh_CN": "所有法术技能等级 #",
-          "zh_TW": "全部法術技能等級#"
+          "zh_TW": "#全部法術技能等級"
         },
         {
           "id": "explicit.stat_124131830",
           "en": "# to Level of all Spell Skills",
           "zh_CN": "所有法术技能等级 #",
-          "zh_TW": "全部法術技能等級#"
+          "zh_TW": "#全部法術技能等級"
         },
         {
           "id": "fractured.stat_124131830",
           "en": "# to Level of all Spell Skills",
           "zh_CN": "所有法术技能等级 #",
-          "zh_TW": "全部法術技能等級#"
+          "zh_TW": "#全部法術技能等級"
         },
         {
           "id": "rune.stat_124131830",
           "en": "# to Level of all Spell Skills",
           "zh_CN": "所有法术技能等级 #",
-          "zh_TW": "全部法術技能等級#"
+          "zh_TW": "#全部法術技能等級"
         },
         {
           "id": "rune.stat_1062190843",
@@ -329563,7 +329852,7 @@
           "id": "rune.stat_2305301734",
           "en": "# to Level of all Strike Skill Gems",
           "zh_CN": "所有打击技能宝石等级提高 #",
-          "zh_TW": "#全部風暴技能寶石等級"
+          "zh_TW": "#全部打擊技能寶石等級"
         },
         {
           "id": "rune.stat_2336703514",
@@ -329593,7 +329882,7 @@
           "id": "explicit.stat_3709513762",
           "en": "# to Level of Elemental Weakness Skills",
           "zh_CN": "元素要害技能等级 #",
-          "zh_TW": "元素要害技能等級#"
+          "zh_TW": "#元素要害技能等級"
         },
         {
           "id": "explicit.stat_3948285912",
@@ -334027,19 +334316,19 @@
           "id": "desecrated.stat_3206904707",
           "en": "#% increased Explicit Cold Modifier magnitudes",
           "zh_CN": "外延冰霜词缀增幅提高 #%",
-          "zh_TW": "#% increased Explicit Cold Modifier magnitudes"
+          "zh_TW": "增加#%變動冰冷詞綴的大小"
         },
         {
           "id": "explicit.stat_3206904707",
           "en": "#% increased Explicit Cold Modifier magnitudes",
           "zh_CN": "外延冰霜词缀增幅提高 #%",
-          "zh_TW": "#% increased Explicit Cold Modifier magnitudes"
+          "zh_TW": "增加#%變動冰冷詞綴的大小"
         },
         {
           "id": "fractured.stat_3206904707",
           "en": "#% increased Explicit Cold Modifier magnitudes",
           "zh_CN": "外延冰霜词缀增幅提高 #%",
-          "zh_TW": "#% increased Explicit Cold Modifier magnitudes"
+          "zh_TW": "增加#%變動冰冷詞綴的大小"
         },
         {
           "id": "desecrated.stat_2393315299",
@@ -334117,19 +334406,19 @@
           "id": "desecrated.stat_3514984677",
           "en": "#% increased Explicit Mana Modifier magnitudes",
           "zh_CN": "外延魔力词缀增幅提高 #%",
-          "zh_TW": "#% increased Explicit Mana Modifier magnitudes"
+          "zh_TW": "增加#%變動魔力詞綴的大小"
         },
         {
           "id": "explicit.stat_3514984677",
           "en": "#% increased Explicit Mana Modifier magnitudes",
           "zh_CN": "外延魔力词缀增幅提高 #%",
-          "zh_TW": "#% increased Explicit Mana Modifier magnitudes"
+          "zh_TW": "增加#%變動魔力詞綴的大小"
         },
         {
           "id": "fractured.stat_3514984677",
           "en": "#% increased Explicit Mana Modifier magnitudes",
           "zh_CN": "外延魔力词缀增幅提高 #%",
-          "zh_TW": "#% increased Explicit Mana Modifier magnitudes"
+          "zh_TW": "增加#%變動魔力詞綴的大小"
         },
         {
           "id": "desecrated.stat_1335369947",
@@ -334506,7 +334795,7 @@
         {
           "id": "explicit.stat_933768533",
           "en": "#% increased Global Armour, Evasion and Energy Shield per Socket filled",
-          "zh_CN": "每个镶嵌的插槽使全局护甲，闪避与能量护盾提高 #%",
+          "zh_CN": "每个镶嵌的插槽全局护甲，闪避与能量护盾提高 #%",
           "zh_TW": "每鑲嵌一個插槽，增加#%全域護甲、閃備與能量護盾"
         },
         {
@@ -335143,19 +335432,19 @@
           "id": "crafted.stat_4259875040",
           "en": "#% increased Magnitude of Impales inflicted with Spells",
           "zh_CN": "法术造成的穿刺强度提高 #%",
-          "zh_TW": "#% increased Magnitude of Impales inflicted with Spells"
+          "zh_TW": "增加#%法術所造成之穿刺的幅度"
         },
         {
           "id": "desecrated.stat_4259875040",
           "en": "#% increased Magnitude of Impales inflicted with Spells",
           "zh_CN": "法术造成的穿刺强度提高 #%",
-          "zh_TW": "#% increased Magnitude of Impales inflicted with Spells"
+          "zh_TW": "增加#%法術所造成之穿刺的幅度"
         },
         {
           "id": "explicit.stat_4259875040",
           "en": "#% increased Magnitude of Impales inflicted with Spells",
           "zh_CN": "法术造成的穿刺强度提高 #%",
-          "zh_TW": "#% increased Magnitude of Impales inflicted with Spells"
+          "zh_TW": "增加#%法術所造成之穿刺的幅度"
         },
         {
           "id": "rune.stat_782230869",
@@ -336127,7 +336416,7 @@
           "id": "rune.stat_3985867204",
           "en": "#% increased Pin duration",
           "zh_CN": "定身持续时间提高 #%",
-          "zh_TW": "#% increased Pin duration"
+          "zh_TW": "增加#%釘身持續時間"
         },
         {
           "id": "desecrated.stat_2011656677",
@@ -336672,37 +336961,37 @@
         {
           "id": "crafted.stat_3377888098",
           "en": "#% increased Skill Effect Duration",
-          "zh_CN": "技能效果持续时间延长 #%",
+          "zh_CN": "技能效果持续时间提高 #%",
           "zh_TW": "增加#%技能效果持續時間"
         },
         {
           "id": "desecrated.stat_3377888098",
           "en": "#% increased Skill Effect Duration",
-          "zh_CN": "技能效果持续时间延长 #%",
+          "zh_CN": "技能效果持续时间提高 #%",
           "zh_TW": "增加#%技能效果持續時間"
         },
         {
           "id": "enchant.stat_3377888098",
           "en": "#% increased Skill Effect Duration",
-          "zh_CN": "技能效果持续时间延长 #%",
+          "zh_CN": "技能效果持续时间提高 #%",
           "zh_TW": "增加#%技能效果持續時間"
         },
         {
           "id": "explicit.stat_3377888098",
           "en": "#% increased Skill Effect Duration",
-          "zh_CN": "技能效果持续时间延长 #%",
+          "zh_CN": "技能效果持续时间提高 #%",
           "zh_TW": "增加#%技能效果持續時間"
         },
         {
           "id": "fractured.stat_3377888098",
           "en": "#% increased Skill Effect Duration",
-          "zh_CN": "技能效果持续时间延长 #%",
+          "zh_CN": "技能效果持续时间提高 #%",
           "zh_TW": "增加#%技能效果持續時間"
         },
         {
           "id": "rune.stat_3377888098",
           "en": "#% increased Skill Effect Duration",
-          "zh_CN": "技能效果持续时间延长 #%",
+          "zh_CN": "技能效果持续时间提高 #%",
           "zh_TW": "增加#%技能效果持續時間"
         },
         {
@@ -336739,7 +337028,7 @@
           "id": "rune.stat_2203195791",
           "en": "#% increased Skill Speed for each Corrupted Item Equipped",
           "zh_CN": "每有一件已装备的腐化物品，技能速度提高 #%",
-          "zh_TW": "#% increased Skill Speed for each Corrupted Item Equipped"
+          "zh_TW": "每裝備一件已汙染物品，即增加#%技能速度"
         },
         {
           "id": "desecrated.stat_3313255158",
@@ -338821,7 +339110,7 @@
           "id": "rune.stat_138373935",
           "en": "#% to Chaos Resistance for each Corrupted Item Equipped",
           "zh_CN": "每个已装备的腐化物品使混沌抗性 #%",
-          "zh_TW": "#% to Chaos Resistance for each Corrupted Item Equipped"
+          "zh_TW": "每一裝備的已汙染物品#%混沌抗性"
         },
         {
           "id": "explicit.stat_1123023256",
@@ -342155,6 +342444,12 @@
         },
         {
           "id": "explicit.stat_2954116742|43250",
+          "en": "Allocates Adaptive Skin",
+          "zh_CN": "配置 应变外观",
+          "zh_TW": "配置適應皮膚"
+        },
+        {
+          "id": "fractured.stat_2954116742|43250",
           "en": "Allocates Adaptive Skin",
           "zh_CN": "配置 应变外观",
           "zh_TW": "配置適應皮膚"
@@ -346408,6 +346703,12 @@
           "zh_TW": "配置穩固護盾"
         },
         {
+          "id": "fractured.stat_2954116742|4931",
+          "en": "Allocates Dependable Ward",
+          "zh_CN": "配置 可靠结界",
+          "zh_TW": "配置穩固護盾"
+        },
+        {
           "id": "crafted.stat_2954116742|28267",
           "en": "Allocates Desensitisation",
           "zh_CN": "配置 脱敏",
@@ -346559,6 +346860,12 @@
         },
         {
           "id": "explicit.stat_2954116742|2344",
+          "en": "Allocates Dimensional Weakspot",
+          "zh_CN": "配置 维度弱点",
+          "zh_TW": "配置維度弱點"
+        },
+        {
+          "id": "fractured.stat_2954116742|2344",
           "en": "Allocates Dimensional Weakspot",
           "zh_CN": "配置 维度弱点",
           "zh_TW": "配置維度弱點"
@@ -350044,6 +350351,12 @@
           "zh_TW": "配置掘墓者"
         },
         {
+          "id": "fractured.stat_2954116742|41905",
+          "en": "Allocates Gravedigger",
+          "zh_CN": "配置 掘墓人",
+          "zh_TW": "配置掘墓者"
+        },
+        {
           "id": "crafted.stat_2954116742|27687",
           "en": "Allocates Greatest Defence",
           "zh_CN": "配置 卓绝防御",
@@ -350152,6 +350465,12 @@
           "zh_TW": "配置危境增長"
         },
         {
+          "id": "fractured.stat_2954116742|13844",
+          "en": "Allocates Growing Peril",
+          "zh_CN": "配置 危在旦夕",
+          "zh_TW": "配置危境增長"
+        },
+        {
           "id": "crafted.stat_2954116742|14945",
           "en": "Allocates Growing Swarm",
           "zh_CN": "配置 成群结队",
@@ -350213,6 +350532,12 @@
         },
         {
           "id": "explicit.stat_2954116742|46499",
+          "en": "Allocates Guts",
+          "zh_CN": "配置 刚胆",
+          "zh_TW": "配置膽量"
+        },
+        {
+          "id": "fractured.stat_2954116742|46499",
           "en": "Allocates Guts",
           "zh_CN": "配置 刚胆",
           "zh_TW": "配置膽量"
@@ -350491,25 +350816,25 @@
           "id": "crafted.stat_2954116742|35966",
           "en": "Allocates Heart Tissue",
           "zh_CN": "配置 心源强健",
-          "zh_TW": "配置心臟疾病"
+          "zh_TW": "配置心臟組織"
         },
         {
           "id": "enchant.stat_2954116742|35966",
           "en": "Allocates Heart Tissue",
           "zh_CN": "配置 心源强健",
-          "zh_TW": "配置心臟疾病"
+          "zh_TW": "配置心臟組織"
         },
         {
           "id": "explicit.stat_2954116742|35966",
           "en": "Allocates Heart Tissue",
           "zh_CN": "配置 心源强健",
-          "zh_TW": "配置心臟疾病"
+          "zh_TW": "配置心臟組織"
         },
         {
           "id": "fractured.stat_2954116742|35966",
           "en": "Allocates Heart Tissue",
           "zh_CN": "配置 心源强健",
-          "zh_TW": "配置心臟疾病"
+          "zh_TW": "配置心臟組織"
         },
         {
           "id": "crafted.stat_2954116742|13407",
@@ -350563,19 +350888,19 @@
           "id": "crafted.stat_2954116742|9896",
           "en": "Allocates Heartstopping Presence",
           "zh_CN": "配置 凝心气息",
-          "zh_TW": "配置停頓心跳"
+          "zh_TW": "配置懾心氣場"
         },
         {
           "id": "enchant.stat_2954116742|9896",
           "en": "Allocates Heartstopping Presence",
           "zh_CN": "配置 凝心气息",
-          "zh_TW": "配置停頓心跳"
+          "zh_TW": "配置懾心氣場"
         },
         {
           "id": "explicit.stat_2954116742|9896",
           "en": "Allocates Heartstopping Presence",
           "zh_CN": "配置 凝心气息",
-          "zh_TW": "配置停頓心跳"
+          "zh_TW": "配置懾心氣場"
         },
         {
           "id": "crafted.stat_2954116742|372",
@@ -351136,6 +351461,12 @@
           "zh_TW": "配置伊克羅特之獄炎"
         },
         {
+          "id": "fractured.stat_2954116742|32932",
+          "en": "Allocates Ichlotl's Inferno",
+          "zh_CN": "配置 伊柯洛塔的狱火",
+          "zh_TW": "配置伊克羅特之獄炎"
+        },
+        {
           "id": "crafted.stat_2954116742|7341",
           "en": "Allocates Ignore Pain",
           "zh_CN": "配置 无视痛苦",
@@ -351269,6 +351600,12 @@
         },
         {
           "id": "explicit.stat_2954116742|24062",
+          "en": "Allocates Immortal Infamy",
+          "zh_CN": "配置 不朽英名",
+          "zh_TW": "配置不朽惡名"
+        },
+        {
+          "id": "fractured.stat_2954116742|24062",
           "en": "Allocates Immortal Infamy",
           "zh_CN": "配置 不朽英名",
           "zh_TW": "配置不朽惡名"
@@ -351580,22 +351917,28 @@
           "zh_TW": "配置煉獄上限"
         },
         {
+          "id": "fractured.stat_2954116742|61354",
+          "en": "Allocates Infernal Limit",
+          "zh_CN": "配置 炼狱上限",
+          "zh_TW": "配置煉獄上限"
+        },
+        {
           "id": "crafted.stat_2954116742|57110",
           "en": "Allocates Infused Flesh",
           "zh_CN": "配置 血肉灌注",
-          "zh_TW": "配置注入肉體"
+          "zh_TW": "配置灌注血肉"
         },
         {
           "id": "enchant.stat_2954116742|57110",
           "en": "Allocates Infused Flesh",
           "zh_CN": "配置 血肉灌注",
-          "zh_TW": "配置注入肉體"
+          "zh_TW": "配置灌注血肉"
         },
         {
           "id": "explicit.stat_2954116742|57110",
           "en": "Allocates Infused Flesh",
           "zh_CN": "配置 血肉灌注",
-          "zh_TW": "配置注入肉體"
+          "zh_TW": "配置灌注血肉"
         },
         {
           "id": "crafted.stat_2954116742|38965",
@@ -351659,6 +352002,12 @@
         },
         {
           "id": "explicit.stat_2954116742|59387",
+          "en": "Allocates Infusion of Power",
+          "zh_CN": "配置 力量灌注",
+          "zh_TW": "配置力量灌注"
+        },
+        {
+          "id": "fractured.stat_2954116742|59387",
           "en": "Allocates Infusion of Power",
           "zh_CN": "配置 力量灌注",
           "zh_TW": "配置力量灌注"
@@ -352183,25 +352532,25 @@
           "id": "crafted.stat_2954116742|10265",
           "en": "Allocates Javelin",
           "zh_CN": "配置 标枪",
-          "zh_TW": "配置長矛：傷害核心"
+          "zh_TW": "配置標槍"
         },
         {
           "id": "enchant.stat_2954116742|10265",
           "en": "Allocates Javelin",
           "zh_CN": "配置 标枪",
-          "zh_TW": "配置長矛：傷害核心"
+          "zh_TW": "配置標槍"
         },
         {
           "id": "explicit.stat_2954116742|10265",
           "en": "Allocates Javelin",
           "zh_CN": "配置 标枪",
-          "zh_TW": "配置長矛：傷害核心"
+          "zh_TW": "配置標槍"
         },
         {
           "id": "fractured.stat_2954116742|10265",
           "en": "Allocates Javelin",
           "zh_CN": "配置 标枪",
-          "zh_TW": "配置長矛：傷害核心"
+          "zh_TW": "配置標槍"
         },
         {
           "id": "crafted.stat_2954116742|3663",
@@ -352330,6 +352679,12 @@
           "zh_TW": "配置伊澤洛之騎士"
         },
         {
+          "id": "fractured.stat_2954116742|9863",
+          "en": "Allocates Knight of Izaro",
+          "zh_CN": "配置 伊泽洛骑士",
+          "zh_TW": "配置伊澤洛之騎士"
+        },
+        {
           "id": "crafted.stat_2954116742|1861",
           "en": "Allocates Knight of Tarcus",
           "zh_CN": "配置 塔库斯骑士",
@@ -352343,6 +352698,12 @@
         },
         {
           "id": "explicit.stat_2954116742|1861",
+          "en": "Allocates Knight of Tarcus",
+          "zh_CN": "配置 塔库斯骑士",
+          "zh_TW": "配置塔克司之騎士"
+        },
+        {
+          "id": "fractured.stat_2954116742|1861",
           "en": "Allocates Knight of Tarcus",
           "zh_CN": "配置 塔库斯骑士",
           "zh_TW": "配置塔克司之騎士"
@@ -352684,6 +353045,12 @@
           "zh_TW": "配置一生之友"
         },
         {
+          "id": "fractured.stat_2954116742|31129",
+          "en": "Allocates Lifelong Friend",
+          "zh_CN": "配置 终生的好友",
+          "zh_TW": "配置一生之友"
+        },
+        {
           "id": "crafted.stat_2954116742|55131",
           "en": "Allocates Light on your Feet",
           "zh_CN": "配置 轻盈步伐",
@@ -352939,25 +353306,25 @@
           "id": "crafted.stat_2954116742|13542",
           "en": "Allocates Loose Flesh",
           "zh_CN": "配置 松弛之躯",
-          "zh_TW": "配置鬆散肌肉"
+          "zh_TW": "配置鬆弛血肉"
         },
         {
           "id": "enchant.stat_2954116742|13542",
           "en": "Allocates Loose Flesh",
           "zh_CN": "配置 松弛之躯",
-          "zh_TW": "配置鬆散肌肉"
+          "zh_TW": "配置鬆弛血肉"
         },
         {
           "id": "explicit.stat_2954116742|13542",
           "en": "Allocates Loose Flesh",
           "zh_CN": "配置 松弛之躯",
-          "zh_TW": "配置鬆散肌肉"
+          "zh_TW": "配置鬆弛血肉"
         },
         {
           "id": "fractured.stat_2954116742|13542",
           "en": "Allocates Loose Flesh",
           "zh_CN": "配置 松弛之躯",
-          "zh_TW": "配置鬆散肌肉"
+          "zh_TW": "配置鬆弛血肉"
         },
         {
           "id": "crafted.stat_2954116742|33240",
@@ -354787,25 +355154,25 @@
           "id": "crafted.stat_2954116742|38111",
           "en": "Allocates Pliable Flesh",
           "zh_CN": "配置 坚韧血肉",
-          "zh_TW": "配置可塑肉體"
+          "zh_TW": "配置柔韌血肉"
         },
         {
           "id": "enchant.stat_2954116742|38111",
           "en": "Allocates Pliable Flesh",
           "zh_CN": "配置 坚韧血肉",
-          "zh_TW": "配置可塑肉體"
+          "zh_TW": "配置柔韌血肉"
         },
         {
           "id": "explicit.stat_2954116742|38111",
           "en": "Allocates Pliable Flesh",
           "zh_CN": "配置 坚韧血肉",
-          "zh_TW": "配置可塑肉體"
+          "zh_TW": "配置柔韌血肉"
         },
         {
           "id": "fractured.stat_2954116742|38111",
           "en": "Allocates Pliable Flesh",
           "zh_CN": "配置 坚韧血肉",
-          "zh_TW": "配置可塑肉體"
+          "zh_TW": "配置柔韌血肉"
         },
         {
           "id": "crafted.stat_2954116742|58426",
@@ -355643,6 +356010,12 @@
         },
         {
           "id": "explicit.stat_2954116742|48240",
+          "en": "Allocates Quick Recovery",
+          "zh_CN": "配置 快速回复",
+          "zh_TW": "配置快速回復"
+        },
+        {
+          "id": "fractured.stat_2954116742|48240",
           "en": "Allocates Quick Recovery",
           "zh_CN": "配置 快速回复",
           "zh_TW": "配置快速回復"
@@ -356617,25 +356990,25 @@
           "id": "crafted.stat_2954116742|58215",
           "en": "Allocates Sanguimantic Rituals",
           "zh_CN": "配置 赤红仪式",
-          "zh_TW": "配置血咒儀式"
+          "zh_TW": "配置占血儀式"
         },
         {
           "id": "enchant.stat_2954116742|58215",
           "en": "Allocates Sanguimantic Rituals",
           "zh_CN": "配置 赤红仪式",
-          "zh_TW": "配置血咒儀式"
+          "zh_TW": "配置占血儀式"
         },
         {
           "id": "explicit.stat_2954116742|58215",
           "en": "Allocates Sanguimantic Rituals",
           "zh_CN": "配置 赤红仪式",
-          "zh_TW": "配置血咒儀式"
+          "zh_TW": "配置占血儀式"
         },
         {
           "id": "fractured.stat_2954116742|58215",
           "en": "Allocates Sanguimantic Rituals",
           "zh_CN": "配置 赤红仪式",
-          "zh_TW": "配置血咒儀式"
+          "zh_TW": "配置占血儀式"
         },
         {
           "id": "crafted.stat_2954116742|4810",
@@ -357401,6 +357774,12 @@
         },
         {
           "id": "explicit.stat_2954116742|47088",
+          "en": "Allocates Sic 'Em",
+          "zh_CN": "配置 关门放狗",
+          "zh_TW": "配置禁錮他們"
+        },
+        {
+          "id": "fractured.stat_2954116742|47088",
           "en": "Allocates Sic 'Em",
           "zh_CN": "配置 关门放狗",
           "zh_TW": "配置禁錮他們"
@@ -359239,19 +359618,19 @@
           "id": "crafted.stat_2954116742|48774",
           "en": "Allocates Taut Flesh",
           "zh_CN": "配置 紧绷之躯",
-          "zh_TW": "配置繃緊肌肉"
+          "zh_TW": "配置緊繃血肉"
         },
         {
           "id": "enchant.stat_2954116742|48774",
           "en": "Allocates Taut Flesh",
           "zh_CN": "配置 紧绷之躯",
-          "zh_TW": "配置繃緊肌肉"
+          "zh_TW": "配置緊繃血肉"
         },
         {
           "id": "explicit.stat_2954116742|48774",
           "en": "Allocates Taut Flesh",
           "zh_CN": "配置 紧绷之躯",
-          "zh_TW": "配置繃緊肌肉"
+          "zh_TW": "配置緊繃血肉"
         },
         {
           "id": "crafted.stat_2954116742|18157",
@@ -359777,6 +360156,12 @@
         },
         {
           "id": "explicit.stat_2954116742|59433",
+          "en": "Allocates Thirst for Endurance",
+          "zh_CN": "配置 耐力饥渴",
+          "zh_TW": "配置耐力渴求"
+        },
+        {
+          "id": "fractured.stat_2954116742|59433",
           "en": "Allocates Thirst for Endurance",
           "zh_CN": "配置 耐力饥渴",
           "zh_TW": "配置耐力渴求"
@@ -360310,6 +360695,12 @@
           "zh_TW": "配置時光倒流"
         },
         {
+          "id": "fractured.stat_2954116742|35564",
+          "en": "Allocates Turn the Clock Back",
+          "zh_CN": "配置 时光倒转",
+          "zh_TW": "配置時光倒流"
+        },
+        {
           "id": "crafted.stat_2954116742|2335",
           "en": "Allocates Turn the Clock Forward",
           "zh_CN": "配置 时光跃进",
@@ -360376,6 +360767,12 @@
           "zh_TW": "配置無礙嚴寒"
         },
         {
+          "id": "fractured.stat_2954116742|4579",
+          "en": "Allocates Unbothering Cold",
+          "zh_CN": "配置 无扰冰霜",
+          "zh_TW": "配置無礙嚴寒"
+        },
+        {
           "id": "crafted.stat_2954116742|64543",
           "en": "Allocates Unbound Forces",
           "zh_CN": "配置 无拘之力",
@@ -360413,6 +360810,12 @@
         },
         {
           "id": "explicit.stat_2954116742|13489",
+          "en": "Allocates Unbreakable",
+          "zh_CN": "配置 坚不可摧",
+          "zh_TW": "配置堅不可破"
+        },
+        {
+          "id": "fractured.stat_2954116742|13489",
           "en": "Allocates Unbreakable",
           "zh_CN": "配置 坚不可摧",
           "zh_TW": "配置堅不可破"
@@ -360871,25 +361274,25 @@
           "id": "crafted.stat_2954116742|4238",
           "en": "Allocates Versatile Arms",
           "zh_CN": "配置 全能神兵",
-          "zh_TW": "配置萬能雙手"
+          "zh_TW": "配置萬用武器"
         },
         {
           "id": "enchant.stat_2954116742|4238",
           "en": "Allocates Versatile Arms",
           "zh_CN": "配置 全能神兵",
-          "zh_TW": "配置萬能雙手"
+          "zh_TW": "配置萬用武器"
         },
         {
           "id": "explicit.stat_2954116742|4238",
           "en": "Allocates Versatile Arms",
           "zh_CN": "配置 全能神兵",
-          "zh_TW": "配置萬能雙手"
+          "zh_TW": "配置萬用武器"
         },
         {
           "id": "fractured.stat_2954116742|4238",
           "en": "Allocates Versatile Arms",
           "zh_CN": "配置 全能神兵",
-          "zh_TW": "配置萬能雙手"
+          "zh_TW": "配置萬用武器"
         },
         {
           "id": "crafted.stat_2954116742|65193",
@@ -362437,7 +362840,7 @@
           "id": "rune.stat_119336587",
           "en": "Banners also grant #% of Life Regenerated per second to affected targets",
           "zh_CN": "旗帜同样使受影响目标每秒回复 #% 的生命",
-          "zh_TW": "Banners also grant #% of Life Regenerated per second to affected targets"
+          "zh_TW": "鬥旗同時賦予被其影響的目標#%每秒生命回復"
         },
         {
           "id": "explicit.stat_1761741119",
@@ -362574,8 +362977,8 @@
         {
           "id": "rune.stat_1554054340",
           "en": "Bonded: # Life Regeneration per second",
-          "zh_CN": "羁绊：生命每秒再生 #",
-          "zh_TW": "命定:#每秒生命回復"
+          "zh_CN": "羁绊： 生命每秒再生 #",
+          "zh_TW": "Bonded: # Life Regeneration per second"
         },
         {
           "id": "rune.stat_769693350",
@@ -362611,19 +363014,19 @@
           "id": "rune.stat_243313994",
           "en": "Bonded: # to Level of all Attack Skills",
           "zh_CN": "羁绊： 所有攻击技能等级 #",
-          "zh_TW": "命定: 全部攻擊技能等級#"
+          "zh_TW": "命定: #全部攻擊技能等級"
         },
         {
           "id": "rune.stat_4111152445",
           "en": "Bonded: # to Level of all Lightning Skills",
           "zh_CN": "羁绊： 所有闪电技能等级 #",
-          "zh_TW": "命定: 全部閃電技能等級#"
+          "zh_TW": "命定: #全部閃電技能等級"
         },
         {
           "id": "rune.stat_3155261831",
           "en": "Bonded: # to Level of all Minion Skills",
           "zh_CN": "羁绊： 所有召唤生物技能等级 #",
-          "zh_TW": "命定: 全部召喚物技能等級#"
+          "zh_TW": "命定: #全部召喚物技能等級"
         },
         {
           "id": "rune.stat_2339851060",
@@ -363114,8 +363517,8 @@
         {
           "id": "rune.stat_841463428",
           "en": "Bonded: #% increased Magnitude of Bleeding you inflict",
-          "zh_CN": "羁绊：你造成的流血强度提高 #%",
-          "zh_TW": "命定:增加#%你所施加之流血的幅度"
+          "zh_CN": "羁绊： 你造成的流血强度提高 #%",
+          "zh_TW": "命定: 增加#%你所施加之流血的幅度"
         },
         {
           "id": "rune.stat_3891661462",
@@ -363198,8 +363601,8 @@
         {
           "id": "rune.stat_2894111835",
           "en": "Bonded: #% increased Presence Area of Effect",
-          "zh_CN": "羁绊：在场范围提高 #%",
-          "zh_TW": "命定:增加#%存在範圍的範圍效果"
+          "zh_CN": "羁绊： 在场范围提高 #%",
+          "zh_TW": "Bonded: #% increased Presence Area of Effect"
         },
         {
           "id": "rune.stat_2418344131",
@@ -364003,7 +364406,7 @@
           "id": "explicit.stat_3831171903|24",
           "en": "Bulwark",
           "zh_CN": "壁垒",
-          "zh_TW": "守護"
+          "zh_TW": "Bulwark"
         },
         {
           "id": "explicit.stat_1617268696",
@@ -364579,7 +364982,7 @@
           "id": "explicit.stat_3831171903|13",
           "en": "Conduit",
           "zh_CN": "能量连接",
-          "zh_TW": "能量連結"
+          "zh_TW": "Conduit"
         },
         {
           "id": "desecrated.stat_2552484522",
@@ -364891,7 +365294,7 @@
           "id": "explicit.stat_3831171903|26",
           "en": "Crimson Assault",
           "zh_CN": "猩红强袭",
-          "zh_TW": "緋紅攻擊"
+          "zh_TW": "緋紅突擊"
         },
         {
           "id": "rune.stat_935518591",
@@ -366094,6 +366497,12 @@
           "zh_TW": "藥劑每秒獲得#充能"
         },
         {
+          "id": "fractured.stat_731781020",
+          "en": "Flasks gain # charges per Second",
+          "zh_CN": "药剂每秒获得 # 次充能",
+          "zh_TW": "藥劑每秒獲得#充能"
+        },
+        {
           "id": "implicit.stat_731781020",
           "en": "Flasks gain # charges per Second",
           "zh_CN": "药剂每秒获得 # 次充能",
@@ -366684,8 +367093,8 @@
         {
           "id": "rune.stat_2621116283",
           "en": "Gain #% of damage as Fire damage per 2% Chance to Block",
-          "zh_CN": "每 #% 格挡几率获得相当于伤害 #% 的火焰伤害",
-          "zh_TW": "每擁有#%格擋率，獲得等同於#%傷害的火焰傷害"
+          "zh_CN": "每 2% 格挡几率获得相当于伤害 #% 的火焰伤害",
+          "zh_TW": "Gain #% of damage as Fire damage per 2% Chance to Block"
         },
         {
           "id": "crafted.stat_1158842087",
@@ -368629,7 +369038,7 @@
           "id": "explicit.stat_3831171903|18",
           "en": "Heartstopper",
           "zh_CN": "凝心者",
-          "zh_TW": "心靈永止"
+          "zh_TW": "Heartstopper"
         },
         {
           "id": "explicit.stat_668076381",
@@ -368796,7 +369205,7 @@
         {
           "id": "rune.stat_726496846",
           "en": "Idols socketed in this item gain the benefits of their Bonded modifiers",
-          "zh_CN": "镶嵌在该物品上的雕像获得其自身的羁绊词缀的强化效果",
+          "zh_CN": "镶嵌在该物品上的雕像获得其自身的绑定词缀的强化效果",
           "zh_TW": "鑲嵌在此物品中的魔偶獲得其命定詞綴的加成效果"
         },
         {
@@ -369852,19 +370261,19 @@
         {
           "id": "desecrated.stat_2594634307",
           "en": "Mark Skills have #% increased Skill Effect Duration",
-          "zh_CN": "印记技能的技能效果持续时间延长 #%",
+          "zh_CN": "印记技能的技能效果持续时间提高 #%",
           "zh_TW": "印記技能增加#%技能效果持續時間"
         },
         {
           "id": "explicit.stat_2594634307",
           "en": "Mark Skills have #% increased Skill Effect Duration",
-          "zh_CN": "印记技能的技能效果持续时间延长 #%",
+          "zh_CN": "印记技能的技能效果持续时间提高 #%",
           "zh_TW": "印記技能增加#%技能效果持續時間"
         },
         {
           "id": "fractured.stat_2594634307",
           "en": "Mark Skills have #% increased Skill Effect Duration",
-          "zh_CN": "印记技能的技能效果持续时间延长 #%",
+          "zh_CN": "印记技能的技能效果持续时间提高 #%",
           "zh_TW": "印記技能增加#%技能效果持續時間"
         },
         {
@@ -372216,19 +372625,19 @@
         {
           "id": "desecrated.stat_3113764475",
           "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-          "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
+          "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
           "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間"
         },
         {
           "id": "explicit.stat_3113764475",
           "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-          "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
+          "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
           "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間"
         },
         {
           "id": "fractured.stat_3113764475",
           "en": "Notable Passive Skills in Radius also grant #% increased Skill Effect Duration",
-          "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间延长 #%",
+          "zh_CN": "范围内的核心天赋同时提供 技能效果持续时间提高 #%",
           "zh_TW": "範圍內核心天賦也會賦予 增加#%技能效果持續時間"
         },
         {
@@ -372895,7 +373304,7 @@
           "id": "explicit.stat_3831171903|19",
           "en": "Oasis",
           "zh_CN": "荒漠绿洲",
-          "zh_TW": "幻景綠洲"
+          "zh_TW": "Oasis"
         },
         {
           "id": "explicit.stat_3430033313",
@@ -373165,7 +373574,7 @@
           "id": "explicit.stat_2422708892|9085",
           "en": "Passives in Radius of Crimson Assault can be Allocated\nwithout being connected to your tree",
           "zh_CN": "猩红强袭范围内的天赋可以在\n未连结至天赋树的情况下配置",
-          "zh_TW": "範圍緋紅攻擊內的天賦可以在沒有連結你的天賦樹下被配置"
+          "zh_TW": "範圍緋紅突擊內的天賦可以在沒有連結你的天賦樹下被配置"
         },
         {
           "id": "explicit.stat_2422708892|14226",
@@ -373644,7 +374053,7 @@
         {
           "id": "rune.stat_967155385",
           "en": "Prevent #% of Damage from Deflected Hits if you've\nDeflected no Hits Recently",
-          "zh_CN": "若你近期没有受到偏转击中，避免 #% 的\n偏转击中伤害",
+          "zh_CN": "若你近期没有偏转击中，避免 #% 的\n偏转击中伤害",
           "zh_TW": "若你近期沒有偏斜擊中，\n避免#%來自偏斜擊中的傷害"
         },
         {
@@ -376260,19 +376669,19 @@
         {
           "id": "desecrated.stat_4162678661",
           "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-          "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
+          "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
           "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間"
         },
         {
           "id": "explicit.stat_4162678661",
           "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-          "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
+          "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
           "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間"
         },
         {
           "id": "fractured.stat_4162678661",
           "en": "Small Passive Skills in Radius also grant Mark Skills have #% increased Skill Effect Duration",
-          "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间延长 #%",
+          "zh_CN": "范围内的小型天赋同时提供 印记技能的技能效果持续时间提高 #%",
           "zh_TW": "範圍內小型天賦也會賦予 印記技能增加#%技能效果持續時間"
         },
         {
@@ -378087,13 +378496,13 @@
     },
     "coverage": {
       "zh_CN": {
-        "matched": 12315,
-        "total": 12319,
-        "ratio": 0.999675
+        "matched": 12336,
+        "total": 12340,
+        "ratio": 0.999676
       },
       "zh_TW": {
-        "matched": 12319,
-        "total": 12319,
+        "matched": 12340,
+        "total": 12340,
         "ratio": 1.0
       }
     },
